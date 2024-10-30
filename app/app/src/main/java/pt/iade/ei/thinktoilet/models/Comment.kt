@@ -6,7 +6,10 @@ import java.time.LocalDateTime
 data class Comment(
     var id: Int?,
     val userForeigner: UserForeigner,
+    val rate: Float,
     val text: String,
     val ratingCategory: RatingCategory,
-    val datetime: LocalDateTime,
+    val date: LocalDateTime,
+    val like: Int,
+    val dislike: Int
 ) : Serializable

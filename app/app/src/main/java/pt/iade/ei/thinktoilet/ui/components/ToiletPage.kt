@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.test.generateRandomToilet
+import pt.iade.ei.thinktoilet.test.generateRandomToiletWithComments
 import pt.iade.ei.thinktoilet.ui.theme.montserratFontFamily
 
 @Composable
@@ -78,7 +80,6 @@ fun ToiletPage(toilet: Toilet) {
             }
             Column {
                 Button(
-                    modifier = Modifier.padding(start = 8.dp),
                     onClick = { /* TODO */ },
                     colors = ButtonColors(
                         containerColor = Color(0xFF6BAED6),
@@ -97,6 +98,54 @@ fun ToiletPage(toilet: Toilet) {
             }
         }
         ToiletRating(toilet = toilet)
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    top = 16.dp,
+                    bottom = 8.dp
+                ),
+            onClick = { /* TODO */ },
+            colors = ButtonColors(
+                containerColor = Color(0xFFC3DEEE),
+                contentColor = Color(0xFF38627B),
+                disabledContainerColor = Color(0xFF3F51B5).copy(alpha = 0.5f),
+                disabledContentColor = Color.White.copy(alpha = 0.5f)
+            )
+        ) {
+            Text(
+                text = "Avaliar",
+                fontFamily = montserratFontFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp
+            )
+        }
+        Row(
+            modifier = Modifier.padding(
+                bottom = 8.dp
+            ),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                modifier = Modifier.padding(
+                    end = 6.dp,
+                ),
+                text = "Avaliações",
+                fontFamily = montserratFontFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp
+            )
+            Text(
+                text = toilet.comments.size.toString(),
+                fontFamily = montserratFontFamily,
+                fontWeight = FontWeight.Medium,
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
+        }
+        for (comment in toilet.comments) {
+            Comment(comment = comment)
+        }
     }
 }
 
@@ -105,6 +154,6 @@ fun ToiletPage(toilet: Toilet) {
 @Composable
 fun ToiletPagePreview() {
     ToiletPage(
-        toilet = generateRandomToilet()
+        toilet = generateRandomToiletWithComments(5)
     )
 }

@@ -24,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.test.generateRandomDistance
-import pt.iade.ei.thinktoilet.test.generateRandomToilet
+import pt.iade.ei.thinktoilet.test.generateRandomToiletsWithComments
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,12 +40,9 @@ fun BottomSheetScaffoldThinkToilet() {
     var locationSelected by remember { mutableStateOf(false) }
     var toiletSelected by remember { mutableStateOf<Toilet?>(null) }
     val toilets: List<Toilet> = remember {
-        listOf(
-            generateRandomToilet(),
-            generateRandomToilet(),
-            generateRandomToilet(),
-            generateRandomToilet(),
-            generateRandomToilet()
+        generateRandomToiletsWithComments(
+            numToilets = 5,
+            numComments = 5
         )
     }
 
