@@ -11,4 +11,5 @@ data class UserMain(
     var email: String,
     var password: String,
     var position: Position,
+    var historyComment: List<Comment>,
 ) : Serializable
