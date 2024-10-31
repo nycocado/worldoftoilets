@@ -131,13 +131,13 @@ Este caso trata da busca por uma casa de banho específica pelo utilizador: [(Ex
 - O processo termina após a realização da ação desejada.
 
 ## Plano de Trabalho
-| **Fase**                            | **Descrição**                                                                                                                                                                                                      | **Prazo**               |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
-| **1. Planejamento e Prototipação**  | Definição dos objetivos, escopo e requisitos do projeto.<br> Criação de protótipos da interface de usuário usando Figma.                                                                                           | Entrega 1: [20/10/2024] |
-| **2. Desenvolvimento do Protótipo** | Implementação inicial da aplicação móvel em Kotlin com Jetpack Compose.<br> Integração básica com Google Maps.<br> Desenvolvimento inicial do servidor com Spring Boot.<br> Conexão com a base de dados MySQL.     | Entrega 2: [24/11/2024] |
-| **3. Desenvolvimento Final**        | Continuação do desenvolvimento da aplicação, incluindo:<br> - Funcionalidades completas de busca, avaliação e sugestão.<br> - Refinamento da integração com Google Maps.<br> - Finalização do servidor e das APIs. | Entrega 3: [12/01/2024] |
-| **4. Testes**                       | Realização de testes unitários e de integração da aplicação.<br>Coleta de feedback de usuários e melhorias com base nas avaliações.                                                                                | Entrega 3: [12/01/2024] |
-| **5. Documentação**                 | Criação do relatório final do projeto.                                                                                                                                                   | Entrega 3: [12/01/2024] |
+| **Fase**                            | **Descrição**                                                                                                                                                                                                                                                                                                                                     | **Prazo**               |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| **1. Planejamento e Prototipação**  | Definição dos objetivos, escopo e requisitos do projeto. (Todos)<br> Criação de protótipos da interface de usuário usando Figma. (Todos)                                                                                                                                                                                                          | Entrega 1: [20/10/2024] |
+| **2. Desenvolvimento do Protótipo** | Implementação inicial da aplicação móvel em Kotlin com Jetpack Compose. (Luan e Nycolas)<br> Integração básica com Google Maps. (Luan e Nycolas)<br> Desenvolvimento inicial do servidor com Spring Boot. (Nycolas e Lohanne)<br> Desenvolvimento da base de dados MySQL. (Lohanne)<br> Conexão com a base de dados MySQL. (Todos)                | Entrega 2: [24/11/2024] |
+| **3. Desenvolvimento Final**        | Continuação do desenvolvimento da aplicação, incluindo:<br> - Funcionalidades completas de busca, avaliação e sugestão. (Todos)<br> - Refinamento da integração com Google Maps. (Luan e Nycolas)<br> - Finalização do servidor e das APIs. (Lohanne e Nycolas)                                                                                   | Entrega 3: [12/01/2024] |
+| **4. Testes**                       | Realização de testes unitários e de integração da aplicação. (Todos)<br>Coleta de feedback de usuários e melhorias com base nas avaliações. (Todos)                                                                                                                                                                                               | Entrega 3: [12/01/2024] |
+| **5. Documentação**                 | Criação do relatório final do projeto. (Todos)                                                                                                                                                                                                                                                                                                    | Entrega 3: [12/01/2024] |
 
 ## Descrição da Solução
 O projeto **[Think Toilet](https://github.com/nycocado/think-toilet)** é uma aplicação móvel que ajuda os utilizadores a encontrar e avaliar casas de banho próximas. A aplicação exibe um mapa interativo com as casas de banho mais bem avaliadas e fornece informações como preço, acessibilidade e restrições de uso (gratuito, público ou para clientes). Os utilizadores podem avaliar critérios como limpeza, acessibilidade, papel disponível e estrutura, além de deixar comentários. A aplicação também permite sugerir novas casas de banho, denunciar locais ou comentários inadequados e visualizar seu histórico de avaliações. Com integração ao Google Maps, oferece rotas para facilitar o acesso aos locais.
@@ -242,7 +242,8 @@ Utilizando **[MySQL](https://www.mysql.com/)**, o banco de dados será projetado
 - Coleta de feedback sobre design e interação com o usuário.
 
 ## Planificação 
-![Gráfico de Gantt](documents/gantt/gantt.png)
+[Gráfico de Gantt](documents/gantt/gantt.pdf)  
+[ClickUp](https://app.clickup.com/9012385337/v/s/90121717706)
 
 ## Interface
 ### Telas que aparecem no Guião de Testes:
