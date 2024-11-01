@@ -8,5 +8,5 @@ data class Comment(
     val userForeigner: UserForeigner,
     val text: String,
     val ratingCategory: RatingCategory,
-    val date: LocalDateTime,
+    val datetime: LocalDateTime,
 ) : Serializable

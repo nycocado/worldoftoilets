@@ -1,17 +1,9 @@
 package pt.iade.ei.thinktoilet.test
 
+import pt.iade.ei.thinktoilet.models.Comment
 import pt.iade.ei.thinktoilet.models.Position
 import pt.iade.ei.thinktoilet.models.RatingCategory
 import pt.iade.ei.thinktoilet.models.Toilet
-
-fun generateRatingCategory(clean: Float = 0.0f, paper: Float = 0.0f, structure: Float = 0.0f, accessibility: Float = 0.0f): RatingCategory {
-    return RatingCategory(
-        clean = clean,
-        paper = paper,
-        structure = structure,
-        accessibility = accessibility,
-    )
-}
 
 fun generateRandomRatingCategory(): RatingCategory {
     return RatingCategory(
@@ -22,32 +14,10 @@ fun generateRandomRatingCategory(): RatingCategory {
     )
 }
 
-fun generatePosition(latitude: Double = 0.0, longitude: Double = 0.0): Position {
-    return Position(
-        latitude = latitude,
-        longitude = longitude
-    )
-}
-
 fun generateRandomPosition(): Position {
     return Position(
         latitude = (0..100).random().toDouble(),
         longitude = (0..100).random().toDouble()
-    )
-}
-
-fun generateToilet(): Toilet {
-    return Toilet(
-        id = 1,
-        name = "Toiletaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        address = "Addressaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        ratingCategory = generateRatingCategory(),
-        accessibility = true,
-        babyChangingStation = true,
-        position = generatePosition(),
-        numComments = 0,
-        comments = emptyList(),
-        googlePlaceId = "0"
     )
 }
 
@@ -66,7 +36,7 @@ fun generateRandomToilet(): Toilet{
     )
 }
 
-fun generateToilets(numToilets: Int): List<Toilet> {
+fun generateRandomToilets(numToilets: Int): List<Toilet> {
     val toilets = mutableListOf<Toilet>()
     for (i in 1..numToilets) {
         toilets.add(generateRandomToilet())
@@ -74,6 +44,6 @@ fun generateToilets(numToilets: Int): List<Toilet> {
     return toilets
 }
 
-fun generateDistance(): Double {
+fun generateRandomDistance(): Double {
     return (0..5000).random().toDouble()
 }

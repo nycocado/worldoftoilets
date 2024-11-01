@@ -9,26 +9,22 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.DefaultShadowColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import pt.iade.ei.thinktoilet.test.generateToilet
 import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.models.distanceToString
+import pt.iade.ei.thinktoilet.test.generateRandomToilet
 import pt.iade.ei.thinktoilet.ui.theme.montserratFontFamily
 
 @Composable
@@ -48,10 +44,8 @@ fun LocationCard(
             )
             .clickable {
                 scope.launch {
-                    delay(100)
                     onClick(toilet)
                 }
-
             }
             .border(
                 width = 2.dp,
@@ -86,7 +80,7 @@ fun LocationCard(
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) { // Estrelas
-                    Stars(toilet.getAverageRating(), size = 14)
+                    Stars(toilet.getAverageRating(), size = 14.dp)
                     Text(
                         modifier = Modifier.padding(horizontal = 2.dp),
                         text = "(${toilet.numComments})",
@@ -126,7 +120,7 @@ fun LocationCard(
 @Composable
 fun LocationCardPreview() {
     LocationCard(
-        toilet = generateToilet(),
+        toilet = generateRandomToilet(),
         distance = 1000.0,
         onClick = {}
     )
