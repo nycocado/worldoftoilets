@@ -49,7 +49,6 @@ local.properties
 # Ignore banco de dados SQLite
 *.db
 *.sqlite
-*.sql
 *.sqlite3
 *.db-wal
 *.db-shm
