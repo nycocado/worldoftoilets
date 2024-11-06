@@ -14,14 +14,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.iade.ei.thinktoilet.ui.components.BottomSheetScaffoldThinkToilet
-import pt.iade.ei.thinktoilet.ui.theme.ThinkToiletTheme
+import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            ThinkToiletTheme {
+            AppTheme(
+                dynamicColor = false
+            ) {
                 MainView()
             }
         }
@@ -30,23 +32,21 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainView() {
-    ThinkToiletTheme {
-        Scaffold(
-            bottomBar = {
-                BottomAppBar {
-                    Text(
-                        text = "BottomAppBar",
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
+    Scaffold(
+        bottomBar = {
+            BottomAppBar {
+                Text(
+                    text = "BottomAppBar",
+                    modifier = Modifier.padding(16.dp)
+                )
             }
-        ) { innerPadding ->
-            Box(
-                Modifier
-                    .padding(innerPadding)
-            ) {
-                BottomSheetScaffoldThinkToilet()
-            }
+        }
+    ) { innerPadding ->
+        Box(
+            Modifier
+                .padding(innerPadding)
+        ) {
+            BottomSheetScaffoldThinkToilet()
         }
     }
 }

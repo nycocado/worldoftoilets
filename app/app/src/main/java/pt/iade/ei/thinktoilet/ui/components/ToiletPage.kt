@@ -22,9 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.Toilet
-import pt.iade.ei.thinktoilet.test.generateRandomToilet
 import pt.iade.ei.thinktoilet.test.generateRandomToiletWithComments
-import pt.iade.ei.thinktoilet.ui.theme.montserratFontFamily
+import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
 @Composable
 fun ToiletPage(toilet: Toilet) {
@@ -33,7 +32,6 @@ fun ToiletPage(toilet: Toilet) {
     ) {
         Text(
             text = toilet.name,
-            fontFamily = montserratFontFamily,
             fontWeight = FontWeight.SemiBold,
             fontSize = 28.sp
         )
@@ -50,7 +48,6 @@ fun ToiletPage(toilet: Toilet) {
             Text(
                 modifier = Modifier.padding(horizontal = 4.dp),
                 text = "%.1f".format(toilet.getAverageRating()),
-                fontFamily = montserratFontFamily,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 16.sp
             )
@@ -73,7 +70,6 @@ fun ToiletPage(toilet: Toilet) {
             ) {
                 Text(
                     text = toilet.address,
-                    fontFamily = montserratFontFamily,
                     fontWeight = FontWeight.Medium,
                     fontSize = 16.sp
                 )
@@ -82,15 +78,14 @@ fun ToiletPage(toilet: Toilet) {
                 Button(
                     onClick = { /* TODO */ },
                     colors = ButtonColors(
-                        containerColor = Color(0xFF6BAED6),
-                        contentColor = Color(0xFF333333),
-                        disabledContainerColor = Color(0xFF3F51B5).copy(alpha = 0.5f),
-                        disabledContentColor = Color.White.copy(alpha = 0.5f)
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 ) {
                     Text(
                         text = "Ir para o Maps",
-                        fontFamily = montserratFontFamily,
                         fontWeight = FontWeight.Medium,
                         fontSize = 16.sp
                     )
@@ -107,15 +102,14 @@ fun ToiletPage(toilet: Toilet) {
                 ),
             onClick = { /* TODO */ },
             colors = ButtonColors(
-                containerColor = Color(0xFFC3DEEE),
-                contentColor = Color(0xFF38627B),
-                disabledContainerColor = Color(0xFF3F51B5).copy(alpha = 0.5f),
-                disabledContentColor = Color.White.copy(alpha = 0.5f)
+                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                disabledContainerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.5f),
+                disabledContentColor = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.5f)
             )
         ) {
             Text(
                 text = "Avaliar",
-                fontFamily = montserratFontFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp
             )
@@ -131,13 +125,11 @@ fun ToiletPage(toilet: Toilet) {
                     end = 6.dp,
                 ),
                 text = "Avaliações",
-                fontFamily = montserratFontFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp
             )
             Text(
                 text = toilet.comments.size.toString(),
-                fontFamily = montserratFontFamily,
                 fontWeight = FontWeight.Medium,
                 fontSize = 14.sp,
                 color = Color.Gray
@@ -153,7 +145,11 @@ fun ToiletPage(toilet: Toilet) {
 @Preview(showBackground = true)
 @Composable
 fun ToiletPagePreview() {
-    ToiletPage(
-        toilet = generateRandomToiletWithComments(5)
-    )
+    AppTheme (
+        dynamicColor = false
+    ){
+        ToiletPage(
+            toilet = generateRandomToiletWithComments(5)
+        )
+    }
 }

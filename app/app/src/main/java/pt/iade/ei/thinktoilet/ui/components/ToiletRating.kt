@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.test.generateRandomToilet
-import pt.iade.ei.thinktoilet.ui.theme.montserratFontFamily
 
 @Composable
 fun ToiletRating(toilet: Toilet) {
@@ -28,7 +27,6 @@ fun ToiletRating(toilet: Toilet) {
             Row {
                 Text(
                     text = "%.1f".format(toilet.getAverageRating()),
-                    fontFamily = montserratFontFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 50.sp
                 )

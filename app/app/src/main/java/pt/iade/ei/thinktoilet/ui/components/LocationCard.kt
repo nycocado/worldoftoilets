@@ -25,7 +25,6 @@ import kotlinx.coroutines.launch
 import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.models.distanceToString
 import pt.iade.ei.thinktoilet.test.generateRandomToilet
-import pt.iade.ei.thinktoilet.ui.theme.montserratFontFamily
 
 @Composable
 fun LocationCard(
@@ -53,7 +52,12 @@ fun LocationCard(
                 shape = MaterialTheme.shapes.medium
             ),
         shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+            disabledContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f),
+            disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+        ),
         elevation = CardDefaults.cardElevation(2.dp)
     ) { // Container (Serve para aplicar o border radius)
         Row(
@@ -70,7 +74,6 @@ fun LocationCard(
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         text = toilet.name,
-                        fontFamily = montserratFontFamily,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 18.sp,
                         maxLines = 1,
@@ -84,7 +87,6 @@ fun LocationCard(
                     Text(
                         modifier = Modifier.padding(horizontal = 2.dp),
                         text = "(${toilet.numComments})",
-                        fontFamily = montserratFontFamily,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 10.sp,
                         lineHeight = 1.sp
@@ -94,7 +96,6 @@ fun LocationCard(
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         text = toilet.address,
-                        fontFamily = montserratFontFamily,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 12.sp,
                         maxLines = 1,
@@ -106,7 +107,6 @@ fun LocationCard(
                 Text(
                     modifier = Modifier.padding(horizontal = 10.dp),
                     text = distanceToString(distance),
-                    fontFamily = montserratFontFamily,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 18.sp,
                     maxLines = 1

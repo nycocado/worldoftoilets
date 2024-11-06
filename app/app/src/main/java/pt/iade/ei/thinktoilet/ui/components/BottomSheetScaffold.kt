@@ -6,10 +6,14 @@ import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
@@ -56,6 +60,7 @@ fun BottomSheetScaffoldThinkToilet() {
         scaffoldState = scaffoldState,
         sheetPeekHeight = 160.dp,
         sheetShadowElevation = 8.dp,
+        sheetContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
         sheetContent = {
             Box(
                 modifier = Modifier
@@ -92,21 +97,16 @@ fun SelectedToiletContent(toilet: Toilet) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ToiletListContent(toilets: List<Toilet>, onToiletSelected: (Toilet) -> Unit) {
-    CompositionLocalProvider(
-        LocalOverscrollConfiguration provides null
-    ) { // Remove o efeito de overscroll do LazyColumn
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            items(5) {
-                val toilet = toilets[it]
-                LocationCard(
-                    toilet = toilet,
-                    distance = generateRandomDistance(),
-                    onClick = onToiletSelected
-                )
-            }
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        items(toilets) { toilet ->
+            LocationCard(
+                toilet = toilet,
+                distance = generateRandomDistance(),
+                onClick = onToiletSelected
+            )
         }
     }
 }

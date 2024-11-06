@@ -4,7 +4,7 @@ import java.io.Serializable
 
 data class Position(
     var latitude: Double,
-    var longitude: Double,
+    var longitude: Double
 ) : Serializable
 
 fun distanceToString(distance: Double): String {
