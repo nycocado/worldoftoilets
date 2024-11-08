@@ -12,7 +12,8 @@ data class Toilet(
     val position: Position,
     var numComments: Int,
     var comments: List<Comment>,
-    val googlePlaceId: String
+    val googlePlaceId: String,
+    val distance: Double
 ) : Serializable {
     fun getAverageRating(): Float {
         return ratingCategory.average()

@@ -19,10 +19,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.Toilet
-import pt.iade.ei.thinktoilet.test.generateRandomToiletWithComments
+import pt.iade.ei.thinktoilet.tests.generateRandomToiletWithComments
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
 @Composable
@@ -32,8 +31,8 @@ fun ToiletPage(toilet: Toilet) {
     ) {
         Text(
             text = toilet.name,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 28.sp
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold
         )
         Row(
             modifier = Modifier.padding(
@@ -48,8 +47,8 @@ fun ToiletPage(toilet: Toilet) {
             Text(
                 modifier = Modifier.padding(horizontal = 4.dp),
                 text = "%.1f".format(toilet.getAverageRating()),
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 16.sp
+                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
+                fontWeight = FontWeight.SemiBold
             )
         }
         Card(
@@ -70,24 +69,24 @@ fun ToiletPage(toilet: Toilet) {
             ) {
                 Text(
                     text = toilet.address,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 16.sp
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Medium
                 )
             }
             Column {
                 Button(
-                    onClick = { /* TODO */ },
+                    onClick = {  },
                     colors = ButtonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                        disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
+                        disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f)
                     )
                 ) {
                     Text(
                         text = "Ir para o Maps",
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 16.sp
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
             }
@@ -110,8 +109,8 @@ fun ToiletPage(toilet: Toilet) {
         ) {
             Text(
                 text = "Avaliar",
+                style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
             )
         }
         Row(
@@ -122,16 +121,16 @@ fun ToiletPage(toilet: Toilet) {
         ) {
             Text(
                 modifier = Modifier.padding(
-                    end = 6.dp,
+                    end = 10.dp,
                 ),
                 text = "Avaliações",
+                style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                fontSize = 20.sp
             )
             Text(
                 text = toilet.comments.size.toString(),
+                style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Medium,
-                fontSize = 14.sp,
                 color = Color.Gray
             )
         }
@@ -141,6 +140,49 @@ fun ToiletPage(toilet: Toilet) {
     }
 }
 
+@Composable
+fun ToiletRating(toilet: Toilet) {
+    Row(
+        modifier = Modifier.padding(horizontal = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(
+            modifier = Modifier.padding(end = 14.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row {
+                Text(
+                    text = "%.1f".format(toilet.getAverageRating()),
+                    style = MaterialTheme.typography.displayLarge,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            Row {
+                Stars(
+                    rating = toilet.getAverageRating(), size = 20.dp
+                )
+            }
+        }
+        Column {
+            ProgressBar(
+                progress = toilet.ratingCategory.clean,
+                text = "Limpeza"
+            )
+            ProgressBar(
+                progress = toilet.ratingCategory.paper,
+                text = "Papel"
+            )
+            ProgressBar(
+                progress = toilet.ratingCategory.structure,
+                text = "Estrutura"
+            )
+            ProgressBar(
+                progress = toilet.ratingCategory.accessibility,
+                text = "Acessibilidade"
+            )
+        }
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
@@ -149,7 +191,7 @@ fun ToiletPagePreview() {
         dynamicColor = false
     ){
         ToiletPage(
-            toilet = generateRandomToiletWithComments(5)
+            toilet = generateRandomToiletWithComments()
         )
     }
 }

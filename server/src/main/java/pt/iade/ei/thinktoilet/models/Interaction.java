@@ -20,11 +20,11 @@ public class Interaction {
 
     @ManyToOne
     @JoinColumn(
-            name = "int_acs_id",
-            referencedColumnName = "acs_id",
+            name = "int_toil_id",
+            referencedColumnName = "toil_id",
             nullable = false
     )
-    private Access access;
+    private Toilet toilet;
 
     public Interaction() {
     }
@@ -37,8 +37,8 @@ public class Interaction {
         return user;
     }
 
-    public Access getAccess() {
-        return access;
+    public Toilet getToilet() {
+        return toilet;
     }
 
     public void setId(int id) {
@@ -49,7 +49,7 @@ public class Interaction {
         this.user = user;
     }
 
-    public void setAccess(Access access) {
-        this.access = access;
+    public void setToilet(Toilet toilet) {
+        this.toilet = toilet;
     }
 }

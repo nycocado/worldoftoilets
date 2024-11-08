@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pt.iade.ei.thinktoilet.models.UserMain
-import pt.iade.ei.thinktoilet.test.generateUserMain
+import pt.iade.ei.thinktoilet.tests.generateUserMain
 
 
 @Composable

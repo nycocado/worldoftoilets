@@ -1,12 +1,12 @@
-package pt.iade.ei.thinktoilet.test
+package pt.iade.ei.thinktoilet.tests
 
 import pt.iade.ei.thinktoilet.models.Comment
-import pt.iade.ei.thinktoilet.models.ToiletReviews
 import pt.iade.ei.thinktoilet.models.Position
 import pt.iade.ei.thinktoilet.models.RatingCategory
 import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.models.UserForeigner
 import pt.iade.ei.thinktoilet.models.UserMain
+import pt.iade.ei.thinktoilet.models.ToiletReviews
 import java.time.LocalDateTime
 
 fun generateRandomRatingCategory(): RatingCategory {
@@ -27,26 +27,28 @@ fun generateRandomPosition(): Position {
 
 fun generateRandomToilet(): Toilet{
     return Toilet(
-        id = (0..100).random(),
+        id = 1,
         name = "Toilet ${(0..100).random()}",
         address = "Address ${(0..100).random()}",
         ratingCategory = generateRandomRatingCategory(),
         accessibility = (0..1).random() == 1,
         babyChangingStation = (0..1).random() == 1,
         position = generateRandomPosition(),
-        numComments = (0..100).random(),
+        numComments = 0,
         comments = emptyList(),
-        googlePlaceId = "0"
+        googlePlaceId = "0",
+        distance = generateRandomDistance()
     )
 }
 
-fun generateRandomToiletWithComments(numComments: Int): Toilet {
+fun generateRandomToiletWithComments(): Toilet {
     val toilet = generateRandomToilet()
     val comments = mutableListOf<Comment>()
-    for (i in 1..numComments) {
+    for (i in 1..(1..15).random()) {
         comments.add(generateComment())
     }
     toilet.comments = comments
+    toilet.numComments = comments.size
     return toilet
 }
 
@@ -58,10 +60,10 @@ fun generateRandomToilets(numToilets: Int): List<Toilet> {
     return toilets
 }
 
-fun generateRandomToiletsWithComments(numToilets: Int, numComments: Int): List<Toilet> {
+fun generateRandomToiletsWithComments(numToilets: Int): List<Toilet> {
     val toilets = mutableListOf<Toilet>()
     for (i in 1..numToilets) {
-        toilets.add(generateRandomToiletWithComments(numComments))
+        toilets.add(generateRandomToiletWithComments())
     }
     return toilets
 }
@@ -115,7 +117,7 @@ fun generateCommentsList(numComments: Int = (10..40).random()): List<Comment> {
     return commentsList
 }
 
-fun generateToiletReviews(): ToiletReviews{
+fun generateToiletReviews(): ToiletReviews {
     return ToiletReviews(
         toilet = generateRandomToilet(),
         user = generateUser(),
