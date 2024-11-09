@@ -8,7 +8,7 @@ import java.time.LocalDate;
 public class Toilet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cla_id")
+    @Column(name = "toil_id")
     private int id;
 
     @ManyToOne
@@ -39,11 +39,11 @@ public class Toilet {
     @Column(name = "toil_address")
     private String address;
 
-    @Column(name = "toil_mapsid")
-    private String mapsid;
+    @Column(name = "toil_placeid", unique = true)
+    private String placeId;
 
     @Column(name = "toil_cdate")
-    private LocalDate cdate;
+    private LocalDate creationDate;
 
     @Column(name = "toil_image")
     private String image;
@@ -79,12 +79,12 @@ public class Toilet {
         return address;
     }
 
-    public String getMapsid() {
-        return mapsid;
+    public String getPlaceId() {
+        return placeId;
     }
 
-    public LocalDate getCdate() {
-        return cdate;
+    public LocalDate getCreationDate() {
+        return creationDate;
     }
 
     public String getImage() {
@@ -119,12 +119,12 @@ public class Toilet {
         this.address = address;
     }
 
-    public void setMapsid(String mapsid) {
-        this.mapsid = mapsid;
+    public void setPlaceId(String placeId) {
+        this.placeId = placeId;
     }
 
-    public void setCdate(LocalDate cdate) {
-        this.cdate = cdate;
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
     }
 
     public void setImage(String image) {

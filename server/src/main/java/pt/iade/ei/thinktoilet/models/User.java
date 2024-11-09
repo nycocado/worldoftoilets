@@ -11,14 +11,14 @@ public class User {
     @Column(name = "user_id")
     private int id;
 
-    @Column(name = "user_name")
+    @Column(name = "user_name", unique = true)
     private String name;
 
-    @Column(name = "user_email")
+    @Column(name = "user_email", unique = true)
     private String email;
 
     @Column(name = "user_pwd")
-    private String pwd;
+    private String password;
 
     @Column(name = "user_points")
     private int points;
@@ -27,10 +27,10 @@ public class User {
     private String iconId;
 
     @Column(name = "user_bdate")
-    private LocalDate bdate;
+    private LocalDate birthDate;
 
     @Column(name = "user_cdate")
-    private LocalDate cdate;
+    private LocalDate creationDate;
 
     public User() {
     }
@@ -47,8 +47,8 @@ public class User {
         return email;
     }
 
-    public String getPwd() {
-        return pwd;
+    public String getPassword() {
+        return password;
     }
 
     public int getPoints() {
@@ -59,12 +59,12 @@ public class User {
         return iconId;
     }
 
-    public LocalDate getBdate() {
-        return bdate;
+    public LocalDate getBirthDate() {
+        return birthDate;
     }
 
-    public LocalDate getCdate() {
-        return cdate;
+    public LocalDate getCreationDate() {
+        return creationDate;
     }
 
     public void setId(int id) {
@@ -79,8 +79,8 @@ public class User {
         this.email = email;
     }
 
-    public void setPwd(String pwd) {
-        this.pwd = pwd;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public void setPoints(int points) {
@@ -91,11 +91,11 @@ public class User {
         this.iconId = iconId;
     }
 
-    public void setBdate(LocalDate bdate) {
-        this.bdate = bdate;
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
     }
 
-    public void setCdate(LocalDate cdate) {
-        this.cdate = cdate;
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
     }
 }

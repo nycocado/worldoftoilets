@@ -54,7 +54,6 @@ local.properties
 *.db-shm
 
 # Arquivos de configuração do Maven (caso use Maven)
-.mvn/
 target/
 pom.xml.tag
 pom.xml.releaseBackup

@@ -28,7 +28,7 @@ public class Report {
     private Interaction interaction;
 
     @Column(name = "rep_cdate")
-    private LocalDate cdate;
+    private LocalDate creationDate;
 
     public Report() {
     }
@@ -45,8 +45,8 @@ public class Report {
         return interaction;
     }
 
-    public LocalDate getCdate() {
-        return cdate;
+    public LocalDate getCreationDate() {
+        return creationDate;
     }
 
     public void setId(int id) {
@@ -61,7 +61,7 @@ public class Report {
         this.interaction = interaction;
     }
 
-    public void setCdate(LocalDate cdate) {
-        this.cdate = cdate;
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
     }
 }

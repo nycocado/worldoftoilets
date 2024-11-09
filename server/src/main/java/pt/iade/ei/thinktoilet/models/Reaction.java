@@ -36,7 +36,7 @@ public class Reaction {
     private TypeReaction typeReaction;
 
     @Column(name = "react_cdate")
-    private LocalDate cdate;
+    private LocalDate creationDate;
 
     public Reaction() {
     }
@@ -57,8 +57,8 @@ public class Reaction {
         return typeReaction;
     }
 
-    public LocalDate getCdate() {
-        return cdate;
+    public LocalDate getCreationDate() {
+        return creationDate;
     }
 
     public void setId(int id) {
@@ -77,7 +77,7 @@ public class Reaction {
         this.typeReaction = typeReaction;
     }
 
-    public void setCdate(LocalDate cdate) {
-        this.cdate = cdate;
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
     }
 }

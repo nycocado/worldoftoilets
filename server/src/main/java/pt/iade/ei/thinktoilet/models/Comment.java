@@ -23,19 +23,22 @@ public class Comment {
     private String text;
 
     @Column(name = "cmm_rclean")
-    private int rclean;
+    private int ratingClean;
 
     @Column(name = "cmm_rpaper")
-    private int rpaper;
+    private int ratingPaper;
 
     @Column(name = "cmm_rstructure")
-    private int rstructure;
+    private int ratingStructure;
 
     @Column(name = "cmm_raccessibility")
-    private int raccessibility;
+    private int ratingAccessibility;
 
     @Column(name = "cmm_cdatetime")
-    private LocalDateTime cdatetime;
+    private LocalDateTime creationDateTime;
+
+    @Column(name = "cmm_score")
+    private int score;
 
     public Comment() {
     }
@@ -52,24 +55,28 @@ public class Comment {
         return text;
     }
 
-    public int getRclean() {
-        return rclean;
+    public int getRatingClean() {
+        return ratingClean;
     }
 
-    public int getRpaper() {
-        return rpaper;
+    public int getRatingPaper() {
+        return ratingPaper;
     }
 
-    public int getRstructure() {
-        return rstructure;
+    public int getRatingStructure() {
+        return ratingStructure;
     }
 
-    public int getRaccessibility() {
-        return raccessibility;
+    public int getRatingAccessibility() {
+        return ratingAccessibility;
     }
 
-    public LocalDateTime getCdatetime() {
-        return cdatetime;
+    public LocalDateTime getCreationDateTime() {
+        return creationDateTime;
+    }
+
+    public int getScore() {
+        return score;
     }
 
     public void setId(int id) {
@@ -84,23 +91,27 @@ public class Comment {
         this.text = text;
     }
 
-    public void setRclean(int rclean) {
-        this.rclean = rclean;
+    public void setRatingClean(int ratingClean) {
+        this.ratingClean = ratingClean;
     }
 
-    public void setRpaper(int rpaper) {
-        this.rpaper = rpaper;
+    public void setRatingPaper(int ratingPaper) {
+        this.ratingPaper = ratingPaper;
     }
 
-    public void setRstructure(int rstructure) {
-        this.rstructure = rstructure;
+    public void setRatingStructure(int ratingStructure) {
+        this.ratingStructure = ratingStructure;
     }
 
-    public void setRaccessibility(int raccessibility) {
-        this.raccessibility = raccessibility;
+    public void setRatingAccessibility(int ratingAccessibility) {
+        this.ratingAccessibility = ratingAccessibility;
     }
 
-    public void setCdatetime(LocalDateTime cdatetime) {
-        this.cdatetime = cdatetime;
+    public void setCreationDateTime(LocalDateTime creationDateTime) {
+        this.creationDateTime = creationDateTime;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
     }
 }

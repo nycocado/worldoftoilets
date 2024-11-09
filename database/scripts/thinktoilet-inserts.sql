@@ -78,17 +78,17 @@ insert into user (user_name, user_email, user_pwd, user_points, user_iconid, use
 insert into user (user_name, user_email, user_pwd, user_points, user_iconid, user_bdate, user_cdate) values('Larissa Gomes', 'larissa.gomes@hotmail.com', 'larissa123', 320, 'icon11', STR_TO_DATE('1994-06-17', '%Y-%m-%d'), CURDATE());
 
 
-insert into toilet (toil_city_id, toil_acs_id, toil_name, toil_lat, toil_long, toil_address, toil_mapsid, toil_cdate, toil_image) values (1, 1, 'Main Mall Restroom', 40.7128, -74.0060, '123 Main St', 'maplink1', CURDATE(), 'image1.jpg');  
-insert into toilet (toil_city_id, toil_acs_id, toil_name, toil_lat, toil_long, toil_address, toil_mapsid, toil_cdate, toil_image) values (1, 2, 'Library Restroom', 40.7129, -74.0059, '456 Library Ave', 'maplink2', CURDATE(), 'image2.jpg'); 
-insert into toilet (toil_city_id, toil_acs_id, toil_name, toil_lat, toil_long, toil_address, toil_mapsid, toil_cdate, toil_image) values (2, 1, 'Park Restroom', 40.7130, -74.0058, '789 Park St', 'maplink3', CURDATE(), 'image3.jpg');
-insert into toilet (toil_city_id, toil_acs_id, toil_name, toil_lat, toil_long, toil_address, toil_mapsid, toil_cdate, toil_image) values (2, 2, 'Office Restroom', 40.7131, -74.0057, '101 Office Ave', 'maplink4', CURDATE(), 'image4.jpg');  
-insert into toilet (toil_city_id, toil_acs_id, toil_name, toil_lat, toil_long, toil_address, toil_mapsid, toil_cdate, toil_image) values (3, 1, 'Stadium Restroom', 40.7132, -74.0056, '102 Stadium Blvd', 'maplink5', CURDATE(), 'image5.jpg');  
-insert into toilet (toil_city_id, toil_acs_id, toil_name, toil_lat, toil_long, toil_address, toil_mapsid, toil_cdate, toil_image) values (3, 2, 'Shopping Restroom', 40.7133, -74.0055, '103 Shopping Plaza', 'maplink6', CURDATE(), 'image6.jpg');
-insert into toilet (toil_city_id, toil_acs_id, toil_name, toil_lat, toil_long, toil_address, toil_mapsid, toil_cdate, toil_image) values (1, 1, 'Central Square Restroom', 40.7140, -74.0040, '150 Central Sq', 'maplink7', CURDATE(), 'image7.jpg');  
-insert into toilet (toil_city_id, toil_acs_id, toil_name, toil_lat, toil_long, toil_address, toil_mapsid, toil_cdate, toil_image) values (2, 2, 'City Park Restroom', 40.7150, -74.0030, '200 City Park', 'maplink8', CURDATE(), 'image8.jpg');  
-insert into toilet (toil_city_id, toil_acs_id, toil_name, toil_lat, toil_long, toil_address, toil_mapsid, toil_cdate, toil_image) values (3, 1, 'Riverfront Restroom', 40.7160, -74.0020, '300 Riverfront Blvd', 'maplink9', CURDATE(), 'image9.jpg');  
-insert into toilet (toil_city_id, toil_acs_id, toil_name, toil_lat, toil_long, toil_address, toil_mapsid, toil_cdate, toil_image) values (1, 2, 'Museum Restroom', 40.7170, -74.0010, '400 Museum Ave', 'maplink10', CURDATE(), 'image10.jpg');  
-insert into toilet (toil_city_id, toil_acs_id, toil_name, toil_lat, toil_long, toil_address, toil_mapsid, toil_cdate, toil_image) values (2, 1, 'Zoo Restroom', 40.7180, -74.0000, '500 Zoo Ln', 'maplink11', CURDATE(), 'image11.jpg');  
+insert into toilet (toil_city_id, toil_acs_id, toil_name, toil_lat, toil_long, toil_address, toil_placeid, toil_cdate, toil_image) values (1, 1, 'Main Mall Restroom', 40.7128, -74.0060, '123 Main St', 'maplink1', CURDATE(), 'image1.jpg');  
+insert into toilet (toil_city_id, toil_acs_id, toil_name, toil_lat, toil_long, toil_address, toil_placeid, toil_cdate, toil_image) values (1, 2, 'Library Restroom', 40.7129, -74.0059, '456 Library Ave', 'maplink2', CURDATE(), 'image2.jpg'); 
+insert into toilet (toil_city_id, toil_acs_id, toil_name, toil_lat, toil_long, toil_address, toil_placeid, toil_cdate, toil_image) values (2, 1, 'Park Restroom', 40.7130, -74.0058, '789 Park St', 'maplink3', CURDATE(), 'image3.jpg');
+insert into toilet (toil_city_id, toil_acs_id, toil_name, toil_lat, toil_long, toil_address, toil_placeid, toil_cdate, toil_image) values (2, 2, 'Office Restroom', 40.7131, -74.0057, '101 Office Ave', 'maplink4', CURDATE(), 'image4.jpg');  
+insert into toilet (toil_city_id, toil_acs_id, toil_name, toil_lat, toil_long, toil_address, toil_placeid, toil_cdate, toil_image) values (3, 1, 'Stadium Restroom', 40.7132, -74.0056, '102 Stadium Blvd', 'maplink5', CURDATE(), 'image5.jpg');  
+insert into toilet (toil_city_id, toil_acs_id, toil_name, toil_lat, toil_long, toil_address, toil_placeid, toil_cdate, toil_image) values (3, 2, 'Shopping Restroom', 40.7133, -74.0055, '103 Shopping Plaza', 'maplink6', CURDATE(), 'image6.jpg');
+insert into toilet (toil_city_id, toil_acs_id, toil_name, toil_lat, toil_long, toil_address, toil_placeid, toil_cdate, toil_image) values (1, 1, 'Central Square Restroom', 40.7140, -74.0040, '150 Central Sq', 'maplink7', CURDATE(), 'image7.jpg');  
+insert into toilet (toil_city_id, toil_acs_id, toil_name, toil_lat, toil_long, toil_address, toil_placeid, toil_cdate, toil_image) values (2, 2, 'City Park Restroom', 40.7150, -74.0030, '200 City Park', 'maplink8', CURDATE(), 'image8.jpg');  
+insert into toilet (toil_city_id, toil_acs_id, toil_name, toil_lat, toil_long, toil_address, toil_placeid, toil_cdate, toil_image) values (3, 1, 'Riverfront Restroom', 40.7160, -74.0020, '300 Riverfront Blvd', 'maplink9', CURDATE(), 'image9.jpg');  
+insert into toilet (toil_city_id, toil_acs_id, toil_name, toil_lat, toil_long, toil_address, toil_placeid, toil_cdate, toil_image) values (1, 2, 'Museum Restroom', 40.7170, -74.0010, '400 Museum Ave', 'maplink10', CURDATE(), 'image10.jpg');  
+insert into toilet (toil_city_id, toil_acs_id, toil_name, toil_lat, toil_long, toil_address, toil_placeid, toil_cdate, toil_image) values (2, 1, 'Zoo Restroom', 40.7180, -74.0000, '500 Zoo Ln', 'maplink11', CURDATE(), 'image11.jpg');  
 
 
 insert into interaction (int_user_id, int_toil_id) values (1, 1);
@@ -136,14 +136,14 @@ insert into extra (extra_toil_id, extra_tex_id) values (4, 4);
 insert into extra (extra_toil_id, extra_tex_id) values (5, 5);
 
 
-insert into comment (cmm_int_id, cmm_text, cmm_rclean, cmm_rpaper, cmm_rstructure, cmm_raccessibility, cmm_cdatetime) values (1, 'This restroom was impressively clean and accessible. Its spacious and well-maintained, perfect for wheelchair users!', 5, 5, 4, 4, NOW());
-insert into comment (cmm_int_id, cmm_text, cmm_rclean, cmm_rpaper, cmm_rstructure, cmm_raccessibility, cmm_cdatetime) values (1, 'There was no toilet paper available during my visit. Otherwise, it seemed fine, but supply tracking needs improvement.', 3, 1, 3, 2, NOW());
-insert into comment (cmm_int_id, cmm_text, cmm_rclean, cmm_rpaper, cmm_rstructure, cmm_raccessibility, cmm_cdatetime) values (2, 'The restroom was clean, but the hand dryer was broken, and I didnt find any paper towels. Regular checks are necessary.', 4, 5, 2, 3, NOW());
-insert into comment (cmm_int_id, cmm_text, cmm_rclean, cmm_rpaper, cmm_rstructure, cmm_raccessibility, cmm_cdatetime) values (3, 'The restroom needs more attention; it was not very clean, with stains on the floor and an overflowing trash bin.', 2, 4, 2, 4, NOW());
-insert into comment (cmm_int_id, cmm_text, cmm_rclean, cmm_rpaper, cmm_rstructure, cmm_raccessibility, cmm_cdatetime) values (4, 'Accessible but lacking supplies; no hand sanitizer and an empty soap dispenser. These details matter!', 4, 3, 4, 5, NOW());
-insert into comment (cmm_int_id, cmm_text, cmm_rclean, cmm_rpaper, cmm_rstructure, cmm_raccessibility, cmm_cdatetime) values (5, 'Decent experience, but it could be cleaner, especially around the sinks where water accumulates.', 3, 2, 1, 1, NOW());
-insert into comment (cmm_int_id, cmm_text, cmm_rclean, cmm_rpaper, cmm_rstructure, cmm_raccessibility, cmm_cdatetime) values (6, 'Great overall! Clean, well-stocked, and excellent accessibility features made my visit comfortable.', 5, 4, 5, 5, NOW());
-insert into comment (cmm_int_id, cmm_text, cmm_rclean, cmm_rpaper, cmm_rstructure, cmm_raccessibility, cmm_cdatetime) values (5, 'Good accessibility but lacking in supplies. The paper towels were out, and the soap dispenser was low.', 3, 2, 2, 3, NOW());
+insert into comment (cmm_int_id, cmm_text, cmm_rclean, cmm_rpaper, cmm_rstructure, cmm_raccessibility, cmm_cdatetime, cmm_score) values (1, 'This restroom was impressively clean and accessible. Its spacious and well-maintained, perfect for wheelchair users!', 5, 5, 4, 4, NOW(), 0);
+insert into comment (cmm_int_id, cmm_text, cmm_rclean, cmm_rpaper, cmm_rstructure, cmm_raccessibility, cmm_cdatetime, cmm_score) values (1, 'There was no toilet paper available during my visit. Otherwise, it seemed fine, but supply tracking needs improvement.', 3, 1, 3, 2, NOW(), 0);
+insert into comment (cmm_int_id, cmm_text, cmm_rclean, cmm_rpaper, cmm_rstructure, cmm_raccessibility, cmm_cdatetime, cmm_score) values (2, 'The restroom was clean, but the hand dryer was broken, and I didnt find any paper towels. Regular checks are necessary.', 4, 5, 2, 3, NOW(), 0);
+insert into comment (cmm_int_id, cmm_text, cmm_rclean, cmm_rpaper, cmm_rstructure, cmm_raccessibility, cmm_cdatetime, cmm_score) values (3, 'The restroom needs more attention; it was not very clean, with stains on the floor and an overflowing trash bin.', 2, 4, 2, 4, NOW(), 0);
+insert into comment (cmm_int_id, cmm_text, cmm_rclean, cmm_rpaper, cmm_rstructure, cmm_raccessibility, cmm_cdatetime, cmm_score) values (4, 'Accessible but lacking supplies; no hand sanitizer and an empty soap dispenser. These details matter!', 4, 3, 4, 5, NOW(), 0);
+insert into comment (cmm_int_id, cmm_text, cmm_rclean, cmm_rpaper, cmm_rstructure, cmm_raccessibility, cmm_cdatetime, cmm_score) values (5, 'Decent experience, but it could be cleaner, especially around the sinks where water accumulates.', 3, 2, 1, 1, NOW(), 0);
+insert into comment (cmm_int_id, cmm_text, cmm_rclean, cmm_rpaper, cmm_rstructure, cmm_raccessibility, cmm_cdatetime, cmm_score) values (6, 'Great overall! Clean, well-stocked, and excellent accessibility features made my visit comfortable.', 5, 4, 5, 5, NOW(), 0);
+insert into comment (cmm_int_id, cmm_text, cmm_rclean, cmm_rpaper, cmm_rstructure, cmm_raccessibility, cmm_cdatetime, cmm_score) values (5, 'Good accessibility but lacking in supplies. The paper towels were out, and the soap dispenser was low.', 3, 2, 2, 3, NOW(), 0);
 
 
 insert into reaction (react_user_id, react_cmm_id, react_trc_id, react_cdate) values (1, 1, 1, CURDATE());

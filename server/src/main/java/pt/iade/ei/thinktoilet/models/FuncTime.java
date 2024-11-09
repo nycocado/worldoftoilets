@@ -38,13 +38,13 @@ public class FuncTime {
     private State state;
 
     @Column(name = "ft_timestart")
-    private LocalTime timestart;
+    private LocalTime timeStart;
 
     @Column(name = "ft_timeend")
-    private LocalTime timeend;
+    private LocalTime timeEnd;
 
     @Column(name = "ft_cdate")
-    private LocalDate cdate;
+    private LocalDate creationDate;
 
     public FuncTime() {
     }
@@ -65,16 +65,16 @@ public class FuncTime {
         return state;
     }
 
-    public LocalTime getTimestart() {
-        return timestart;
+    public LocalTime getTimeStart() {
+        return timeStart;
     }
 
-    public LocalTime getTimeend() {
-        return timeend;
+    public LocalTime getTimeEnd() {
+        return timeEnd;
     }
 
-    public LocalDate getCdate() {
-        return cdate;
+    public LocalDate getCreationDate() {
+        return creationDate;
     }
 
     public void setId(int id) {
@@ -93,15 +93,15 @@ public class FuncTime {
         this.state = state;
     }
 
-    public void setTimestart(LocalTime timestart) {
-        this.timestart = timestart;
+    public void setTimeStart(LocalTime timeStart) {
+        this.timeStart = timeStart;
     }
 
-    public void setTimeend(LocalTime timeend) {
-        this.timeend = timeend;
+    public void setTimeEnd(LocalTime timeEnd) {
+        this.timeEnd = timeEnd;
     }
 
-    public void setCdate(LocalDate cdate) {
-        this.cdate = cdate;
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
     }
 }

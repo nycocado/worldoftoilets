@@ -1,7 +1,7 @@
 create table user (
 					user_id INT NOT NULL auto_increment,
-					user_name VARCHAR(50) NOT NULL, 
-					user_email VARCHAR(100) NOT NULL,											
+					user_name VARCHAR(50) UNIQUE NOT NULL, 
+					user_email VARCHAR(100) UNIQUE NOT NULL,											
 					user_pwd VARCHAR(255) NOT NULL, 							
 					user_points INT,
 					user_iconid VARCHAR(255),
@@ -18,7 +18,7 @@ create table toilet (
 					toil_lat DOUBLE NOT NULL,
 					toil_long DOUBLE NOT NULL,
 					toil_address VARCHAR(255) NOT NULL,
-					toil_mapsid VARCHAR(255),
+					toil_placeid VARCHAR(255) UNIQUE,
 					toil_cdate DATE NOT NULL,
 					toil_image VARCHAR(255),
 					primary key (toil_id)
@@ -115,6 +115,7 @@ create table comment (
 					cmm_rstructure INT NOT NULL,
 					cmm_raccessibility INT NOT NULL,
 					cmm_cdatetime DATETIME NOT NULL,
+					cmm_score INT NOT NULL,
 					primary key (cmm_id)
 );
 
