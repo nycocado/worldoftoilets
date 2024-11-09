@@ -1,10 +1,12 @@
 package pt.iade.ei.thinktoilet.test
 
 import pt.iade.ei.thinktoilet.models.Comment
+import pt.iade.ei.thinktoilet.models.ToiletReviews
 import pt.iade.ei.thinktoilet.models.Position
 import pt.iade.ei.thinktoilet.models.RatingCategory
 import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.models.UserForeigner
+import pt.iade.ei.thinktoilet.models.UserMain
 import java.time.LocalDateTime
 
 fun generateRandomRatingCategory(): RatingCategory {
@@ -70,32 +72,65 @@ fun generateRandomDistance(): Double {
 
 fun generateUser(): UserForeigner {
     return UserForeigner(
-        id = 1,
+        id = (0..100).random(),
         name = "Luan Ribeiro",
         iconId = 1,
-        numComments = 1,
-        points = 1
+        numComments = (0..200).random(),
+        points = (0..10000).random(),
     )
 }
 
 fun generateComment(): Comment {
     return Comment(
-        id = 13,
+        id = (0..100).random(),
         userForeigner = generateUser(),
-        rate = 2.8f,
+        rate = (0..5).random().toFloat(),
         text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc ac varius ex. Morbi vitae fermentum dui. Sed in laoreet massa. Donec sed pretium ipsum. Phasellus diam nunc, hendrerit laoreet imperdiet sit amet, ornare ut diam. Sed augue nisl, sollicitudin id dui sit amet, auctor faucibus odio. Nulla hendrerit gravida lacus ut aliquet.",
         ratingCategory = generateRandomRatingCategory(),
         datetime = LocalDateTime.now(),
-        like = 527,
-        dislike = 97
-
+        like = (0..1000).random(),
+        dislike = (0..1000).random(),
     )
-    // Padrao para Text
-    /**
-     * Text(
-     *       text = "texto",                        texto
-     *       fontFamily = montserratFontFamily,     estilo da fonte
-     *       fontWeight = FontWeight.Normal,        tamanho da fonte
-     *       )
-     * **/
 }
+
+fun generateUserMain(): UserMain {
+    return UserMain(
+        id = (0..100).random(),
+        name = "Lohanne Guedes",
+        iconId = (0..100).random(),
+        numComments = (0..200).random(),
+        points = (0..10000).random(),
+        email = "Lohanneguedes@fake.com",
+        password = "nothing_here",
+        position = generateRandomPosition(),
+        historyComment = generateCommentsList(),
+    )
+}
+
+fun generateCommentsList(numComments: Int = (10..40).random()): List<Comment> {
+    val commentsList = mutableListOf<Comment>()
+    for (i in 1..numComments) {
+        commentsList.add(generateComment())
+    }
+    return commentsList
+}
+
+fun generateToiletReviews(): ToiletReviews{
+    return ToiletReviews(
+        toilet = generateRandomToilet(),
+        user = generateUser(),
+        comments = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc ac varius ex. Morbi vitae fermentum dui. Sed in laoreet massa.",
+        ratingCategory = generateRandomRatingCategory(),
+        datetime = LocalDateTime.now(),
+    )
+}
+
+fun generateToiletReviewsList(numComments: Int = (10..40).random()): List<ToiletReviews> {
+    val ToiletReviewsList = mutableListOf<ToiletReviews>()
+    for (i in 1..numComments) {
+        ToiletReviewsList.add(generateToiletReviews())
+    }
+    return ToiletReviewsList
+}
+
+
