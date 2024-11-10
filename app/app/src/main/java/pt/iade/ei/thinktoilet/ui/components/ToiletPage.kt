@@ -12,6 +12,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,13 +21,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.tests.generateRandomToiletWithComments
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
 @Composable
-fun ToiletPage(toilet: Toilet) {
+fun ToiletPage(
+    toilet: Toilet,
+    onClick: () -> Unit = {}
+) {
+    val scope = rememberCoroutineScope()
+
     Column(
         modifier = Modifier.padding(16.dp)
     ) {
@@ -99,7 +107,7 @@ fun ToiletPage(toilet: Toilet) {
                     top = 16.dp,
                     bottom = 8.dp
                 ),
-            onClick = { /* TODO */ },
+            onClick = { scope.launch { onClick() } },
             colors = ButtonColors(
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                 contentColor = MaterialTheme.colorScheme.onTertiaryContainer,

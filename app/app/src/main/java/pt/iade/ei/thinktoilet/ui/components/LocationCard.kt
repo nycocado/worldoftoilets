@@ -63,8 +63,7 @@ fun LocationCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 15.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            verticalAlignment = Alignment.CenterVertically
         ) { // Todos os elementos são colocados em linha
             Column(
                 modifier = Modifier.weight(1f)

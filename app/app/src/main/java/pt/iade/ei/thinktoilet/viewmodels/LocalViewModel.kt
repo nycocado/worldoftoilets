@@ -8,7 +8,8 @@ import pt.iade.ei.thinktoilet.tests.generateUserMain
 
 class LocalViewModel: ViewModel() {
     val user: UserMain = generateUserMain()
-    val toilets: List<Toilet> = generateRandomToiletsWithComments(numToilets = 5)
+    val toilets: List<Toilet> = generateRandomToiletsWithComments(20)
+    var selectedToilet: Toilet? = null
 
     fun getToiletById(id: Int): Toilet? {
         return toilets.find { it.id == id }

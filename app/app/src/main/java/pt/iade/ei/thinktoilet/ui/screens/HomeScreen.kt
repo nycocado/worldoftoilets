@@ -11,12 +11,14 @@ import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,13 +40,13 @@ import pt.iade.ei.thinktoilet.ui.components.ToiletPage
 @Composable
 fun HomeScreen(
     navController: NavController = rememberNavController(),
-    initialToiletID: Int? = null,
     initialSheetValue: SheetValue = SheetValue.PartiallyExpanded,
     viewModel: LocalViewModel = viewModel()
 ) {
     val bottomSheetNavController = rememberNavController()
     val scope = rememberCoroutineScope()
-    val currentRoute = bottomSheetNavController.currentBackStackEntryAsState().value?.destination?.route
+    val currentRoute =
+        bottomSheetNavController.currentBackStackEntryAsState().value?.destination?.route
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState(
             initialValue = initialSheetValue,
@@ -54,14 +56,19 @@ fun HomeScreen(
         )
     )
 
-    LaunchedEffect(initialToiletID) {
-        if (initialToiletID != null) {
-            bottomSheetNavController.navigate("toilet_detail/$initialToiletID")
+    LaunchedEffect(viewModel.selectedToilet) {
+        if (viewModel.selectedToilet != null) {
+            bottomSheetNavController.navigate("toilet_detail") {
+                popUpTo(bottomSheetNavController.graph.startDestinationId) {
+                    inclusive = false
+                }
+                launchSingleTop = false
+            }
         }
     }
 
     LaunchedEffect(currentRoute) {
-        if (currentRoute == "toilet_detail/{toiletId}") {
+        if (currentRoute == "toilet_detail") {
             scaffoldState.bottomSheetState.expand()
         } else {
             scaffoldState.bottomSheetState.partialExpand()
@@ -98,21 +105,18 @@ fun HomeScreen(
                 ) {
                     composable("toilet_list") {
                         ToiletList(toilets = viewModel.toilets) { selectedToilet ->
-                            bottomSheetNavController.navigate("toilet_detail/${selectedToilet.id}") {
+                            viewModel.selectedToilet = selectedToilet
+                            bottomSheetNavController.navigate("toilet_detail") {
                                 popUpTo(bottomSheetNavController.graph.startDestinationId) {
                                     inclusive = false
                                 }
-                                launchSingleTop = true
-                                restoreState = true
+                                launchSingleTop = false
                             }
                         }
                     }
-                    composable("toilet_detail/{toiletId}") { backStackEntry ->
-                        val toiletId =
-                            backStackEntry.arguments?.getString("toiletId")?.toIntOrNull()
-                        val toilet = toiletId?.let { viewModel.getToiletById(it) }
-                        if (toilet != null) {
-                            ToiletDetail(toilet)
+                    composable("toilet_detail") {
+                        if (viewModel.selectedToilet != null) {
+                            ToiletDetail(viewModel.selectedToilet!!, navController)
                         }
                     }
                 }
@@ -122,10 +126,20 @@ fun HomeScreen(
 }
 
 @Composable
-fun ToiletDetail(toilet: Toilet) {
+fun ToiletDetail(
+    toilet: Toilet,
+    navController: NavController
+) {
     LazyColumn {
         item {
-            ToiletPage(toilet = toilet)
+            ToiletPage(toilet = toilet){
+                navController.navigate("rating"){
+                    popUpTo(navController.graph.startDestinationId){
+                        inclusive = false
+                    }
+                    launchSingleTop = true
+                }
+            }
         }
     }
 }
@@ -133,9 +147,9 @@ fun ToiletDetail(toilet: Toilet) {
 @Composable
 fun ToiletList(toilets: List<Toilet>, onToiletSelected: (Toilet) -> Unit) {
     LazyColumn {
-        items(toilets) { toilet ->
+        items(5) { index ->
             LocationCard(
-                toilet = toilet,
+                toilet = toilets[index],
                 onClick = onToiletSelected
             )
         }

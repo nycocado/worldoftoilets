@@ -11,6 +11,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -18,7 +19,9 @@ import pt.iade.ei.thinktoilet.ui.components.BottomNavigationBar
 import pt.iade.ei.thinktoilet.ui.screens.HistoryScreen
 import pt.iade.ei.thinktoilet.ui.screens.HomeScreen
 import pt.iade.ei.thinktoilet.ui.screens.ProfileScreen
+import pt.iade.ei.thinktoilet.ui.screens.RatingScreen
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
+import pt.iade.ei.thinktoilet.viewmodels.LocalViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +41,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainView() {
     val navController = rememberNavController()
+    val viewModel: LocalViewModel = viewModel()
 
     Scaffold(
         bottomBar = {
@@ -52,15 +56,10 @@ fun MainView() {
                 navController = navController,
                 startDestination = "home"
             ) {
-                composable("home") { HomeScreen(navController) }
-                composable("history") { HistoryScreen(navController) }
-                composable("profile") { ProfileScreen(navController) }
-                composable("toilet_detail/{toiletID}") { backStackEntry ->
-                    HomeScreen(
-                        navController = navController,
-                        initialToiletID = backStackEntry.arguments?.getString("toiletID")?.toInt()
-                    )
-                }
+                composable("home") { HomeScreen(navController = navController, viewModel = viewModel) }
+                composable("history") { HistoryScreen(navController = navController, viewModel = viewModel) }
+                composable("profile") { ProfileScreen(navController = navController, viewModel = viewModel) }
+                composable("rating") { RatingScreen(navController = navController, viewModel = viewModel) }
             }
         }
     }

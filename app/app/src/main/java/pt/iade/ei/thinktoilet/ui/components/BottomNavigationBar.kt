@@ -36,7 +36,9 @@ fun BottomNavigationBar(navController: NavController) {
     }
 
     LaunchedEffect(currentRoute) {
-        selectedItemIndex = bottomNavigationItems.indexOfFirst { it.router == currentRoute }
+        selectedItemIndex = bottomNavigationItems.indexOfFirst {
+            currentRoute?.startsWith(it.router) == true
+        }
     }
 
     NavigationBar(
@@ -53,7 +55,7 @@ fun BottomNavigationBar(navController: NavController) {
                     disabledIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                     disabledTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                 ),
-                selected = currentRoute == item.router,
+                selected = currentRoute?.startsWith(item.router) == true,
                 onClick = {
                     selectedItemIndex = index
                     navController.navigate(item.router) {
