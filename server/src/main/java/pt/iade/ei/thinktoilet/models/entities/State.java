@@ -1,19 +1,19 @@
-package pt.iade.ei.thinktoilet.models;
+package pt.iade.ei.thinktoilet.models.entities;
 
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "day")
-public class Day {
+@Table(name = "state")
+public class State {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "day_id")
+    @Column(name = "state_id")
     private int id;
 
-    @Column(name = "day_name")
+    @Column(name = "state_name")
     private String name;
 
-    public Day() {
+    public State() {
     }
 
     public int getId() {

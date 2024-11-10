@@ -1,4 +1,4 @@
-package pt.iade.ei.thinktoilet.models;
+package pt.iade.ei.thinktoilet.models.entities;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;

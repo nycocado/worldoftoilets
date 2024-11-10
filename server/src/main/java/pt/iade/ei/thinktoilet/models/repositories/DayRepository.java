@@ -2,7 +2,7 @@ package pt.iade.ei.thinktoilet.models.repositories;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-import pt.iade.ei.thinktoilet.models.Day;
+import pt.iade.ei.thinktoilet.models.entities.Day;
 
 @Repository
 public interface DayRepository extends CrudRepository<Day, Integer> {

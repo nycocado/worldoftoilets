@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pt.iade.ei.thinktoilet.models.UserMain
 import pt.iade.ei.thinktoilet.tests.generateUserMain
+import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
 
 @Composable
@@ -30,7 +31,7 @@ fun ProfileStatus(userMain: UserMain) {
         horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()
     ) {
         var nivel = Int // Altera Processode Nivel
-        Row {
+
             Text(
                 text = if (userMain.points > 9000) {
                     "Immortal"
@@ -51,76 +52,71 @@ fun ProfileStatus(userMain: UserMain) {
                 } else {
                     "Beginning"
                 },
-
-                modifier = Modifier.padding(12.dp),
+                modifier = Modifier.padding(bottom = 5.dp),
                 fontWeight = FontWeight.SemiBold,
                 color = Color.Gray,
-                fontSize = 32.sp,
-                maxLines = 1,
+                style = MaterialTheme.typography.headlineSmall
             )
-        }
-        Row {
             Text(
                 "Progresso",
-                modifier = Modifier.padding(bottom = 8.dp),
+                modifier = Modifier.padding(
+                    top = 4.dp,
+                    bottom = 8.dp
+                ),
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 20.sp
+                style = MaterialTheme.typography.titleMedium
             )
-        }
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                (Row {
                     Text(
+                        modifier = Modifier.padding(
+                            end = 8.dp
+                        ),
                         text = "Nível 1", // Altera Processode Nivel
                         fontWeight = FontWeight.SemiBold,
-                        fontSize = 18.sp
+                        style = MaterialTheme.typography.titleSmall
                     )
-
-                })
             }
             Column(
                 modifier = Modifier
-                    .padding(
-                        horizontal = 10.dp,
-                    )
-                    .height(30.dp)
+                    .height(25.dp)
             ) {
-                val progresso = (0..100).random().toFloat()
+                val progress = (0..100).random().toFloat()
 
-                (LinearProgressIndicator(
+                LinearProgressIndicator(
                     modifier = Modifier
-                        .weight(2f)
+                        .weight(1f)
                         .height(1.dp)
                         .border(
-                            width = 4.dp, color = Color.Black, shape = MaterialTheme.shapes.small
+                            width = 4.dp, color = Color.Black, shape = MaterialTheme.shapes.extraLarge
                         ), progress = {
-                        progresso / 100f // Altera Processode Nivel
-                    }, strokeCap = StrokeCap.Round, color = MaterialTheme.colorScheme.secondary
-                ))
+                        progress / 100f // Altera Processode Nivel
+                    },
+                    strokeCap = StrokeCap.Round,
+                    color = MaterialTheme.colorScheme.primaryContainer
+                )
             }
             Column {
-                (Row {
+
                     Text(
-                        "Nível 2",  // Altera Processode Nivel
+                        modifier = Modifier.padding(start = 8.dp),
+                        text = "Nível 2",  // Altera Processode Nivel
                         fontWeight = FontWeight.SemiBold,
-                        fontSize = 18.sp
+                        style = MaterialTheme.typography.titleSmall
                     )
-                })
+
             }
         }
-        HorizontalDivider(
-            modifier = Modifier.padding(top = 14.dp),
-            thickness = 2.dp,
-            color = Color.LightGray
-        )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewProfileStatus() {
+    AppTheme {
     ProfileStatus(generateUserMain())
+    }
 }

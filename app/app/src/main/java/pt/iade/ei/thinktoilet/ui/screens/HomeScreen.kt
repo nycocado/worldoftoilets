@@ -30,7 +30,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import pt.iade.ei.thinktoilet.models.Toilet
-import pt.iade.ei.thinktoilet.viewmodels.ToiletViewModel
+import pt.iade.ei.thinktoilet.viewmodels.LocalViewModel
 import pt.iade.ei.thinktoilet.ui.components.LocationCard
 import pt.iade.ei.thinktoilet.ui.components.ToiletPage
 
@@ -40,7 +40,7 @@ fun HomeScreen(
     navController: NavController = rememberNavController(),
     initialToiletID: Int? = null,
     initialSheetValue: SheetValue = SheetValue.PartiallyExpanded,
-    viewModel: ToiletViewModel = viewModel()
+    viewModel: LocalViewModel = viewModel()
 ) {
     val bottomSheetNavController = rememberNavController()
     val scope = rememberCoroutineScope()

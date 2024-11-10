@@ -4,60 +4,64 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pt.iade.ei.thinktoilet.models.ToiletReviews
-import pt.iade.ei.thinktoilet.tests.generateToiletReviews
+import pt.iade.ei.thinktoilet.models.Comment
+import pt.iade.ei.thinktoilet.models.Toilet
+import pt.iade.ei.thinktoilet.tests.generateComment
+import pt.iade.ei.thinktoilet.tests.generateRandomToilet
+import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
 @Composable
-fun ProfileCritiques(ToiletReviews: ToiletReviews) {
+fun ProfileToiletReviews(comment: Comment, toilet: Toilet) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp)
+            .padding(
+                vertical = 16.dp
+            )
     ) {
         Row {
             Text(
-                text = ToiletReviews.toilet.name,
+                text = toilet.name,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 20.sp
+                style = MaterialTheme.typography.titleLarge
             )
         }
         Row(
-            modifier = Modifier.padding(
-                top = 5.dp,
-                bottom = 1.dp
-            ),
-
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(bottom = 4.dp)
         ) {
             Row(
                 modifier = Modifier
                     .padding(end = 10.dp)
             ) {
                 Stars(
-                    rating = ToiletReviews.toilet.getAverageRating(),
+                    rating = toilet.getAverageRating(),
                     size = 20.dp
                 )
             }
             Text(
                 text = "há uma semana",
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 12.sp
+                style = MaterialTheme.typography.labelLarge
             )
         }
         Row {
             Text(
-                text = ToiletReviews.comments,
+                text = comment.text,
                 fontWeight = FontWeight.Normal,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                fontSize = 14.sp,
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
     }
@@ -67,5 +71,7 @@ fun ProfileCritiques(ToiletReviews: ToiletReviews) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewToiletReviews() {
-    ProfileCritiques(generateToiletReviews())
+    AppTheme {
+        ProfileToiletReviews(comment = generateComment(), toilet = generateRandomToilet())
+    }
 }

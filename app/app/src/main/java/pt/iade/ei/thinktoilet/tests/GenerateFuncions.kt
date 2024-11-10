@@ -6,7 +6,6 @@ import pt.iade.ei.thinktoilet.models.RatingCategory
 import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.models.UserForeigner
 import pt.iade.ei.thinktoilet.models.UserMain
-import pt.iade.ei.thinktoilet.models.ToiletReviews
 import java.time.LocalDateTime
 
 fun generateRandomRatingCategory(): RatingCategory {
@@ -85,6 +84,7 @@ fun generateUser(): UserForeigner {
 fun generateComment(): Comment {
     return Comment(
         id = (0..100).random(),
+        toiletId = 1,
         userForeigner = generateUser(),
         rate = (0..5).random().toFloat(),
         text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc ac varius ex. Morbi vitae fermentum dui. Sed in laoreet massa. Donec sed pretium ipsum. Phasellus diam nunc, hendrerit laoreet imperdiet sit amet, ornare ut diam. Sed augue nisl, sollicitudin id dui sit amet, auctor faucibus odio. Nulla hendrerit gravida lacus ut aliquet.",
@@ -116,23 +116,4 @@ fun generateCommentsList(numComments: Int = (10..40).random()): List<Comment> {
     }
     return commentsList
 }
-
-fun generateToiletReviews(): ToiletReviews {
-    return ToiletReviews(
-        toilet = generateRandomToilet(),
-        user = generateUser(),
-        comments = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc ac varius ex. Morbi vitae fermentum dui. Sed in laoreet massa.",
-        ratingCategory = generateRandomRatingCategory(),
-        datetime = LocalDateTime.now(),
-    )
-}
-
-fun generateToiletReviewsList(numComments: Int = (10..40).random()): List<ToiletReviews> {
-    val ToiletReviewsList = mutableListOf<ToiletReviews>()
-    for (i in 1..numComments) {
-        ToiletReviewsList.add(generateToiletReviews())
-    }
-    return ToiletReviewsList
-}
-
 

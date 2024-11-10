@@ -5,6 +5,7 @@ import java.time.LocalDateTime
 
 data class Comment(
     var id: Int?,
+    var toiletId: Int?,
     val userForeigner: UserForeigner,
     val rate: Float,
     val text: String,
