@@ -21,10 +21,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.Comment
 import pt.iade.ei.thinktoilet.tests.generateComment
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
+import pt.iade.ei.thinktoilet.viewmodels.LocalViewModel
 
 @Composable
 fun Comment(
@@ -116,6 +118,7 @@ fun Comment(
 
 @Composable
 fun UserComment(comment: Comment) {
+    val viewModel: LocalViewModel = viewModel()
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -136,7 +139,7 @@ fun UserComment(comment: Comment) {
         ) {
             Row {
                 Text(
-                    comment.userForeigner.name,
+                    text = viewModel.getUserById(comment.userId)!!.name,
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
                     maxLines = 2,
@@ -145,7 +148,7 @@ fun UserComment(comment: Comment) {
             }
             Row {
                 Text(
-                    text = "${comment.userForeigner.numComments} Avaliações",
+                    text = "${viewModel.getUserById(comment.userId)!!.numComments} Avaliações",
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold,
                 )

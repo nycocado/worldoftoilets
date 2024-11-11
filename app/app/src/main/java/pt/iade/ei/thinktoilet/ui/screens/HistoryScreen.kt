@@ -10,35 +10,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import pt.iade.ei.thinktoilet.models.ToiletDetailed
+import pt.iade.ei.thinktoilet.tests.generateRandomToiletsDetailedToList
 import pt.iade.ei.thinktoilet.ui.components.HistoryCard
 import pt.iade.ei.thinktoilet.viewmodels.LocalViewModel
 
 @Composable
 fun HistoryScreen(
-    navController: NavController = rememberNavController(),
-    viewModel: LocalViewModel = viewModel()
+    onNavigateToHomeScreen : (Int?) -> Unit = {},
+    toiletsDetailed: List<ToiletDetailed> = emptyList()
 ) {
-    val toilets = viewModel.toilets
-
+    val viewModel: LocalViewModel = viewModel()
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 20.dp),
     ) {
         LazyColumn {
-            items(toilets) { toilet ->
+            items(toiletsDetailed) { toiletDetailed ->
                 HistoryCard(
-                    toilet = toilet,
-                    onClick = { selectedToilet ->
-                        viewModel.selectedToilet = selectedToilet
-                        navController.navigate("home") {
-                            popUpTo(navController.graph.startDestinationId) {
-                                inclusive = true
-                            }
-                            launchSingleTop = false
-                        }
+                    toilet = toiletDetailed.toilet,
+                    onClick = { selectedToiletId ->
+                        viewModel.setFromOutside(true)
+                        onNavigateToHomeScreen(selectedToiletId)
                     }
                 )
             }
@@ -50,5 +44,7 @@ fun HistoryScreen(
 @Preview(showBackground = true)
 @Composable
 fun HistoryPreview() {
-    HistoryScreen()
+    HistoryScreen(
+        toiletsDetailed = generateRandomToiletsDetailedToList()
+    )
 }

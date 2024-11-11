@@ -27,7 +27,7 @@ fun RatingScreen(
     ) {
         LazyColumn {
             item {
-                RatingPage(viewModel.user)
+                RatingPage(viewModel.getUser())
             }
         }
     }

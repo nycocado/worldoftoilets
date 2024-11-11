@@ -27,7 +27,7 @@ import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 @Composable
 fun HistoryCard(
     toilet: Toilet,
-    onClick: (Toilet) -> Unit = {}
+    onClick: (Int?) -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
 
@@ -40,7 +40,7 @@ fun HistoryCard(
             )
             .clickable {
                 scope.launch {
-                    onClick(toilet)
+                    onClick(toilet.id)
                 }
             }
             .border(

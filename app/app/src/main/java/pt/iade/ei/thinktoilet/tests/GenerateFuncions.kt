@@ -4,7 +4,8 @@ import pt.iade.ei.thinktoilet.models.Comment
 import pt.iade.ei.thinktoilet.models.Position
 import pt.iade.ei.thinktoilet.models.RatingCategory
 import pt.iade.ei.thinktoilet.models.Toilet
-import pt.iade.ei.thinktoilet.models.UserForeigner
+import pt.iade.ei.thinktoilet.models.ToiletDetailed
+import pt.iade.ei.thinktoilet.models.User
 import pt.iade.ei.thinktoilet.models.UserMain
 import java.time.LocalDateTime
 
@@ -24,9 +25,13 @@ fun generateRandomPosition(): Position {
     )
 }
 
-fun generateRandomToilet(): Toilet{
+fun generateRandomDistance(): Double {
+    return (0..5000).random().toDouble()
+}
+
+fun generateRandomToilet(id: Int = (1..100).random()): Toilet {
     return Toilet(
-        id = 1,
+        id = id,
         name = "Toilet ${(0..100).random()}",
         address = "Address ${(0..100).random()}",
         ratingCategory = generateRandomRatingCategory(),
@@ -34,50 +39,15 @@ fun generateRandomToilet(): Toilet{
         babyChangingStation = (0..1).random() == 1,
         position = generateRandomPosition(),
         numComments = 0,
-        comments = emptyList(),
         googlePlaceId = "0",
-        distance = generateRandomDistance()
     )
 }
 
-fun generateRandomToiletWithComments(): Toilet {
-    val toilet = generateRandomToilet()
-    val comments = mutableListOf<Comment>()
-    for (i in 1..(1..15).random()) {
-        comments.add(generateComment())
-    }
-    toilet.comments = comments
-    toilet.numComments = comments.size
-    return toilet
-}
-
-fun generateRandomToilets(numToilets: Int): List<Toilet> {
-    val toilets = mutableListOf<Toilet>()
-    for (i in 1..numToilets) {
-        toilets.add(generateRandomToilet())
-    }
-    return toilets
-}
-
-fun generateRandomToiletsWithComments(numToilets: Int): List<Toilet> {
-    val toilets = mutableListOf<Toilet>()
-    for (i in 1..numToilets) {
-        toilets.add(generateRandomToiletWithComments())
-    }
-    return toilets
-}
-
-fun generateRandomDistance(): Double {
-    return (0..5000).random().toDouble()
-}
-
-fun generateUser(): UserForeigner {
-    return UserForeigner(
-        id = (0..100).random(),
-        name = "Luan Ribeiro",
-        iconId = 1,
-        numComments = (0..200).random(),
-        points = (0..10000).random(),
+fun generateRandomToiletDetailed(id: Int = (1..100).random(), numComments: Int): ToiletDetailed {
+    return ToiletDetailed(
+        toilet = generateRandomToilet(id),
+        comments = generateCommentsList(numComments),
+        distance = generateRandomDistance()
     )
 }
 
@@ -85,7 +55,7 @@ fun generateComment(): Comment {
     return Comment(
         id = (0..100).random(),
         toiletId = 1,
-        userForeigner = generateUser(),
+        userId = 1,
         rate = (0..5).random().toFloat(),
         text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc ac varius ex. Morbi vitae fermentum dui. Sed in laoreet massa. Donec sed pretium ipsum. Phasellus diam nunc, hendrerit laoreet imperdiet sit amet, ornare ut diam. Sed augue nisl, sollicitudin id dui sit amet, auctor faucibus odio. Nulla hendrerit gravida lacus ut aliquet.",
         ratingCategory = generateRandomRatingCategory(),
@@ -95,13 +65,19 @@ fun generateComment(): Comment {
     )
 }
 
-fun generateUserMain(): UserMain {
-    return UserMain(
-        id = (0..100).random(),
-        name = "Lohanne Guedes",
-        iconId = (0..100).random(),
+fun generateUser(): User {
+    return User(
+        id = 1,
+        name = "Luan Ribeiro",
+        iconId = 1,
         numComments = (0..200).random(),
         points = (0..10000).random(),
+    )
+}
+
+fun generateUserMain(): UserMain {
+    return UserMain(
+        user = generateUser(),
         email = "Lohanneguedes@fake.com",
         password = "nothing_here",
         position = generateRandomPosition(),
@@ -117,3 +93,32 @@ fun generateCommentsList(numComments: Int = (10..40).random()): List<Comment> {
     return commentsList
 }
 
+fun generateRandomToiletsDetailed(
+    numToilets: Int = (10..20).random(),
+    numComments: Int = (10..40).random()
+): HashMap<Int, ToiletDetailed> {
+    val toilets = hashMapOf<Int, ToiletDetailed>()
+    toilets[1] = generateRandomToiletDetailed(1, numComments)
+    for (i in 1..numToilets) {
+        val toilet: ToiletDetailed = generateRandomToiletDetailed(numComments = numComments)
+        if(toilets.keys.contains(toilet.toilet.id)) continue
+        toilets[toilet.toilet.id!!] = toilet
+    }
+    return toilets
+}
+
+fun generateRandomToiletsDetailedToList(
+    numToilets: Int = (10..20).random(),
+    numComments: Int = (10..40).random()
+): List<ToiletDetailed> {
+    return generateRandomToiletsDetailed(numToilets, numComments).values.toList()
+}
+
+fun generateUsers(numUsers: Int): HashMap<Int, User> {
+    val users = hashMapOf<Int, User>()
+    for (i in 1..numUsers) {
+        val user: User = generateUser()
+        users[user.id!!] = user
+    }
+    return users
+}

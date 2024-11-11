@@ -28,9 +28,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import pt.iade.ei.thinktoilet.R
+import pt.iade.ei.thinktoilet.models.User
 import pt.iade.ei.thinktoilet.models.UserMain
 import pt.iade.ei.thinktoilet.tests.generateUserMain
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
@@ -38,9 +37,7 @@ import pt.iade.ei.thinktoilet.viewmodels.LocalViewModel
 
 @Composable
 fun ProfilePage(
-    user: UserMain,
-    viewModel: LocalViewModel = viewModel(),
-    navController: NavController = rememberNavController(),
+    userMain: UserMain,
 ) {
     Column {
         Text(
@@ -49,7 +46,7 @@ fun ProfilePage(
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.headlineLarge
         )
-        ProfileUser(user)
+        ProfileUser(userMain)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -75,7 +72,7 @@ fun ProfilePage(
                 )
             }
         }
-        ProfileStatus(user)
+        ProfileStatus(userMain.user)
         HorizontalDivider(
             modifier = Modifier
                 .padding(
@@ -93,8 +90,8 @@ fun ProfilePage(
             textDecoration = TextDecoration.Underline
         )
         Column {
-            //generateToiletReviewsList()
-            for (comment in user.historyComment) {
+            val viewModel: LocalViewModel = viewModel()
+            for (comment in userMain.historyComment) {
                 ProfileToiletReviews(comment, viewModel.getToiletById(comment.toiletId!!)!!)
             }
         }
@@ -119,7 +116,7 @@ fun ProfileUser(userMain: UserMain) {
             contentDescription = "Profile Icon"
         )
         Text(
-            text = userMain.name,
+            text = userMain.user.name,
             modifier = Modifier.padding(top = 10.dp),
             fontWeight = FontWeight.SemiBold,
             style = MaterialTheme.typography.titleLarge,
@@ -134,7 +131,7 @@ fun ProfileUser(userMain: UserMain) {
         )
         Text(
             modifier = Modifier.padding(top = 8.dp),
-            text = userMain.points.toString() + " points",
+            text = userMain.user.points.toString() + " points",
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.titleLarge,
@@ -144,7 +141,7 @@ fun ProfileUser(userMain: UserMain) {
 }
 
 @Composable
-fun ProfileStatus(user: UserMain) {
+fun ProfileStatus(user: User) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()
     ) {
@@ -229,7 +226,7 @@ fun ProfileStatus(user: UserMain) {
 fun ProfilePagePreview() {
     AppTheme {
         ProfilePage(
-            user = generateUserMain()
+            userMain = generateUserMain()
         )
     }
 }

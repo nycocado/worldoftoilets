@@ -12,7 +12,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,12 +23,13 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.Toilet
-import pt.iade.ei.thinktoilet.tests.generateRandomToiletWithComments
+import pt.iade.ei.thinktoilet.models.ToiletDetailed
+import pt.iade.ei.thinktoilet.tests.generateRandomToiletDetailed
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
 @Composable
 fun ToiletPage(
-    toilet: Toilet,
+    toiletDetailed: ToiletDetailed,
     onClick: () -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
@@ -38,7 +38,7 @@ fun ToiletPage(
         modifier = Modifier.padding(16.dp)
     ) {
         Text(
-            text = toilet.name,
+            text = toiletDetailed.toilet.name,
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
@@ -50,11 +50,11 @@ fun ToiletPage(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Stars(
-                rating = toilet.getAverageRating(), size = 22.dp
+                rating = toiletDetailed.toilet.getAverageRating(), size = 22.dp
             )
             Text(
                 modifier = Modifier.padding(horizontal = 4.dp),
-                text = "%.1f".format(toilet.getAverageRating()),
+                text = "%.1f".format(toiletDetailed.toilet.getAverageRating()),
                 fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
                 fontWeight = FontWeight.SemiBold
             )
@@ -76,7 +76,7 @@ fun ToiletPage(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = toilet.address,
+                    text = toiletDetailed.toilet.address,
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Medium
                 )
@@ -99,7 +99,7 @@ fun ToiletPage(
                 }
             }
         }
-        ToiletRating(toilet = toilet)
+        ToiletRating(toilet = toiletDetailed.toilet)
         Button(
             modifier = Modifier
                 .fillMaxWidth()
@@ -136,13 +136,13 @@ fun ToiletPage(
                 fontWeight = FontWeight.Bold,
             )
             Text(
-                text = toilet.comments.size.toString(),
+                text = toiletDetailed.comments.size.toString(),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Medium,
                 color = Color.Gray
             )
         }
-        for (comment in toilet.comments) {
+        for (comment in toiletDetailed.comments) {
             Comment(comment = comment)
         }
     }
@@ -195,11 +195,9 @@ fun ToiletRating(toilet: Toilet) {
 @Preview(showBackground = true)
 @Composable
 fun ToiletPagePreview() {
-    AppTheme (
-        dynamicColor = false
-    ){
+    AppTheme {
         ToiletPage(
-            toilet = generateRandomToiletWithComments()
+            toiletDetailed = generateRandomToiletDetailed(numComments = 10)
         )
     }
 }

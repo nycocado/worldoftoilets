@@ -23,12 +23,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import pt.iade.ei.thinktoilet.models.BottomNavigationItem
+import pt.iade.ei.thinktoilet.viewmodels.LocalViewModel
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
+    val viewModel: LocalViewModel = viewModel()
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     val bottomNavigationItems = bottomNavigationItems()
     var selectedItemIndex by rememberSaveable {
@@ -57,6 +60,9 @@ fun BottomNavigationBar(navController: NavController) {
                 ),
                 selected = currentRoute?.startsWith(item.router) == true,
                 onClick = {
+                    if(currentRoute != "home" && item.router == "home") {
+                        viewModel.clearSelectedToilet()
+                    }
                     selectedItemIndex = index
                     navController.navigate(item.router) {
                         popUpTo(navController.graph.startDestinationId) { saveState = true }
