@@ -139,7 +139,7 @@ fun UserComment(comment: Comment) {
         ) {
             Row {
                 Text(
-                    text = viewModel.getUserById(comment.userId)!!.name,
+                    text = viewModel.users.value?.get(comment.userId)!!.name,
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
                     maxLines = 2,
@@ -148,7 +148,7 @@ fun UserComment(comment: Comment) {
             }
             Row {
                 Text(
-                    text = "${viewModel.getUserById(comment.userId)!!.numComments} Avaliações",
+                    text = "${viewModel.users.value?.get(comment.userId)!!.numComments} Avaliações",
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold,
                 )

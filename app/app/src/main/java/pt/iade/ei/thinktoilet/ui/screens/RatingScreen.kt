@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import pt.iade.ei.thinktoilet.ui.components.RatingPage
+import pt.iade.ei.thinktoilet.ui.pages.RatingPage
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 import pt.iade.ei.thinktoilet.viewmodels.LocalViewModel
 
@@ -27,7 +27,7 @@ fun RatingScreen(
     ) {
         LazyColumn {
             item {
-                RatingPage(viewModel.getUser())
+                RatingPage(viewModel.userMain.value!!)
             }
         }
     }

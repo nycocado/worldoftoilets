@@ -20,18 +20,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.launch
-import pt.iade.ei.thinktoilet.models.ToiletDetailed
+import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.models.distanceToString
-import pt.iade.ei.thinktoilet.tests.generateRandomToiletDetailed
+import pt.iade.ei.thinktoilet.tests.generateRandomToilet
 
 @Composable
 fun LocationCard(
-    toiletDetailed: ToiletDetailed,
-    onClick: (Int?) -> Unit
+    toilet: Toilet,
+    onClick: (Int) -> Unit
 ) {
-    val scope = rememberCoroutineScope()
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -39,11 +36,6 @@ fun LocationCard(
                 horizontal = 20.dp,
                 vertical = 8.dp
             )
-            .clickable {
-                scope.launch {
-                    onClick(toiletDetailed.toilet.id)
-                }
-            }
             .border(
                 width = 2.dp,
                 color = Color.LightGray,
@@ -56,7 +48,10 @@ fun LocationCard(
             disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest.copy(alpha = 0.5f),
             disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
         ),
-        elevation = CardDefaults.cardElevation(2.dp)
+        elevation = CardDefaults.cardElevation(2.dp),
+        onClick = {
+            onClick(toilet.id!!)
+        }
     ) { // Container (Serve para aplicar o border radius)
         Row(
             modifier = Modifier
@@ -70,7 +65,7 @@ fun LocationCard(
                 Row { // Nome
                     Text(
                         modifier = Modifier.fillMaxWidth(),
-                        text = toiletDetailed.toilet.name,
+                        text = toilet.name,
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
@@ -80,10 +75,10 @@ fun LocationCard(
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) { // Estrelas
-                    Stars(toiletDetailed.toilet.getAverageRating(), size = 14.dp)
+                    Stars(toilet.getAverageRating(), size = 14.dp)
                     Text(
                         modifier = Modifier.padding(horizontal = 2.dp),
-                        text = "(${toiletDetailed.toilet.numComments})",
+                        text = "(${toilet.numComments})",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.SemiBold,
                         lineHeight = 1.sp
@@ -92,7 +87,7 @@ fun LocationCard(
                 Row { // Endereço
                     Text(
                         modifier = Modifier.fillMaxWidth(),
-                        text = toiletDetailed.toilet.address,
+                        text = toilet.address,
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.SemiBold,
                         maxLines = 1,
@@ -103,7 +98,7 @@ fun LocationCard(
             Column { // Distância
                 Text(
                     modifier = Modifier.padding(horizontal = 10.dp),
-                    text = distanceToString(toiletDetailed.distance),
+                    text = distanceToString(toilet.distance),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 1
@@ -117,7 +112,7 @@ fun LocationCard(
 @Composable
 fun LocationCardPreview() {
     LocationCard(
-        toiletDetailed = generateRandomToiletDetailed(numComments = 10),
+        toilet = generateRandomToilet(numComments = 10),
         onClick = {}
     )
 }

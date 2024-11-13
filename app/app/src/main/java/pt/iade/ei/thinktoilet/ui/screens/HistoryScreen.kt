@@ -10,15 +10,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import pt.iade.ei.thinktoilet.models.ToiletDetailed
-import pt.iade.ei.thinktoilet.tests.generateRandomToiletsDetailedToList
+import pt.iade.ei.thinktoilet.models.Toilet
+import pt.iade.ei.thinktoilet.tests.generateRandomToilets
 import pt.iade.ei.thinktoilet.ui.components.HistoryCard
 import pt.iade.ei.thinktoilet.viewmodels.LocalViewModel
 
 @Composable
 fun HistoryScreen(
     onNavigateToHomeScreen : (Int?) -> Unit = {},
-    toiletsDetailed: List<ToiletDetailed> = emptyList()
+    toilets: List<Toilet> = emptyList()
 ) {
     val viewModel: LocalViewModel = viewModel()
     Box(
@@ -27,11 +27,10 @@ fun HistoryScreen(
             .padding(top = 20.dp),
     ) {
         LazyColumn {
-            items(toiletsDetailed) { toiletDetailed ->
+            items(toilets) { toilet ->
                 HistoryCard(
-                    toilet = toiletDetailed.toilet,
+                    toilet = toilet,
                     onClick = { selectedToiletId ->
-                        viewModel.setFromOutside(true)
                         onNavigateToHomeScreen(selectedToiletId)
                     }
                 )
@@ -45,6 +44,6 @@ fun HistoryScreen(
 @Composable
 fun HistoryPreview() {
     HistoryScreen(
-        toiletsDetailed = generateRandomToiletsDetailedToList()
+        toilets = generateRandomToilets(15)
     )
 }

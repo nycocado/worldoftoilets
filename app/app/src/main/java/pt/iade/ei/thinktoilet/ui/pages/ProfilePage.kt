@@ -1,4 +1,4 @@
-package pt.iade.ei.thinktoilet.ui.components
+package pt.iade.ei.thinktoilet.ui.pages
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -32,6 +32,7 @@ import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.User
 import pt.iade.ei.thinktoilet.models.UserMain
 import pt.iade.ei.thinktoilet.tests.generateUserMain
+import pt.iade.ei.thinktoilet.ui.components.ProfileToiletReviews
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 import pt.iade.ei.thinktoilet.viewmodels.LocalViewModel
 
@@ -92,7 +93,7 @@ fun ProfilePage(
         Column {
             val viewModel: LocalViewModel = viewModel()
             for (comment in userMain.historyComment) {
-                ProfileToiletReviews(comment, viewModel.getToiletById(comment.toiletId!!)!!)
+                ProfileToiletReviews(comment, viewModel.toilets.value?.get(comment.toiletId)!!)
             }
         }
     }

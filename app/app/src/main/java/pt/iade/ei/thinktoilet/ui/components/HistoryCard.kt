@@ -27,10 +27,8 @@ import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 @Composable
 fun HistoryCard(
     toilet: Toilet,
-    onClick: (Int?) -> Unit = {}
+    onClick: (Int) -> Unit = {}
 ) {
-    val scope = rememberCoroutineScope()
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -38,11 +36,6 @@ fun HistoryCard(
                 horizontal = 20.dp,
                 vertical = 8.dp
             )
-            .clickable {
-                scope.launch {
-                    onClick(toilet.id)
-                }
-            }
             .border(
                 width = 2.dp,
                 color = Color.LightGray,
@@ -55,7 +48,10 @@ fun HistoryCard(
             disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest.copy(alpha = 0.5f),
             disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
         ),
-        elevation = CardDefaults.cardElevation(2.dp)
+        elevation = CardDefaults.cardElevation(2.dp),
+        onClick = {
+            onClick(toilet.id!!)
+        }
     ) {
         Row(
             modifier = Modifier
