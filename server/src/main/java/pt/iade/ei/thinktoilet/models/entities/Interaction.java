@@ -1,7 +1,11 @@
 package pt.iade.ei.thinktoilet.models.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "interaction")
 public class Interaction {
@@ -25,31 +29,4 @@ public class Interaction {
             nullable = false
     )
     private Toilet toilet;
-
-    public Interaction() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public Toilet getToilet() {
-        return toilet;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public void setToilet(Toilet toilet) {
-        this.toilet = toilet;
-    }
 }

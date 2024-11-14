@@ -1,7 +1,11 @@
 package pt.iade.ei.thinktoilet.models.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "city")
 public class City {
@@ -20,31 +24,4 @@ public class City {
             nullable = false
     )
     private Country country;
-
-    public City() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Country getCountry() {
-        return country;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setCountry(Country country) {
-        this.country = country;
-    }
 }

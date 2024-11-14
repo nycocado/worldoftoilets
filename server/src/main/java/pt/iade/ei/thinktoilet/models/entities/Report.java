@@ -1,8 +1,13 @@
 package pt.iade.ei.thinktoilet.models.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "report")
 public class Report {
@@ -29,39 +34,4 @@ public class Report {
 
     @Column(name = "rep_cdate")
     private LocalDate creationDate;
-
-    public Report() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public TypeReport getTypeReport() {
-        return typeReport;
-    }
-
-    public Interaction getInteraction() {
-        return interaction;
-    }
-
-    public LocalDate getCreationDate() {
-        return creationDate;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setTypeReport(TypeReport typeReport) {
-        this.typeReport = typeReport;
-    }
-
-    public void setInteraction(Interaction interaction) {
-        this.interaction = interaction;
-    }
-
-    public void setCreationDate(LocalDate creationDate) {
-        this.creationDate = creationDate;
-    }
 }

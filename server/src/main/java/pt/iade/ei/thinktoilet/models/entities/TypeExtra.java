@@ -1,7 +1,11 @@
 package pt.iade.ei.thinktoilet.models.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "typeextra")
 public class TypeExtra {
@@ -12,23 +16,4 @@ public class TypeExtra {
 
     @Column(name = "tex_name")
     private String name;
-
-    public TypeExtra() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

@@ -1,8 +1,13 @@
 package pt.iade.ei.thinktoilet.models.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "comment")
 public class Comment {
@@ -39,79 +44,4 @@ public class Comment {
 
     @Column(name = "cmm_score")
     private int score;
-
-    public Comment() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public Interaction getInteraction() {
-        return interaction;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public int getRatingClean() {
-        return ratingClean;
-    }
-
-    public int getRatingPaper() {
-        return ratingPaper;
-    }
-
-    public int getRatingStructure() {
-        return ratingStructure;
-    }
-
-    public int getRatingAccessibility() {
-        return ratingAccessibility;
-    }
-
-    public LocalDateTime getCreationDateTime() {
-        return creationDateTime;
-    }
-
-    public int getScore() {
-        return score;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setInteraction(Interaction interaction) {
-        this.interaction = interaction;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public void setRatingClean(int ratingClean) {
-        this.ratingClean = ratingClean;
-    }
-
-    public void setRatingPaper(int ratingPaper) {
-        this.ratingPaper = ratingPaper;
-    }
-
-    public void setRatingStructure(int ratingStructure) {
-        this.ratingStructure = ratingStructure;
-    }
-
-    public void setRatingAccessibility(int ratingAccessibility) {
-        this.ratingAccessibility = ratingAccessibility;
-    }
-
-    public void setCreationDateTime(LocalDateTime creationDateTime) {
-        this.creationDateTime = creationDateTime;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
-    }
 }

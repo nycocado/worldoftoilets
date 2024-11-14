@@ -1,7 +1,11 @@
 package pt.iade.ei.thinktoilet.models.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "extra")
 public class Extra {
@@ -25,31 +29,4 @@ public class Extra {
             nullable = false
     )
     private TypeExtra typeExtra;
-
-    public Extra() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public Toilet getToilet() {
-        return toilet;
-    }
-
-    public TypeExtra getTypeExtra() {
-        return typeExtra;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setToilet(Toilet toilet) {
-        this.toilet = toilet;
-    }
-
-    public void setTypeExtra(TypeExtra typeExtra) {
-        this.typeExtra = typeExtra;
-    }
 }

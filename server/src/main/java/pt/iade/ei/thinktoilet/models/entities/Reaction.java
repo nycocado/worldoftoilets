@@ -1,8 +1,13 @@
 package pt.iade.ei.thinktoilet.models.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "reaction")
 public class Reaction {
@@ -37,47 +42,4 @@ public class Reaction {
 
     @Column(name = "react_cdate")
     private LocalDate creationDate;
-
-    public Reaction() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public Comment getComment() {
-        return comment;
-    }
-
-    public TypeReaction getTypeReaction() {
-        return typeReaction;
-    }
-
-    public LocalDate getCreationDate() {
-        return creationDate;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public void setComment(Comment comment) {
-        this.comment = comment;
-    }
-
-    public void setTypeReaction(TypeReaction typeReaction) {
-        this.typeReaction = typeReaction;
-    }
-
-    public void setCreationDate(LocalDate creationDate) {
-        this.creationDate = creationDate;
-    }
 }
