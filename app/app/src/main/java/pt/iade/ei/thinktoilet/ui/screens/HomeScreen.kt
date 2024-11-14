@@ -106,7 +106,7 @@ fun ToiletDetail(
     viewModel: LocalViewModel = viewModel(),
     toiletId: Int,
 ) {
-    val toilet = viewModel.toilets.value?.get(toiletId)
+    val toilet = viewModel.toilets.value?.find { it.id == toiletId }
     LazyColumn {
         item {
             ToiletPage(toilet = toilet!!) {

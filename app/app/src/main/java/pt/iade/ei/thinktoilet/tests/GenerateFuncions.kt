@@ -93,7 +93,7 @@ fun generateRandomToilets(
     val toilets = mutableListOf<Toilet>()
     toilets.add(generateRandomToilet(0))
     for (i in 1..numToilets) {
-        toilets.add(generateRandomToilet(i, numComments))
+        toilets.add(generateRandomToilet(numComments = numComments))
     }
     return toilets
 }

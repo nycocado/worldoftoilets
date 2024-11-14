@@ -26,10 +26,4 @@ public class UserController {
         logger.info("Sending user with id {} without sensitive data", id);
         return userRepository.findByIdWithoutSensitiveData(id);
     }
-
-    @GetMapping(path = "/name/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Iterable<User> getUser(@PathVariable String name) {
-        logger.info("Sending user with name {} without sensitive data", name);
-        return userRepository.findByNameWithoutSensitiveData(name);
-    }
 }

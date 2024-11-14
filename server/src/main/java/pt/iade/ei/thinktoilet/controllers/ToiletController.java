@@ -30,12 +30,12 @@ public class ToiletController {
         return toiletRepository.findById(id);
     }
 
-    @GetMapping(path = "/nearby/{lon}/{lat}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/nearby", produces = MediaType.APPLICATION_JSON_VALUE)
     public Page<Toilet> getToiletsNearby(
-            @PathVariable double lon,
-            @PathVariable double lat,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int limit) {
+            @RequestParam(required = true) double lon,
+            @RequestParam(required = true) double lat,
+            @RequestParam(defaultValue = "0", required = false) int page,
+            @RequestParam(defaultValue = "10", required = false) int limit) {
 
         Pageable pageable = PageRequest.of(page, limit);
         logger.info("Sending toilets near lon {} and lat {}", lon, lat);
