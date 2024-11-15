@@ -6,11 +6,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,12 +37,15 @@ import pt.iade.ei.thinktoilet.viewmodels.LocalViewModel
 fun Comment(
     comment: Comment,
 ) {
+    var likePressed by remember { mutableStateOf(false) }
+    var dislikePressed by remember { mutableStateOf(false) }
+
     HorizontalDivider(
         thickness = 2.dp,
         color = Color.LightGray
     )
     Column(
-        modifier = Modifier.padding(vertical = 12.dp)
+        modifier = Modifier.padding(top = 12.dp)
     ) {
         UserComment(comment = comment)
         Row(
@@ -64,7 +72,7 @@ fun Comment(
             )
         }
         Row(
-            modifier = Modifier.padding(vertical = 5.dp)
+            modifier = Modifier.padding(top = 5.dp)
         ) {
             Text(
                 text = comment.text,
@@ -73,43 +81,46 @@ fun Comment(
             )
         }
         Row(
-            modifier = Modifier.padding(vertical = 3.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
                 modifier = Modifier
-                    .padding(end = 30.dp)
+                    .width(100.dp)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
+                ThumbUp(
+                    count = comment.like,
+                    isPressed = likePressed
                 ) {
-                    Image(
-                        painter = painterResource(R.drawable.like),
-                        contentDescription = "Like Icon",
-                        Modifier.padding(end = 5.dp)
-                    )
-                    Text(
-                        text = comment.like.toString(),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.SemiBold,
-                    )
+                    likePressed = !it
+                    if (likePressed && !dislikePressed) {
+                        comment.like += 1
+                    } else if (!likePressed && !dislikePressed) {
+                        comment.like -= 1
+                    } else if (likePressed && dislikePressed) {
+                        comment.like += 1
+                        comment.dislike -= 1
+                        dislikePressed = false
+                    }
                 }
             }
-            Column {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier
+                    .width(100.dp)
+            ) {
+                ThumbDown(
+                    count = comment.dislike,
+                    isPressed = dislikePressed
                 ) {
-                    Image(
-                        painter = painterResource(R.drawable.dislike),
-                        contentDescription = "Like Icon",
-                        Modifier.padding(end = 5.dp)
-
-                    )
-                    Text(
-                        text = comment.dislike.toString(),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.SemiBold,
-                    )
+                    dislikePressed = !it
+                    if (dislikePressed && !likePressed) {
+                        comment.dislike += 1
+                    } else if (!dislikePressed && !likePressed) {
+                        comment.dislike -= 1
+                    } else if (dislikePressed && likePressed) {
+                        comment.dislike += 1
+                        comment.like -= 1
+                        likePressed = false
+                    }
                 }
             }
         }
