@@ -3,8 +3,10 @@ package pt.iade.ei.thinktoilet.models.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import pt.iade.ei.thinktoilet.models.dtos.RatingCategoryDTO;
+import pt.iade.ei.thinktoilet.models.dtos.ToiletDTO;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -52,4 +54,8 @@ public class Toilet {
 
     @Column(name = "toil_image")
     private String image;
+
+    public ToiletDTO toDTO(RatingCategoryDTO rating, int numComments, List<Extra> extras) {
+        return new ToiletDTO(this, rating, numComments, extras);
+    }
 }

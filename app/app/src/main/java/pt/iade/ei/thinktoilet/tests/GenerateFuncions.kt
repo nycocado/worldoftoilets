@@ -1,6 +1,7 @@
 package pt.iade.ei.thinktoilet.tests
 
 import pt.iade.ei.thinktoilet.models.Comment
+import pt.iade.ei.thinktoilet.models.Extra
 import pt.iade.ei.thinktoilet.models.Position
 import pt.iade.ei.thinktoilet.models.RatingCategory
 import pt.iade.ei.thinktoilet.models.Toilet
@@ -28,19 +29,26 @@ fun generateRandomDistance(): Double {
     return (0..5000).random().toDouble()
 }
 
+fun generateExtra(): List<Extra> {
+    val extras = mutableListOf<Extra>()
+    extras.add(Extra(1, true))
+    extras.add(Extra(2, false))
+    return extras
+}
+
 fun generateRandomToilet(id: Int = (1..100).random(), numComments: Int = (1..40).random()): Toilet {
     return Toilet(
         id = id,
         name = "Toilet $id",
         address = "Address ${(0..100).random()}",
         ratingCategory = generateRandomRatingCategory(),
-        accessibility = (0..1).random() == 1,
-        babyChangingStation = (0..1).random() == 1,
+        extras = generateExtra(),
         position = generateRandomPosition(),
         numComments = 0,
         googlePlaceId = "0",
         comments = generateCommentsList(numComments),
-        distance = generateRandomDistance()
+        distance = generateRandomDistance(),
+        image = ""
     )
 }
 

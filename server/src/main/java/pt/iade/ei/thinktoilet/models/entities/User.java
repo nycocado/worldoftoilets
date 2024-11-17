@@ -3,7 +3,6 @@ package pt.iade.ei.thinktoilet.models.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 
 @Data

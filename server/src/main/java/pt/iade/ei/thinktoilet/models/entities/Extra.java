@@ -3,6 +3,7 @@ package pt.iade.ei.thinktoilet.models.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pt.iade.ei.thinktoilet.models.dtos.ExtraDTO;
 
 @Data
 @NoArgsConstructor
@@ -29,4 +30,8 @@ public class Extra {
             nullable = false
     )
     private TypeExtra typeExtra;
+
+    public ExtraDTO toDTO() {
+        return new ExtraDTO(this.getTypeExtra().getId());
+    }
 }
