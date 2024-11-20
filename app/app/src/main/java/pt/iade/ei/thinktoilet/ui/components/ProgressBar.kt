@@ -23,7 +23,8 @@ import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 @Composable
 fun ProgressBar(
     progress: Float,
-    text: String
+    text: String,
+    maxValue : Float = 5f
 ) {
     Row(
         modifier = Modifier.padding(vertical = 2.dp),
@@ -40,7 +41,7 @@ fun ProgressBar(
                     shape = MaterialTheme.shapes.small
                 ),
             progress = {
-                progress / 5f
+                progress / maxValue
             },
             strokeCap = StrokeCap.Round,
             color = MaterialTheme.colorScheme.secondary
@@ -48,7 +49,7 @@ fun ProgressBar(
         Text(
             modifier = Modifier
                 .padding(start = 8.dp)
-                .width(106.dp),
+                .width(120.dp),
             text = text,
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Medium,

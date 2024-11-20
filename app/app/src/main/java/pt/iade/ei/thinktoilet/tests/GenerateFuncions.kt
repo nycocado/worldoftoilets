@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 fun generateRandomRatingCategory(): Rating {
     return Rating(
         clean = (0..5).random().toFloat(),
-        paper = (0..5).random().toFloat(),
+        paper = (0..100).random().toFloat(),
         structure = (0..5).random().toFloat(),
         accessibility = (0..5).random().toFloat(),
     )

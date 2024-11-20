@@ -1,5 +1,6 @@
 package pt.iade.ei.thinktoilet.ui.pages
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -154,6 +155,7 @@ fun ToiletPage(
     }
 }
 
+@SuppressLint("DefaultLocale")
 @Composable
 fun ToiletRating(toilet: Toilet) {
     Row(
@@ -179,20 +181,22 @@ fun ToiletRating(toilet: Toilet) {
         }
         Column {
             ProgressBar(
-                progress = toilet.rating.clean,
-                text = "Limpeza"
+                progress = toilet.ratingCategory.clean,
+                text = String.format("%.1f", toilet.ratingCategory.clean) + " Limpeza"
+            )
+
+            ProgressBar(
+                progress = toilet.ratingCategory.structure,
+                text = String.format("%.1f", toilet.ratingCategory.structure) + " Estrutura"
             )
             ProgressBar(
-                progress = toilet.rating.paper,
-                text = "Papel"
+                progress = toilet.ratingCategory.accessibility,
+                text = String.format("%.1f", toilet.ratingCategory.accessibility) + " Acessibilidade"
             )
             ProgressBar(
-                progress = toilet.rating.structure,
-                text = "Estrutura"
-            )
-            ProgressBar(
-                progress = toilet.rating.accessibility,
-                text = "Acessibilidade"
+                progress = toilet.ratingCategory.paper,
+                text = String.format("%.0f", toilet.ratingCategory.paper)+ "% Papel",
+                maxValue = 100f
             )
         }
     }

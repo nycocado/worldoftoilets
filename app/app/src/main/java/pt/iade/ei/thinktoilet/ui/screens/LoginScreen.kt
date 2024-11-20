@@ -1,5 +1,6 @@
 package pt.iade.ei.thinktoilet.ui.screens
 
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -11,12 +12,14 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import pt.iade.ei.thinktoilet.ui.pages.RatingPage
-import pt.iade.ei.thinktoilet.ui.theme.AppTheme
+import pt.iade.ei.thinktoilet.ui.pages.LoginPage
+import pt.iade.ei.thinktoilet.ui.pages.ProfilePage
+import pt.iade.ei.thinktoilet.viewmodels.LocalViewModel
 
 @Composable
-fun RatingScreen(
+fun LoginScreen(
     navController: NavController = rememberNavController(),
+    viewModel: LocalViewModel = viewModel()
 ) {
     Box(
         modifier = Modifier
@@ -25,18 +28,17 @@ fun RatingScreen(
     ) {
         LazyColumn {
             item {
-                RatingPage() {
-                    navController.popBackStack()
-                }
+                LoginPage(
+                   // userMain = viewModel.userMain.value!!,
+                )
             }
         }
     }
 }
 
+
 @Preview(showBackground = true)
 @Composable
-fun DefaultPreview() {
-    AppTheme {
-        RatingScreen()
-    }
+fun LoginScreenPreview() {
+    ProfileScreen()
 }
