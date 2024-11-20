@@ -32,7 +32,7 @@ public class ToiletService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Page<ToiletDTO> getAllToilets(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Toilet> toilets = toiletRepository.findAll(pageable);
+        Page<Toilet> toilets = toiletRepository.findToiletsByOrderById(pageable);
 
         return getToiletDTOS(toilets);
     }
@@ -40,7 +40,7 @@ public class ToiletService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public ToiletDTO getToilet(int id) {
         Toilet toilet = toiletRepository.findToiletById(id);
-        List<Extra> extras = extraRepository.findExtrasByToiletId(id);
+        List<Extra> extras = extraRepository.findExtrasByToilet_Id(id);
         RatingCategory rating = Optional.ofNullable(commentRepository.findAverageRatingByToiletId(id)).orElse(new RatingCategory());
         NumObject numComments = Optional.ofNullable(commentRepository.countCommentsByToiletId(id)).orElse(new NumObject());
 
@@ -56,7 +56,7 @@ public class ToiletService {
     }
 
     private Page<ToiletDTO> getToiletDTOS(Page<Toilet> toilets) {
-        List<Extra> extras = extraRepository.findExtrasByToiletIds(toilets.stream().map(Toilet::getId).toList());
+        List<Extra> extras = extraRepository.findExtrasByToilet_IdIn(toilets.stream().map(Toilet::getId).toList());
         List<RatingCategory> ratings = commentRepository.findAverageRatingByToiletIds(toilets.stream().map(Toilet::getId).toList());
         List<NumObject> countComments = commentRepository.countCommentsByToiletIds(toilets.stream().map(Toilet::getId).toList());
 

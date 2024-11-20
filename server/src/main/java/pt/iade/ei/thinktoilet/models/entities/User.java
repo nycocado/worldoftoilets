@@ -1,5 +1,6 @@
 package pt.iade.ei.thinktoilet.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,9 +20,11 @@ public class User {
     private String name;
 
     @Column(name = "user_email", unique = true)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String email;
 
     @Column(name = "user_pwd")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @Column(name = "user_points")

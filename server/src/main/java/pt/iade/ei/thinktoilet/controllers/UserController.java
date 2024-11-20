@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import pt.iade.ei.thinktoilet.models.dtos.CommentDTO;
-import pt.iade.ei.thinktoilet.models.dtos.UserDTO;
+import pt.iade.ei.thinktoilet.models.entities.User;
 import pt.iade.ei.thinktoilet.repositories.UserRepository;
 import pt.iade.ei.thinktoilet.services.CommentService;
 
@@ -21,15 +21,15 @@ public class UserController {
     private CommentService commentService;
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Iterable<UserDTO> getUsers() {
+    public Iterable<User> getUsers() {
         logger.info("Sending all users without sensitive data");
-        return userRepository.findAllWithoutSensitiveData();
+        return userRepository.findUsersByOrderById();
     }
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Iterable<UserDTO> getUser(@PathVariable int id) {
+    public User getUser(@PathVariable int id) {
         logger.info("Sending user with id {} without sensitive data", id);
-        return userRepository.findByIdWithoutSensitiveData(id);
+        return userRepository.findUserById(id);
     }
 
     @GetMapping(path = "/{id}/comments", produces = MediaType.APPLICATION_JSON_VALUE)

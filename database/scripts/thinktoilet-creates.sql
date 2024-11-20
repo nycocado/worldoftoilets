@@ -210,3 +210,22 @@ alter table reaction
 add constraint reaction_fk_typereaction
 foreign key (react_trc_id) references typereaction(trc_id) 
 ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+
+-- Views
+
+CREATE VIEW view_likes AS
+SELECT cmm_id, COUNT(react_id) 'likes'
+FROM comment
+INNER JOIN reaction ON react_cmm_id = cmm_id
+INNER JOIN typereaction ON trc_id = react_trc_id
+WHERE trc_id = 1
+GROUP BY cmm_id
+
+CREATE VIEW view_dislikes AS
+SELECT cmm_id, COUNT(react_id) 'dislikes'
+FROM comment
+INNER JOIN reaction ON react_cmm_id = cmm_id
+INNER JOIN typereaction ON trc_id = react_trc_id
+WHERE trc_id = 2
+GROUP BY cmm_id

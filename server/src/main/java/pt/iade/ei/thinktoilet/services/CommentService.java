@@ -7,10 +7,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.iade.ei.thinktoilet.models.dtos.CommentDTO;
-import pt.iade.ei.thinktoilet.models.dtos.NumObject;
 import pt.iade.ei.thinktoilet.models.entities.Comment;
+import pt.iade.ei.thinktoilet.models.views.Dislikes;
+import pt.iade.ei.thinktoilet.models.views.Likes;
 import pt.iade.ei.thinktoilet.repositories.CommentRepository;
-import pt.iade.ei.thinktoilet.repositories.ReactionRepository;
+import pt.iade.ei.thinktoilet.repositories.DislikesRepository;
+import pt.iade.ei.thinktoilet.repositories.LikesRepository;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,7 +23,9 @@ public class CommentService {
     @Autowired
     private CommentRepository commentRepository;
     @Autowired
-    private ReactionRepository reactionRepository;
+    private LikesRepository likesRepository;
+    @Autowired
+    private DislikesRepository dislikesRepository;
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Page<CommentDTO> getCommentsByToiletId(int toiletId, int page, int size) {
@@ -37,11 +42,11 @@ public class CommentService {
     }
 
     private Page<CommentDTO> getCommentDTOS(Page<Comment> comments) {
-        List<NumObject> numLikes = reactionRepository.countLikesByCommentsIds(comments.stream().map(Comment::getId).toList());
-        List<NumObject> numDislikes = reactionRepository.countDislikesByCommentsIds(comments.stream().map(Comment::getId).toList());
+        List<Likes> numLikes = likesRepository.findLikesByCommentIdIn(comments.stream().map(Comment::getId).toList());
+        List<Dislikes> numDislikes = dislikesRepository.findDislikesByCommentIdIn(comments.stream().map(Comment::getId).toList());
 
-        Map<Integer, Integer> likesMap = numLikes.stream().collect(Collectors.toMap(NumObject::getId, NumObject::getNum));
-        Map<Integer, Integer> dislikesMap = numDislikes.stream().collect(Collectors.toMap(NumObject::getId, NumObject::getNum));
+        Map<Integer, Integer> likesMap = numLikes.stream().collect(Collectors.toMap(Likes::getCommentId, Likes::getLikes));
+        Map<Integer, Integer> dislikesMap = numDislikes.stream().collect(Collectors.toMap(Dislikes::getCommentId, Dislikes::getDislikes));
 
         return comments.map(comment -> {
             int likes = likesMap.getOrDefault(comment.getId(), 0);

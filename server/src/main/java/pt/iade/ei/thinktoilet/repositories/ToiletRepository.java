@@ -3,6 +3,7 @@ package pt.iade.ei.thinktoilet.repositories;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
@@ -11,7 +12,7 @@ import pt.iade.ei.thinktoilet.models.entities.Toilet;
 @Repository
 public interface ToiletRepository extends PagingAndSortingRepository<Toilet, Integer> {
     @EntityGraph(attributePaths = {"city", "city.country", "access"})
-    Page<Toilet> findAll(Pageable pageable);
+    Page<Toilet> findToiletsByOrderById(Pageable pageable);
 
     @EntityGraph(attributePaths = {"city", "city.country", "access"})
     Toilet findToiletById(int id);
