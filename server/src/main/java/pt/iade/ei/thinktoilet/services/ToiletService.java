@@ -8,12 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.iade.ei.thinktoilet.models.dtos.NumObject;
-import pt.iade.ei.thinktoilet.models.dtos.RatingCategory;
 import pt.iade.ei.thinktoilet.models.dtos.ToiletDTO;
 import pt.iade.ei.thinktoilet.models.entities.Extra;
 import pt.iade.ei.thinktoilet.models.entities.Toilet;
+import pt.iade.ei.thinktoilet.models.views.Rating;
 import pt.iade.ei.thinktoilet.repositories.CommentRepository;
 import pt.iade.ei.thinktoilet.repositories.ExtraRepository;
+import pt.iade.ei.thinktoilet.repositories.RatingRepository;
 import pt.iade.ei.thinktoilet.repositories.ToiletRepository;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,8 @@ public class ToiletService {
     private CommentRepository commentRepository;
     @Autowired
     private ExtraRepository extraRepository;
+    @Autowired
+    private RatingRepository ratingRepository;
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Page<ToiletDTO> getAllToilets(int page, int size) {
@@ -41,10 +44,10 @@ public class ToiletService {
     public ToiletDTO getToilet(int id) {
         Toilet toilet = toiletRepository.findToiletById(id);
         List<Extra> extras = extraRepository.findExtrasByToilet_Id(id);
-        RatingCategory rating = Optional.ofNullable(commentRepository.findAverageRatingByToiletId(id)).orElse(new RatingCategory());
+        Rating rating = Optional.ofNullable(ratingRepository.findRatingsByToiletId(toilet.getId())).orElse(new Rating());
         NumObject numComments = Optional.ofNullable(commentRepository.countCommentsByToiletId(id)).orElse(new NumObject());
 
-        return toilet.toDTO(rating.toDTO(), numComments.getNum(), extras);
+        return toilet.toDTO(rating, numComments.getNum(), extras);
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
@@ -57,21 +60,21 @@ public class ToiletService {
 
     private Page<ToiletDTO> getToiletDTOS(Page<Toilet> toilets) {
         List<Extra> extras = extraRepository.findExtrasByToilet_IdIn(toilets.stream().map(Toilet::getId).toList());
-        List<RatingCategory> ratings = commentRepository.findAverageRatingByToiletIds(toilets.stream().map(Toilet::getId).toList());
+        List<Rating> ratings = ratingRepository.findRatingsByToiletIdIn(toilets.stream().map(Toilet::getId).toList());
         List<NumObject> countComments = commentRepository.countCommentsByToiletIds(toilets.stream().map(Toilet::getId).toList());
 
-        Map<Integer, RatingCategory> ratingMap = ratings.stream()
-                .collect(Collectors.toMap(RatingCategory::getId, rating -> rating));
+        Map<Integer, Rating> ratingMap = ratings.stream()
+                .collect(Collectors.toMap(Rating::getToiletId, rating -> rating));
         Map<Integer, Integer> commentCountMap = countComments.stream()
                 .collect(Collectors.toMap(NumObject::getId, NumObject::getNum));
         Map<Integer, List<Extra>> extrasMap = extras.stream()
                 .collect(Collectors.groupingBy(extra -> extra.getToilet().getId()));
 
         return toilets.map(toilet -> {
-            RatingCategory rating = ratingMap.getOrDefault(toilet.getId(), new RatingCategory());
+            Rating rating = ratingMap.getOrDefault(toilet.getId(), new Rating());
             int numComments = commentCountMap.getOrDefault(toilet.getId(), 0);
             List<Extra> extrasToilet = extrasMap.getOrDefault(toilet.getId(), List.of());
-            return toilet.toDTO(rating.toDTO(), numComments, extrasToilet);
+            return toilet.toDTO(rating, numComments, extrasToilet);
         });
     }
 }

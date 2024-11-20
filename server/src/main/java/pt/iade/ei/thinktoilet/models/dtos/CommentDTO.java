@@ -12,7 +12,10 @@ public class CommentDTO {
     private int toiletId;
     private int userId;
     private String text;
-    private RatingCategoryDTO ratingCategory;
+    private int ratingClean;
+    private boolean ratingPaper;
+    private int ratingStructure;
+    private int ratingAccessibility;
     private LocalDateTime datetime;
     private int numLikes;
     private int numDislikes;
@@ -23,7 +26,10 @@ public class CommentDTO {
         this.toiletId = comment.getInteraction().getToilet().getId();
         this.userId = comment.getInteraction().getUser().getId();
         this.text = comment.getText();
-        this.ratingCategory = new RatingCategoryDTO((double)comment.getRatingClean(), (double)comment.getRatingPaper(), (double)comment.getRatingStructure(), (double)comment.getRatingAccessibility());
+        this.ratingClean = comment.getRatingClean();
+        this.ratingPaper = comment.isRatingPaper();
+        this.ratingStructure = comment.getRatingStructure();
+        this.ratingAccessibility = comment.getRatingAccessibility();
         this.datetime = comment.getCreationDateTime();
         this.numLikes = numLikes;
         this.numDislikes = numDislikes;

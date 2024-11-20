@@ -7,34 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import pt.iade.ei.thinktoilet.models.dtos.NumObject;
-import pt.iade.ei.thinktoilet.models.dtos.RatingCategory;
 import pt.iade.ei.thinktoilet.models.entities.Comment;
 import java.util.List;
 
 @Repository
 public interface CommentRepository extends CrudRepository<Comment, Integer> {
-    @Query("SELECT new pt.iade.ei.thinktoilet.models.dtos.RatingCategory(" +
-            "c.interaction.toilet.id, " +
-            "AVG(c.ratingClean), " +
-            "AVG(c.ratingPaper), " +
-            "AVG(c.ratingStructure), " +
-            "AVG(c.ratingAccessibility)) " +
-            "FROM Comment c " +
-            "WHERE c.interaction.toilet.id IN :toiletIds " +
-            "GROUP BY c.interaction.toilet.id")
-    List<RatingCategory> findAverageRatingByToiletIds(List<Integer> toiletIds);
-
-    @Query("SELECT new pt.iade.ei.thinktoilet.models.dtos.RatingCategory(" +
-            "c.interaction.toilet.id, " +
-            "AVG(c.ratingClean), " +
-            "AVG(c.ratingPaper), " +
-            "AVG(c.ratingStructure), " +
-            "AVG(c.ratingAccessibility)) " +
-            "FROM Comment c " +
-            "WHERE c.interaction.toilet.id = :toiletId " +
-            "GROUP BY c.interaction.toilet.id")
-    RatingCategory findAverageRatingByToiletId(int toiletId);
-
     @Query("SELECT new pt.iade.ei.thinktoilet.models.dtos.NumObject(c.interaction.toilet.id, CAST(COUNT(c) AS int)) " +
             "FROM Comment c " +
             "WHERE c.interaction.toilet.id IN :toiletIds " +

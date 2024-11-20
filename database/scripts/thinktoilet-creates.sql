@@ -111,7 +111,7 @@ create table comment (
 					cmm_int_id INT NOT NULL,
 					cmm_text VARCHAR(280) NOT NULL,		
 					cmm_rclean INT NOT NULL,
-					cmm_rpaper INT NOT NULL,
+					cmm_rpaper BOOLEAN NOT NULL,
 					cmm_rstructure INT NOT NULL,
 					cmm_raccessibility INT NOT NULL,
 					cmm_cdatetime DATETIME NOT NULL,
@@ -215,17 +215,40 @@ ON DELETE NO ACTION ON UPDATE NO ACTION;
 -- Views
 
 CREATE VIEW view_likes AS
-SELECT cmm_id, COUNT(react_id) 'likes'
-FROM comment
-INNER JOIN reaction ON react_cmm_id = cmm_id
-INNER JOIN typereaction ON trc_id = react_trc_id
-WHERE trc_id = 1
-GROUP BY cmm_id
+SELECT 
+    c.cmm_id, 
+    COUNT(r.react_id) AS likes
+FROM comment c
+INNER JOIN reaction r ON r.react_cmm_id = c.cmm_id
+INNER JOIN typereaction tr ON tr.trc_id = r.react_trc_id AND tr.trc_id = 1
+GROUP BY c.cmm_id;
 
 CREATE VIEW view_dislikes AS
-SELECT cmm_id, COUNT(react_id) 'dislikes'
-FROM comment
-INNER JOIN reaction ON react_cmm_id = cmm_id
-INNER JOIN typereaction ON trc_id = react_trc_id
-WHERE trc_id = 2
-GROUP BY cmm_id
+SELECT 
+    c.cmm_id,
+    COUNT(r.react_id) AS dislikes
+FROM comment c
+INNER JOIN reaction r ON r.react_cmm_id = c.cmm_id
+INNER JOIN typereaction tr ON tr.trc_id = r.react_trc_id AND tr.trc_id = 2
+GROUP BY c.cmm_id;
+
+CREATE VIEW view_rating AS
+SELECT
+    t.toil_id,
+    AVG(c.cmm_rclean) AS avg_clean,
+    COALESCE((tt.tt_paper_true * 100.0) / COUNT(c.cmm_rpaper), 0) AS paper_ratio,
+    AVG(c.cmm_rstructure) AS avg_structure,
+    AVG(c.cmm_raccessibility) AS avg_accessibility
+FROM comment c
+INNER JOIN interaction i ON i.int_id = c.cmm_int_id
+INNER JOIN toilet t ON t.toil_id = i.int_toil_id
+LEFT JOIN (
+    SELECT
+        i.int_toil_id AS tt_id,
+        COUNT(c.cmm_rpaper) AS tt_paper_true
+    FROM comment c
+    INNER JOIN interaction i ON i.int_id = c.cmm_int_id
+    WHERE c.cmm_rpaper = TRUE
+    GROUP BY i.int_toil_id
+) tt ON t.toil_id = tt.tt_id
+GROUP BY t.toil_id

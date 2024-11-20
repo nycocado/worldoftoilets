@@ -29,14 +29,14 @@ public class Comment {
     @Column(name = "cmm_rclean")
     private int ratingClean;
 
-    @Column(name = "cmm_rpaper")
-    private int ratingPaper;
-
     @Column(name = "cmm_rstructure")
     private int ratingStructure;
 
     @Column(name = "cmm_raccessibility")
     private int ratingAccessibility;
+
+    @Column(name = "cmm_rpaper")
+    private boolean ratingPaper;
 
     @Column(name = "cmm_cdatetime")
     private LocalDateTime creationDateTime;
