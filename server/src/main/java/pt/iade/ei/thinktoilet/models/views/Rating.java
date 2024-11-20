@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "view_rating")
+@Table(name = "vw_rating")
 public class Rating {
     @Id
     @Column(name = "toil_id")
@@ -21,12 +21,12 @@ public class Rating {
     @Column(name = "avg_clean")
     private double clean;
 
-    @Column(name = "paper_ratio")
-    private double paper;
-
     @Column(name = "avg_structure")
     private double structure;
 
     @Column(name = "avg_accessibility")
     private double accessibility;
+
+    @Column(name = "paper_ratio")
+    private double paper;
 }

@@ -3,6 +3,7 @@ package pt.iade.ei.thinktoilet.models.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 
 @Data
@@ -15,7 +16,7 @@ public class Report {
     @Column(name = "rep_id")
     private int id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "rep_trp_id",
             referencedColumnName = "trp_id",
@@ -23,7 +24,7 @@ public class Report {
     )
     private TypeReport typeReport;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "rep_int_id",
             referencedColumnName = "int_id",

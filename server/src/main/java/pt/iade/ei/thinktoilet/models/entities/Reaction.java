@@ -3,6 +3,7 @@ package pt.iade.ei.thinktoilet.models.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 
 @Data
@@ -15,7 +16,7 @@ public class Reaction {
     @Column(name = "react_id")
     private int id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "react_user_id",
             referencedColumnName = "user_id",
@@ -23,7 +24,7 @@ public class Reaction {
     )
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "react_cmm_id",
             referencedColumnName = "cmm_id",
@@ -31,7 +32,7 @@ public class Reaction {
     )
     private Comment comment;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "react_trc_id",
             referencedColumnName = "trc_id",

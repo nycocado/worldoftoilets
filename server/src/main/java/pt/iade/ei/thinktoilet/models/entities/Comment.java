@@ -15,7 +15,7 @@ public class Comment {
     @Column(name = "cmm_id")
     private int id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "cmm_int_id",
             referencedColumnName = "int_id",

@@ -3,6 +3,7 @@ package pt.iade.ei.thinktoilet.models.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -16,7 +17,7 @@ public class FuncTime {
     @Column(name = "ft_id")
     private int id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "ft_toil_id",
             referencedColumnName = "toil_id",
@@ -24,7 +25,7 @@ public class FuncTime {
     )
     private Toilet toilet;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "ft_day_id",
             referencedColumnName = "day_id",
@@ -32,7 +33,7 @@ public class FuncTime {
     )
     private Day day;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "ft_state_id",
             referencedColumnName = "state_id",

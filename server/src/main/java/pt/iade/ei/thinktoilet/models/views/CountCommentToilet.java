@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "view_dislikes")
-public class Dislikes {
+@Table(name = "vw_count_comment_toilet")
+public class CountCommentToilet {
     @Id
-    @Column(name = "cmm_id")
-    private int commentId;
+    @Column(name = "toil_id")
+    private int toiletId;
 
-    @Column(name = "dislikes")
-    private int dislikes;
+    @Column(name = "comments")
+    private int comments;
 }

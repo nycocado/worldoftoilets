@@ -10,5 +10,6 @@ import java.util.List;
 @Repository
 public interface RatingRepository extends CrudRepository<Rating, Integer> {
     List<Rating> findRatingsByToiletIdIn(Collection<Integer> toiletIds);
+
     Rating findRatingsByToiletId(int toiletId);
 }

@@ -3,11 +3,8 @@ package pt.iade.ei.thinktoilet.models.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pt.iade.ei.thinktoilet.models.dtos.ToiletDTO;
-import pt.iade.ei.thinktoilet.models.views.Rating;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -19,7 +16,7 @@ public class Toilet {
     @Column(name = "toil_id")
     private int id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "toil_city_id",
             referencedColumnName = "city_id",
@@ -27,7 +24,7 @@ public class Toilet {
     )
     private City city;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "toil_acs_id",
             referencedColumnName = "acs_id",
@@ -55,8 +52,4 @@ public class Toilet {
 
     @Column(name = "toil_image")
     private String image;
-
-    public ToiletDTO toDTO(Rating rating, int numComments, List<Extra> extras) {
-        return new ToiletDTO(this, rating, numComments, extras);
-    }
 }

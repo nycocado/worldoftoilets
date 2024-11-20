@@ -8,7 +8,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import pt.iade.ei.thinktoilet.models.dtos.CommentDTO;
 import pt.iade.ei.thinktoilet.models.dtos.ToiletDTO;
-import pt.iade.ei.thinktoilet.repositories.ToiletRepository;
 import pt.iade.ei.thinktoilet.services.CommentService;
 import pt.iade.ei.thinktoilet.services.ToiletService;
 
@@ -20,8 +19,6 @@ public class ToiletController {
     private ToiletService toiletService;
     @Autowired
     private CommentService commentService;
-    @Autowired
-    private ToiletRepository toiletRepository;
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Page<ToiletDTO> getToilets(

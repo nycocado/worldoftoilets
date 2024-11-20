@@ -14,7 +14,7 @@ public class Interaction {
     @Column(name = "int_id")
     private int id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "int_user_id",
             referencedColumnName = "user_id",
@@ -22,7 +22,7 @@ public class Interaction {
     )
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "int_toil_id",
             referencedColumnName = "toil_id",

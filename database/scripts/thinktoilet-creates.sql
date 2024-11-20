@@ -214,34 +214,25 @@ ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- Views
 
-CREATE VIEW view_likes AS
-SELECT 
-    c.cmm_id, 
-    COUNT(r.react_id) AS likes
-FROM comment c
-INNER JOIN reaction r ON r.react_cmm_id = c.cmm_id
-INNER JOIN typereaction tr ON tr.trc_id = r.react_trc_id AND tr.trc_id = 1
-GROUP BY c.cmm_id;
-
-CREATE VIEW view_dislikes AS
-SELECT 
-    c.cmm_id,
-    COUNT(r.react_id) AS dislikes
-FROM comment c
-INNER JOIN reaction r ON r.react_cmm_id = c.cmm_id
-INNER JOIN typereaction tr ON tr.trc_id = r.react_trc_id AND tr.trc_id = 2
-GROUP BY c.cmm_id;
-
-CREATE VIEW view_rating AS
+CREATE VIEW vw_comment_reaction AS
 SELECT
-    t.toil_id,
-    AVG(c.cmm_rclean) AS avg_clean,
-    COALESCE((tt.tt_paper_true * 100.0) / COUNT(c.cmm_rpaper), 0) AS paper_ratio,
-    AVG(c.cmm_rstructure) AS avg_structure,
-    AVG(c.cmm_raccessibility) AS avg_accessibility
+    c.cmm_id,
+    COUNT(r1.react_id) AS likes,
+    COUNT(r2.react_id) AS dislikes
+FROM comment c
+LEFT JOIN reaction r1 ON c.cmm_id = r1.react_cmm_id AND r1.react_trc_id = 1
+LEFT JOIN reaction r2 ON c.cmm_id = r2.react_cmm_id AND r2.react_trc_id = 2
+GROUP BY c.cmm_id
+
+CREATE VIEW vw_rating AS
+SELECT
+    i.int_toil_id 'toil_id',
+    AVG(c.cmm_rclean) 'avg_clean',
+    COALESCE((tt.tt_paper_true * 100.0) / COUNT(c.cmm_rpaper), 0) 'paper_ratio',
+    AVG(c.cmm_rstructure) 'avg_structure',
+    AVG(c.cmm_raccessibility) 'avg_accessibility'
 FROM comment c
 INNER JOIN interaction i ON i.int_id = c.cmm_int_id
-INNER JOIN toilet t ON t.toil_id = i.int_toil_id
 LEFT JOIN (
     SELECT
         i.int_toil_id AS tt_id,
@@ -250,5 +241,17 @@ LEFT JOIN (
     INNER JOIN interaction i ON i.int_id = c.cmm_int_id
     WHERE c.cmm_rpaper = TRUE
     GROUP BY i.int_toil_id
-) tt ON t.toil_id = tt.tt_id
-GROUP BY t.toil_id
+) tt ON i.int_toil_id = tt.tt_id
+GROUP BY i.int_toil_id
+
+CREATE VIEW vw_count_comment_toilet AS
+SELECT i.int_toil_id 'toil_id', COUNT(c.cmm_id) 'comments'
+FROM interaction i
+INNER JOIN comment c ON c.cmm_int_id = i.int_id
+GROUP BY i.int_toil_id;
+
+CREATE VIEW vw_count_comment_user AS
+SELECT i.int_user_id 'user_id', COUNT(c.cmm_id) 'comments'
+FROM interaction i
+INNER JOIN comment c ON c.cmm_int_id = i.int_id
+GROUP BY i.int_user_id;

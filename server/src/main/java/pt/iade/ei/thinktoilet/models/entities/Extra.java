@@ -3,7 +3,6 @@ package pt.iade.ei.thinktoilet.models.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pt.iade.ei.thinktoilet.models.dtos.ExtraDTO;
 
 @Data
 @NoArgsConstructor
@@ -15,7 +14,7 @@ public class Extra {
     @Column(name = "extra_id")
     private int id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "extra_toil_id",
             referencedColumnName = "toil_id",
@@ -23,15 +22,11 @@ public class Extra {
     )
     private Toilet toilet;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "extra_tex_id",
             referencedColumnName = "tex_id",
             nullable = false
     )
     private TypeExtra typeExtra;
-
-    public ExtraDTO toDTO() {
-        return new ExtraDTO(this.getTypeExtra().getId());
-    }
 }
