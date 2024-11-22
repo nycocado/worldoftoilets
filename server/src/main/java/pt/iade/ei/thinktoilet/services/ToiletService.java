@@ -2,6 +2,7 @@ package pt.iade.ei.thinktoilet.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import pt.iade.ei.thinktoilet.models.views.CountCommentToilet;
 import pt.iade.ei.thinktoilet.models.views.Rating;
 import pt.iade.ei.thinktoilet.repositories.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,6 +27,8 @@ public class ToiletService {
     @Autowired
     private ToiletRepository toiletRepository;
     @Autowired
+    private ToiletPagingRepository toiletPagingRepository;
+    @Autowired
     private ExtraRepository extraRepository;
     @Autowired
     private RatingRepository ratingRepository;
@@ -32,11 +36,18 @@ public class ToiletService {
     private CountCommentToiletRepository countCommentToiletRepository;
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public Page<ToiletDTO> getAllToilets(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Toilet> toilets = toiletRepository.findToiletsByOrderById(pageable);
+    public List<ToiletDTO> getAllToilets(){
+        List<Toilet> toilets = toiletRepository.findToiletsByOrderById();
+        return mapToiletDTOS(toilets);
+    }
 
-        return getToiletDTOS(toilets);
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public Page<ToiletDTO> getAllToiletsPaging(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Toilet> toilets = toiletPagingRepository.findToiletsByOrderById(pageable);
+        List<Toilet> toiletsList = toilets.toList();
+
+        return new PageImpl<>(mapToiletDTOS(toiletsList), pageable, toilets.getTotalElements());
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
@@ -62,14 +73,21 @@ public class ToiletService {
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public Page<ToiletDTO> getToiletsNearby(double lat, double lon, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Toilet> toilets = toiletRepository.findByDistance(lat, lon, pageable);
-
-        return getToiletDTOS(toilets);
+    public List<ToiletDTO> getToiletsNearby(double lat, double lon) {
+        List<Toilet> toilets = toiletRepository.findByDistance(lat, lon);
+        return mapToiletDTOS(toilets);
     }
 
-    private Page<ToiletDTO> getToiletDTOS(Page<Toilet> toilets) {
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public Page<ToiletDTO> getToiletsNearbyPaging(double lat, double lon, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Toilet> toilets = toiletPagingRepository.findByDistance(lat, lon, pageable);
+        List<Toilet> toiletsList = toilets.toList();
+
+        return new PageImpl<>(mapToiletDTOS(toiletsList), pageable, toilets.getTotalElements());
+    }
+
+    private <T> List<ToiletDTO> mapToiletDTOS(Collection<Toilet> toilets){
         List<Integer> toiletIds = toilets.stream().map(Toilet::getId).toList();
         List<Extra> extras = extraRepository.findExtrasByToilet_IdIn(toiletIds);
         List<Rating> ratings = ratingRepository.findRatingsByToiletIdIn(toiletIds);
@@ -82,7 +100,7 @@ public class ToiletService {
         Map<Integer, List<TypeExtra>> extrasMap = extras.stream()
                 .collect(Collectors.groupingBy(extra -> extra.getToilet().getId(), Collectors.mapping(Extra::getTypeExtra, Collectors.toList())));
 
-        return toilets.map(toilet -> {
+        return toilets.stream().map(toilet -> {
             Rating rating = ratingMap.getOrDefault(toilet.getId(), new Rating());
             int numComments = commentCountMap.getOrDefault(toilet.getId(), 0);
             List<TypeExtra> extrasToilet = extrasMap.getOrDefault(toilet.getId(), List.of());
@@ -99,6 +117,6 @@ public class ToiletService {
                     toilet.getImage(),
                     List.of()
             );
-        });
+        }).toList();
     }
 }

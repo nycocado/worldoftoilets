@@ -2,6 +2,7 @@ package pt.iade.ei.thinktoilet.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -9,9 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.iade.ei.thinktoilet.models.dtos.CommentDTO;
 import pt.iade.ei.thinktoilet.models.entities.Comment;
 import pt.iade.ei.thinktoilet.models.views.CommentReaction;
+import pt.iade.ei.thinktoilet.repositories.CommentPagingRepository;
 import pt.iade.ei.thinktoilet.repositories.CommentReactionRepository;
 import pt.iade.ei.thinktoilet.repositories.CommentRepository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,30 +24,51 @@ public class CommentService {
     @Autowired
     private CommentRepository commentRepository;
     @Autowired
+    private CommentPagingRepository commentPagingRepository;
+    @Autowired
     private CommentReactionRepository commentReactionRepository;
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public Page<CommentDTO> getCommentsByToiletId(int toiletId, int page, int size) {
-        PageRequest pageable = PageRequest.of(page, size);
-        Page<Comment> comments = commentRepository.findCommentsByInteractionToiletId(toiletId, pageable);
-        return getCommentDTOS(comments);
+    public List<CommentDTO> getCommentsByToiletId(int toiletId) {
+        List<Comment> comments = commentRepository.findCommentsByInteractionToiletId(toiletId);
+        return mapCommentDTOS(comments);
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public Page<CommentDTO> getCommentsByUserId(int userId, int page, int size) {
+    public Page<CommentDTO> getCommentsByToiletIdPaging(int toiletId, int page, int size) {
         PageRequest pageable = PageRequest.of(page, size);
-        Page<Comment> comments = commentRepository.findCommentsByInteractionUserId(userId, pageable);
-        return getCommentDTOS(comments);
+        Page<Comment> comments = commentPagingRepository.findCommentsByInteractionToiletId(toiletId, pageable);
+        List<Comment> commentsList = comments.toList();
+
+        return new PageImpl<>(mapCommentDTOS(commentsList), pageable, comments.getTotalElements());
     }
 
-    private Page<CommentDTO> getCommentDTOS(Page<Comment> comments) {
-        List<CommentReaction> numLikes = commentReactionRepository.findCommentReactionsByCommentIdIn(comments.map(Comment::getId).toList());
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<CommentDTO> getCommentsByUserId(int userId) {
+        List<Comment> comments = commentRepository.findCommentsByInteractionUserId(userId);
+        return mapCommentDTOS(comments);
+    }
 
-        Map<Integer, CommentReaction> commentReactionMap = numLikes.stream().collect(Collectors.toMap(CommentReaction::getCommentId, CommentReaction -> CommentReaction));
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public Page<CommentDTO> getCommentsByUserIdPaging(int userId, int page, int size) {
+        PageRequest pageable = PageRequest.of(page, size);
+        Page<Comment> comments = commentPagingRepository.findCommentsByInteractionUserId(userId, pageable);
+        List<Comment> commentsList = comments.toList();
 
-        return comments.map(comment -> {
-            int likes = commentReactionMap.getOrDefault(comment.getId(), new CommentReaction()).getLikes();
-            int dislikes = commentReactionMap.getOrDefault(comment.getId(), new CommentReaction()).getDislikes();
+        return new PageImpl<>(mapCommentDTOS(commentsList), pageable, comments.getTotalElements());
+    }
+
+    private <T> List<CommentDTO> mapCommentDTOS(Collection<Comment> comments) {
+        List<Integer> commentIds = comments.stream().map(Comment::getId).toList();
+        List<CommentReaction> numLikes = commentReactionRepository.findCommentReactionsByCommentIdIn(commentIds);
+
+        // Mapear reações de comentários
+        Map<Integer, CommentReaction> commentReactionMap = numLikes.stream()
+                .collect(Collectors.toMap(CommentReaction::getCommentId, reaction -> reaction));
+
+        // Mapear comentários para DTOs
+        return comments.stream().map(comment -> {
+            CommentReaction reaction = commentReactionMap.getOrDefault(comment.getId(), new CommentReaction());
             return new CommentDTO(
                     comment.getId(),
                     comment.getInteraction().getToilet().getId(),
@@ -55,10 +79,10 @@ public class CommentService {
                     comment.getRatingStructure(),
                     comment.getRatingAccessibility(),
                     comment.getCreationDateTime(),
-                    likes,
-                    dislikes,
+                    reaction.getLikes(),
+                    reaction.getDislikes(),
                     comment.getScore()
             );
-        });
+        }).toList();
     }
 }

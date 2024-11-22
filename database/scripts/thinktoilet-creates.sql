@@ -228,7 +228,7 @@ CREATE VIEW vw_rating AS
 SELECT
     i.int_toil_id 'toil_id',
     AVG(c.cmm_rclean) 'avg_clean',
-    COALESCE((tt.tt_paper_true * 100.0) / COUNT(c.cmm_rpaper), 0) 'paper_ratio',
+    COALESCE((tt.tt_paper_true * 100.0) / COUNT(c.cmm_rpaper), 0) 'ratio_paper',
     AVG(c.cmm_rstructure) 'avg_structure',
     AVG(c.cmm_raccessibility) 'avg_accessibility'
 FROM comment c

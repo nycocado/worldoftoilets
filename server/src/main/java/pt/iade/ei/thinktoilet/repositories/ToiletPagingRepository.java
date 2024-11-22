@@ -1,17 +1,17 @@
 package pt.iade.ei.thinktoilet.repositories;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 import pt.iade.ei.thinktoilet.models.entities.Toilet;
 
-import java.util.List;
-
 @Repository
-public interface ToiletRepository extends PagingAndSortingRepository<Toilet, Integer> {
+public interface ToiletPagingRepository extends PagingAndSortingRepository<Toilet, Integer> {
     @EntityGraph(attributePaths = {"city", "city.country", "access"})
-    List<Toilet> findToiletsByOrderById();
+    Page<Toilet> findToiletsByOrderById(Pageable pageable);
 
     @EntityGraph(attributePaths = {"city", "city.country", "access"})
     Toilet findToiletById(int id);
@@ -20,5 +20,5 @@ public interface ToiletRepository extends PagingAndSortingRepository<Toilet, Int
     @Query("SELECT t " +
             "FROM Toilet t " +
             "ORDER BY (6371 * acos(cos(radians(:lat)) * cos(radians(t.latitude)) * cos(radians(t.longitude) - radians(:lon)) + sin(radians(:lat)) * sin(radians(t.latitude))))")
-    List<Toilet> findByDistance(double lat, double lon);
+    Page<Toilet> findByDistance(double lat, double lon, Pageable pageable);
 }
