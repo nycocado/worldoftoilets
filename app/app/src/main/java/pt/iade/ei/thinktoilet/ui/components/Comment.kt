@@ -31,7 +31,7 @@ import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.Comment
 import pt.iade.ei.thinktoilet.tests.generateComment
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
-import pt.iade.ei.thinktoilet.viewmodels.LocalViewModel
+import pt.iade.ei.thinktoilet.viewmodel.LocalViewModel
 
 @Composable
 fun Comment(
@@ -129,7 +129,7 @@ fun Comment(
 
 @Composable
 fun UserComment(comment: Comment) {
-    val viewModel: LocalViewModel = viewModel()
+    val localViewModel: LocalViewModel = viewModel()
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -150,7 +150,7 @@ fun UserComment(comment: Comment) {
         ) {
             Row {
                 Text(
-                    text = viewModel.users.value?.get(comment.userId)!!.name,
+                    text = localViewModel.users.value?.get(comment.userId)!!.name,
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
                     maxLines = 2,
@@ -159,7 +159,7 @@ fun UserComment(comment: Comment) {
             }
             Row {
                 Text(
-                    text = "${viewModel.users.value?.get(comment.userId)!!.numComments} Avaliações",
+                    text = "${localViewModel.users.value?.get(comment.userId)!!.numComments} Avaliações",
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold,
                 )

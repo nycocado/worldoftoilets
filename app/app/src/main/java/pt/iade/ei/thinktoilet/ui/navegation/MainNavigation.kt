@@ -11,20 +11,20 @@ import pt.iade.ei.thinktoilet.ui.screens.HistoryScreen
 import pt.iade.ei.thinktoilet.ui.screens.HomeScreen
 import pt.iade.ei.thinktoilet.ui.screens.ProfileScreen
 import pt.iade.ei.thinktoilet.ui.screens.RatingScreen
-import pt.iade.ei.thinktoilet.viewmodels.LocalViewModel
+import pt.iade.ei.thinktoilet.viewmodel.LocalViewModel
 
 @Composable
 fun MainNavigation(
     navController: NavHostController,
-    viewModel: LocalViewModel
+    localViewModel: LocalViewModel,
 ) {
     NavHost(
         navController = navController,
         startDestination = Routes.HOME
     ) {
-        homeNavScreen(navController, viewModel)
+        homeNavScreen(navController, localViewModel)
         historyNavScreen(
-            viewModel.toilets.value!!,
+            localViewModel,
             onNavigateToHomeScreen = { selectedToiletId ->
                 navController.navigate(Routes.homeToiletDetail(selectedToiletId!!)) {
                     popUpTo(navController.graph.startDestinationId) {
@@ -34,60 +34,55 @@ fun MainNavigation(
                 }
             }
         )
-        profileNavScreen(navController, viewModel)
-        ratingNavScreen(navController, viewModel)
-        homeToiletDetailNavScreen(navController, viewModel)
+        profileNavScreen(navController, localViewModel)
+        ratingNavScreen(navController)
+        homeToiletDetailNavScreen(navController, localViewModel)
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 private fun NavGraphBuilder.homeNavScreen(
     navController: NavHostController,
-    viewModel: LocalViewModel
+    localViewModel: LocalViewModel
 ) {
     composable(Routes.HOME) {
-        HomeScreen(mainNavController = navController, viewModel = viewModel)
+        HomeScreen(navController, localViewModel)
     }
 }
 
 private fun NavGraphBuilder.historyNavScreen(
-    toilets: List<Toilet> = emptyList(),
+    localViewModel: LocalViewModel,
     onNavigateToHomeScreen: (Int?) -> Unit,
 ) {
     composable(Routes.HISTORY) {
-        HistoryScreen(onNavigateToHomeScreen, toilets)
+        HistoryScreen(onNavigateToHomeScreen, localViewModel)
     }
 }
 
 private fun NavGraphBuilder.profileNavScreen(
     navController: NavHostController,
-    viewModel: LocalViewModel
+    localViewModel: LocalViewModel
 ) {
     composable(Routes.PROFILE) {
-        ProfileScreen(navController = navController, viewModel = viewModel)
+        ProfileScreen(navController, localViewModel)
     }
 }
 
 private fun NavGraphBuilder.ratingNavScreen(
-    navController: NavHostController,
-    viewModel: LocalViewModel
+    navController: NavHostController
 ) {
     composable(Routes.RATING) {
-        RatingScreen(navController = navController, viewModel = viewModel)
+        RatingScreen(navController)
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 private fun NavGraphBuilder.homeToiletDetailNavScreen(
     navController: NavHostController,
-    viewModel: LocalViewModel
+    localViewModel: LocalViewModel
 ) {
     composable(Routes.HOME_TOILET_DETAIL) {
         val toiletId = it.arguments?.getString("toiletId")!!.toInt()
-        HomeScreen(
-            mainNavController = navController,
-            viewModel = viewModel,
-            selectedToiletId = toiletId
-        )
+        HomeScreen(navController, localViewModel, toiletId)
     }
 }

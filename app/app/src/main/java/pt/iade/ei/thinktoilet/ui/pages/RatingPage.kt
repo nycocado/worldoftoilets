@@ -37,9 +37,7 @@ import pt.iade.ei.thinktoilet.ui.components.Stars
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
 @Composable
-fun RatingPage(
-    userMain: UserMain,
-) {
+fun RatingPage() {
     var ratingClean by remember { mutableFloatStateOf(0f) }
     var ratingPaper by remember { mutableFloatStateOf(0f) }
     var ratingStructure by remember { mutableFloatStateOf(0f) }
@@ -61,7 +59,6 @@ fun RatingPage(
                 fontWeight = FontWeight.Bold
             )
         }
-        RatingUser(userMain = userMain)
         RatingComment(commentInput) {
             commentInput = it
         }
@@ -93,41 +90,6 @@ fun RatingPage(
             }
             RatingItem(title = "Acessibilidade", rating = ratingAccessibility) {
                 ratingAccessibility = it.toFloat()
-            }
-        }
-    }
-}
-
-@Composable
-fun RatingUser(
-    userMain: UserMain,
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Column {
-            Image(
-                modifier = Modifier
-                    .size(90.dp)
-                    .clip(CircleShape)
-                    .border(
-                        width = 2.dp, color = Color.Gray, shape = CircleShape
-                    ),
-                painter = painterResource(R.drawable.image_test),
-                contentDescription = "Like Icon"
-            )
-        }
-        Column(
-            modifier = Modifier.padding(start = 10.dp)
-        ) {
-            Row {
-                Text(
-                    text = userMain.user.name,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Normal,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
             }
         }
     }
@@ -203,6 +165,6 @@ fun RatingItem(
 @Composable
 fun RatingPagePreview() {
     AppTheme {
-        RatingPage(userMain = generateUserMain())
+        RatingPage()
     }
 }

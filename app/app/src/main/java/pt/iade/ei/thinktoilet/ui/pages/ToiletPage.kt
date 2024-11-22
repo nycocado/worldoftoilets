@@ -85,12 +85,16 @@ fun ToiletPage(
             }
             Column {
                 Button(
-                    onClick = {  },
+                    onClick = { },
                     colors = ButtonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
-                        disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f)
+                        disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(
+                            alpha = 0.5f
+                        ),
+                        disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(
+                            alpha = 0.5f
+                        )
                     )
                 ) {
                     Text(
@@ -138,7 +142,7 @@ fun ToiletPage(
                 fontWeight = FontWeight.Bold,
             )
             Text(
-                text = toilet.comments.size.toString(),
+                text = toilet.numComments.toString(),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Medium,
                 color = Color.Gray
@@ -175,19 +179,19 @@ fun ToiletRating(toilet: Toilet) {
         }
         Column {
             ProgressBar(
-                progress = toilet.ratingCategory.clean,
+                progress = toilet.rating.clean,
                 text = "Limpeza"
             )
             ProgressBar(
-                progress = toilet.ratingCategory.paper,
+                progress = toilet.rating.paper,
                 text = "Papel"
             )
             ProgressBar(
-                progress = toilet.ratingCategory.structure,
+                progress = toilet.rating.structure,
                 text = "Estrutura"
             )
             ProgressBar(
-                progress = toilet.ratingCategory.accessibility,
+                progress = toilet.rating.accessibility,
                 text = "Acessibilidade"
             )
         }

@@ -13,12 +13,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import pt.iade.ei.thinktoilet.ui.pages.RatingPage
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
-import pt.iade.ei.thinktoilet.viewmodels.LocalViewModel
 
 @Composable
 fun RatingScreen(
     navController: NavController = rememberNavController(),
-    viewModel: LocalViewModel = viewModel()
 ) {
     Box(
         modifier = Modifier
@@ -27,7 +25,7 @@ fun RatingScreen(
     ) {
         LazyColumn {
             item {
-                RatingPage(viewModel.userMain.value!!)
+                RatingPage()
             }
         }
     }

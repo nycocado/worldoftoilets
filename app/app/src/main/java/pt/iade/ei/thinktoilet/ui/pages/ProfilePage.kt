@@ -34,7 +34,7 @@ import pt.iade.ei.thinktoilet.models.UserMain
 import pt.iade.ei.thinktoilet.tests.generateUserMain
 import pt.iade.ei.thinktoilet.ui.components.ProfileToiletReviews
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
-import pt.iade.ei.thinktoilet.viewmodels.LocalViewModel
+import pt.iade.ei.thinktoilet.viewmodel.LocalViewModel
 
 @Composable
 fun ProfilePage(
@@ -91,9 +91,9 @@ fun ProfilePage(
             textDecoration = TextDecoration.Underline
         )
         Column {
-            val viewModel: LocalViewModel = viewModel()
+            val localViewModel: LocalViewModel = viewModel()
             for (comment in userMain.historyComment) {
-                ProfileToiletReviews(comment, viewModel.toilets.value?.get(comment.toiletId)!!)
+                ProfileToiletReviews(comment, localViewModel.toilets.value?.get(comment.toiletId)!!)
             }
         }
     }

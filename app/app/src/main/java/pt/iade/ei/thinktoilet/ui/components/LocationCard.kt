@@ -98,7 +98,7 @@ fun LocationCard(
             Column { // Distância
                 Text(
                     modifier = Modifier.padding(horizontal = 10.dp),
-                    text = distanceToString(toilet.distance),
+                    text = toilet.distanceToString(0.0, 0.0),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 1

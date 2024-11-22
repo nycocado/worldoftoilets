@@ -12,12 +12,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import pt.iade.ei.thinktoilet.ui.pages.ProfilePage
-import pt.iade.ei.thinktoilet.viewmodels.LocalViewModel
+import pt.iade.ei.thinktoilet.viewmodel.LocalViewModel
 
 @Composable
 fun ProfileScreen(
     navController: NavController = rememberNavController(),
-    viewModel: LocalViewModel = viewModel()
+    localViewModel: LocalViewModel = viewModel()
 ) {
     Box(
         modifier = Modifier
@@ -27,7 +27,7 @@ fun ProfileScreen(
         LazyColumn {
             item {
                 ProfilePage(
-                    userMain = viewModel.userMain.value!!,
+                    userMain = localViewModel.userMain.value!!,
                 )
             }
         }

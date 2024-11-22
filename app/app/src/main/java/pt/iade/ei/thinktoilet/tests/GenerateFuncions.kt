@@ -3,14 +3,14 @@ package pt.iade.ei.thinktoilet.tests
 import pt.iade.ei.thinktoilet.models.Comment
 import pt.iade.ei.thinktoilet.models.Extra
 import pt.iade.ei.thinktoilet.models.Position
-import pt.iade.ei.thinktoilet.models.RatingCategory
+import pt.iade.ei.thinktoilet.models.Rating
 import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.models.User
 import pt.iade.ei.thinktoilet.models.UserMain
 import java.time.LocalDateTime
 
-fun generateRandomRatingCategory(): RatingCategory {
-    return RatingCategory(
+fun generateRandomRatingCategory(): Rating {
+    return Rating(
         clean = (0..5).random().toFloat(),
         paper = (0..5).random().toFloat(),
         structure = (0..5).random().toFloat(),
@@ -31,8 +31,8 @@ fun generateRandomDistance(): Double {
 
 fun generateExtra(): List<Extra> {
     val extras = mutableListOf<Extra>()
-    extras.add(Extra(1, true))
-    extras.add(Extra(2, false))
+    extras.add(Extra(1))
+    extras.add(Extra(2))
     return extras
 }
 
@@ -41,13 +41,13 @@ fun generateRandomToilet(id: Int = (1..100).random(), numComments: Int = (1..40)
         id = id,
         name = "Toilet $id",
         address = "Address ${(0..100).random()}",
-        ratingCategory = generateRandomRatingCategory(),
+        rating = generateRandomRatingCategory(),
         extras = generateExtra(),
-        position = generateRandomPosition(),
+        latitude = (0..100).random().toDouble(),
+        longitude = (0..100).random().toDouble(),
         numComments = 0,
-        googlePlaceId = "0",
+        placeId = "0",
         comments = generateCommentsList(numComments),
-        distance = generateRandomDistance(),
         image = ""
     )
 }
@@ -59,8 +59,8 @@ fun generateComment(): Comment {
         userId = 1,
         rate = (0..5).random().toFloat(),
         text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc ac varius ex. Morbi vitae fermentum dui. Sed in laoreet massa. Donec sed pretium ipsum. Phasellus diam nunc, hendrerit laoreet imperdiet sit amet, ornare ut diam. Sed augue nisl, sollicitudin id dui sit amet, auctor faucibus odio. Nulla hendrerit gravida lacus ut aliquet.",
-        ratingCategory = generateRandomRatingCategory(),
-        datetime = LocalDateTime.now(),
+        rating = generateRandomRatingCategory(),
+        datetime = LocalDateTime.now().toString(),
         like = (0..1000).random(),
         dislike = (0..1000).random(),
     )
