@@ -6,80 +6,42 @@
 **Curso:** Engenharia Informática
 
 ## Índice
-- [Think Toilet - IADE - UE](#think-toilet---iade---ue)
-  - [Índice](#índice)
-  - [Elementos do Grupo:](#elementos-do-grupo)
-  - [Palavras-Chave](#palavras-chave)
-  - [Descrição](#descrição)
-    - [Motivação](#motivação)
-    - [Objetivos](#objetivos)
-  - [Público-Alvo](#público-alvo)
-  - [Pesquisa de Mercado](#pesquisa-de-mercado)
-    - [Where is the Toilet](#where-is-the-toilet)
-    - [Berlin Toilet](#berlin-toilet)
-    - [Flush](#flush)
-    - [Where is Public Toilet](#where-is-public-toilet)
-  - [Guiões de Teste](#guiões-de-teste)
-    - [Primeiro Caso (Core) - Localizar a melhor casa de banho próxima](#primeiro-caso-core---localizar-a-melhor-casa-de-banho-próxima)
-    - [Segundo Caso - Feedback da casa de banho](#segundo-caso---feedback-da-casa-de-banho)
-    - [Terceiro Caso - Pesquisar casa de banho específica](#terceiro-caso---pesquisar-casa-de-banho-específica)
-  - [Plano de Trabalho](#plano-de-trabalho)
-  - [Descrição da Solução](#descrição-da-solução)
-  - [Enquadramento das Unidades Curriculares](#enquadramento-das-unidades-curriculares)
-    - [Programação de Dispositivos Móveis](#programação-de-dispositivos-móveis)
-    - [Programação Orientada por Objetos](#programação-orientada-por-objetos)
-    - [Bases de Dados](#bases-de-dados)
-    - [Matemática Discreta](#matemática-discreta)
-    - [Projeto de Desenvolvimento Móvel](#projeto-de-desenvolvimento-móvel)
-    - [Competências Comunicacionais](#competências-comunicacionais)
-  - [Requisitos Técnicos](#requisitos-técnicos)
-    - [Requisitos Funcionais](#requisitos-funcionais)
-    - [Requisitos Não Funcionais](#requisitos-não-funcionais)
-  - [Arquitetura da Solução](#arquitetura-da-solução)
-    - [Componentes da Arquitetura:](#componentes-da-arquitetura)
-      - [Front-end (Aplicação Móvel)](#front-end-aplicação-móvel)
-      - [Back-end (Servidor)](#back-end-servidor)
-      - [Banco de Dados](#banco-de-dados)
-    - [Fluxo de Dados:](#fluxo-de-dados)
-      - [Busca de Casas de Banho](#busca-de-casas-de-banho)
-      - [Avaliação de Casas de Banho](#avaliação-de-casas-de-banho)
-      - [Sugestão de Novas Casas de Banho](#sugestão-de-novas-casas-de-banho)
-      - [Visualização de Avaliações e Sugestões](#visualização-de-avaliações-e-sugestões)
-      - [Visualização do Histórico de Avaliações](#visualização-do-histórico-de-avaliações)
-  - [Tecnologias](#tecnologias)
-    - [Desenvolvimento Móvel:](#desenvolvimento-móvel)
-    - [Desenvolvimento Back-End:](#desenvolvimento-back-end)
-    - [Bases de Dados:](#bases-de-dados-1)
-    - [Prototipação:](#prototipação)
-  - [Diagrama de Classes](#diagrama-de-classes)
-  - [Planificação](#planificação)
-  - [Mockups e Interface](#mockups-e-interface)
-    - [Telas que aparecem no Guião de Testes:](#telas-que-aparecem-no-guião-de-testes)
-    - [Telas que não aparecem no Guião de Testes:](#telas-que-não-aparecem-no-guião-de-testes)
-      - [Casas de Banho:](#casas-de-banho)
-      - [Usuário:](#usuário)
-      - [Login:](#login)
-      - [Denuncia:](#denuncia)
-      - [Sugerir Casa de Banho:](#sugerir-casa-de-banho)
-  - [Conclusão](#conclusão)
-  - [Bibliografia](#bibliografia)
-- [Dicionário de Dados](#dicionário-de-dados)
-    - [Modelo Entidade-Relacionamento](#modelo-entidade-relacionamento)
-    - [Documento de Referência](#documento-de-referência)
-- [REST API](#rest-api)
-  - [Introdução](#introdução)
-  - [Endpoints](#endpoints)
-    - [Mostrar usuários](#mostrar-usuários)
-    - [Mostrar usuário por ID](#mostrar-usuário-por-id)
-    - [Mostrar comentários de um usuário](#mostrar-comentários-de-um-usuário)
-    - [Mostrar comentários de um usuário de forma paginada](#mostrar-comentários-de-um-usuário-de-forma-paginada)
-    - [Mostrar casas de banho](#mostrar-casas-de-banho)
-    - [Mostrar casas de banho de forma paginada](#mostrar-casas-de-banho-de-forma-paginada)
-    - [Mostrar casas de banho por ID](#mostrar-casas-de-banho-por-id)
-    - [Mostrar casas de banho próximas](#mostrar-casas-de-banho-próximas)
-    - [Mostrar casas de banho próximas de forma paginada](#mostrar-casas-de-banho-próximas-de-forma-paginada)
-    - [Mostrar comentários de uma casa de banho](#mostrar-comentários-de-uma-casa-de-banho)
-    - [Mostrar comentários de uma casa de banho de forma paginada](#mostrar-comentários-de-uma-casa-de-banho-de-forma-paginada)
+- [Elementos do Grupo](#elementos-do-grupo)
+- [Palavras-Chave](#palavras-chave)
+- [Descrição](#descrição)
+  - [Motivação](#motivação)
+  - [Objetivo](#objetivos)
+- [Público Alvo](#público-alvo)
+- [Pesquisa de Mercado](#pesquisa-de-mercado)
+  - [Where is the Toilet](#where-is-the-toilet)
+  - [Berlin Toilet](#berlin-toilet)
+  - [Flush](#flush)
+  - [Where is Public Toilet](#where-is-public-toilet)
+- [Personas](#personas) 
+- [Guiões de Teste](#guiões-de-teste)
+  - [Primeiro Caso (Core)](#primeiro-caso-core---localizar-a-melhor-casa-de-banho-próxima)
+  - [Segundo Caso](#segundo-caso---feedback-da-casa-de-banho)
+  - [Terceiro Caso](#terceiro-caso---pesquisar-casa-de-banho-específica)
+- [Plano de Trabalho](#plano-de-trabalho)
+- [Descrição da Solução](#descrição-da-solução)
+- [Enquadramento nas Unidades Curriculares](#enquadramento-nas-unidades-curriculares)
+  - [Programação de Dispositivos Móveis](#programação-de-dispositivos-móveis)
+  - [Programação Orientada por Objetos](#programação-orientada-por-objetos)
+  - [Bases de Dados](#bases-de-dados)
+  - [Mátematica Discreta](#matemática-discreta)
+  - [Projeto de Desenvolvimento Móvel](#projeto-de-desenvolvimento-móvel)
+  - [Competencias Comunicacionais](#competências-comunicacionais)
+- [Requisitos Técnicos](#requisitos-técnicos)
+  - [Requisitos Funcionais](#requisitos-funcionais)
+  - [Requisitos Não Funcionais](#requisitos-não-funcionais)
+- [Arquitetura da Solução](#arquitetura-da-solução)
+  - [Componentes da Arquitetura](#componentes-da-arquitetura)
+  - [Fluxo de Dados](#fluxo-de-dados)
+- [Tecnologias](#tecnologias)
+- [Planificação](#planificação)
+- [Interface](#interface)
+- [Conclusão](#conclusão)
+- [Bibliografia](#bibliografia)
 
 ## Elementos do Grupo:
 - [Nycolas Souza](https://github.com/nycocado) - 20230989
@@ -140,30 +102,60 @@ Aplicativo para localizar banheiros públicos, com informações úteis como ava
 - **Pontos Negativos:** Necessita baixar o banco de dados a cada instalação, o que é demorado. Não possui comentários e a interface é confusa e pouco intuitiva.
 - **Melhorias Sugeridas:** Mostrar os pins de banheiros registrados ao entrar no aplicativo, adicionar a opção de compartilhamento e incluir um menu com funções extras.
 
+## Personas  
+
+### Matilde Homão  
+- **Iade:** 21 anos
+- **Sexo:** Feminino
+- **Ocupação:** Motorista de aplicação e Estudante
+- **Descrição:** Matilde é uma jovem motorista de aplicação que enfrenta diversos desafios no seu dia a dia, como deslocar-se por diferentes locais e gerir a rotina entre o trabalho e os estudos numa universidade de prestígio.
+- **Objetivo:** Devido à natureza dinâmica do seu trabalho como motorista de aplicação, Matilde precisa localizar de forma rápida e eficiente casas de banho de qualidade em diferentes regiões.
+- **Frustrações:** Dificuldade em encontrar casas de banho em locais desconhecidos ou remotos.
+
+### David Barção
+- **Iade:** 20 anos
+- **Sexo:** Masculino
+- **Ocupação:**Turista e Empreendedor 
+- **Descrição:** David é um jovem empreendedor em busca de autoconhecimento, decidido a explorar o mundo após desenvolver uma carreira de sucesso. Viajar é a sua forma de se conectar consigo mesmo e com diferentes culturas.
+- **Objetivo:** David procura as rotas mais eficientes para explorar novos países e, durante as suas viagens, precisa localizar casas de banho confortáveis e acessíveis em diferentes regiões.
+- **Frustrações:** Devido às suas constantes viagens, David frequentemente desconhece as características e comodidades das regiões onde irá pernoitar. Por isso, sente a necessidade de uma aplicação que facilite a localização de casas de banho confortáveis e próximas.
+
+### Maria Cunha
+- **Iade:** 39 anos
+- **Sexo:** Feminino
+- **Ocupação:** Jornalista, Dentista e Gestante 
+- **Descrição:** Maria, mãe diagnosticada com Síndrome de Laron, cuida de um bebé de 8 meses e enfrenta os desafios de uma rotina intensa. Para lidar com as necessidades do seu filho, precisa estar sempre preparada para trocar fraldas e oferecer cuidados adequados, mesmo em locais fora de casa.
+- **Objetivo:** Localizar rapidamente casas de banho equipadas com fraldários que atendam a altos padrões de limpeza e conforto.
+- **Frustrações:** Devido à sua rotina corrida, Maria encontra dificuldades em encontrar casas de banho adequadas e bem equipadas para cuidar do seu bebé, o que adiciona stress à sua jornada diária.
+
 ## Guiões de Teste
-### Primeiro Caso (Core) - Localizar a melhor casa de banho próxima
+
+#### Primeiro Caso (Matilde Homão) - Localizar a melhor casa de banho próxima 
 Consideramos a localização da melhor casa de banho próxima como o objetivo principal do projeto, seguindo estes passos: [(Exemplos)](#telas-que-aparecem-no-guião-de-testes)
-- O utilizador acede à aplicação e visualiza o mapa. 
-- No mapa, aparecem as casas de banho mais próximas, priorizadas por avaliação. Na parte inferior, é exibida a primeira casa de banho, e o utilizador pode deslizar para ver as cinco mais próximas.
-- Independentemente do método escolhido para aceder à casa de banho, o utilizador será redirecionado para a janela da casa escolhida.
-- Nessa janela, o utilizador pode clicar no botão escrito "Abrir no Maps", que o levará ao Google Maps, onde poderá escolher a rota até à casa de banho.
+- Matilde encontra-se num local desconhecido e precisa urgentemente de uma casa de banho.
+- O Matilde acede à aplicação e visualiza o mapa. 
+- No mapa, são exibidas as casas de banho mais próximas, organizadas de acordo com as avaliações dos usuários. Na parte inferior, aparece a primeira casa de banho, e Matilde pode deslizar para ver as cinco opções mais próximas.
+- Independentemente do método escolhido para aceder à casa de banho, o Matilde será redirecionado para a janela da casa de banho escolhida.
+- Nessa janela, o Matilde pode clicar no botão escrito "Abrir no Maps", que o levará ao Google Maps, onde poderá escolher a rota até à casa de banho.
 
-### Segundo Caso - Feedback da casa de banho
+### Segundo Caso (Maria Cunha) - Feedback da casa de banho
 O segundo caso envolve a avaliação de uma casa de banho: [(Exemplos)](#telas-que-aparecem-no-guião-de-testes)
-- O utilizador acede à aplicação e visualiza o mapa.
-- No mapa, aparecem as casas de banho mais próximas, priorizadas por avaliação. Na parte inferior, é exibida a primeira casa de banho, e o utilizador pode deslizar para ver as cinco mais próximas.
-- Após escolher uma casa de banho, o utilizador é redirecionado para a janela da casa selecionada.
-- Nessa janela, o utilizador clica no botão "Avaliar" e é levado à tela de avaliações.
-- O utilizador pode comentar sobre a sua experiência e avaliar categorias como "Limpeza", "Papel", "Estrutura" e "Acessibilidade".
-  - Opcionalmente, o utilizador pode responder a perguntas adicionais sobre o estado da casa de banho.
-- Para concluir, o utilizador clica no botão de confirmação para publicar a sua avaliação.
+- Maria utilizou uma casa de banho e gostaria de avaliar a excelente experiência que teve, compartilhando seu feedback positivo sobre a limpeza, conforto e acessibilidade do local.
+- O Maria acede à aplicação e visualiza o mapa.
+- No mapa, são exibidas as casas de banho mais próximas, organizadas conforme as avaliações dos usuários. Na parte inferior, destaca-se a primeira casa de banho que Maria utilizou, seguindo a recomendação da aplicação.
+- Após selecionar a primeira casa de banho, o Maria é redirecionado para a janela da casa de banho selecionada.
+- Nessa janela, o Maria clica no botão "Avaliar" e é levado à tela de avaliações.
+- Maria pode comentar sobre a sua experiência e avaliar categorias como "Limpeza", "Papel", "Estrutura" e "Acessibilidade".
+  - Opcionalmente, o Maria pode responder a perguntas adicionais sobre o estado da casa de banho.
+- Para concluir, o Maria clica no botão de confirmação para publicar a sua avaliação.
 
-### Terceiro Caso - Pesquisar casa de banho específica
+### Terceiro Caso (David Barção) - Pesquisar casa de banho específica
 Este caso trata da busca por uma casa de banho específica pelo utilizador: [(Exemplos)](#telas-que-aparecem-no-guião-de-testes)
-- O utilizador acede à aplicação e visualiza o mapa.
+- David viajou para Lisboa, um destino que nunca havia visitado antes. Agora, hospedado em seu hotel, ele deseja planejar sua viagem como turista, explorando a capital de Portugal e seus principais pontos turísticos
+- David acede à aplicação e visualiza o mapa.
 - Na parte superior, clica no botão de pesquisa.
 - O teclado é acionado, e o utilizador pode digitar a localização ou o nome do estabelecimento onde a casa de banho se encontra.
-- O utilizador tem duas possibilidades:
+- David tem duas possibilidades:
   - Encontrar a casa de banho e visualizar a sua página.
   - Não encontrar, mas ter a opção de sugerir a sua existência.
 - O processo termina após a realização da ação desejada.
