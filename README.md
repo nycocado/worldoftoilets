@@ -6,41 +6,80 @@
 **Curso:** Engenharia Informática
 
 ## Índice
-- [Elementos do Grupo](#elementos-do-grupo)
-- [Palavras-Chave](#palavras-chave)
-- [Descrição](#descrição)
-  - [Motivação](#motivação)
-  - [Objetivo](#objetivos)
-- [Público Alvo](#público-alvo)
-- [Pesquisa de Mercado](#pesquisa-de-mercado)
-  - [Where is the Toilet](#where-is-the-toilet)
-  - [Berlin Toilet](#berlin-toilet)
-  - [Flush](#flush)
-  - [Where is Public Toilet](#where-is-public-toilet)
-- [Guiões de Teste](#guiões-de-teste)
-  - [Primeiro Caso (Core)](#primeiro-caso-core---localizar-a-melhor-casa-de-banho-próxima)
-  - [Segundo Caso](#segundo-caso---feedback-da-casa-de-banho)
-  - [Terceiro Caso](#terceiro-caso---pesquisar-casa-de-banho-específica)
-- [Plano de Trabalho](#plano-de-trabalho)
-- [Descrição da Solução](#descrição-da-solução)
-- [Enquadramento nas Unidades Curriculares](#enquadramento-nas-unidades-curriculares)
-  - [Programação de Dispositivos Móveis](#programação-de-dispositivos-móveis)
-  - [Programação Orientada por Objetos](#programação-orientada-por-objetos)
-  - [Bases de Dados](#bases-de-dados)
-  - [Mátematica Discreta](#matemática-discreta)
-  - [Projeto de Desenvolvimento Móvel](#projeto-de-desenvolvimento-móvel)
-  - [Competencias Comunicacionais](#competências-comunicacionais)
-- [Requisitos Técnicos](#requisitos-técnicos)
-  - [Requisitos Funcionais](#requisitos-funcionais)
-  - [Requisitos Não Funcionais](#requisitos-não-funcionais)
-- [Arquitetura da Solução](#arquitetura-da-solução)
-  - [Componentes da Arquitetura](#componentes-da-arquitetura)
-  - [Fluxo de Dados](#fluxo-de-dados)
-- [Tecnologias](#tecnologias)
-- [Planificação](#planificação)
-- [Interface](#interface)
-- [Conclusão](#conclusão)
-- [Bibliografia](#bibliografia)
+- [Think Toilet - IADE - UE](#think-toilet---iade---ue)
+  - [Índice](#índice)
+  - [Elementos do Grupo:](#elementos-do-grupo)
+  - [Palavras-Chave](#palavras-chave)
+  - [Descrição](#descrição)
+    - [Motivação](#motivação)
+    - [Objetivos](#objetivos)
+  - [Público-Alvo](#público-alvo)
+  - [Pesquisa de Mercado](#pesquisa-de-mercado)
+    - [Where is the Toilet](#where-is-the-toilet)
+    - [Berlin Toilet](#berlin-toilet)
+    - [Flush](#flush)
+    - [Where is Public Toilet](#where-is-public-toilet)
+  - [Guiões de Teste](#guiões-de-teste)
+    - [Primeiro Caso (Core) - Localizar a melhor casa de banho próxima](#primeiro-caso-core---localizar-a-melhor-casa-de-banho-próxima)
+    - [Segundo Caso - Feedback da casa de banho](#segundo-caso---feedback-da-casa-de-banho)
+    - [Terceiro Caso - Pesquisar casa de banho específica](#terceiro-caso---pesquisar-casa-de-banho-específica)
+  - [Plano de Trabalho](#plano-de-trabalho)
+  - [Descrição da Solução](#descrição-da-solução)
+  - [Enquadramento das Unidades Curriculares](#enquadramento-das-unidades-curriculares)
+    - [Programação de Dispositivos Móveis](#programação-de-dispositivos-móveis)
+    - [Programação Orientada por Objetos](#programação-orientada-por-objetos)
+    - [Bases de Dados](#bases-de-dados)
+    - [Matemática Discreta](#matemática-discreta)
+    - [Projeto de Desenvolvimento Móvel](#projeto-de-desenvolvimento-móvel)
+    - [Competências Comunicacionais](#competências-comunicacionais)
+  - [Requisitos Técnicos](#requisitos-técnicos)
+    - [Requisitos Funcionais](#requisitos-funcionais)
+    - [Requisitos Não Funcionais](#requisitos-não-funcionais)
+  - [Arquitetura da Solução](#arquitetura-da-solução)
+    - [Componentes da Arquitetura:](#componentes-da-arquitetura)
+      - [Front-end (Aplicação Móvel)](#front-end-aplicação-móvel)
+      - [Back-end (Servidor)](#back-end-servidor)
+      - [Banco de Dados](#banco-de-dados)
+    - [Fluxo de Dados:](#fluxo-de-dados)
+      - [Busca de Casas de Banho](#busca-de-casas-de-banho)
+      - [Avaliação de Casas de Banho](#avaliação-de-casas-de-banho)
+      - [Sugestão de Novas Casas de Banho](#sugestão-de-novas-casas-de-banho)
+      - [Visualização de Avaliações e Sugestões](#visualização-de-avaliações-e-sugestões)
+      - [Visualização do Histórico de Avaliações](#visualização-do-histórico-de-avaliações)
+  - [Tecnologias](#tecnologias)
+    - [Desenvolvimento Móvel:](#desenvolvimento-móvel)
+    - [Desenvolvimento Back-End:](#desenvolvimento-back-end)
+    - [Bases de Dados:](#bases-de-dados-1)
+    - [Prototipação:](#prototipação)
+  - [Diagrama de Classes](#diagrama-de-classes)
+  - [Planificação](#planificação)
+  - [Mockups e Interface](#mockups-e-interface)
+    - [Telas que aparecem no Guião de Testes:](#telas-que-aparecem-no-guião-de-testes)
+    - [Telas que não aparecem no Guião de Testes:](#telas-que-não-aparecem-no-guião-de-testes)
+      - [Casas de Banho:](#casas-de-banho)
+      - [Usuário:](#usuário)
+      - [Login:](#login)
+      - [Denuncia:](#denuncia)
+      - [Sugerir Casa de Banho:](#sugerir-casa-de-banho)
+  - [Conclusão](#conclusão)
+  - [Bibliografia](#bibliografia)
+- [Dicionário de Dados](#dicionário-de-dados)
+    - [Modelo Entidade-Relacionamento](#modelo-entidade-relacionamento)
+    - [Documento de Referência](#documento-de-referência)
+- [REST API](#rest-api)
+  - [Introdução](#introdução)
+  - [Endpoints](#endpoints)
+    - [Mostrar usuários](#mostrar-usuários)
+    - [Mostrar usuário por ID](#mostrar-usuário-por-id)
+    - [Mostrar comentários de um usuário](#mostrar-comentários-de-um-usuário)
+    - [Mostrar comentários de um usuário de forma paginada](#mostrar-comentários-de-um-usuário-de-forma-paginada)
+    - [Mostrar casas de banho](#mostrar-casas-de-banho)
+    - [Mostrar casas de banho de forma paginada](#mostrar-casas-de-banho-de-forma-paginada)
+    - [Mostrar casas de banho por ID](#mostrar-casas-de-banho-por-id)
+    - [Mostrar casas de banho próximas](#mostrar-casas-de-banho-próximas)
+    - [Mostrar casas de banho próximas de forma paginada](#mostrar-casas-de-banho-próximas-de-forma-paginada)
+    - [Mostrar comentários de uma casa de banho](#mostrar-comentários-de-uma-casa-de-banho)
+    - [Mostrar comentários de uma casa de banho de forma paginada](#mostrar-comentários-de-uma-casa-de-banho-de-forma-paginada)
 
 ## Elementos do Grupo:
 - [Nycolas Souza](https://github.com/nycocado) - 20230989
@@ -54,7 +93,6 @@ Localizador; Avaliação; Sanitários; Casa de banho; Público; Privada; Busca; 
 O **[Think Toilet](https://github.com/nycocado/think-toilet)** é uma aplicação móvel projetada para resolver um problema comum: localizar casas de banho limpas e acessíveis. Muitas vezes, as pessoas enfrentam dificuldades para encontrar uma casa de banho, especialmente em situações de emergência ou em áreas desconhecidas.
 
 ### Motivação
-
 O **["Spreadshit"](https://exame.com/pop/spreadshit-planilha-avalia-banheiros-empresas/)** foi um evento viral em 2022 que popularizou reviews humorísticas de casas de banho. A pandemia de COVID-19, que levou ao fechamento de muitos banheiros públicos, fez com que encontrar um banheiro acessível se tornasse um desafio.
 
 Com o fechamento de estabelecimentos e preocupações sobre a limpeza dos banheiros disponíveis, as pessoas começaram a compartilhar suas experiências online, formando uma comunidade disposta a ajudar na busca por opções mais seguras e limpas.
@@ -131,13 +169,13 @@ Este caso trata da busca por uma casa de banho específica pelo utilizador: [(Ex
 - O processo termina após a realização da ação desejada.
 
 ## Plano de Trabalho
-| **Fase**                            | **Descrição**                                                                                                                                                                                                                                                                                                                                     | **Prazo**               |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| **1. Planejamento e Prototipação**  | Definição dos objetivos, escopo e requisitos do projeto. (Todos)<br> Criação de protótipos da interface de usuário usando Figma. (Todos)                                                                                                                                                                                                          | Entrega 1: [20/10/2024] |
-| **2. Desenvolvimento do Protótipo** | Implementação inicial da aplicação móvel em Kotlin com Jetpack Compose. (Luan e Nycolas)<br> Integração básica com Google Maps. (Luan e Nycolas)<br> Desenvolvimento inicial do servidor com Spring Boot. (Nycolas e Lohanne)<br> Desenvolvimento da base de dados MySQL. (Lohanne)<br> Conexão com a base de dados MySQL. (Todos)                | Entrega 2: [24/11/2024] |
-| **3. Desenvolvimento Final**        | Continuação do desenvolvimento da aplicação, incluindo:<br> - Funcionalidades completas de busca, avaliação e sugestão. (Todos)<br> - Refinamento da integração com Google Maps. (Luan e Nycolas)<br> - Finalização do servidor e das APIs. (Lohanne e Nycolas)                                                                                   | Entrega 3: [12/01/2024] |
-| **4. Testes**                       | Realização de testes unitários e de integração da aplicação. (Todos)<br>Coleta de feedback de usuários e melhorias com base nas avaliações. (Todos)                                                                                                                                                                                               | Entrega 3: [12/01/2024] |
-| **5. Documentação**                 | Criação do relatório final do projeto. (Todos)                                                                                                                                                                                                                                                                                                    | Entrega 3: [12/01/2024] |
+| **Fase**                            | **Descrição**                                                                                                                                                                                                                                                           | **Prazo**               |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| **1. Planejamento e Prototipação**  | - Definição dos objetivos, escopo e requisitos do projeto. (Todos)<br> - Criação de protótipos da interface de usuário usando Figma. (Todos)                                                                                                                            | Entrega 1: [20/10/2024] |
+| **2. Desenvolvimento do Protótipo** | - Implementação inicial da aplicação móvel em Kotlin com Jetpack Compose. (Todos)<br> - Desenvolvimento inicial do servidor com Spring Boot. (Nycolas)<br> - Desenvolvimento da base de dados MySQL. (Lohanne)<br> - Integração do Back-End com o Front-End (Luan)      | Entrega 2: [24/11/2024] |
+| **3. Desenvolvimento Final**        | - Funcionalidades completas de busca, avaliação e sugestão. (Todos)<br> - Integração e refinamento com a API do Google Maps. (Luan e Nycolas)<br> - Finalização do servidor e das APIs. (Lohanne e Nycolas)                                                             | Entrega 3: [12/01/2024] |
+| **4. Testes**                       | - Realização de testes unitários e de integração da aplicação. (Todos)<br> - Coleta de feedback de usuários e melhorias com base nas avaliações. (Todos)                                                                                                                | Entrega 3: [12/01/2024] |
+| **5. Documentação**                 | - Criação do relatório final do projeto. (Todos)                                                                                                                                                                                                                        | Entrega 3: [12/01/2024] |
 
 ## Descrição da Solução
 O projeto **[Think Toilet](https://github.com/nycocado/think-toilet)** é uma aplicação móvel que ajuda os utilizadores a encontrar e avaliar casas de banho próximas. A aplicação exibe um mapa interativo com as casas de banho mais bem avaliadas e fornece informações como preço, acessibilidade e restrições de uso (gratuito, público ou para clientes). Os utilizadores podem avaliar critérios como limpeza, acessibilidade, papel disponível e estrutura, além de deixar comentários. A aplicação também permite sugerir novas casas de banho, denunciar locais ou comentários inadequados e visualizar seu histórico de avaliações. Com integração ao Google Maps, oferece rotas para facilitar o acesso aos locais.
@@ -150,7 +188,7 @@ Para o desenvolvimento mobile, usaremos **[Kotlin](https://kotlinlang.org)** com
 Nesta disciplina, usaremos o **[Java](https://www.java.com/)** com **[Spring Boot](https://spring.io)** para o back-end, conectando a interface ao banco de dados. O projeto seguirá a arquitetura **REST**, criando APIs que facilitam a comunicação entre o front-end e o back-end. Será utilizado o padrão **MVC** (Model-View-Controller) para separar a lógica de negócios, a interface e os dados. Conceitos como herança e polimorfismo também serão aplicados para otimizar o código em **[Java](https://www.java.com/)**.
 
 ### Bases de Dados
-PUsaremos o **[MySQL](https://www.mysql.com/)** para gerenciar o armazenamento das informações do projeto, aplicando os conceitos da disciplina de Bases de Dados. Isso garante uma estrutura eficiente e organizada, otimizando o acesso a dados como avaliações, sugestões e denúncias, com foco em segurança e desempenho.
+Usaremos o **[MySQL](https://www.mysql.com/)** para gerenciar o armazenamento das informações do projeto, aplicando os conceitos da disciplina de Bases de Dados. Isso garante uma estrutura eficiente e organizada, otimizando o acesso a dados como avaliações, sugestões e denúncias, com foco em segurança e desempenho.
 
 ### Matemática Discreta
 A disciplina de Matemática Discreta fornecerá a lógica necessária para o funcionamento do banco de dados, front-end e back-end. Conceitos como grafos, lógica proposicional e teoria dos conjuntos serão utilizados para resolver problemas de organização e acesso eficiente a dados, garantindo uma lógica de controle e validação robusta e segura.
@@ -237,53 +275,52 @@ Utilizando **[MySQL](https://www.mysql.com/)**, o banco de dados será projetado
 ### Prototipação:
 - **Software:** [Figma](https://www.figma.com/) para design e prototipação da interface do usuário.
 
-#### Comunicação e Feedback
-- Estabelecimento de canais de comunicação eficazes.
-- Coleta de feedback sobre design e interação com o usuário.
+## Diagrama de Classes
+![Diagrama de Classes](documents/segunda_entrega/diagramas/classes.png)
 
 ## Planificação 
 [Gráfico de Gantt](documents/gantt/gantt.pdf)  
 [ClickUp](https://app.clickup.com/9012385337/v/s/90121717706)
 
-## Interface
+## Mockups e Interface
 ### Telas que aparecem no Guião de Testes:
-<img src="documents/interface/home_page/home01.png" alt="Tela Principal 01" width="250"/>
-<img src="documents/interface/home_page/home02.png" alt="Tela Principal 02" width="250"/>
-<img src="documents/interface/toilet_page/mare_alta.png" alt="Maré Alta - Página da Casa de Banho" width="250"/>
-<img src="documents/interface/toilet_page/rating.png" alt="Avaliação" width="250"/>
+<img src="documents/primeira_entrega/interface/home_page/home01.png" alt="Tela Principal 01" width="250"/>
+<img src="documents/primeira_entrega/interface/home_page/home02.png" alt="Tela Principal 02" width="250"/>
+<img src="documents/primeira_entrega/interface/toilet_page/mare_alta.png" alt="Maré Alta - Página da Casa de Banho" width="250"/>
+<img src="documents/primeira_entrega/interface/toilet_page/rating.png" alt="Avaliação" width="250"/>
 
 ### Telas que não aparecem no Guião de Testes:
 #### Casas de Banho:
-- [La Tavola di Firenze - Página da Casa de Banho](documents/interface/toilet_page/la_tavola_di_firenze.png)
-- [Pastel de Nata - Página da Casa de Banho](documents/interface/toilet_page/pastel_de_nata.png)
-- [Sabor e Estudo - Página da Casa de Banho](documents/interface/toilet_page/sabor_e_estudo.png)
-- [Vista do Tejo - Página da Casa de Banho](documents/interface/toilet_page/sabor_e_estudo.png)
-- [Avaliação](documents/interface/toilet_page/comment.png)
+- [La Tavola di Firenze - Página da Casa de Banho](documents/primeira_entrega/interface/toilet_page/la_tavola_di_firenze.png)
+- [Pastel de Nata - Página da Casa de Banho](documents/primeira_entrega/interface/toilet_page/pastel_de_nata.png)
+- [Sabor e Estudo - Página da Casa de Banho](documents/primeira_entrega/interface/toilet_page/sabor_e_estudo.png)
+- [Vista do Tejo - Página da Casa de Banho](documents/primeira_entrega/interface/toilet_page/sabor_e_estudo.png)
+- [Avaliação](documents/primeira_entrega/interface/toilet_page/comment.png)
 
 #### Usuário:
-- [Usuário](documents/interface/user_page/user.png)
-- [Configurações do Usuário](documents/interface/user_page/user_config.png)
-- [Pontos do Usuário 01](documents/interface/user_page/user_points01.png)
-- [Pontos do Usuário 02](documents/interface/user_page/user_points02.png)
-- [Desafios do Usuário](documents/interface/user_page/user_missions.png)
-- [Histórico](documents/interface/user_page/historic.png)
+- [Usuário](documents/primeira_entrega/interface/user_page/user.png)
+- [Configurações do Usuário](documents/primeira_entrega/interface/user_page/user_config.png)
+- [Pontos do Usuário 01](documents/primeira_entrega/interface/user_page/user_points01.png)
+- [Pontos do Usuário 02](documents/primeira_entrega/interface/user_page/user_points02.png)
+- [Desafios do Usuário](documents/primeira_entrega/interface/user_page/user_missions.png)
+- [Histórico](documents/primeira_entrega/interface/user_page/historic.png)
 
 #### Login:
-- [Login](documents/interface/login_page/login.png)
-- [Registo 01](documents/interface/login_page/register01.png)
-- [Registo 02](documents/interface/login_page/register02.png)
+- [Login](documents/primeira_entrega/interface/login_page/login.png)
+- [Registo 01](documents/primeira_entrega/interface/login_page/register01.png)
+- [Registo 02](documents/primeira_entrega/interface/login_page/register02.png)
 
 #### Denuncia:
-- [Denúnciar - Casa de Banho](documents/interface/report_page/report_toilet.png)
-- [Denúnciar - Avaliação](documents/interface/report_page/report_comment.png)
-- [Denunciar - Finalização](documents/interface/report_page/report_thanks.png)
+- [Denúnciar - Casa de Banho](documents/primeira_entrega/interface/report_page/report_toilet.png)
+- [Denúnciar - Avaliação](documents/primeira_entrega/interface/report_page/report_comment.png)
+- [Denunciar - Finalização](documents/primeira_entrega/interface/report_page/report_thanks.png)
 
 #### Sugerir Casa de Banho:
-- [Sugerir Casa de Banho 01](documents/interface/suggest_page/suggest01.png)
-- [Sugerir Casa de Banho 02](documents/interface/suggest_page/suggest02.png)
-- [Sugerir Casa de Banho 03](documents/interface/suggest_page/suggest03.png)
-- [Sugerir Casa de Banho 04](documents/interface/suggest_page/suggest04.png)
-- [Sugerir Casa de Banho 05](documents/interface/suggest_page/suggest05.png)
+- [Sugerir Casa de Banho 01](documents/primeira_entrega/interface/suggest_page/suggest01.png)
+- [Sugerir Casa de Banho 02](documents/primeira_entrega/interface/suggest_page/suggest02.png)
+- [Sugerir Casa de Banho 03](documents/primeira_entrega/interface/suggest_page/suggest03.png)
+- [Sugerir Casa de Banho 04](documents/primeira_entrega/interface/suggest_page/suggest04.png)
+- [Sugerir Casa de Banho 05](documents/primeira_entrega/interface/suggest_page/suggest05.png)
 
 ## Conclusão
 O **[Think Toilet](https://github.com/nycocado/think-toilet)** tem como principal objetivo fornecer uma solução eficaz para facilitar a localização de casas de banho públicas e privadas, ao mesmo tempo que melhora a experiência do utilizador através de um sistema de avaliações detalhadas. A aplicação permite que os utilizadores encontrem rapidamente casas de banho próximas, com base em critérios como limpeza, acessibilidade e preço. Além disso, o projeto visa promover a colaboração dos utilizadores através de sugestões de novos locais e avaliações, criando assim um banco de dados sempre atualizado e confiável.
@@ -306,3 +343,534 @@ Outro objetivo central é o incentivo à participação ativa, implementando um 
 - [MySQL - Oracle](https://www.mysql.com/)
 - [Android SDK 28 - Google](https://developer.android.com/tools/releases/platforms#9.0)
 - [Figma - Figma, Inc.](https://www.figma.com/)
+
+# Dicionário de Dados
+### Modelo Entidade-Relacionamento
+![Modelo Entidade-Relacionamento](documents/segunda_entrega/diagramas/er.png)  
+### Documento de Referência
+[Dicionário de Dados](documents/g04-relatoriobd.pdf)
+
+# REST API
+## Introdução
+A API do Think Toilet oferece acesso eficiente a informações sobre usuários, casas de banho e comentários, permitindo consultas, visualizações e interações organizadas. Desenvolvida para integração com a aplicação móvel, a API fornece dados atualizados e é compatível com outras plataformas.
+
+Os dados são entregues em formato JSON, garantindo respostas consistentes e facilitando a integração com sistemas diversos. A estrutura dos dados e os endpoints são flexíveis, projetados para suportar expansões futuras e melhorias contínuas na aplicação.
+
+## Endpoints
+### Mostrar usuários
+- URL:  
+`/users`  
+- METHOD:  
+`GET`  
+- SUCCESS RESPONSE:  
+  ```json
+  [
+    {
+      "id": [integer],
+      "name": [string],
+      "points": [integer],
+      "iconId": [alphanumeric],
+      "birthDate": [date],
+      "creationDate": [date],
+    },
+  ]
+  ```
+- ERROR RESPONSE:
+  ```json
+  {
+    "status": 500,
+    "message": "An unexpected error occurred.",
+    "timestamp": [datetime]
+  }
+  ``` 
+- SAMPLE CALL:  
+  ```kotlin
+  @GET("users")
+  suspend fun getUsers(): List<User>
+  ```
+
+### Mostrar usuário por ID
+- **URL:**  
+`/users/:id`  
+- **METHOD:**  
+`GET`
+- **URL PARAMETHERS:**  
+  - Required:  
+  `id=[integer]` 
+- **SUCCESS RESPONSE:**
+  ```json
+  {
+    "id": [integer],
+    "name": [string],
+    "points": [integer],
+    "iconId": [alphanumeric],
+    "birthDate": [date],
+    "creationDate": [date],
+  }
+  ```
+- **ERROR RESPONSE:**
+  ```json
+  {
+    "status": 404,
+    "message": "User with id {id} not found.",
+    "timestamp": [datetime]
+  }
+  ```
+- **SAMPLE CALL:**
+  ```kotlin
+  @GET("users/{id}")
+  suspend fun getUsersById(@Path("id") id: Int): User
+  ```
+
+### Mostrar comentários de um usuário
+- **URL:**  
+  `/users/:id/comments`
+- **METHOD:**  
+  `GET`
+- **URL PARAMETHERS:**  
+  - Required:  
+  `id=[integer]`
+- **SUCCESS RESPONSE:**
+  ```json
+  [
+    {
+      "id": [integer],
+      "toiletId": [integer],
+      "userId": [integer],
+      "text": [string],
+      "ratingClean": [integer],
+      "ratingPaper": [boolean],
+      "ratingStructure": [integer],
+      "ratingAccessibility": [integer],
+      "datetime": [datetime],
+      "numLikes": [integer],
+      "numDislikes": [integer],
+      "score": [integer]
+    },
+  ]
+  ```
+- **ERROR RESPONSE:**
+  ```json
+  {
+    "status": 404,
+    "message": "Comment with user id {id} not found.",
+    "timestamp": [datetime]
+  }
+  ```
+- **SAMPLE CALL:**  
+  ```kotlin
+  @GET("users/{id}/comments")
+  suspend fun getUserComments(@Path("id") id: Int): List<Comment>
+  ```
+
+### Mostrar comentários de um usuário de forma paginada
+- **URL:**  
+  `/users/:id/comments/page?size=:size&page=:page`
+- **METHOD:**  
+  `GET`
+- **URL PARAMETHERS:**
+- **Required:**  
+  `id=[integer]`
+- **Optional:**  
+  `size=[integer]` (default: 20)  
+  `page=[integer]` (default: 0)
+- **SUCCESS RESPONSE:**
+  ```json
+  {
+    "content": [
+      {
+        "id": [integer],
+        "toiletId": [integer],
+        "userId": [integer],
+        "text": [string],
+        "ratingClean": [integer],
+        "ratingPaper": [boolean],
+        "ratingStructure": [integer],
+        "ratingAccessibility": [integer],
+        "datetime": [datetime],
+        "numLikes": [integer],
+        "numDislikes": [integer],
+        "score": [integer]
+      },
+    ],
+    "page": {
+      "size": [integer],
+      "number": [integer],
+      "totalElements": [integer],
+      "totalPages": [integer]
+    }
+  }
+  ```
+- **ERROR RESPONSE:**
+  ```json
+  {
+    "status": 404,
+    "message": "Comment with user id {id} not found.",
+    "timestamp": [datetime]
+  }
+  ```
+- **SAMPLE CALL:**
+  ```kotlin
+  @GET("users/{id}/comments/page")
+  suspend fun getUserCommentsPage(@Path("id") id: Int, @Query("size") size: Int, @Query("page") page: Int): PageResponse<Comment>
+  ```
+
+### Mostrar casas de banho
+- **URL:**  
+`/toilets`
+- **METHOD:**  
+`GET` 
+- **SUCCESS RESPONSE:**  
+  ```json
+  [
+    {
+      "id": [integer],
+      "name": [string],
+      "address": [string],
+      "rating": {
+        "clean": [decimal],
+        "structure": [decimal],
+        "accessibility": [decimal],
+        "paper": [decimal],
+      },
+      "extras": [
+        {
+          "id": [integer],
+          "name": [string],
+        },
+      ],
+      "latitude": [decimal],
+      "longitude": [decimal],
+      "numComments": [integer],
+      "placeId": [alphanumeric],
+      "image": [alphanumeric],
+      "comments": []
+    },
+  ]
+  ```
+- **ERROR RESPONSE:**
+  ```json
+  {
+    "status": 500,
+    "message": "An unexpected error occurred.",
+    "timestamp": [datetime]
+  }
+  ```
+- **SAMPLE CALL:**
+  ```kotlin
+  @GET("toilets")
+  suspend fun getToilets(): List<Toilet>
+  ```
+
+### Mostrar casas de banho de forma paginada
+- **URL:**  
+  `/toilets/page?size=:size&page=:page`
+- **METHOD:**  
+  `GET`
+- **URL PARAMETHERS:**  
+  - Optional:  
+  `size=[integer]` (default: 20)  
+  `page=[integer]` (default: 0)
+- **SUCCESS RESPONSE:**
+  ```json
+  {
+    "content": [
+      {
+        "id": [integer],
+        "name": [string],
+        "address": [string],
+        "rating": {
+          "clean": [decimal],
+          "structure": [decimal],
+          "accessibility": [decimal],
+          "paper": [decimal],
+        },
+        "extras": [
+          {
+            "id": [integer],
+            "name": [string],
+          },
+        ],
+        "latitude": [decimal],
+        "longitude": [decimal],
+        "numComments": [integer],
+        "placeId": [alphanumeric],
+        "image": [alphanumeric],
+        "comments": []
+      },
+    ],
+    "page": {
+      "size": [integer],
+      "number": [integer],
+      "totalElements": [integer],
+      "totalPages": [integer]
+    }
+  }
+  ```
+- **ERROR RESPONSE:**
+  ```json
+  {
+    "status": 500,
+    "message": "An unexpected error occurred.",
+    "timestamp": [datetime]
+  }
+  ```
+- **SAMPLE CALL:**
+  ```kotlin
+  @GET("toilets/page")
+  suspend fun getToiletsPage(@Query("size") size: Int, @Query("page") page: Int): PageResponse<Toilet>
+  ```
+
+### Mostrar casas de banho por ID
+- **URL:**  
+  `/toilets/:id`
+- **METHOD:**  
+  `GET` 
+- **URL PARAMETHERS:**
+  - Required:  
+  `id=[integer]`  
+- **SUCCESS RESPONSE:**
+  ```json
+  {
+    "id": [integer],
+    "name": [string],
+    "address": [string],
+    "rating": {
+      "clean": [decimal],
+      "structure":  [decimal],
+      "accessibility": [decimal],
+      "paper": [decimal]
+    },
+    "extras": [
+      {
+        "id": [integer],
+        "name": [string]
+      },
+    ],
+    "latitude": [decimal],
+    "longitude": [decimal],
+    "numComments": [integer],
+    "placeId": [alphanumeric],
+    "image": [alphanumeric],
+    "comments": []
+  }
+  ```
+- **ERROR RESPONSE:**
+  ```json
+  {
+    "status": 404,
+    "message": "Toilet with id {id} not found.",
+    "timestamp": [datetime]
+  }
+  ```
+- **SAMPLE CALL:**
+  ```kotlin
+  @GET("toilets/{id}")
+  suspend fun getToiletById(@Path("id") id: Int): Toilet
+  ```
+
+### Mostrar casas de banho próximas
+- **URL:**  
+  `/toilets/nearby?lat=:lat&lon=:lon`
+- **METHOD:**  
+  `GET`
+- **URL PARAMETHERS:**  
+  - Required:  
+  `lat=[decimal]`  
+  `lon=[decimal]`
+- **SUCCESS RESPONSE:**  
+  ```json
+  [
+    {
+      "id": [integer],
+      "name": [string],
+      "address": [string],
+      "rating": {
+        "clean": [decimal],
+        "structure": [decimal],
+        "accessibility": [decimal],
+        "paper": [decimal]
+      },
+      "extras": [
+        {
+          "id": [integer],
+          "name": [string]
+        },
+      ],
+      "latitude": [decimal],
+      "longitude": [decimal],
+      "numComments": [integer],
+      "placeId": [alphanumeric],
+      "image": [alphanumeric],
+      "comments": []
+    },
+  ]
+  ```
+- **ERROR RESPONSE:**
+  ```json
+  {
+    "status": 500,
+    "message": "An unexpected error occurred.",
+    "timestamp": [datetime]
+  }
+  ```
+- **SAMPLE CALL:**
+  ```kotlin
+  @GET("toilets/nearby")
+  suspend fun getNearbyToilets(@Query("lat") lat: Double, @Query("lon") lon: Double): List<Toilet>
+  ```
+
+### Mostrar casas de banho próximas de forma paginada
+- **URL:**  
+  `/toilets/nearby/page?lat=:lat&lon=:lon&size=:size&page=:page`
+- **METHOD:**  
+  `GET`
+- **URL PARAMETHERS:**  
+  - Required:  
+  `lat=[decimal]`  
+  `lon=[decimal]`
+  - Optional:  
+  `size=[integer]` (default: 20)  
+  `page=[integer]` (default: 0)
+- **SUCCESS RESPONSE:**  
+  ```json
+  {
+    "content": [
+      {
+        "id": [integer],
+        "name": [string],
+        "address": [string],
+        "rating": {
+          "clean": [decimal],
+          "structure": [decimal],
+          "accessibility": [decimal],
+          "paper": [decimal]
+        },
+        "extras": [
+          {
+            "id": [integer],
+            "name": [string]
+          },
+        ],
+        "latitude": [decimal],
+        "longitude": [decimal],
+        "numComments": [integer],
+        "placeId": [alphanumeric],
+        "image": [alphanumeric],
+        "comments": []
+      },
+    ],
+    "page": {
+      "size": [integer],
+      "number": [integer],
+      "totalElements": [integer],
+      "totalPages": [integer]
+    }
+  }
+  ```
+- **ERROR RESPONSE:**
+  ```json
+  {
+    "status": 500,
+    "message": "An unexpected error occurred.",
+    "timestamp": [datetime]
+  }
+  ```
+- **SAMPLE CALL:**
+  ```kotlin
+  @GET("toilets/nearby/page")
+  suspend fun getNearbyToiletsPage(@Query("lat") lat: Double, @Query("lon") lon: Double, @Query("size") size: Int, @Query("page") page: Int): PageResponse<Toilet>
+  ```
+
+### Mostrar comentários de uma casa de banho
+- **URL:**  
+  `/toilets/:id/comments`
+- **METHOD:**  
+  `GET` 
+- **URL PARAMETHERS:**  
+  - Required:  
+  `id=[integer]`
+- **SUCCESS RESPONSE:**
+  ```json
+  [
+    {
+      "id": [integer],
+      "toiletId": [integer],
+      "userId": [integer],
+      "text": [string],
+      "ratingClean": [integer],
+      "ratingPaper": [boolean],
+      "ratingStructure": [integer],
+      "ratingAccessibility": [integer],
+      "datetime": [datetime],
+      "numLikes": [integer],
+      "numDislikes": [integer],
+      "score": [integer]
+    },
+  ]
+  ```
+- **ERROR RESPONSE:**
+  ```json
+  {
+    "status": 404,
+    "message": "Comment with toilet id {id} not found.",
+    "timestamp": [datetime]
+  }
+  ```
+- **SAMPLE CALL:**
+  ```kotlin
+  @GET("toilets/{id}/comments")
+  suspend fun getToiletComments(@Path("id") id: Int): List<Comment>
+  ```
+
+### Mostrar comentários de uma casa de banho de forma paginada
+- **URL:**  
+  `/toilets/:id/comments/page?size=:size&page=:page`
+- **METHOD:**  
+  `GET`
+- **URL PARAMETHERS:**
+  - **Required:**  
+    `id=[integer]`
+  - **Optional:**  
+    `size=[integer]` (default: 20)  
+    `page=[integer]` (default: 0)
+- **SUCCESS RESPONSE:**
+  ```json
+  {
+    "content": [
+      {
+        "id": [integer],
+        "toiletId": [integer],
+        "userId": [integer],
+        "text": [string],
+        "ratingClean": [integer],
+        "ratingPaper": [boolean],
+        "ratingStructure": [integer],
+        "ratingAccessibility": [integer],
+        "datetime": [datetime],
+        "numLikes": [integer],
+        "numDislikes": [integer],
+        "score": [integer]
+      },
+    ],
+    "page": {
+      "size": [integer],
+      "number": [integer],
+      "totalElements": [integer],
+      "totalPages": [integer]
+    }
+  }
+  ```
+- **ERROR RESPONSE:**
+  ```json
+  {
+    "status": 404,
+    "message": "Comment with toilet id {id} not found.",
+    "timestamp": [datetime]
+  }
+  ```
+- **SAMPLE CALL:**
+  ```kotlin
+  @GET("toilets/{id}/comments/page")
+  suspend fun getToiletCommentsPage(@Path("id") id: Int, @Query("size") size: Int, @Query("page") page: Int): PageResponse<Comment>
+  ```
