@@ -1,6 +1,5 @@
 package pt.iade.ei.thinktoilet.models
 
-import androidx.lifecycle.LiveData
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 import kotlin.math.atan2
@@ -18,7 +17,7 @@ data class Toilet(
     @SerializedName("longitude") val longitude: Double,
     @SerializedName("numComments") var numComments: Int,
     @SerializedName("placeId") val placeId: String? = null,
-    @SerializedName("comments") var comments: List<Comment> = emptyList(),
+    @SerializedName("comments") var comments: List<CommentItem> = emptyList(),
     @SerializedName("image") val image: String? = null
 ) : Serializable {
     fun getAverageRating(): Float {

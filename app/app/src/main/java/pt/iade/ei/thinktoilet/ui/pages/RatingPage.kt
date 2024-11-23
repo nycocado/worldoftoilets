@@ -48,10 +48,11 @@ fun RatingPage(
 
     var avgPaper = 0f
     if (ratingPaper) {
-         avgPaper = 2f // 40%
+        avgPaper = 2f // 40%
     }
 
-    averageRating = ( (ratingClean * 0.2f) + avgPaper + (ratingStructure * 0.2f) +(ratingAccessibility * 0.2f) )
+    averageRating =
+        ((ratingClean * 0.2f) + avgPaper + (ratingStructure * 0.2f) + (ratingAccessibility * 0.2f))
     var commentInput by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
 
@@ -71,7 +72,7 @@ fun RatingPage(
                 fontWeight = FontWeight.Bold
             )
         }
-        Column (
+        Column(
             modifier = Modifier
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -95,13 +96,13 @@ fun RatingPage(
             RatingItem(title = "Limpeza", rating = ratingClean) {
                 ratingClean = it.toFloat()
             }
-            }
-            RatingItem(title = "Estrutura", rating = ratingStructure) {
-                ratingStructure = it.toFloat()
-            }
-            RatingItem(title = "Acessibilidade", rating = ratingAccessibility) {
-                ratingAccessibility = it.toFloat()
-            }
+        }
+        RatingItem(title = "Estrutura", rating = ratingStructure) {
+            ratingStructure = it.toFloat()
+        }
+        RatingItem(title = "Acessibilidade", rating = ratingAccessibility) {
+            ratingAccessibility = it.toFloat()
+        }
 
         Row(
             modifier = Modifier
@@ -121,11 +122,13 @@ fun RatingPage(
                     ratingPaper = it
                 },
                 thumbContent = if (ratingPaper) {
-                    { Icon(
-                        imageVector = Icons.Filled.Check,
-                        contentDescription = "Possui Papel Hiênico",
-                        modifier = Modifier.size(SwitchDefaults.IconSize),
-                    ) }
+                    {
+                        Icon(
+                            imageVector = Icons.Filled.Check,
+                            contentDescription = "Possui Papel Hiênico",
+                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                        )
+                    }
                 } else {
                     null
                 }

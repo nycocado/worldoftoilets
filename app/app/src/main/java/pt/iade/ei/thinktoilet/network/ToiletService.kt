@@ -1,7 +1,6 @@
 package pt.iade.ei.thinktoilet.network
 
-import pt.iade.ei.thinktoilet.models.Comment
-import pt.iade.ei.thinktoilet.models.PageResponse
+import pt.iade.ei.thinktoilet.models.CommentItem
 import pt.iade.ei.thinktoilet.models.Toilet
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -15,7 +14,7 @@ interface ToiletService {
     suspend fun getToiletById(@Path("id") id: Int): Toilet
 
     @GET("toilets/{id}/comments")
-    suspend fun getCommentsByToiletId(@Path("id") id: Int): List<Comment>
+    suspend fun getCommentsByToiletId(@Path("id") id: Int): List<CommentItem>
 
     @GET("toilets/nearby?lat={latitude}&lon={longitude}")
     suspend fun getNearbyToilets(

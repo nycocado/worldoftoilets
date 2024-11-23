@@ -80,7 +80,7 @@ fun ToiletPage(
             ) {
                 Text(
                     text = toilet.address,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium
                 )
             }
@@ -149,9 +149,6 @@ fun ToiletPage(
                 color = Color.Gray
             )
         }
-        for (comment in toilet.comments) {
-            Comment(comment = comment)
-        }
     }
 }
 
@@ -181,21 +178,21 @@ fun ToiletRating(toilet: Toilet) {
         }
         Column {
             ProgressBar(
-                progress = toilet.ratingCategory.clean,
-                text = String.format("%.1f", toilet.ratingCategory.clean) + " Limpeza"
+                progress = toilet.rating.clean,
+                text = String.format("%.1f", toilet.rating.clean) + " Limpeza"
             )
 
             ProgressBar(
-                progress = toilet.ratingCategory.structure,
-                text = String.format("%.1f", toilet.ratingCategory.structure) + " Estrutura"
+                progress = toilet.rating.structure,
+                text = String.format("%.1f", toilet.rating.structure) + " Estrutura"
             )
             ProgressBar(
-                progress = toilet.ratingCategory.accessibility,
-                text = String.format("%.1f", toilet.ratingCategory.accessibility) + " Acessibilidade"
+                progress = toilet.rating.accessibility,
+                text = String.format("%.1f", toilet.rating.accessibility) + " Acessibilidade"
             )
             ProgressBar(
-                progress = toilet.ratingCategory.paper,
-                text = String.format("%.0f", toilet.ratingCategory.paper)+ "% Papel",
+                progress = toilet.rating.paper,
+                text = String.format("%.0f", toilet.rating.paper)+ "% Papel",
                 maxValue = 100f
             )
         }

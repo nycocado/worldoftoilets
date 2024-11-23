@@ -6,16 +6,18 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import pt.iade.ei.thinktoilet.models.Comment
+import pt.iade.ei.thinktoilet.models.CommentItem
 import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.models.User
 import pt.iade.ei.thinktoilet.models.UserMain
 import pt.iade.ei.thinktoilet.repositories.ToiletRepository
+import pt.iade.ei.thinktoilet.repositories.UserRepository
 import pt.iade.ei.thinktoilet.tests.generateUserMain
 import pt.iade.ei.thinktoilet.tests.generateUsers
 
 class LocalViewModel: ViewModel() {
     private val toiletRepository = ToiletRepository()
+    private val userRepository = UserRepository()
 
     private val _toilets = MutableLiveData<List<Toilet>>(emptyList())
     val toilets: LiveData<List<Toilet>> get() = _toilets
@@ -26,11 +28,11 @@ class LocalViewModel: ViewModel() {
     private val _users = MutableLiveData<List<User>>()
     val users: LiveData<List<User>> get() = _users
 
-    private val _commentsToilet = MutableLiveData<List<Comment>>()
-    val commentsToilet: LiveData<List<Comment>> get() = _commentsToilet
+    private val _commentsToilet = MutableLiveData<List<CommentItem>>()
+    val commentsToilet: LiveData<List<CommentItem>> get() = _commentsToilet
 
-    private val _commentsUser = MutableLiveData<List<Comment>>()
-    val commentsUser: LiveData<List<Comment>> get() = _commentsUser
+    private val _commentsUser = MutableLiveData<List<CommentItem>>()
+    val commentsUser: LiveData<List<CommentItem>> get() = _commentsUser
 
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> get() = _error
@@ -66,10 +68,25 @@ class LocalViewModel: ViewModel() {
         }
     }
 
+    private fun loadUser(userId: Int) {
+        viewModelScope.launch {
+            try {
+                val fetchedUser = userRepository.getUserById(userId)
+                _users.value = _users.value?.plus(fetchedUser)
+            } catch (e: Exception) {
+                _error.value = "Erro ao carregar usuário: ${e.message}"
+                Log.e("ToiletViewModel", "Erro ao carregar usuário", e)
+            }
+        }
+    }
+
     fun getToiletComment(toiletId: Int) {
         viewModelScope.launch {
             try {
                 val fetchedComments = toiletRepository.getToiletComment(toiletId)
+                fetchedComments.forEach {
+                    _users.value?.find { user -> user.id == it.userId } ?: loadUser(it.userId)
+                }
                 _commentsToilet.value = fetchedComments
             } catch (e: Exception) {
                 _error.value = "Erro ao carregar comentários: ${e.message}"

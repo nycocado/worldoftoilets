@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,6 +33,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import pt.iade.ei.thinktoilet.R
+import pt.iade.ei.thinktoilet.models.CommentItem
+import pt.iade.ei.thinktoilet.ui.components.Comment
 import pt.iade.ei.thinktoilet.ui.components.CustomDragHandle
 import pt.iade.ei.thinktoilet.ui.components.LocationCard
 import pt.iade.ei.thinktoilet.ui.navegation.BottomSheetNavigation
@@ -124,11 +127,19 @@ fun ToiletDetail(
     toiletId: Int,
 ) {
     val toilet = localViewModel.toilets.value?.find { it.id == toiletId }
+    localViewModel.getToiletComment(toiletId)
+    val comments: List<CommentItem> = localViewModel.commentsToilet.value!!.filter { it.toiletId == toiletId }
     LazyColumn {
         item {
             ToiletPage(toilet = toilet!!) {
                 navController.navigate("rating")
             }
+        }
+        items(comments) { comment ->
+            Comment(
+                comment = comment,
+                user = localViewModel.users.value!!.find { it.id == comment.userId }!!
+            )
         }
     }
 }

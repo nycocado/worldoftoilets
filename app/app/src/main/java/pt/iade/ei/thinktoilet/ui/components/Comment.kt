@@ -26,16 +26,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.iade.ei.thinktoilet.R
-import pt.iade.ei.thinktoilet.models.Comment
+import pt.iade.ei.thinktoilet.models.CommentItem
+import pt.iade.ei.thinktoilet.models.User
 import pt.iade.ei.thinktoilet.tests.generateComment
+import pt.iade.ei.thinktoilet.tests.generateUser
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
-import pt.iade.ei.thinktoilet.viewmodel.LocalViewModel
 
 @Composable
 fun Comment(
-    comment: Comment,
+    comment: CommentItem,
+    user: User
 ) {
     var likePressed by remember { mutableStateOf(false) }
     var dislikePressed by remember { mutableStateOf(false) }
@@ -47,7 +48,7 @@ fun Comment(
     Column(
         modifier = Modifier.padding(top = 12.dp)
     ) {
-        UserComment(comment = comment)
+        UserComment(user)
         Row(
             modifier = Modifier.padding(
                 top = 5.dp,
@@ -60,7 +61,7 @@ fun Comment(
                     .padding(end = 10.dp)
             ) {
                 Stars(
-                    rating = comment.rate,
+                    rating = comment.average(),
                     size = 20.dp
                 )
             }
@@ -128,8 +129,7 @@ fun Comment(
 }
 
 @Composable
-fun UserComment(comment: Comment) {
-    val localViewModel: LocalViewModel = viewModel()
+fun UserComment(user: User) {
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -150,7 +150,7 @@ fun UserComment(comment: Comment) {
         ) {
             Row {
                 Text(
-                    text = localViewModel.users.value?.get(comment.userId)!!.name,
+                    text = user.name,
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
                     maxLines = 2,
@@ -159,7 +159,7 @@ fun UserComment(comment: Comment) {
             }
             Row {
                 Text(
-                    text = "${localViewModel.users.value?.get(comment.userId)!!.numComments} Avaliações",
+                    text = "${user.numComments} Avaliações",
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold,
                 )
@@ -174,7 +174,8 @@ fun UserComment(comment: Comment) {
 fun CommentPreview() {
     AppTheme {
         Comment(
-            comment = generateComment()
+            comment = generateComment(),
+            user = generateUser()
         )
     }
 }

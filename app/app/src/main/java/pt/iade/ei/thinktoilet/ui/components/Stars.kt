@@ -47,8 +47,8 @@ fun Stars(
                 Image(
 
                     painter = painterResource(
-                        if (i <= round(rating)) R.drawable.star_filled
-                        else R.drawable.star
+                        if (i <= round(rating)) R.drawable.star_filled_24px
+                        else R.drawable.star_24px
                     ),  contentDescription = "{i} star",
                         modifier = Modifier.size(size)
 

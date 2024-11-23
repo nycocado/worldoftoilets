@@ -1,6 +1,6 @@
 package pt.iade.ei.thinktoilet.tests
 
-import pt.iade.ei.thinktoilet.models.Comment
+import pt.iade.ei.thinktoilet.models.CommentItem
 import pt.iade.ei.thinktoilet.models.Extra
 import pt.iade.ei.thinktoilet.models.Position
 import pt.iade.ei.thinktoilet.models.Rating
@@ -52,17 +52,20 @@ fun generateRandomToilet(id: Int = (1..100).random(), numComments: Int = (1..40)
     )
 }
 
-fun generateComment(): Comment {
-    return Comment(
+fun generateComment(): CommentItem {
+    return CommentItem(
         id = (0..100).random(),
         toiletId = 1,
         userId = 1,
-        rate = (0..5).random().toFloat(),
         text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc ac varius ex. Morbi vitae fermentum dui. Sed in laoreet massa. Donec sed pretium ipsum. Phasellus diam nunc, hendrerit laoreet imperdiet sit amet, ornare ut diam. Sed augue nisl, sollicitudin id dui sit amet, auctor faucibus odio. Nulla hendrerit gravida lacus ut aliquet.",
-        rating = generateRandomRatingCategory(),
+        ratingClean = (0..5).random(),
+        ratingPaper = true,
+        ratingStructure = (0..5).random(),
+        ratingAccessibility = (0..5).random(),
         datetime = LocalDateTime.now().toString(),
         like = (0..1000).random(),
         dislike = (0..1000).random(),
+        score = (0..1000).random(),
     )
 }
 
@@ -86,8 +89,8 @@ fun generateUserMain(): UserMain {
     )
 }
 
-fun generateCommentsList(numComments: Int = (10..40).random()): List<Comment> {
-    val commentsList = mutableListOf<Comment>()
+fun generateCommentsList(numComments: Int = (10..40).random()): List<CommentItem> {
+    val commentsList = mutableListOf<CommentItem>()
     for (i in 1..numComments) {
         commentsList.add(generateComment())
     }

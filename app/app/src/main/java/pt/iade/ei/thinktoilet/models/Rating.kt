@@ -10,6 +10,6 @@ data class Rating(
     @SerializedName("accessibility") var accessibility: Float
 ) : Serializable {
     fun average(): Float {
-        return (clean + paper + structure + accessibility) / 4
+        return ((clean * 0.2f) + ((paper / 20) * 0.4f) + (structure * 0.2f) + accessibility * 0.2f)
     }
 }

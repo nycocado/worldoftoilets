@@ -115,7 +115,7 @@ Aplicativo para localizar banheiros públicos, com informações úteis como ava
 ### David Barção
 - **Iade:** 20 anos
 - **Sexo:** Masculino
-- **Ocupação:**Turista e Empreendedor 
+- **Ocupação:** Turista e Empreendedor 
 - **Descrição:** David é um jovem empreendedor em busca de autoconhecimento, decidido a explorar o mundo após desenvolver uma carreira de sucesso. Viajar é a sua forma de se conectar consigo mesmo e com diferentes culturas.
 - **Objetivo:** David procura as rotas mais eficientes para explorar novos países e, durante as suas viagens, precisa localizar casas de banho confortáveis e acessíveis em diferentes regiões.
 - **Frustrações:** Devido às suas constantes viagens, David frequentemente desconhece as características e comodidades das regiões onde irá pernoitar. Por isso, sente a necessidade de uma aplicação que facilite a localização de casas de banho confortáveis e próximas.
@@ -129,7 +129,6 @@ Aplicativo para localizar banheiros públicos, com informações úteis como ava
 - **Frustrações:** Devido à sua rotina corrida, Maria encontra dificuldades em encontrar casas de banho adequadas e bem equipadas para cuidar do seu bebé, o que adiciona stress à sua jornada diária.
 
 ## Guiões de Teste
-
 #### Primeiro Caso (Matilde Homão) - Localizar a melhor casa de banho próxima 
 Consideramos a localização da melhor casa de banho próxima como o objetivo principal do projeto, seguindo estes passos: [(Exemplos)](#telas-que-aparecem-no-guião-de-testes)
 - Matilde encontra-se num local desconhecido e precisa urgentemente de uma casa de banho.
@@ -362,8 +361,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
       "name": [string],
       "points": [integer],
       "iconId": [alphanumeric],
-      "birthDate": [date],
-      "creationDate": [date],
+      "numComments": [integer],
     },
   ]
   ```
@@ -396,8 +394,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     "name": [string],
     "points": [integer],
     "iconId": [alphanumeric],
-    "birthDate": [date],
-    "creationDate": [date],
+    "numComments": [integer],
   }
   ```
 - **ERROR RESPONSE:**

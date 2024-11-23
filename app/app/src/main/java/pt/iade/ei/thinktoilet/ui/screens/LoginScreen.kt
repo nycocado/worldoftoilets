@@ -13,8 +13,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import pt.iade.ei.thinktoilet.ui.pages.LoginPage
-import pt.iade.ei.thinktoilet.ui.pages.ProfilePage
-import pt.iade.ei.thinktoilet.viewmodels.LocalViewModel
+import pt.iade.ei.thinktoilet.viewmodel.LocalViewModel
 
 @Composable
 fun LoginScreen(
