@@ -3,7 +3,7 @@ create table user (
 					user_name VARCHAR(50) UNIQUE NOT NULL, 
 					user_email VARCHAR(100) UNIQUE NOT NULL,											
 					user_pwd VARCHAR(255) NOT NULL, 							
-					user_points INT,
+					user_points INT NOT NULL,
 					user_iconid VARCHAR(255),
 					user_bdate DATE, 
 					user_cdate DATE NOT NULL,

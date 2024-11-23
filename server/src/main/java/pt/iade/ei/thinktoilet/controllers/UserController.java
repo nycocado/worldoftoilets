@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import pt.iade.ei.thinktoilet.exceptions.GlobalExceptionHandler;
 import pt.iade.ei.thinktoilet.exceptions.NotFoundException;
 import pt.iade.ei.thinktoilet.models.dtos.CommentDTO;
 import pt.iade.ei.thinktoilet.models.entities.User;
@@ -51,7 +50,7 @@ public class UserController {
         }
     }
 
-    @GetMapping(path = "/{id}/comments/paging", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/{id}/comments/page", produces = MediaType.APPLICATION_JSON_VALUE)
     public Page<CommentDTO> getUserCommentsPaging(
             @PathVariable int id,
             @RequestParam(defaultValue = "0", required = false) int page,

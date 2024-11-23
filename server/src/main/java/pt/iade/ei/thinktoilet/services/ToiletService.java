@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.iade.ei.thinktoilet.exceptions.NotFoundException;
 import pt.iade.ei.thinktoilet.models.dtos.ToiletDTO;
 import pt.iade.ei.thinktoilet.models.entities.Extra;
 import pt.iade.ei.thinktoilet.models.entities.Toilet;
@@ -52,7 +53,7 @@ public class ToiletService {
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public ToiletDTO getToilet(int id) {
-        Toilet toilet = toiletRepository.findToiletById(id);
+        Toilet toilet = Optional.ofNullable(toiletRepository.findToiletById(id)).orElseThrow(() -> new NotFoundException(String.valueOf(id), "Toilet", "id"));
         List<TypeExtra> typeExtras = extraRepository.findExtrasByToilet_Id(id).stream().map(Extra::getTypeExtra).toList();
         Rating rating = Optional.ofNullable(ratingRepository.findRatingsByToiletId(toilet.getId())).orElse(new Rating());
         CountCommentToilet numComments = Optional.ofNullable(countCommentToiletRepository.findCountCommentToiletByToiletId(toilet.getId())).orElse(new CountCommentToilet());

@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.iade.ei.thinktoilet.exceptions.NotFoundException;
 import pt.iade.ei.thinktoilet.models.dtos.CommentDTO;
 import pt.iade.ei.thinktoilet.models.entities.Comment;
 import pt.iade.ei.thinktoilet.models.views.CommentReaction;
@@ -31,6 +32,9 @@ public class CommentService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<CommentDTO> getCommentsByToiletId(int toiletId) {
         List<Comment> comments = commentRepository.findCommentsByInteractionToiletId(toiletId);
+        if(comments.isEmpty()) {
+            throw new NotFoundException(String.valueOf(toiletId), "Comment", "toilet id");
+        }
         return mapCommentDTOS(comments);
     }
 
@@ -38,6 +42,9 @@ public class CommentService {
     public Page<CommentDTO> getCommentsByToiletIdPaging(int toiletId, int page, int size) {
         PageRequest pageable = PageRequest.of(page, size);
         Page<Comment> comments = commentPagingRepository.findCommentsByInteractionToiletId(toiletId, pageable);
+        if(comments.isEmpty()) {
+            throw new NotFoundException(String.valueOf(toiletId), "Comment", "toilet id");
+        }
         List<Comment> commentsList = comments.toList();
 
         return new PageImpl<>(mapCommentDTOS(commentsList), pageable, comments.getTotalElements());
@@ -46,6 +53,9 @@ public class CommentService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<CommentDTO> getCommentsByUserId(int userId) {
         List<Comment> comments = commentRepository.findCommentsByInteractionUserId(userId);
+        if(comments.isEmpty()) {
+            throw new NotFoundException(String.valueOf(userId), "Comment", "user id");
+        }
         return mapCommentDTOS(comments);
     }
 
@@ -53,6 +63,9 @@ public class CommentService {
     public Page<CommentDTO> getCommentsByUserIdPaging(int userId, int page, int size) {
         PageRequest pageable = PageRequest.of(page, size);
         Page<Comment> comments = commentPagingRepository.findCommentsByInteractionUserId(userId, pageable);
+        if(comments.isEmpty()) {
+            throw new NotFoundException(String.valueOf(userId), "Comment", "user id");
+        }
         List<Comment> commentsList = comments.toList();
 
         return new PageImpl<>(mapCommentDTOS(commentsList), pageable, comments.getTotalElements());

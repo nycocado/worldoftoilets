@@ -43,12 +43,7 @@ public class ToiletController {
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ToiletDTO getToilet(@PathVariable int id) {
         logger.info("Sending toilet with id {}", id);
-        ToiletDTO toilet = toiletService.getToilet(id);
-        if (toilet == null) {
-            throw new NotFoundException(String.valueOf(id), "Toilet", "id");
-        } else {
-            return toilet;
-        }
+        return toiletService.getToilet(id);
     }
 
     @GetMapping(path = "/nearby", produces = MediaType.APPLICATION_JSON_VALUE)
