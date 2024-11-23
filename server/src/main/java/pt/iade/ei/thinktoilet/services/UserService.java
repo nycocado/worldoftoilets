@@ -44,6 +44,12 @@ public class UserService {
         );
     }
 
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<UserDTO> getUsersByIds(Collection<Integer> ids) {
+        List<User> users = userRepository.findUserByIdIn(ids);
+        return mapUserDTOS(users);
+    }
+
     private <T> List<UserDTO> mapUserDTOS(Collection<User> users) {
         List<Integer> userIds = users.stream().map(User::getId).toList();
         List<CountCommentUser> countCommentUsers = countCommentUserRepository.findCountCommentUserByUserIdIn(userIds);

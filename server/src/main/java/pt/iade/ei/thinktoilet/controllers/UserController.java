@@ -24,9 +24,12 @@ public class UserController {
     private CommentService commentService;
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<UserDTO> getUsers() {
+    public List<UserDTO> getUsers(@RequestParam(required = false) List<Integer> ids) {
         logger.info("Sending all users");
-        return userService.getAllUsers();
+        if (ids == null)
+            return userService.getAllUsers();
+        else
+            return userService.getUsersByIds(ids);
     }
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
