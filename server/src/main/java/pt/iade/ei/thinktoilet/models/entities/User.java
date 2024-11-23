@@ -21,11 +21,9 @@ public class User {
     private String name;
 
     @Column(name = "user_email", unique = true)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String email;
 
     @Column(name = "user_pwd")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @Column(name = "user_points")

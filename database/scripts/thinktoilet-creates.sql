@@ -1,3 +1,5 @@
+-- Tables
+
 create table user (
 					user_id INT NOT NULL auto_increment,
 					user_name VARCHAR(50) UNIQUE NOT NULL, 
@@ -217,12 +219,21 @@ ON DELETE NO ACTION ON UPDATE NO ACTION;
 CREATE VIEW vw_comment_reaction AS
 SELECT
     c.cmm_id,
-    COUNT(r1.react_id) AS likes,
-    COUNT(r2.react_id) AS dislikes
+    COALESCE(l.likes, 0) AS likes,
+    COALESCE(d.dislikes, 0) AS dislikes
 FROM comment c
-LEFT JOIN reaction r1 ON c.cmm_id = r1.react_cmm_id AND r1.react_trc_id = 1
-LEFT JOIN reaction r2 ON c.cmm_id = r2.react_cmm_id AND r2.react_trc_id = 2
-GROUP BY c.cmm_id
+LEFT JOIN (
+    SELECT react_cmm_id, COUNT(*) AS likes
+    FROM reaction
+    WHERE react_trc_id = 1
+    GROUP BY react_cmm_id
+) l ON c.cmm_id = l.react_cmm_id
+LEFT JOIN (
+    SELECT react_cmm_id, COUNT(*) AS dislikes
+    FROM reaction
+    WHERE react_trc_id = 2
+    GROUP BY react_cmm_id
+) d ON c.cmm_id = d.react_cmm_id;
 
 CREATE VIEW vw_rating AS
 SELECT
@@ -242,7 +253,7 @@ LEFT JOIN (
     WHERE c.cmm_rpaper = TRUE
     GROUP BY i.int_toil_id
 ) tt ON i.int_toil_id = tt.tt_id
-GROUP BY i.int_toil_id
+GROUP BY i.int_toil_id;
 
 CREATE VIEW vw_count_comment_toilet AS
 SELECT i.int_toil_id 'toil_id', COUNT(c.cmm_id) 'comments'
