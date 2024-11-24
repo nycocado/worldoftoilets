@@ -15,7 +15,6 @@ import pt.iade.ei.thinktoilet.models.UserMain
 import pt.iade.ei.thinktoilet.repositories.LocationRepository
 import pt.iade.ei.thinktoilet.repositories.ToiletRepository
 import pt.iade.ei.thinktoilet.repositories.UserRepository
-import pt.iade.ei.thinktoilet.tests.generateUserMain
 import javax.inject.Inject
 
 @HiltViewModel

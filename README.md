@@ -6,42 +6,88 @@
 **Curso:** Engenharia Informática
 
 ## Índice
-- [Elementos do Grupo](#elementos-do-grupo)
-- [Palavras-Chave](#palavras-chave)
-- [Descrição](#descrição)
-  - [Motivação](#motivação)
-  - [Objetivo](#objetivos)
-- [Público Alvo](#público-alvo)
-- [Pesquisa de Mercado](#pesquisa-de-mercado)
-  - [Where is the Toilet](#where-is-the-toilet)
-  - [Berlin Toilet](#berlin-toilet)
-  - [Flush](#flush)
-  - [Where is Public Toilet](#where-is-public-toilet)
-- [Personas](#personas) 
-- [Guiões de Teste](#guiões-de-teste)
-  - [Primeiro Caso (Core)](#primeiro-caso-core---localizar-a-melhor-casa-de-banho-próxima)
-  - [Segundo Caso](#segundo-caso---feedback-da-casa-de-banho)
-  - [Terceiro Caso](#terceiro-caso---pesquisar-casa-de-banho-específica)
-- [Plano de Trabalho](#plano-de-trabalho)
-- [Descrição da Solução](#descrição-da-solução)
-- [Enquadramento nas Unidades Curriculares](#enquadramento-nas-unidades-curriculares)
-  - [Programação de Dispositivos Móveis](#programação-de-dispositivos-móveis)
-  - [Programação Orientada por Objetos](#programação-orientada-por-objetos)
-  - [Bases de Dados](#bases-de-dados)
-  - [Mátematica Discreta](#matemática-discreta)
-  - [Projeto de Desenvolvimento Móvel](#projeto-de-desenvolvimento-móvel)
-  - [Competencias Comunicacionais](#competências-comunicacionais)
-- [Requisitos Técnicos](#requisitos-técnicos)
-  - [Requisitos Funcionais](#requisitos-funcionais)
-  - [Requisitos Não Funcionais](#requisitos-não-funcionais)
-- [Arquitetura da Solução](#arquitetura-da-solução)
-  - [Componentes da Arquitetura](#componentes-da-arquitetura)
-  - [Fluxo de Dados](#fluxo-de-dados)
-- [Tecnologias](#tecnologias)
-- [Planificação](#planificação)
-- [Interface](#interface)
-- [Conclusão](#conclusão)
-- [Bibliografia](#bibliografia)
+- [Think Toilet - IADE - UE](#think-toilet---iade---ue)
+  - [Índice](#índice)
+  - [Elementos do Grupo:](#elementos-do-grupo)
+  - [Palavras-Chave](#palavras-chave)
+  - [Descrição](#descrição)
+    - [Motivação](#motivação)
+    - [Objetivos](#objetivos)
+  - [Público-Alvo](#público-alvo)
+  - [Pesquisa de Mercado](#pesquisa-de-mercado)
+    - [Where is the Toilet](#where-is-the-toilet)
+    - [Berlin Toilet](#berlin-toilet)
+    - [Flush](#flush)
+    - [Where is Public Toilet](#where-is-public-toilet)
+  - [Personas](#personas)
+    - [Matilde Homão](#matilde-homão)
+    - [David Barção](#david-barção)
+    - [Maria Cunha](#maria-cunha)
+  - [Guiões de Teste](#guiões-de-teste)
+    - [Primeiro Caso (Matilde Homão) - Localizar a melhor casa de banho próxima](#primeiro-caso-matilde-homão---localizar-a-melhor-casa-de-banho-próxima)
+    - [Segundo Caso (Maria Cunha) - Feedback da casa de banho](#segundo-caso-maria-cunha---feedback-da-casa-de-banho)
+    - [Terceiro Caso (David Barção) - Pesquisar casa de banho específica](#terceiro-caso-david-barção---pesquisar-casa-de-banho-específica)
+  - [Plano de Trabalho](#plano-de-trabalho)
+  - [Descrição da Solução](#descrição-da-solução)
+  - [Enquadramento das Unidades Curriculares](#enquadramento-das-unidades-curriculares)
+    - [Programação de Dispositivos Móveis](#programação-de-dispositivos-móveis)
+    - [Programação Orientada por Objetos](#programação-orientada-por-objetos)
+    - [Bases de Dados](#bases-de-dados)
+    - [Matemática Discreta](#matemática-discreta)
+    - [Projeto de Desenvolvimento Móvel](#projeto-de-desenvolvimento-móvel)
+    - [Competências Comunicacionais](#competências-comunicacionais)
+  - [Requisitos Técnicos](#requisitos-técnicos)
+    - [Requisitos Funcionais](#requisitos-funcionais)
+    - [Requisitos Não Funcionais](#requisitos-não-funcionais)
+  - [Arquitetura da Solução](#arquitetura-da-solução)
+    - [Componentes da Arquitetura:](#componentes-da-arquitetura)
+      - [Front-end (Aplicação Móvel)](#front-end-aplicação-móvel)
+      - [Back-end (Servidor)](#back-end-servidor)
+      - [Banco de Dados](#banco-de-dados)
+    - [Fluxo de Dados:](#fluxo-de-dados)
+      - [Busca de Casas de Banho](#busca-de-casas-de-banho)
+      - [Avaliação de Casas de Banho](#avaliação-de-casas-de-banho)
+      - [Sugestão de Novas Casas de Banho](#sugestão-de-novas-casas-de-banho)
+      - [Visualização de Avaliações e Sugestões](#visualização-de-avaliações-e-sugestões)
+      - [Visualização do Histórico de Avaliações](#visualização-do-histórico-de-avaliações)
+  - [Tecnologias](#tecnologias)
+    - [Desenvolvimento Móvel:](#desenvolvimento-móvel)
+    - [Desenvolvimento Back-End:](#desenvolvimento-back-end)
+    - [Bases de Dados:](#bases-de-dados-1)
+    - [Prototipação:](#prototipação)
+  - [Alterações no Projeto - Segunda Entrega](#alterações-no-projeto---segunda-entrega)
+    - [Ajustes Técnicos](#ajustes-técnicos)
+    - [Progresso do Desenvolvimento](#progresso-do-desenvolvimento)
+    - [Desafios Enfrentados](#desafios-enfrentados)
+  - [Diagrama de Classes](#diagrama-de-classes)
+  - [Planificação](#planificação)
+  - [Mockups e Interface](#mockups-e-interface)
+    - [Telas que aparecem no Guião de Testes:](#telas-que-aparecem-no-guião-de-testes)
+    - [Telas que não aparecem no Guião de Testes:](#telas-que-não-aparecem-no-guião-de-testes)
+      - [Casas de Banho:](#casas-de-banho)
+      - [Usuário:](#usuário)
+      - [Login:](#login)
+      - [Denuncia:](#denuncia)
+      - [Sugerir Casa de Banho:](#sugerir-casa-de-banho)
+  - [Conclusão](#conclusão)
+  - [Bibliografia](#bibliografia)
+- [Dicionário de Dados](#dicionário-de-dados)
+    - [Modelo Entidade-Relacionamento](#modelo-entidade-relacionamento)
+    - [Documento de Referência](#documento-de-referência)
+- [REST API](#rest-api)
+  - [Introdução](#introdução)
+  - [Endpoints](#endpoints)
+    - [Mostrar usuários](#mostrar-usuários)
+    - [Mostrar usuário por ID](#mostrar-usuário-por-id)
+    - [Mostrar comentários de um usuário](#mostrar-comentários-de-um-usuário)
+    - [Mostrar comentários de um usuário de forma paginada](#mostrar-comentários-de-um-usuário-de-forma-paginada)
+    - [Mostrar casas de banho](#mostrar-casas-de-banho)
+    - [Mostrar casas de banho de forma paginada](#mostrar-casas-de-banho-de-forma-paginada)
+    - [Mostrar casas de banho por ID](#mostrar-casas-de-banho-por-id)
+    - [Mostrar casas de banho próximas](#mostrar-casas-de-banho-próximas)
+    - [Mostrar casas de banho próximas de forma paginada](#mostrar-casas-de-banho-próximas-de-forma-paginada)
+    - [Mostrar comentários de uma casa de banho](#mostrar-comentários-de-uma-casa-de-banho)
+    - [Mostrar comentários de uma casa de banho de forma paginada](#mostrar-comentários-de-uma-casa-de-banho-de-forma-paginada)
 
 ## Elementos do Grupo:
 - [Nycolas Souza](https://github.com/nycocado) - 20230989
@@ -129,7 +175,7 @@ Aplicativo para localizar banheiros públicos, com informações úteis como ava
 - **Frustrações:** Devido à sua rotina corrida, Maria encontra dificuldades em encontrar casas de banho adequadas e bem equipadas para cuidar do seu bebé, o que adiciona stress à sua jornada diária.
 
 ## Guiões de Teste
-#### Primeiro Caso (Matilde Homão) - Localizar a melhor casa de banho próxima 
+### Primeiro Caso (Matilde Homão) - Localizar a melhor casa de banho próxima 
 Consideramos a localização da melhor casa de banho próxima como o objetivo principal do projeto, seguindo estes passos: [(Exemplos)](#telas-que-aparecem-no-guião-de-testes)
 - Matilde encontra-se num local desconhecido e precisa urgentemente de uma casa de banho.
 - O Matilde acede à aplicação e visualiza o mapa. 
@@ -160,13 +206,13 @@ Este caso trata da busca por uma casa de banho específica pelo utilizador: [(Ex
 - O processo termina após a realização da ação desejada.
 
 ## Plano de Trabalho
-| **Fase**                            | **Descrição**                                                                                                                                                                                                                                                           | **Prazo**               |
-| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| **1. Planejamento e Prototipação**  | - Definição dos objetivos, escopo e requisitos do projeto. (Todos)<br> - Criação de protótipos da interface de usuário usando Figma. (Todos)                                                                                                                            | Entrega 1: [20/10/2024] |
-| **2. Desenvolvimento do Protótipo** | - Implementação inicial da aplicação móvel em Kotlin com Jetpack Compose. (Todos)<br> - Desenvolvimento inicial do servidor com Spring Boot. (Nycolas)<br> - Desenvolvimento da base de dados MySQL. (Lohanne)<br> - Integração do Back-End com o Front-End (Luan)      | Entrega 2: [24/11/2024] |
-| **3. Desenvolvimento Final**        | - Funcionalidades completas de busca, avaliação e sugestão. (Todos)<br> - Integração e refinamento com a API do Google Maps. (Luan e Nycolas)<br> - Finalização do servidor e das APIs. (Lohanne e Nycolas)                                                             | Entrega 3: [12/01/2024] |
-| **4. Testes**                       | - Realização de testes unitários e de integração da aplicação. (Todos)<br> - Coleta de feedback de usuários e melhorias com base nas avaliações. (Todos)                                                                                                                | Entrega 3: [12/01/2024] |
-| **5. Documentação**                 | - Criação do relatório final do projeto. (Todos)                                                                                                                                                                                                                        | Entrega 3: [12/01/2024] |
+| **Fase**                            | **Descrição**                                                                                                                                                                                                                                                      | **Prazo**               |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
+| **1. Planejamento e Prototipação**  | - Definição dos objetivos, escopo e requisitos do projeto. (Todos)<br> - Criação de protótipos da interface de usuário usando Figma. (Todos)                                                                                                                       | Entrega 1: [20/10/2024] |
+| **2. Desenvolvimento do Protótipo** | - Implementação inicial da aplicação móvel em Kotlin com Jetpack Compose. (Todos)<br> - Desenvolvimento inicial do servidor com Spring Boot. (Nycolas)<br> - Desenvolvimento da base de dados MySQL. (Lohanne)<br> - Integração do Back-End com o Front-End (Luan) | Entrega 2: [24/11/2024] |
+| **3. Desenvolvimento Final**        | - Funcionalidades completas de busca, avaliação e sugestão. (Todos)<br> - Integração e refinamento com a API do Google Maps. (Luan e Nycolas)<br> - Finalização do servidor e das APIs. (Lohanne e Nycolas)                                                        | Entrega 3: [12/01/2024] |
+| **4. Testes**                       | - Realização de testes unitários e de integração da aplicação. (Todos)<br> - Coleta de feedback de usuários e melhorias com base nas avaliações. (Todos)                                                                                                           | Entrega 3: [12/01/2024] |
+| **5. Documentação**                 | - Criação do relatório final do projeto. (Todos)                                                                                                                                                                                                                   | Entrega 3: [12/01/2024] |
 
 ## Descrição da Solução
 O projeto **[Think Toilet](https://github.com/nycocado/think-toilet)** é uma aplicação móvel que ajuda os utilizadores a encontrar e avaliar casas de banho próximas. A aplicação exibe um mapa interativo com as casas de banho mais bem avaliadas e fornece informações como preço, acessibilidade e restrições de uso (gratuito, público ou para clientes). Os utilizadores podem avaliar critérios como limpeza, acessibilidade, papel disponível e estrutura, além de deixar comentários. A aplicação também permite sugerir novas casas de banho, denunciar locais ou comentários inadequados e visualizar seu histórico de avaliações. Com integração ao Google Maps, oferece rotas para facilitar o acesso aos locais.
@@ -266,11 +312,52 @@ Utilizando **[MySQL](https://www.mysql.com/)**, o banco de dados será projetado
 ### Prototipação:
 - **Software:** [Figma](https://www.figma.com/) para design e prototipação da interface do usuário.
 
+## Alterações no Projeto - Segunda Entrega
+Na segunda entrega, não houve alterações conceituais no projeto. Mantivemos os princípios da proposta original, focando na implementação técnica. O destaque foi o desenvolvimento da fórmula para cálculo de médias de avaliação, garantindo uma análise precisa e alinhada aos objetivos do projeto.
+
+### Ajustes Técnicos
+Definimos uma fórmula para calcular a média de avaliação das casas de banho, considerando diferentes pesos para os critérios avaliados:
+
+$$
+\text{Média} = (\text{clean} \times 0.2) + \left(\frac{\text{paper}}{20} \times 0.4\right) + (\text{structure} \times 0.2) + (\text{accessibility} \times 0.2)
+$$
+
+- **clean:** Avaliação da limpeza, de 0 a 5, com peso de 20%.
+- **paper:** Avaliação em porcentagem do papel, de 0 a 100, com peso de 40%.
+- **structure:** Avaliação da estrutura, de 0 a 5, com peso de 20%.
+- **accessibility:** Avaliação da acessibilidade, de 0 a 5, com peso de 20%.
+
+Além disso, agora as avaliações da categoria **papel** são valores **booleanos**, indicando se o papel estava disponível ou não. Isso simplifica a avaliação e permite uma análise mais direta da disponibilidade do papel higiênico nas casas de banho.
+
+### Progresso do Desenvolvimento
+- **Funcionalidades Implementadas:**
+  - Visualização de casas próximas no Bottom Sheet.
+  - Visualização de detalhes da casa de banho (nome, endereço, avaliações médias e comentários).
+  - Redirecionamento da casa de banho para o Google Maps.
+- **Funcionalidades em Desenvolvimento:**
+  - Visualizar a foto da casa de banho.
+  - Avaliação de casas de banho.
+  - Visualização do histórico de avaliações.
+  - Login e registro de usuários.
+  - Sugestão de novas casas de banho.
+- **Funcionalidades Futuras:**
+  - Denúncia de casas de banho e comentários.
+  - Integração com o Google Maps para busca de dados e visualização do mapa.
+  - Pesquisa de casas de banho específicas.
+
+### Desafios Enfrentados
+1. **Transporte de Informações entre Telas (NavHosts):**  
+  O principal desafio foi o transporte de informações entre os **NavHosts**, que estava sendo impedido pelo aninhamento do NavHost principal e o do Bottom Sheet. A solução foi estabelecer um nó de comunicação entre os dois NavHosts, o que permitiu o compartilhamento de dados de forma eficiente e o fluxo adequado da navegação.
+1. **Conexão com a API:**  
+  Embora o problema com o transporte de dados fosse o principal, a conexão com a API também enfrentou obstáculos devido ao **escopo** do **NavHost** e dos **Composables**. A solução foi implementar o **Hilt** para injeção de dependências, o que facilitou a comunicação entre os componentes e garantiu o funcionamento correto da integração com a API.
+1. **Consulta da Localização:**  
+  A consulta da localização das casas de banho próximas foi um desafio adicional, pois exigia a integração com o **Google Services**, o que necessitava de acesso ao contexto da aplicação pela **ViewModel**. A solução, assim como nas situações anteriores, foi a implementação do Hilt para injeção de dependências, permitindo o acesso ao contexto e a consulta da localização de forma eficiente.
+
 ## Diagrama de Classes
 ![Diagrama de Classes](documents/segunda_entrega/diagramas/classes.png)
 
 ## Planificação 
-[Gráfico de Gantt](documents/gantt/gantt.pdf)  
+[Gráfico de Gantt](documents/primeira_entrega/gantt/gantt.pdf)  
 [ClickUp](https://app.clickup.com/9012385337/v/s/90121717706)
 
 ## Mockups e Interface
@@ -339,7 +426,7 @@ Outro objetivo central é o incentivo à participação ativa, implementando um 
 ### Modelo Entidade-Relacionamento
 ![Modelo Entidade-Relacionamento](documents/segunda_entrega/diagramas/er.png)  
 ### Documento de Referência
-[BD Report - Dicionario e Guia de Dados](documents/g04-relatoriobd.pdf)
+[BD Report - Dicionario e Guia de Dados](documents/g04-bdreport.pdf)
 
 # REST API
 ## Introdução
