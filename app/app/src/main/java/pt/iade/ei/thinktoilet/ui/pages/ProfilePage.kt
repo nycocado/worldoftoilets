@@ -27,14 +27,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.User
 import pt.iade.ei.thinktoilet.models.UserMain
 import pt.iade.ei.thinktoilet.tests.generateUserMain
-import pt.iade.ei.thinktoilet.ui.components.ProfileToiletReviews
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
-import pt.iade.ei.thinktoilet.viewmodel.LocalViewModel
 
 @Composable
 fun ProfilePage(
@@ -90,12 +87,6 @@ fun ProfilePage(
             style = MaterialTheme.typography.headlineSmall,
             textDecoration = TextDecoration.Underline
         )
-        Column {
-            val localViewModel: LocalViewModel = viewModel()
-            for (comment in userMain.historyComment) {
-                ProfileToiletReviews(comment, localViewModel.toilets.value?.get(comment.toiletId)!!)
-            }
-        }
     }
 }
 
@@ -205,7 +196,7 @@ fun ProfileStatus(user: User) {
                             color = Color.Black,
                             shape = MaterialTheme.shapes.extraLarge
                         ), progress = {
-                        progress / 100f // Altera Processode Nivel
+                        progress / 100f // Altera Processo de Nivel
                     },
                     strokeCap = StrokeCap.Round,
                     color = MaterialTheme.colorScheme.primaryContainer
@@ -213,7 +204,7 @@ fun ProfileStatus(user: User) {
             }
             Column {
                 Text(
-                    text = "Nível 2",  // Altera Processode Nivel
+                    text = "Nível 2",  // Altera Processo de Nivel
                     fontWeight = FontWeight.SemiBold,
                     style = MaterialTheme.typography.titleSmall
                 )

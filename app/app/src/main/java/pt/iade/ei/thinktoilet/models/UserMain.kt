@@ -5,7 +5,5 @@ import java.io.Serializable
 data class UserMain(
     val user: User,
     var email: String,
-    var password: String,
-    var position: Position,
-    var historyComment: List<CommentItem>
+    var password: String
 ): Serializable

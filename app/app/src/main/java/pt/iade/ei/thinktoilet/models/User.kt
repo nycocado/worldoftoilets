@@ -1,11 +1,12 @@
 package pt.iade.ei.thinktoilet.models
 
+import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 data class User(
-    var id: Int?,
-    val name: String,
-    val iconId: Int,
-    val numComments: Int,
-    val points: Int
+    @SerializedName("id") var id: Int?,
+    @SerializedName("name") val name: String,
+    @SerializedName("iconId") val iconId: String,
+    @SerializedName("numComments") val numComments: Int,
+    @SerializedName("points") val points: Int
 ): Serializable

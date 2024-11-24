@@ -22,5 +22,4 @@ public class ToiletDTO {
     private int numComments;
     private String placeId;
     private String image;
-    private List<Void> comments;
 }

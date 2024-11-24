@@ -20,7 +20,7 @@ import pt.iade.ei.thinktoilet.tests.generateRandomToilet
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
 @Composable
-fun ProfileToiletReviews(comment: CommentItem, toilet: Toilet) {
+fun ToiletReview(comment: CommentItem, toilet: Toilet) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -71,6 +71,6 @@ fun ProfileToiletReviews(comment: CommentItem, toilet: Toilet) {
 @Composable
 fun PreviewToiletReviews() {
     AppTheme {
-        ProfileToiletReviews(comment = generateComment(), toilet = generateRandomToilet())
+        ToiletReview(comment = generateComment(), toilet = generateRandomToilet())
     }
 }

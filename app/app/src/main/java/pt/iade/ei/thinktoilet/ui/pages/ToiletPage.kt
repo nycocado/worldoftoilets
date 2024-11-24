@@ -1,6 +1,8 @@
 package pt.iade.ei.thinktoilet.ui.pages
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,6 +19,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,10 +39,9 @@ fun ToiletPage(
     onClick: () -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
-    Column(
-        modifier = Modifier.padding(16.dp)
-    ) {
+    Column{
         Text(
             text = toilet.name,
             style = MaterialTheme.typography.headlineMedium,
@@ -86,7 +88,16 @@ fun ToiletPage(
             }
             Column {
                 Button(
-                    onClick = { },
+                    onClick = {
+                        val destination = Uri.encode(toilet.address)
+                        val intent = Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("https://www.google.com/maps/dir/?api=1&destination=${destination}QVB&destination_place_id=${toilet.placeId}&travelmode=walking")
+                        ).apply {
+                            putExtra(Intent.EXTRA_REFERRER, Uri.parse("android-app://com.google.android.apps.maps"))
+                        }
+                        context.startActivity(intent)
+                    },
                     colors = ButtonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer,

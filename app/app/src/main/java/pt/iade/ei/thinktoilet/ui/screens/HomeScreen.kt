@@ -33,7 +33,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import pt.iade.ei.thinktoilet.R
-import pt.iade.ei.thinktoilet.models.CommentItem
 import pt.iade.ei.thinktoilet.ui.components.Comment
 import pt.iade.ei.thinktoilet.ui.components.CustomDragHandle
 import pt.iade.ei.thinktoilet.ui.components.LocationCard
@@ -127,22 +126,35 @@ fun ToiletDetail(
     toiletId: Int,
 ) {
     val toilet = localViewModel.toilets.value?.find { it.id == toiletId }
-    localViewModel.getToiletComment(toiletId)
-    val comments: List<CommentItem> = localViewModel.commentsToilet.value!!.filter { it.toiletId == toiletId }
-    LazyColumn {
+    val comments = localViewModel.commentsToilet.observeAsState().value?.filter { it.toiletId == toiletId }.orEmpty()
+
+    if (comments.isEmpty()) {
+        localViewModel.getToiletComments(toiletId)
+    }
+
+    LazyColumn(
+        modifier = Modifier.padding(16.dp)
+    ) {
         item {
             ToiletPage(toilet = toilet!!) {
                 navController.navigate("rating")
             }
         }
-        items(comments) { comment ->
-            Comment(
-                comment = comment,
-                user = localViewModel.users.value!!.find { it.id == comment.userId }!!
-            )
+        if (comments.isEmpty()) {
+            item {
+                CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+            }
+        } else {
+            items(comments) { comment ->
+                val user = localViewModel.users.value?.find { it.id == comment.userId }
+                if (user != null) {
+                    Comment(comment = comment, user = user)
+                }
+            }
         }
     }
 }
+
 
 @Composable
 fun ToiletList(
@@ -171,6 +183,7 @@ fun ToiletList(
                 items(5) { index ->
                     LocationCard(
                         toilet = toilets.value!![index],
+                        location = localViewModel.location.value!!,
                         onClick = onToiletSelected
                     )
                 }

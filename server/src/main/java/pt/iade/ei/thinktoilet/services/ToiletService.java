@@ -68,8 +68,7 @@ public class ToiletService {
                 toilet.getLongitude(),
                 numComments.getComments(),
                 toilet.getPlaceId(),
-                toilet.getImage(),
-                List.of()
+                toilet.getImage()
         );
     }
 
@@ -115,8 +114,7 @@ public class ToiletService {
                     toilet.getLongitude(),
                     numComments,
                     toilet.getPlaceId(),
-                    toilet.getImage(),
-                    List.of()
+                    toilet.getImage()
             );
         }).toList();
     }

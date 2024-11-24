@@ -2,7 +2,6 @@ package pt.iade.ei.thinktoilet.tests
 
 import pt.iade.ei.thinktoilet.models.CommentItem
 import pt.iade.ei.thinktoilet.models.Extra
-import pt.iade.ei.thinktoilet.models.Position
 import pt.iade.ei.thinktoilet.models.Rating
 import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.models.User
@@ -15,13 +14,6 @@ fun generateRandomRatingCategory(): Rating {
         paper = (0..100).random().toFloat(),
         structure = (0..5).random().toFloat(),
         accessibility = (0..5).random().toFloat(),
-    )
-}
-
-fun generateRandomPosition(): Position {
-    return Position(
-        latitude = (0..100).random().toDouble(),
-        longitude = (0..100).random().toDouble()
     )
 }
 
@@ -47,7 +39,6 @@ fun generateRandomToilet(id: Int = (1..100).random(), numComments: Int = (1..40)
         longitude = (0..100).random().toDouble(),
         numComments = 0,
         placeId = "0",
-        comments = generateCommentsList(numComments),
         image = ""
     )
 }
@@ -73,7 +64,7 @@ fun generateUser(): User {
     return User(
         id = 1,
         name = "Luan Ribeiro",
-        iconId = 1,
+        iconId = "",
         numComments = (0..200).random(),
         points = (0..10000).random(),
     )
@@ -83,9 +74,7 @@ fun generateUserMain(): UserMain {
     return UserMain(
         user = generateUser(),
         email = "Lohanneguedes@fake.com",
-        password = "nothing_here",
-        position = generateRandomPosition(),
-        historyComment = generateCommentsList(),
+        password = "nothing_here"
     )
 }
 
