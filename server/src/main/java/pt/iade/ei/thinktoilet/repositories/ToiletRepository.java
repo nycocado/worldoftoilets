@@ -6,6 +6,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 import pt.iade.ei.thinktoilet.models.entities.Toilet;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -15,6 +16,9 @@ public interface ToiletRepository extends PagingAndSortingRepository<Toilet, Int
 
     @EntityGraph(attributePaths = {"city", "city.country", "access"})
     Toilet findToiletById(int id);
+
+    @EntityGraph(attributePaths = {"city", "city.country", "access"})
+    List<Toilet> findToiletsByIdIn(Collection<Integer> ids);
 
     @EntityGraph(attributePaths = {"city", "city.country", "access"})
     @Query("SELECT t " +

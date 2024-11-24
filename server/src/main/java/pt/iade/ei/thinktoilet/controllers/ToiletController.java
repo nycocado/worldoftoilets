@@ -26,9 +26,14 @@ public class ToiletController {
     private CommentService commentService;
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ToiletDTO> getToilets() {
+    public List<ToiletDTO> getToilets(
+            @RequestParam(required = false) List<Integer> ids
+    ) {
         logger.info("Sending all toilets");
-        return toiletService.getAllToilets();
+        if (ids == null)
+            return toiletService.getAllToilets();
+        else
+            return toiletService.getToiletsByIds(ids);
     }
 
     @GetMapping(path = "/page", produces = MediaType.APPLICATION_JSON_VALUE)

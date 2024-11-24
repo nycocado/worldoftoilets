@@ -43,6 +43,12 @@ public class ToiletService {
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<ToiletDTO> getToiletsByIds(Collection<Integer> ids) {
+        List<Toilet> toilets = toiletRepository.findToiletsByIdIn(ids);
+        return mapToiletDTOS(toilets);
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Page<ToiletDTO> getAllToiletsPaging(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Toilet> toilets = toiletPagingRepository.findToiletsByOrderById(pageable);
