@@ -3,9 +3,12 @@ package pt.iade.ei.thinktoilet.controllers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import pt.iade.ei.thinktoilet.exceptions.GlobalExceptionHandler;
 import pt.iade.ei.thinktoilet.exceptions.NotFoundException;
 import pt.iade.ei.thinktoilet.models.dtos.CommentDTO;
@@ -94,6 +97,29 @@ public class ToiletController {
             throw new NotFoundException(String.valueOf(id), "Toilet", "id");
         } else {
             return comments;
+        }
+    }
+
+    @PostMapping(path = "{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void uploadImage(
+            @PathVariable int id,
+            @RequestParam(required = true, name = "image") MultipartFile image
+    ) {
+        logger.info("Uploading image to toilet with id {}", id);
+        toiletService.uploadImage(id, image);
+    }
+
+    @GetMapping(path = "/{id}/image", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<Resource> getImage(@PathVariable int id) {
+        logger.info("Sending image from toilet with id {}", id);
+        try {
+            Resource image = toiletService.getImage(id);
+            return ResponseEntity
+                    .ok()
+                    .contentType(MediaType.IMAGE_JPEG)
+                    .body(image);
+        } catch (Exception e) {
+            throw new NotFoundException(String.valueOf(id), "Toilet", "id");
         }
     }
 }

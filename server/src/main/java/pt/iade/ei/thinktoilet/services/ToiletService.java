@@ -1,6 +1,9 @@
 package pt.iade.ei.thinktoilet.services;
 
+import lombok.extern.flogger.Flogger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -8,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import pt.iade.ei.thinktoilet.exceptions.NotFoundException;
 import pt.iade.ei.thinktoilet.models.dtos.ToiletDTO;
 import pt.iade.ei.thinktoilet.models.entities.Extra;
@@ -17,10 +21,8 @@ import pt.iade.ei.thinktoilet.models.views.CountCommentToilet;
 import pt.iade.ei.thinktoilet.models.views.Rating;
 import pt.iade.ei.thinktoilet.repositories.*;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.io.File;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,6 +37,8 @@ public class ToiletService {
     private RatingRepository ratingRepository;
     @Autowired
     private CountCommentToiletRepository countCommentToiletRepository;
+
+    private static final String IMAGE_DIR = "/images/";
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<ToiletDTO> getAllToilets(){
@@ -91,6 +95,38 @@ public class ToiletService {
         List<Toilet> toiletsList = toilets.toList();
 
         return new PageImpl<>(mapToiletDTOS(toiletsList), pageable, toilets.getTotalElements());
+    }
+
+    public void uploadImage(int id, MultipartFile image) {
+        Optional.ofNullable(toiletRepository.findToiletById(id)).orElseThrow(() -> new NotFoundException(String.valueOf(id), "Toilet", "id"));
+
+        if(image.isEmpty()) {
+            throw new NotFoundException("Image", "Image", "image");
+        }
+
+        if (!Objects.requireNonNull(image.getContentType()).startsWith("image/")) {
+            throw new NotFoundException(image.getContentType(), "Image", "image");
+        }
+
+        String imagePath = IMAGE_DIR + "T" + id + ".jpeg";
+
+        try {
+            File targetFile = new File(imagePath);
+            image.transferTo(targetFile);
+        } catch (Exception e) {
+            throw new NotFoundException(e.getMessage(), "Image", "image");
+        }
+    }
+
+    public Resource getImage(int id) {
+        String imagePath = IMAGE_DIR + "T" + id + ".jpeg";
+        File file = new File(imagePath);
+
+        if (!file.exists()) {
+            throw new NotFoundException(String.valueOf(id), "Image", "image");
+        }
+
+        return new FileSystemResource(file);
     }
 
     private <T> List<ToiletDTO> mapToiletDTOS(Collection<Toilet> toilets){

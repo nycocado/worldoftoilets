@@ -1,5 +1,6 @@
 package pt.iade.ei.thinktoilet.network
 
+import pt.iade.ei.thinktoilet.BuildConfig
 import pt.iade.ei.thinktoilet.models.CommentItem
 import pt.iade.ei.thinktoilet.models.Toilet
 import retrofit2.http.GET

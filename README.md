@@ -151,7 +151,7 @@ Aplicativo para localizar banheiros públicos, com informações úteis como ava
 ## Personas  
 
 ### Matilde Homão  
-- **Iade:** 21 anos
+- **Idade:** 21 anos
 - **Sexo:** Feminino
 - **Ocupação:** Motorista de aplicação e Estudante
 - **Descrição:** Matilde é uma jovem motorista de aplicação que enfrenta diversos desafios no seu dia a dia, como deslocar-se por diferentes locais e gerir a rotina entre o trabalho e os estudos numa universidade de prestígio.
@@ -159,7 +159,7 @@ Aplicativo para localizar banheiros públicos, com informações úteis como ava
 - **Frustrações:** Dificuldade em encontrar casas de banho em locais desconhecidos ou remotos.
 
 ### David Barção
-- **Iade:** 20 anos
+- **Idade:** 20 anos
 - **Sexo:** Masculino
 - **Ocupação:** Turista e Empreendedor 
 - **Descrição:** David é um jovem empreendedor em busca de autoconhecimento, decidido a explorar o mundo após desenvolver uma carreira de sucesso. Viajar é a sua forma de se conectar consigo mesmo e com diferentes culturas.
@@ -167,7 +167,7 @@ Aplicativo para localizar banheiros públicos, com informações úteis como ava
 - **Frustrações:** Devido às suas constantes viagens, David frequentemente desconhece as características e comodidades das regiões onde irá pernoitar. Por isso, sente a necessidade de uma aplicação que facilite a localização de casas de banho confortáveis e próximas.
 
 ### Maria Cunha
-- **Iade:** 39 anos
+- **Idade:** 39 anos
 - **Sexo:** Feminino
 - **Ocupação:** Jornalista, Dentista e Gestante 
 - **Descrição:** Maria, mãe diagnosticada com Síndrome de Laron, cuida de um bebé de 8 meses e enfrenta os desafios de uma rotina intensa. Para lidar com as necessidades do seu filho, precisa estar sempre preparada para trocar fraldas e oferecer cuidados adequados, mesmo em locais fora de casa.
