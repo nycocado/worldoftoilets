@@ -9,11 +9,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import pt.iade.ei.thinktoilet.exceptions.GlobalExceptionHandler;
 import pt.iade.ei.thinktoilet.exceptions.NotFoundException;
 import pt.iade.ei.thinktoilet.models.dtos.CommentDTO;
 import pt.iade.ei.thinktoilet.models.dtos.ToiletDTO;
-import pt.iade.ei.thinktoilet.models.entities.Toilet;
 import pt.iade.ei.thinktoilet.services.CommentService;
 import pt.iade.ei.thinktoilet.services.ToiletService;
 
