@@ -1,5 +1,6 @@
 package pt.iade.ei.thinktoilet.ui.components
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -21,7 +22,10 @@ import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.UserMain
 
 @Composable
-fun ProfileUser(userMain: UserMain) {
+fun ProfileUser(
+    userMain: UserMain,
+    context: Context
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -53,7 +57,7 @@ fun ProfileUser(userMain: UserMain) {
         )
         Text(
             modifier = Modifier.padding(top = 8.dp),
-            text = userMain.user.points.toString() + " points",
+            text = userMain.user.points.toString() + " " + context.getString(R.string.points),
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.titleLarge,

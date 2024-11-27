@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.ui.components.ProfileStatus
 import pt.iade.ei.thinktoilet.ui.components.ProfileUser
 import pt.iade.ei.thinktoilet.ui.components.ToiletReview
@@ -37,6 +39,7 @@ fun ProfileScreen(
 ) {
     val userMain = localViewModel.userMain.value!!
     val comments = localViewModel.commentsUser.observeAsState().value?.filter { it.userId == userMain.user.id }.orEmpty()
+    val context = LocalContext.current
 
     if (comments.isEmpty()) {
         localViewModel.getUserComments(userMain.user.id!!)
@@ -51,14 +54,14 @@ fun ProfileScreen(
             item {
                 Text(
                     modifier = Modifier.padding(vertical = 20.dp),
-                    text = "Perfil",
+                    text = context.getString(R.string.profile),
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.headlineLarge
                 )
             }
 
             item {
-                ProfileUser(userMain)
+                ProfileUser(userMain, context)
             }
 
             item {
@@ -81,7 +84,7 @@ fun ProfileScreen(
                         )
                     ) {
                         Text(
-                            text = "Editar Perfil",
+                            text = context.getString(R.string.edit_profile),
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.Bold
                         )
@@ -90,7 +93,7 @@ fun ProfileScreen(
             }
 
             item {
-                ProfileStatus(userMain.user)
+                ProfileStatus(userMain.user, context)
             }
 
             item {
@@ -108,7 +111,7 @@ fun ProfileScreen(
 
             item {
                 Text(
-                    text = "Suas Críticas",
+                    text = context.getString(R.string.your_critics),
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.headlineSmall,
                     textDecoration = TextDecoration.Underline

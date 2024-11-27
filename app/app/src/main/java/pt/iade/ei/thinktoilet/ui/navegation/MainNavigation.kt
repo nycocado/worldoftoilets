@@ -1,12 +1,10 @@
 package pt.iade.ei.thinktoilet.ui.navegation
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.ui.screens.HistoryScreen
 import pt.iade.ei.thinktoilet.ui.screens.HomeScreen
 import pt.iade.ei.thinktoilet.ui.screens.ProfileScreen
@@ -26,21 +24,22 @@ fun MainNavigation(
         historyNavScreen(
             localViewModel,
             onNavigateToHomeScreen = { selectedToiletId ->
-                navController.navigate(Routes.homeToiletDetail(selectedToiletId!!)) {
-                    popUpTo(navController.graph.startDestinationId) {
-                        inclusive = false
+                navController.navigate(Routes.homeToiletDetail(selectedToiletId!!)){
+                    popUpTo(navController.graph.startDestinationRoute!!){
+                        inclusive = true
                     }
                     launchSingleTop = true
                 }
             }
         )
         profileNavScreen(navController, localViewModel)
-        ratingNavScreen(navController)
+        ratingNavScreen(navController, localViewModel){
+            navController.navigateUp()
+        }
         homeToiletDetailNavScreen(navController, localViewModel)
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 private fun NavGraphBuilder.homeNavScreen(
     navController: NavHostController,
     localViewModel: LocalViewModel
@@ -69,14 +68,16 @@ private fun NavGraphBuilder.profileNavScreen(
 }
 
 private fun NavGraphBuilder.ratingNavScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    localViewModel: LocalViewModel,
+    onRatingToBack: () -> Unit
 ) {
     composable(Routes.RATING) {
-        RatingScreen(navController)
+        val toiletId = it.arguments?.getString("toiletId")!!.toInt()
+        RatingScreen(navController, localViewModel, toiletId, onRatingToBack)
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 private fun NavGraphBuilder.homeToiletDetailNavScreen(
     navController: NavHostController,
     localViewModel: LocalViewModel

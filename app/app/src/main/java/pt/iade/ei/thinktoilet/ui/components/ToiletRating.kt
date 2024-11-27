@@ -1,6 +1,7 @@
 package pt.iade.ei.thinktoilet.ui.components
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -11,11 +12,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.Toilet
 
 @SuppressLint("DefaultLocale")
 @Composable
-fun ToiletRating(toilet: Toilet) {
+fun ToiletRating(
+    toilet: Toilet,
+    context: Context
+) {
     Row(
         modifier = Modifier.padding(horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -40,20 +45,19 @@ fun ToiletRating(toilet: Toilet) {
         Column {
             ProgressBar(
                 progress = toilet.rating.clean,
-                text = String.format("%.1f", toilet.rating.clean) + " Limpeza"
+                text = String.format("%.1f", toilet.rating.clean) + " " + context.getString(R.string.clean)
             )
-
             ProgressBar(
                 progress = toilet.rating.structure,
-                text = String.format("%.1f", toilet.rating.structure) + " Estrutura"
+                text = String.format("%.1f", toilet.rating.structure) + " " + context.getString(R.string.structure)
             )
             ProgressBar(
                 progress = toilet.rating.accessibility,
-                text = String.format("%.1f", toilet.rating.accessibility) + " Acessibilidade"
+                text = String.format("%.1f", toilet.rating.accessibility) + " " + context.getString(R.string.accessibility)
             )
             ProgressBar(
                 progress = toilet.rating.paper,
-                text = String.format("%.0f", toilet.rating.paper) + "% Papel",
+                text = String.format("%.0f", toilet.rating.paper) + "% " + context.getString(R.string.paper),
                 maxValue = 100f
             )
         }

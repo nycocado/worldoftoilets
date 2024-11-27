@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavController
@@ -21,13 +22,16 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
+    val context = LocalContext.current
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     var selectedItemIndex by rememberSaveable {
         mutableIntStateOf(0)
     }
 
+    val bottomRoutes = getBottomRoutes(context)
+
     LaunchedEffect(currentRoute) {
-        selectedItemIndex = BottomRoutes.indexOfFirst {
+        selectedItemIndex = bottomRoutes.indexOfFirst {
             currentRoute?.startsWith(it.route) == true
         }
     }
@@ -35,7 +39,7 @@ fun BottomNavigationBar(navController: NavController) {
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
     ) {
-        BottomRoutes.forEachIndexed { index, item ->
+        bottomRoutes.forEachIndexed { index, item ->
             NavigationBarItem(
                 colors = NavigationBarItemColors(
                     selectedIconColor = MaterialTheme.colorScheme.onTertiaryContainer,
@@ -50,14 +54,16 @@ fun BottomNavigationBar(navController: NavController) {
                 onClick = {
                     selectedItemIndex = index
                     navController.navigate(item.route) {
-                        popUpTo(navController.graph.startDestinationId) { saveState = true }
+                        popUpTo(navController.graph.startDestinationId) {
+                            saveState = true
+                        }
                         launchSingleTop = true
                         restoreState = true
                     }
                 },
                 label = {
                     Text(
-                        text = item.title,
+                        text = item.getTitle(),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = if(index == selectedItemIndex) FontWeight.Bold else FontWeight.Normal,
                         maxLines = 1,
@@ -82,7 +88,7 @@ fun BottomNavigationBar(navController: NavController) {
                     ) {
                         Icon(
                             imageVector = if (index == selectedItemIndex) item.selectedIcon else item.unselectedIcon,
-                            contentDescription = item.title
+                            contentDescription = item.getTitle()
                         )
                     }
                 }

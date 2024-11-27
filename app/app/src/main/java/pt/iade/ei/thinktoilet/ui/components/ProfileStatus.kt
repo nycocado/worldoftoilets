@@ -1,5 +1,6 @@
 package pt.iade.ei.thinktoilet.ui.components
 
+import android.content.Context
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,10 +18,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.User
 
 @Composable
-fun ProfileStatus(user: User) {
+fun ProfileStatus(
+    user: User,
+    context: Context
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()
     ) {
@@ -51,7 +56,7 @@ fun ProfileStatus(user: User) {
             style = MaterialTheme.typography.titleLarge
         )
         Text(
-            "Progresso",
+            text = context.getString(R.string.progress),
             modifier = Modifier.padding(vertical = 8.dp),
             fontWeight = FontWeight.SemiBold,
             style = MaterialTheme.typography.titleMedium
@@ -62,7 +67,7 @@ fun ProfileStatus(user: User) {
         ) {
             Column {
                 Text(
-                    text = "Nível 1", // Altera Processode Nivel
+                    text = context.getString(R.string.level) + " 1", // Altera Processode Nivel
                     fontWeight = FontWeight.SemiBold,
                     style = MaterialTheme.typography.titleSmall
                 )
@@ -91,7 +96,7 @@ fun ProfileStatus(user: User) {
             }
             Column {
                 Text(
-                    text = "Nível 2",  // Altera Processo de Nivel
+                    text = context.getString(R.string.level) + " 2",  // Altera Processo de Nivel
                     fontWeight = FontWeight.SemiBold,
                     style = MaterialTheme.typography.titleSmall
                 )

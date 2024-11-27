@@ -6,8 +6,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import pt.iade.ei.thinktoilet.ui.screens.ToiletDetail
-import pt.iade.ei.thinktoilet.ui.screens.ToiletList
+import pt.iade.ei.thinktoilet.ui.screens.ToiletDetailScreen
+import pt.iade.ei.thinktoilet.ui.screens.ToiletListScreen
 import pt.iade.ei.thinktoilet.viewmodel.LocalViewModel
 
 @Composable
@@ -21,7 +21,9 @@ fun BottomSheetNavigation(
         startDestination = Routes.HOME
     ) {
         toiletListNavScreen(localViewModel, navController)
-        toiletDetailNavScreen(mainNavController, localViewModel)
+        toiletDetailNavScreen(mainNavController, localViewModel){
+            mainNavController.navigate(Routes.rating(it))
+        }
     }
 }
 
@@ -30,7 +32,7 @@ private fun NavGraphBuilder.toiletListNavScreen(
     navController: NavHostController
 ) {
     composable(Routes.HOME) {
-        ToiletList(localViewModel) { toiletId ->
+        ToiletListScreen(localViewModel) { toiletId ->
             navController.navigate(Routes.homeToiletDetail(toiletId))
         }
     }
@@ -38,10 +40,11 @@ private fun NavGraphBuilder.toiletListNavScreen(
 
 private fun NavGraphBuilder.toiletDetailNavScreen(
     mainNavController: NavController,
-    localViewModel: LocalViewModel
+    localViewModel: LocalViewModel,
+    onToiletDetailToRating: (Int) -> Unit
 ) {
     composable(Routes.HOME_TOILET_DETAIL) { backStackEntry ->
         val toiletId = backStackEntry.arguments?.getString("toiletId")!!.toInt()
-        ToiletDetail(mainNavController, localViewModel, toiletId)
+        ToiletDetailScreen(localViewModel, toiletId, onToiletDetailToRating)
     }
 }

@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name" translatable="false">Think Toilet</string>
+    <string name="home">Home</string>
+    <string name="history">Histórico</string>
+    <string name="profile">Perfil</string>
+    <string name="go_to_maps">Ir para o Maps</string>
+    <string name="rate">Avaliar</string>
+    <string name="clean">Limpeza</string>
+    <string name="paper">Papel</string>
+    <string name="structure">Estrutura</string>
+    <string name="accessibility">Acessibilidade</string>
+    <string name="rates">Avaliações</string>
+    <string name="edit_profile">Editar Perfil</string>
+    <string name="points">Pontos</string>
+    <string name="progress">Progresso</string>
+    <string name="level">Nível</string>
+    <string name="your_critics">Suas Críticas</string>
+    <string name="error_image">Erro ao carregar imagem</string>
+    <string name="comments">Comentários</string>
 </resources>

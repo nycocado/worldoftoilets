@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
@@ -39,10 +40,14 @@ import pt.iade.ei.thinktoilet.ui.components.RatingComment
 import pt.iade.ei.thinktoilet.ui.components.RatingItem
 import pt.iade.ei.thinktoilet.ui.components.Stars
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
+import pt.iade.ei.thinktoilet.viewmodel.LocalViewModel
 
 @Composable
 fun RatingScreen(
     navController: NavController = rememberNavController(),
+    localViewModel: LocalViewModel = viewModel(),
+    toiletId: Int,
+    onRatingToBack: () -> Unit = {}
 ) {
     var ratingClean by remember { mutableFloatStateOf(0f) }
     var ratingPaper by remember { mutableStateOf(false) }
@@ -163,7 +168,7 @@ fun RatingScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Button(
-                        onClick = { scope.launch { navController.popBackStack() } },
+                        onClick = { scope.launch { onRatingToBack() } },
                         modifier = Modifier
                             .padding(bottom = 10.dp),
                         colors = ButtonColors(
@@ -193,6 +198,8 @@ fun RatingScreen(
 @Composable
 fun DefaultPreview() {
     AppTheme {
-        RatingScreen()
+        RatingScreen(
+            toiletId = 0
+        )
     }
 }
