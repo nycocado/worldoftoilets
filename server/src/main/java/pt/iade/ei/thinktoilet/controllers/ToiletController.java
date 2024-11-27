@@ -99,9 +99,9 @@ public class ToiletController {
     }
 
     @GetMapping(path = "/users/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ToiletDTO> getToiletsByUserId(@PathVariable int userId) {
-        logger.info("Sending toilets from user with id {}", userId);
-        return toiletService.getToiletsByUserId(userId);
+    public List<Integer> getToiletIdsByUserId(@PathVariable int userId) {
+        logger.info("Sending toilet ids from user with id {}", userId);
+        return toiletService.getToiletIdsByUserId(userId);
     }
 
     @PostMapping(path = "{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

@@ -26,6 +26,11 @@ public interface ToiletRepository extends PagingAndSortingRepository<Toilet, Int
             "ORDER BY (6371 * acos(cos(radians(:lat)) * cos(radians(t.latitude)) * cos(radians(t.longitude) - radians(:lon)) + sin(radians(:lat)) * sin(radians(t.latitude))))")
     List<Toilet> findByDistance(double lat, double lon);
 
+    @Query("SELECT i.toilet.id " +
+            "FROM Interaction i " +
+            "WHERE i.user.id = :userId")
+    List<Integer> findToiletIdsByUserId(int userId);
+
     @Query("SELECT i.toilet " +
             "FROM Interaction i " +
             "WHERE i.user.id = :userId")

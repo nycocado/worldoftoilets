@@ -95,9 +95,8 @@ public class ToiletService {
         return new PageImpl<>(mapToiletDTOS(toiletsList), pageable, toilets.getTotalElements());
     }
 
-    public List<ToiletDTO> getToiletsByUserId(int userId) {
-        List<Toilet> toilets = toiletRepository.findToiletsByUserId(userId);
-        return mapToiletDTOS(toilets);
+    public List<Integer> getToiletIdsByUserId(int userId) {
+        return toiletRepository.findToiletIdsByUserId(userId);
     }
 
     public void uploadImage(int id, MultipartFile image) {
