@@ -95,6 +95,11 @@ public class ToiletService {
         return new PageImpl<>(mapToiletDTOS(toiletsList), pageable, toilets.getTotalElements());
     }
 
+    public List<ToiletDTO> getToiletsByUserId(int userId) {
+        List<Toilet> toilets = toiletRepository.findToiletsByUserId(userId);
+        return mapToiletDTOS(toilets);
+    }
+
     public void uploadImage(int id, MultipartFile image) {
         Optional.ofNullable(toiletRepository.findToiletById(id)).orElseThrow(() -> new NotFoundException(String.valueOf(id), "Toilet", "id"));
 
