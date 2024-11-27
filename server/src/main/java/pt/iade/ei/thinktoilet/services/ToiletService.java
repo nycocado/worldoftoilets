@@ -1,8 +1,5 @@
 package pt.iade.ei.thinktoilet.services;
 
-import lombok.extern.flogger.Flogger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -24,9 +21,6 @@ import pt.iade.ei.thinktoilet.models.views.Rating;
 import pt.iade.ei.thinktoilet.repositories.*;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -82,8 +76,7 @@ public class ToiletService {
                 toilet.getLatitude(),
                 toilet.getLongitude(),
                 numComments.getComments(),
-                toilet.getPlaceId(),
-                toilet.getImage()
+                toilet.getPlaceId()
         );
     }
 
@@ -160,8 +153,7 @@ public class ToiletService {
                     toilet.getLatitude(),
                     toilet.getLongitude(),
                     numComments,
-                    toilet.getPlaceId(),
-                    toilet.getImage()
+                    toilet.getPlaceId()
             );
         }).toList();
     }

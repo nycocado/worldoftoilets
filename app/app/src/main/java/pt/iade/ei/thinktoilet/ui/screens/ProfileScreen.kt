@@ -1,21 +1,33 @@
 package pt.iade.ei.thinktoilet.ui.screens
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import pt.iade.ei.thinktoilet.ui.components.ProfileStatus
+import pt.iade.ei.thinktoilet.ui.components.ProfileUser
 import pt.iade.ei.thinktoilet.ui.components.ToiletReview
-import pt.iade.ei.thinktoilet.ui.pages.ProfilePage
 import pt.iade.ei.thinktoilet.viewmodel.LocalViewModel
 
 @Composable
@@ -37,10 +49,72 @@ fun ProfileScreen(
     ) {
         LazyColumn {
             item {
-                ProfilePage(
-                    userMain = localViewModel.userMain.value!!,
+                Text(
+                    modifier = Modifier.padding(vertical = 20.dp),
+                    text = "Perfil",
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.headlineLarge
                 )
             }
+
+            item {
+                ProfileUser(userMain)
+            }
+
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            vertical = 15.dp
+                        ),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Button(
+                        onClick = {
+                            println("Botão de editar perfil pressionado")
+                        }, colors = ButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
+                            disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f)
+                        )
+                    ) {
+                        Text(
+                            text = "Editar Perfil",
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+
+            item {
+                ProfileStatus(userMain.user)
+            }
+
+            item {
+                HorizontalDivider(
+                    modifier = Modifier
+                        .padding(
+                            top = 30.dp,
+                            bottom = 20.dp
+                        )
+                        .fillMaxWidth(1f),
+                    thickness = 2.dp,
+                    color = Color.LightGray
+                )
+            }
+
+            item {
+                Text(
+                    text = "Suas Críticas",
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.headlineSmall,
+                    textDecoration = TextDecoration.Underline
+                )
+            }
+
             if (comments.isEmpty()) {
                 item {
                     CircularProgressIndicator(modifier = Modifier.padding(16.dp))

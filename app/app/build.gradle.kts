@@ -23,6 +23,7 @@ android {
             useSupportLibrary = true
         }
         buildConfigField("String", "API_KEY", gradleLocalProperties(rootDir, providers).getProperty("API_KEY"))
+        buildConfigField("String", "API_URL", gradleLocalProperties(rootDir, providers).getProperty("API_URL"))
     }
 
     buildTypes {

@@ -49,7 +49,4 @@ public class Toilet {
 
     @Column(name = "toil_cdate")
     private LocalDate creationDate;
-
-    @Column(name = "toil_image")
-    private String image;
 }

@@ -11,8 +11,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient{
-    private const val BASE_URL = "https://think-toilet-production.up.railway.app/api/"
-    private val API_KEY = BuildConfig.API_KEY
+    private const val BASE_URL = BuildConfig.API_URL
+    private const val API_KEY = BuildConfig.API_KEY
 
     class ApiKeyInterceptor(private val apiKey: String) : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {

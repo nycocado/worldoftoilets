@@ -1,3 +1,3 @@
 <resources>
-    <string name="app_name">Think Toilet</string>
+    <string name="app_name" translatable="false">Think Toilet</string>
 </resources>

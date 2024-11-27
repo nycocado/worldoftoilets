@@ -21,5 +21,4 @@ public class ToiletDTO {
     private Double longitude;
     private int numComments;
     private String placeId;
-    private String image;
 }

@@ -22,7 +22,6 @@ create table toilet (
 					toil_address VARCHAR(255) NOT NULL,
 					toil_placeid VARCHAR(255) UNIQUE,
 					toil_cdate DATE NOT NULL,
-					toil_image VARCHAR(255),
 					primary key (toil_id)
 );
 		           

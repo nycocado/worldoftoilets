@@ -38,8 +38,7 @@ fun generateRandomToilet(id: Int = (1..100).random(), numComments: Int = (1..40)
         latitude = (0..100).random().toDouble(),
         longitude = (0..100).random().toDouble(),
         numComments = 0,
-        placeId = "0",
-        image = ""
+        placeId = "0"
     )
 }
 

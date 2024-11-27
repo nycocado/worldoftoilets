@@ -16,8 +16,7 @@ data class Toilet(
     @SerializedName("latitude") val latitude: Double,
     @SerializedName("longitude") val longitude: Double,
     @SerializedName("numComments") var numComments: Int,
-    @SerializedName("placeId") val placeId: String? = null,
-    @SerializedName("image") val image: String? = null
+    @SerializedName("placeId") val placeId: String? = null
 ) : Serializable {
     fun getAverageRating(): Float {
         return rating.average()
