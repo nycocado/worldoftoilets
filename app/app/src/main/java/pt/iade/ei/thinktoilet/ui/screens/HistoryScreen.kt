@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,20 +21,31 @@ fun HistoryScreen(
     onNavigateToHomeScreen: (Int?) -> Unit = {},
     localViewModel: LocalViewModel = viewModel()
 ) {
-    val toilets = localViewModel.toilets.observeAsState()
+    val toiletIds = localViewModel.toiletsHistoryIds.observeAsState().value
+    val toilets = localViewModel.toilets.observeAsState().value?.filter{ it.id in toiletIds!! }
+    LaunchedEffect(Unit){
+        if(toilets.isNullOrEmpty()){
+            localViewModel.loadToiletsHistory()
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 20.dp),
     ) {
-        LazyColumn {
-            items(toilets.value!!) { toilet ->
-                HistoryCard(
-                    toilet = toilet,
-                    onClick = { selectedToiletId ->
-                        onNavigateToHomeScreen(selectedToiletId)
-                    }
-                )
+        if(toilets.isNullOrEmpty()) {
+            CircularProgressIndicator()
+        } else {
+            LazyColumn {
+                items(toilets) { toilet ->
+                    HistoryCard(
+                        toilet = toilet,
+                        onClick = { selectedToiletId ->
+                            onNavigateToHomeScreen(selectedToiletId)
+                        }
+                    )
+                }
             }
         }
     }

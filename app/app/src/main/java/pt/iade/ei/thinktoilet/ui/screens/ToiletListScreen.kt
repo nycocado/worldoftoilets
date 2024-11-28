@@ -5,13 +5,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.iade.ei.thinktoilet.ui.components.LocationCard
 import pt.iade.ei.thinktoilet.viewmodel.LocalViewModel
 
@@ -20,12 +23,18 @@ fun ToiletListScreen(
     localViewModel: LocalViewModel,
     onToiletSelected: (Int) -> Unit
 ) {
-    val toilets = localViewModel.toilets.observeAsState()
+    val toiletsIds = localViewModel.toiletsNearbyIds.observeAsState().value
+    val toilets = localViewModel.toilets.observeAsState().value?.filter { it.id in toiletsIds!! }
+    LaunchedEffect(Unit) {
+        if(toilets.isNullOrEmpty() || localViewModel.location.value == null) {
+            localViewModel.loadLocation()
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        if (toilets.value.isNullOrEmpty()) {
+        if (toilets.isNullOrEmpty()) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -39,9 +48,9 @@ fun ToiletListScreen(
             }
         } else {
             LazyColumn {
-                items(5) { index ->
+                items(toilets) { toilet ->
                     LocationCard(
-                        toilet = toilets.value!![index],
+                        toilet = toilet,
                         location = localViewModel.location.value!!,
                         onClick = onToiletSelected
                     )

@@ -27,16 +27,22 @@ class LocalViewModel @Inject constructor(
     private val _toilets = MutableLiveData<List<Toilet>>(emptyList())
     val toilets: LiveData<List<Toilet>> get() = _toilets
 
+    private val _toiletsNearbyIds = MutableLiveData<List<Int>>(emptyList())
+    val toiletsNearbyIds: LiveData<List<Int>> get() = _toiletsNearbyIds
+
+    private val _toiletsHistoryIds = MutableLiveData<List<Int>>(emptyList())
+    val toiletsHistoryIds: LiveData<List<Int>> get() = _toiletsHistoryIds
+
     private val _userMain = MutableLiveData<UserMain>()
     val userMain: LiveData<UserMain> get() = _userMain
 
     private val _users = MutableLiveData<List<User>>(emptyList())
     val users: LiveData<List<User>> get() = _users
 
-    private val _commentsToilet = MutableLiveData<List<CommentItem>>()
+    private val _commentsToilet = MutableLiveData<List<CommentItem>>(emptyList())
     val commentsToilet: LiveData<List<CommentItem>> get() = _commentsToilet
 
-    private val _commentsUser = MutableLiveData<List<CommentItem>>()
+    private val _commentsUser = MutableLiveData<List<CommentItem>>(emptyList())
     val commentsUser: LiveData<List<CommentItem>> get() = _commentsUser
 
     private val _location = MutableLiveData<Location>()
@@ -57,10 +63,9 @@ class LocalViewModel @Inject constructor(
             email = "luan.ribeiro@gmail.com",
             password = "luan_pass",
         )
-        loadLocation()
     }
 
-    private fun loadLocation() {
+    fun loadLocation() {
         locationRepository.getCurrentLocation().observeForever {
             _location.value = it
             it?.let { location ->
@@ -74,9 +79,27 @@ class LocalViewModel @Inject constructor(
             try {
                 val fetchedToilets = toiletRepository.getToiletsNearby(latitude, longitude)
                 _toilets.value = fetchedToilets
+                _toiletsNearbyIds.value = fetchedToilets.map { it.id!! }
             } catch (e: Exception) {
                 _error.value = "Erro ao carregar banheiros próximos: ${e.message}"
                 Log.e("ToiletViewModel", "Erro ao carregar banheiros próximos", e)
+            }
+        }
+    }
+
+    fun loadToiletsHistory() {
+        viewModelScope.launch {
+            try {
+                val fetchedToiletsIds = toiletRepository.getToiletsByUserId(_userMain.value?.user?.id!!)
+                val toiletIds = fetchedToiletsIds.filter { it !in (_toilets.value?.map { it.id } ?: emptyList()) }
+                if (fetchedToiletsIds.isNotEmpty() && toiletIds.isNotEmpty()) {
+                    val fetchedToilets = toiletRepository.getToilets(toiletIds)
+                    _toilets.value = (_toilets.value.orEmpty() + fetchedToilets).distinctBy { it.id }
+                }
+                _toiletsHistoryIds.value = fetchedToiletsIds
+            } catch (e: Exception) {
+                _error.value = "Erro ao carregar histórico de banheiros: ${e.message}"
+                Log.e("ToiletViewModel", "Erro ao carregar histórico de banheiros", e)
             }
         }
     }
@@ -144,5 +167,4 @@ class LocalViewModel @Inject constructor(
             }
         }
     }
-
 }
