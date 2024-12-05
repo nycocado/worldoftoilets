@@ -23,7 +23,7 @@ class ToiletRepository @Inject constructor() {
         return toiletService.getNearbyToilets(lat, lon)
     }
 
-    suspend fun getToiletsByUserId(userId: Int): List<Int> {
+    suspend fun getToiletsByUserId(userId: Int): List<Toilet> {
         return toiletService.getToiletsByUserId(userId)
     }
 }

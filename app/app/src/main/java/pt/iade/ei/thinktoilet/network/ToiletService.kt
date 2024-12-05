@@ -25,5 +25,5 @@ interface ToiletService {
     ): List<Toilet>
 
     @GET("toilets/users/{id}")
-    suspend fun getToiletsByUserId(@Path("id") id: Int): List<Int>
+    suspend fun getToiletsByUserId(@Path("id") id: Int): List<Toilet>
 }

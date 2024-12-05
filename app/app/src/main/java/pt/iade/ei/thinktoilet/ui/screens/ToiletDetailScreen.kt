@@ -19,6 +19,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -47,13 +49,13 @@ fun ToiletDetailScreen(
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val toilet = localViewModel.toilets.value?.find { it.id == toiletId }
+    val toilet = localViewModel.toilets.collectAsState().value.find { it.id == toiletId }
     val comments =
         localViewModel.commentsToilet.observeAsState().value?.filter { it.toiletId == toiletId }
             .orEmpty()
     val url = BuildConfig.API_URL + "toilets/${toilet!!.id}/image?API_KEY=" + BuildConfig.API_KEY
 
-    if (comments.isEmpty()) {
+    LaunchedEffect(Unit) {
         localViewModel.getToiletComments(toiletId)
     }
 

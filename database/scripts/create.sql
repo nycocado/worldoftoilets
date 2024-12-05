@@ -1,18 +1,18 @@
 -- Tables
 
-create table user (
+CREATE TABLE user (
 					user_id INT NOT NULL auto_increment,
-					user_name VARCHAR(50) UNIQUE NOT NULL, 
+					user_name VARCHAR(50) NOT NULL, 
 					user_email VARCHAR(100) UNIQUE NOT NULL,											
 					user_pwd VARCHAR(255) NOT NULL, 							
 					user_points INT NOT NULL,
 					user_iconid VARCHAR(255),
 					user_bdate DATE, 
 					user_cdate DATE NOT NULL,
-					primary key (user_id)	
+					PRIMARY KEY (user_id)	
 );
 		     		     
-create table toilet (
+CREATE TABLE toilet (
 					toil_id INT NOT NULL auto_increment,
 					toil_city_id INT NOT NULL,
 					toil_acs_id INT NOT NULL,
@@ -22,25 +22,27 @@ create table toilet (
 					toil_address VARCHAR(255) NOT NULL,
 					toil_placeid VARCHAR(255) UNIQUE,
 					toil_cdate DATE NOT NULL,
-					primary key (toil_id)
+					PRIMARY KEY (toil_id)
 );
 		           
-create table report (
+CREATE TABLE report (
 					rep_id INT NOT NULL auto_increment,
 					rep_trp_id INT NOT NULL, 			
 					rep_int_id INT NOT NULL,
 					rep_cdate DATE NOT NULL,
-					primary key (rep_id)
+					PRIMARY KEY (rep_id),
+					UNIQUE (rep_int_id)
 );	     
 		           
-create table interaction (
+CREATE TABLE interaction (
 					int_id INT NOT NULL auto_increment,
 					int_user_id INT NOT NULL, 			
 					int_toil_id INT NOT NULL, 				
-					primary key (int_id)
+					PRIMARY KEY (int_id),
+					UNIQUE (int_user_id, int_toil_id)
 );
 		    
-create table functime (
+CREATE TABLE functime (
 					ft_id INT NOT NULL auto_increment,
           		    ft_toil_id INT NOT NULL,				
 					ft_day_id INT NOT NULL,				
@@ -48,66 +50,66 @@ create table functime (
 					ft_timestart TIME NOT NULL,
 					ft_timeend TIME NOT NULL,
 					ft_cdate DATE NOT NULL,
-					primary key (ft_id)
+					PRIMARY KEY (ft_id)
 );		
 		            		                 		     
-create table extra (
+CREATE TABLE extra (
 					extra_id INT NOT NULL auto_increment,
 					extra_toil_id INT NOT NULL,
 					extra_tex_id INT NOT NULL,				
-					primary key (extra_id)
+					PRIMARY KEY (extra_id)
 );
 
-create table city (
+CREATE TABLE city (
 					city_id INT NOT NULL auto_increment,
 					city_country_id INT NOT NULL,
 					city_name VARCHAR(50) NOT NULL,				
-					primary key (city_id)
+					PRIMARY KEY (city_id)
 );
 
-create table country (
+CREATE TABLE country (
 					country_id INT NOT NULL auto_increment,
 					country_name VARCHAR(50) NOT NULL,			
-					primary key (country_id)
+					PRIMARY KEY (country_id)
 );
 
-create table access (
+CREATE TABLE access (
 					acs_id int not null auto_increment,
 					acs_name VARCHAR(50) not null,		
-					primary key (acs_id)
+					PRIMARY KEY (acs_id)
 );
 
-create table typereport (
+CREATE TABLE typereport (
 					trp_id INT NOT NULL auto_increment,
 					trp_name VARCHAR(50) NOT NULL,			
-					primary key (trp_id)
+					PRIMARY KEY (trp_id)
 );
 
-create table typereaction (
+CREATE TABLE typereaction (
 					trc_id INT NOT NULL auto_increment,
 					trc_name VARCHAR(50) NOT NULL,			
-					primary key (trc_id)
+					PRIMARY KEY (trc_id)
 );
 
-create table typeextra (
+CREATE TABLE typeextra (
 					tex_id INT NOT NULL auto_increment,
 					tex_name VARCHAR(50) NOT NULL,			
-					primary key (tex_id)
+					PRIMARY KEY (tex_id)
 );
 
-create table day (
+CREATE TABLE day (
 					day_id INT NOT NULL auto_increment,
 					day_name VARCHAR(50) NOT NULL,		
-					primary key (day_id)
+					PRIMARY KEY (day_id)
 );
 
-create table state (
+CREATE TABLE state (
 					state_id INT NOT NULL auto_increment,
 					state_name VARCHAR(50) NOT NULL,			
-					primary key (state_id)
+					PRIMARY KEY (state_id)
 );
 
-create table comment (
+CREATE TABLE comment (
 					cmm_id INT NOT NULL auto_increment,
 					cmm_int_id INT NOT NULL,
 					cmm_text VARCHAR(280) NOT NULL,		
@@ -117,7 +119,7 @@ create table comment (
 					cmm_raccessibility INT NOT NULL,
 					cmm_cdatetime DATETIME NOT NULL,
 					cmm_score INT NOT NULL,
-					primary key (cmm_id)
+					PRIMARY KEY (cmm_id)
 );
 
 create table reaction (
@@ -126,7 +128,8 @@ create table reaction (
 					react_cmm_id INT NOT NULL,	
 					react_trc_id INT NOT NULL,
 					react_cdate	DATE NOT NULL,		
-					primary key (react_id)
+					PRIMARY KEY (react_id),
+					UNIQUE (react_user_id, react_cmm_id)
 );
 
 

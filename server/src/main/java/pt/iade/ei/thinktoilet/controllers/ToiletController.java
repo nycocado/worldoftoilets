@@ -99,7 +99,7 @@ public class ToiletController {
     }
 
     @GetMapping(path = "/users/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Integer> getToiletIdsByUserId(@PathVariable int userId) {
+    public List<ToiletDTO> getToiletByUserId(@PathVariable int userId) {
         logger.info("Sending toilet ids from user with id {}", userId);
         return toiletService.getToiletIdsByUserId(userId);
     }

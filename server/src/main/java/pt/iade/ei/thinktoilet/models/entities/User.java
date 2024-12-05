@@ -1,6 +1,5 @@
 package pt.iade.ei.thinktoilet.models.entities;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
