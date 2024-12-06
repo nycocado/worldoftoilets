@@ -1,5 +1,8 @@
 package pt.iade.ei.thinktoilet.tests
 
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.runtime.Composable
 import pt.iade.ei.thinktoilet.models.CommentItem
 import pt.iade.ei.thinktoilet.models.Extra
 import pt.iade.ei.thinktoilet.models.Rating
@@ -104,3 +107,17 @@ fun generateUsers(numUsers: Int): List<User> {
     }
     return users
 }
+
+
+fun generateCarouselImage(): List<String> {
+    return listOf(
+        //filme muito bom
+        "https://media.themoviedb.org/t/p/w440_and_h660_face/bOVr292mwn3jxr1e0NmUPM1rcjo.jpg",
+        "https://media.themoviedb.org/t/p/w440_and_h660_face/t5v2Zsb5sa6PSP9jMUWY4GdIb3c.jpg",
+        "https://media.themoviedb.org/t/p/w440_and_h660_face/4BtyJ4KAyuptcjnFgoxJgEcPmrY.jpg",
+        "https://media.themoviedb.org/t/p/w440_and_h660_face/hhhJN8aJdTlzGmARCbwWflHXhwI.jpg",
+        "https://media.themoviedb.org/t/p/w440_and_h660_face/kOrGwksr5qlucIWtg4oRtyc5r1t.jpg",
+        "https://media.themoviedb.org/t/p/w1066_and_h600_bestv2/qU4HDNKv7gjdlvMu74r70rISPwn.jpg"
+    )
+}
+
