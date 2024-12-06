@@ -17,5 +17,5 @@ public class CountCommentUser {
     private int userId;
 
     @Column(name = "comments")
-    private int comments;
+    private int num;
 }

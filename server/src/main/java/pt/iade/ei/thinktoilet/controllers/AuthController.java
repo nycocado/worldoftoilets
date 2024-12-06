@@ -17,7 +17,6 @@ import pt.iade.ei.thinktoilet.services.AuthService;
 @RequestMapping(path = "/api/auth")
 public class AuthController {
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
-
     @Autowired
     private AuthService authService;
 

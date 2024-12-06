@@ -17,5 +17,5 @@ public class CountCommentToilet {
     private int toiletId;
 
     @Column(name = "comments")
-    private int comments;
+    private int num;
 }

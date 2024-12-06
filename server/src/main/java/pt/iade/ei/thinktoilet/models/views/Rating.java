@@ -19,14 +19,14 @@ public class Rating {
     private int toiletId;
 
     @Column(name = "avg_clean")
-    private double clean;
+    private double avgClean;
 
     @Column(name = "avg_structure")
-    private double structure;
+    private double avgStructure;
 
     @Column(name = "avg_accessibility")
-    private double accessibility;
+    private double avgAccessibility;
 
     @Column(name = "ratio_paper")
-    private double paper;
+    private double avgPaper;
 }

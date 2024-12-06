@@ -17,8 +17,8 @@ public class CommentReaction {
     private int commentId;
 
     @Column(name = "likes")
-    private int likes;
+    private int numLikes;
 
     @Column(name = "dislikes")
-    private int dislikes;
+    private int numDislikes;
 }

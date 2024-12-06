@@ -11,8 +11,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class RegisterRequest {
     private String name;
-    private String password;
     private String email;
+    private String password;
     private String iconId;
     private LocalDate birthDate;
 }

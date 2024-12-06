@@ -20,5 +20,5 @@ public interface ToiletPagingRepository extends PagingAndSortingRepository<Toile
     @Query("SELECT t " +
             "FROM Toilet t " +
             "ORDER BY (6371 * acos(cos(radians(:lat)) * cos(radians(t.latitude)) * cos(radians(t.longitude) - radians(:lon)) + sin(radians(:lat)) * sin(radians(t.latitude))))")
-    Page<Toilet> findByDistance(double lat, double lon, Pageable pageable);
+    Page<Toilet> findToiletsByDistance(double lat, double lon, Pageable pageable);
 }

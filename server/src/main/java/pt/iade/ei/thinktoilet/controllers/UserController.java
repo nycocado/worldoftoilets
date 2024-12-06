@@ -3,10 +3,8 @@ package pt.iade.ei.thinktoilet.controllers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import pt.iade.ei.thinktoilet.exceptions.NotFoundException;
 import pt.iade.ei.thinktoilet.models.dtos.CommentDTO;
 import pt.iade.ei.thinktoilet.models.dtos.UserDTO;
 import pt.iade.ei.thinktoilet.services.CommentService;
@@ -24,43 +22,35 @@ public class UserController {
     private CommentService commentService;
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<UserDTO> getUsers(@RequestParam(required = false) List<Integer> ids) {
+    public List<UserDTO> getUsers(
+            @RequestParam(required = false) List<Integer> ids
+    ) {
         logger.info("Sending all users");
-        if (ids == null)
-            return userService.getAllUsers();
-        else
+        if (ids != null)
             return userService.getUsersByIds(ids);
+        else
+            return userService.getAllUsers();
     }
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public UserDTO getUser(@PathVariable int id) {
+    public UserDTO getUser(
+            @PathVariable int id
+    ) {
         logger.info("Sending user with id {}", id);
         return userService.getUser(id);
     }
 
     @GetMapping(path = "/{id}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<CommentDTO> getUserComments(@PathVariable int id) {
-        logger.info("Sending comments from user with id {}", id);
-        List<CommentDTO> comments = commentService.getCommentsByUserId(id);
-        if (comments == null) {
-            throw new NotFoundException(String.valueOf(id), "User", "id");
-        } else {
-            return comments;
-        }
-    }
-
-    @GetMapping(path = "/{id}/comments/page", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Page<CommentDTO> getUserCommentsPaging(
+    public List<CommentDTO> getUserComments(
             @PathVariable int id,
+            @RequestParam(defaultValue = "false", required = false) boolean pageable,
             @RequestParam(defaultValue = "0", required = false) int page,
             @RequestParam(defaultValue = "20", required = false) int size
     ) {
-        logger.info("Sending comments from user with id {} (page {})", id, page);
-        Page<CommentDTO> comments = commentService.getCommentsByUserIdPaging(id, page, size);
-        if (comments.isEmpty()) {
-            throw new NotFoundException(String.valueOf(id), "User", "id");
-        } else {
-            return comments;
-        }
+        logger.info("Sending comments from user with id {}", id);
+        if (pageable)
+            return commentService.getCommentsByUserIdPaging(id, page, size).getContent();
+        else
+            return commentService.getCommentsByUserId(id);
     }
 }

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pt.iade.ei.thinktoilet.exceptions.DatabaseSaveException;
 import pt.iade.ei.thinktoilet.exceptions.EmailAlreadyInUseException;
 import pt.iade.ei.thinktoilet.exceptions.EmailNotFoundException;
 import pt.iade.ei.thinktoilet.exceptions.InvalidPasswordException;
@@ -27,13 +28,14 @@ public class AuthService {
 
     @Transactional
     public UserDTO login(LoginRequest request) {
-        User user = Optional.ofNullable(userRepository.findUserByEmail(request.getEmail())).orElseThrow(() -> new EmailNotFoundException(request.getEmail()));
+        User user = Optional.ofNullable(userRepository.findUserByEmail(request.getEmail()))
+                .orElseThrow(() -> new EmailNotFoundException(request.getEmail()));
 
         if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
             throw new InvalidPasswordException();
         }
 
-        int numComments = countCommentUserRepository.findCountCommentUserByUserId(user.getId()).getComments();
+        int numComments = countCommentUserRepository.findCountCommentUserByUserId(user.getId()).getNum();
 
         return new UserDTO(
                 user.getId(),
@@ -59,7 +61,8 @@ public class AuthService {
         user.setBirthDate(request.getBirthDate());
         user.setCreationDate(java.time.LocalDate.now());
 
-        User savedUser = userRepository.save(user);
+        User savedUser = Optional.of(userRepository.save(user))
+                .orElseThrow(() -> new DatabaseSaveException("User"));
 
         return new UserDTO(
                 savedUser.getId(),

@@ -38,4 +38,10 @@ public class GlobalExceptionHandler extends RuntimeException {
         ErrorResponse error = new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(DatabaseSaveException.class)
+    public ResponseEntity<ErrorResponse> handleDatabaseSaveException(DatabaseSaveException ex) {
+        ErrorResponse error = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

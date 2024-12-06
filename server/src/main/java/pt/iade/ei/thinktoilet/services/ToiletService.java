@@ -8,7 +8,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import pt.iade.ei.thinktoilet.exceptions.NotFoundException;
@@ -39,28 +38,29 @@ public class ToiletService {
 
     private static final String IMAGE_DIR = "/images/";
 
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional
     public List<ToiletDTO> getAllToilets(){
-        List<Toilet> toilets = toiletRepository.findToiletsByOrderById();
+        List<Toilet> toilets = Optional.ofNullable(toiletRepository.findToiletsByOrderById())
+                .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "all"));
         return mapToiletDTOS(toilets);
     }
 
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional
     public List<ToiletDTO> getToiletsByIds(Collection<Integer> ids) {
-        List<Toilet> toilets = toiletRepository.findToiletsByIdIn(ids);
+        List<Toilet> toilets = Optional.ofNullable(toiletRepository.findToiletsByIdIn(ids))
+                .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "ids"));
         return mapToiletDTOS(toilets);
     }
 
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional
     public Page<ToiletDTO> getAllToiletsPaging(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Toilet> toilets = toiletPagingRepository.findToiletsByOrderById(pageable);
-        List<Toilet> toiletsList = toilets.toList();
-
-        return new PageImpl<>(mapToiletDTOS(toiletsList), pageable, toilets.getTotalElements());
+        Page<Toilet> toilets = Optional.ofNullable(toiletPagingRepository.findToiletsByOrderById(pageable))
+                .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "all"));
+        return new PageImpl<>(mapToiletDTOS(toilets.getContent()), pageable, toilets.getTotalElements());
     }
 
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional
     public ToiletDTO getToilet(int id) {
         Toilet toilet = Optional.ofNullable(toiletRepository.findToiletById(id)).orElseThrow(() -> new NotFoundException(String.valueOf(id), "Toilet", "id"));
         List<TypeExtra> typeExtras = extraRepository.findExtrasByToilet_Id(id).stream().map(Extra::getTypeExtra).toList();
@@ -75,28 +75,29 @@ public class ToiletService {
                 typeExtras,
                 toilet.getLatitude(),
                 toilet.getLongitude(),
-                numComments.getComments(),
+                numComments.getNum(),
                 toilet.getPlaceId()
         );
     }
 
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional
     public List<ToiletDTO> getToiletsNearby(double lat, double lon) {
-        List<Toilet> toilets = toiletRepository.findByDistance(lat, lon);
+        List<Toilet> toilets = Optional.ofNullable(toiletRepository.findToiletsByDistance(lat, lon))
+                .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "nearby"));
         return mapToiletDTOS(toilets);
     }
 
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional
     public Page<ToiletDTO> getToiletsNearbyPaging(double lat, double lon, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Toilet> toilets = toiletPagingRepository.findByDistance(lat, lon, pageable);
-        List<Toilet> toiletsList = toilets.toList();
-
-        return new PageImpl<>(mapToiletDTOS(toiletsList), pageable, toilets.getTotalElements());
+        Page<Toilet> toilets = Optional.ofNullable(toiletPagingRepository.findToiletsByDistance(lat, lon, pageable))
+                .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "nearby"));
+        return new PageImpl<>(mapToiletDTOS(toilets.getContent()), pageable, toilets.getTotalElements());
     }
 
     public List<ToiletDTO> getToiletIdsByUserId(int userId) {
-        List<Toilet> toilets =  toiletRepository.findToiletByUserId(userId);
+        List<Toilet> toilets = Optional.ofNullable(toiletRepository.findToiletByUserId(userId))
+                .orElseThrow(() -> new NotFoundException(String.valueOf(userId), "Toilet", "user id"));
         return mapToiletDTOS(toilets);
     }
 
@@ -132,7 +133,7 @@ public class ToiletService {
         return new FileSystemResource(file);
     }
 
-    private <T> List<ToiletDTO> mapToiletDTOS(Collection<Toilet> toilets){
+    private List<ToiletDTO> mapToiletDTOS(Collection<Toilet> toilets){
         List<Integer> toiletIds = toilets.stream().map(Toilet::getId).toList();
         List<Extra> extras = extraRepository.findExtrasByToilet_IdIn(toiletIds);
         List<Rating> ratings = ratingRepository.findRatingsByToiletIdIn(toiletIds);
@@ -141,7 +142,7 @@ public class ToiletService {
         Map<Integer, Rating> ratingMap = ratings.stream()
                 .collect(Collectors.toMap(Rating::getToiletId, rating -> rating));
         Map<Integer, Integer> commentCountMap = countComments.stream()
-                .collect(Collectors.toMap(CountCommentToilet::getToiletId, CountCommentToilet::getComments));
+                .collect(Collectors.toMap(CountCommentToilet::getToiletId, CountCommentToilet::getNum));
         Map<Integer, List<TypeExtra>> extrasMap = extras.stream()
                 .collect(Collectors.groupingBy(extra -> extra.getToilet().getId(), Collectors.mapping(Extra::getTypeExtra, Collectors.toList())));
 
