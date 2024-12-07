@@ -10,11 +10,15 @@ import java.util.List;
 
 @Repository
 public interface UserRepository extends CrudRepository<User, Integer> {
-    List<User> findUsersByOrderById();
+    @Query("SELECT u " +
+            "FROM User u")
+    List<User> findUsers();
 
     List<User> findUserByIdIn(Collection<Integer> ids);
 
     User findUserById(int id);
 
     User findUserByEmail(String email);
+
+    boolean existsUserByEmail(String email);
 }

@@ -12,7 +12,9 @@ import java.util.List;
 @Repository
 public interface ToiletRepository extends PagingAndSortingRepository<Toilet, Integer> {
     @EntityGraph(attributePaths = {"city", "city.country", "access"})
-    List<Toilet> findToiletsByOrderById();
+    @Query("SELECT t " +
+            "FROM Toilet t ")
+    List<Toilet> findUsers();
 
     @EntityGraph(attributePaths = {"city", "city.country", "access"})
     Toilet findToiletById(int id);

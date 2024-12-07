@@ -35,11 +35,11 @@ public class ToiletController {
     ) {
         logger.info("Sending all toilets");
         if (ids != null)
-            return toiletService.getToiletsByIds(ids);
+            return toiletService.findToiletsByIds(ids);
         else if (pageable)
-            return toiletService.getAllToiletsPaging(page, size).getContent();
+            return toiletService.findAllToiletsPaging(page, size).getContent();
         else
-            return toiletService.getAllToilets();
+            return toiletService.findAllToilets();
     }
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -47,7 +47,7 @@ public class ToiletController {
             @PathVariable int id
     ) {
         logger.info("Sending toilet with id {}", id);
-        return toiletService.getToilet(id);
+        return toiletService.findToiletById(id);
     }
 
     @GetMapping(path = "/nearby", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -60,9 +60,9 @@ public class ToiletController {
     ) {
         logger.info("Sending toilets nearby");
         if (pageable)
-            return toiletService.getToiletsNearbyPaging(lat, lon, page, size).getContent();
+            return toiletService.findToiletsNearbyPaging(lat, lon, page, size).getContent();
         else
-            return toiletService.getToiletsNearby(lat, lon);
+            return toiletService.findToiletsNearby(lat, lon);
     }
 
     @GetMapping(path = "/{id}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -74,9 +74,9 @@ public class ToiletController {
     ) {
         logger.info("Sending comments from toilet with id {}", id);
         if (pageable)
-            return commentService.getCommentsByToiletIdPaging(id, page, size).getContent();
+            return commentService.findCommentsByToiletIdPaging(id, page, size).getContent();
         else
-            return commentService.getCommentsByToiletId(id);
+            return commentService.findCommentsByToiletId(id);
     }
 
     @GetMapping(path = "/users/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -84,7 +84,7 @@ public class ToiletController {
             @PathVariable int id
     ) {
         logger.info("Sending toilet ids from user with id {}", id);
-        return toiletService.getToiletIdsByUserId(id);
+        return toiletService.findToiletsByUserId(id);
     }
 
     @PostMapping(path = "/comments", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

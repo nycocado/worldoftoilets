@@ -27,9 +27,9 @@ public class UserController {
     ) {
         logger.info("Sending all users");
         if (ids != null)
-            return userService.getUsersByIds(ids);
+            return userService.findUsersByIds(ids);
         else
-            return userService.getAllUsers();
+            return userService.findAllUsers();
     }
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -37,7 +37,7 @@ public class UserController {
             @PathVariable int id
     ) {
         logger.info("Sending user with id {}", id);
-        return userService.getUser(id);
+        return userService.findUserById(id);
     }
 
     @GetMapping(path = "/{id}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -49,8 +49,8 @@ public class UserController {
     ) {
         logger.info("Sending comments from user with id {}", id);
         if (pageable)
-            return commentService.getCommentsByUserIdPaging(id, page, size).getContent();
+            return commentService.findCommentsByUserIdPaging(id, page, size).getContent();
         else
-            return commentService.getCommentsByUserId(id);
+            return commentService.findCommentsByUserId(id);
     }
 }

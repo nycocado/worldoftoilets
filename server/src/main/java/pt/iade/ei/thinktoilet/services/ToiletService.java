@@ -12,16 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import pt.iade.ei.thinktoilet.exceptions.NotFoundException;
 import pt.iade.ei.thinktoilet.models.dtos.ToiletDTO;
-import pt.iade.ei.thinktoilet.models.entities.Extra;
 import pt.iade.ei.thinktoilet.models.entities.Toilet;
-import pt.iade.ei.thinktoilet.models.entities.TypeExtra;
-import pt.iade.ei.thinktoilet.models.views.CountCommentToilet;
-import pt.iade.ei.thinktoilet.models.views.Rating;
+import pt.iade.ei.thinktoilet.models.mappers.ToiletMapper;
 import pt.iade.ei.thinktoilet.repositories.*;
 
 import java.io.File;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ToiletService {
@@ -30,79 +26,92 @@ public class ToiletService {
     @Autowired
     private ToiletPagingRepository toiletPagingRepository;
     @Autowired
-    private ExtraRepository extraRepository;
-    @Autowired
-    private RatingRepository ratingRepository;
-    @Autowired
-    private CountCommentToiletRepository countCommentToiletRepository;
+    private ToiletMapper toiletMapper;
 
     private static final String IMAGE_DIR = "/images/";
 
-    @Transactional
-    public List<ToiletDTO> getAllToilets(){
-        List<Toilet> toilets = Optional.ofNullable(toiletRepository.findToiletsByOrderById())
+    public List<Toilet> getToilets() {
+        return Optional.ofNullable(toiletRepository.findUsers())
                 .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "all"));
-        return mapToiletDTOS(toilets);
     }
 
-    @Transactional
-    public List<ToiletDTO> getToiletsByIds(Collection<Integer> ids) {
-        List<Toilet> toilets = Optional.ofNullable(toiletRepository.findToiletsByIdIn(ids))
+    public List<Toilet> getToiletsByIds(Collection<Integer> ids) {
+        return Optional.ofNullable(toiletRepository.findToiletsByIdIn(ids))
                 .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "ids"));
-        return mapToiletDTOS(toilets);
     }
 
-    @Transactional
-    public Page<ToiletDTO> getAllToiletsPaging(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Toilet> toilets = Optional.ofNullable(toiletPagingRepository.findToiletsByOrderById(pageable))
-                .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "all"));
-        return new PageImpl<>(mapToiletDTOS(toilets.getContent()), pageable, toilets.getTotalElements());
+    public Toilet getToiletById(int id) {
+        return Optional.ofNullable(toiletRepository.findToiletById(id))
+                .orElseThrow(() -> new NotFoundException(String.valueOf(id), "Toilet", "id"));
     }
 
-    @Transactional
-    public ToiletDTO getToilet(int id) {
-        Toilet toilet = Optional.ofNullable(toiletRepository.findToiletById(id)).orElseThrow(() -> new NotFoundException(String.valueOf(id), "Toilet", "id"));
-        List<TypeExtra> typeExtras = extraRepository.findExtrasByToilet_Id(id).stream().map(Extra::getTypeExtra).toList();
-        Rating rating = Optional.ofNullable(ratingRepository.findRatingsByToiletId(toilet.getId())).orElse(new Rating());
-        CountCommentToilet numComments = Optional.ofNullable(countCommentToiletRepository.findCountCommentToiletByToiletId(toilet.getId())).orElse(new CountCommentToilet());
-
-        return new ToiletDTO(
-                toilet.getId(),
-                toilet.getName(),
-                toilet.getAddress(),
-                rating,
-                typeExtras,
-                toilet.getLatitude(),
-                toilet.getLongitude(),
-                numComments.getNum(),
-                toilet.getPlaceId()
-        );
-    }
-
-    @Transactional
-    public List<ToiletDTO> getToiletsNearby(double lat, double lon) {
-        List<Toilet> toilets = Optional.ofNullable(toiletRepository.findToiletsByDistance(lat, lon))
-                .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "nearby"));
-        return mapToiletDTOS(toilets);
-    }
-
-    @Transactional
-    public Page<ToiletDTO> getToiletsNearbyPaging(double lat, double lon, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Toilet> toilets = Optional.ofNullable(toiletPagingRepository.findToiletsByDistance(lat, lon, pageable))
-                .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "nearby"));
-        return new PageImpl<>(mapToiletDTOS(toilets.getContent()), pageable, toilets.getTotalElements());
-    }
-
-    public List<ToiletDTO> getToiletIdsByUserId(int userId) {
-        List<Toilet> toilets = Optional.ofNullable(toiletRepository.findToiletByUserId(userId))
+    public List<Toilet> getToiletsByUserId(int userId) {
+        return Optional.ofNullable(toiletRepository.findToiletByUserId(userId))
                 .orElseThrow(() -> new NotFoundException(String.valueOf(userId), "Toilet", "user id"));
-        return mapToiletDTOS(toilets);
     }
 
+    public List<Toilet> getToiletsNearby(double lat, double lon) {
+        return Optional.ofNullable(toiletRepository.findToiletsByDistance(lat, lon))
+                .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "nearby"));
+    }
+
+    public Page<Toilet> getToiletsPaging(Pageable pageable) {
+        return Optional.ofNullable(toiletPagingRepository.findUsers(pageable))
+                .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "all"));
+    }
+
+    public Page<Toilet> getToiletsNearbyPaging(double lat, double lon, Pageable pageable) {
+        return Optional.ofNullable(toiletPagingRepository.findToiletsByDistance(lat, lon, pageable))
+                .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "nearby"));
+    }
+
+    @Transactional
+    public List<ToiletDTO> findAllToilets(){
+        List<Toilet> toilets = getToilets();
+        return toiletMapper.mapToiletDTOS(toilets);
+    }
+
+    @Transactional
+    public List<ToiletDTO> findToiletsByIds(Collection<Integer> ids) {
+        List<Toilet> toilets = getToiletsByIds(ids);
+        return toiletMapper.mapToiletDTOS(toilets);
+    }
+
+    @Transactional
+    public ToiletDTO findToiletById(int id) {
+        Toilet toilet = getToiletById(id);
+        return toiletMapper.mapToiletDTO(toilet);
+    }
+
+    @Transactional
+    public List<ToiletDTO> findToiletsByUserId(int userId) {
+        List<Toilet> toilets = getToiletsByUserId(userId);
+        return toiletMapper.mapToiletDTOS(toilets);
+    }
+
+    @Transactional
+    public List<ToiletDTO> findToiletsNearby(double lat, double lon) {
+        List<Toilet> toilets = getToiletsNearby(lat, lon);
+        return toiletMapper.mapToiletDTOS(toilets);
+    }
+
+    @Transactional
+    public Page<ToiletDTO> findAllToiletsPaging(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Toilet> toilets = getToiletsPaging(pageable);
+        return new PageImpl<>(toiletMapper.mapToiletDTOS(toilets.getContent()), pageable, toilets.getTotalElements());
+    }
+
+    @Transactional
+    public Page<ToiletDTO> findToiletsNearbyPaging(double lat, double lon, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Toilet> toilets = getToiletsNearbyPaging(lat, lon, pageable);
+        return new PageImpl<>(toiletMapper.mapToiletDTOS(toilets.getContent()), pageable, toilets.getTotalElements());
+    }
+
+    @Transactional
     public void uploadImage(int id, MultipartFile image) {
-        Optional.ofNullable(toiletRepository.findToiletById(id)).orElseThrow(() -> new NotFoundException(String.valueOf(id), "Toilet", "id"));
+        getToiletById(id);
 
         if(image.isEmpty()) {
             throw new NotFoundException("Image", "Image", "image");
@@ -131,36 +140,5 @@ public class ToiletService {
         }
 
         return new FileSystemResource(file);
-    }
-
-    private List<ToiletDTO> mapToiletDTOS(Collection<Toilet> toilets){
-        List<Integer> toiletIds = toilets.stream().map(Toilet::getId).toList();
-        List<Extra> extras = extraRepository.findExtrasByToilet_IdIn(toiletIds);
-        List<Rating> ratings = ratingRepository.findRatingsByToiletIdIn(toiletIds);
-        List<CountCommentToilet> countComments = countCommentToiletRepository.findCountCommentToiletByToiletIdIn(toiletIds);
-
-        Map<Integer, Rating> ratingMap = ratings.stream()
-                .collect(Collectors.toMap(Rating::getToiletId, rating -> rating));
-        Map<Integer, Integer> commentCountMap = countComments.stream()
-                .collect(Collectors.toMap(CountCommentToilet::getToiletId, CountCommentToilet::getNum));
-        Map<Integer, List<TypeExtra>> extrasMap = extras.stream()
-                .collect(Collectors.groupingBy(extra -> extra.getToilet().getId(), Collectors.mapping(Extra::getTypeExtra, Collectors.toList())));
-
-        return toilets.stream().map(toilet -> {
-            Rating rating = ratingMap.getOrDefault(toilet.getId(), new Rating());
-            int numComments = commentCountMap.getOrDefault(toilet.getId(), 0);
-            List<TypeExtra> extrasToilet = extrasMap.getOrDefault(toilet.getId(), List.of());
-            return new ToiletDTO(
-                    toilet.getId(),
-                    toilet.getName(),
-                    toilet.getAddress(),
-                    rating,
-                    extrasToilet,
-                    toilet.getLatitude(),
-                    toilet.getLongitude(),
-                    numComments,
-                    toilet.getPlaceId()
-            );
-        }).toList();
     }
 }
