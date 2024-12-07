@@ -11,7 +11,8 @@ import java.util.List;
 @Repository
 public interface UserRepository extends CrudRepository<User, Integer> {
     @Query("SELECT u " +
-            "FROM User u")
+            "FROM User u " +
+            "ORDER BY u.id")
     List<User> findUsers();
 
     List<User> findUserByIdIn(Collection<Integer> ids);

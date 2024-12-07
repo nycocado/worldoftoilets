@@ -122,7 +122,7 @@ CREATE TABLE comment (
 					PRIMARY KEY (cmm_id)
 );
 
-create table reaction (
+CREATE TABLE reaction (
 					react_id INT NOT NULL auto_increment,
 					react_user_id INT NOT NULL,
 					react_cmm_id INT NOT NULL,	
@@ -135,84 +135,84 @@ create table reaction (
 
 -- Foreign Keys
 
-alter table toilet 
-add constraint toil_fk_city
-foreign key (toil_city_id) references city(city_id) 
+ALTER TABLE toilet 
+ADD CONSTRAINT toil_fk_city
+FOREIGN KEY (toil_city_id) REFERENCES city(city_id) 
 ON DELETE NO ACTION ON UPDATE NO ACTION;
             
-alter table toilet 
-add constraint toil_fk_access
-foreign key (toil_acs_id) references access(acs_id) 
+ALTER TABLE toilet 
+ADD CONSTRAINT toil_fk_access
+FOREIGN KEY (toil_acs_id) REFERENCES access(acs_id) 
 ON DELETE NO ACTION ON UPDATE NO ACTION;
 
-alter table report
-add constraint report_fk_typereport
-foreign key (rep_trp_id) references typereport(trp_id) 
+ALTER TABLE report
+ADD CONSTRAINT report_fk_typereport
+FOREIGN KEY (rep_trp_id) REFERENCES typereport(trp_id) 
 ON DELETE NO ACTION ON UPDATE NO ACTION;
             
-alter table report
-add constraint report_fk_interaction
-foreign key (rep_int_id) references interaction(int_id) 
+ALTER TABLE report
+ADD CONSTRAINT report_fk_interaction
+FOREIGN KEY (rep_int_id) REFERENCES interaction(int_id) 
 ON DELETE NO ACTION ON UPDATE NO ACTION;
 
-alter table interaction
-add constraint interaction_fk_user
-foreign key (int_user_id) references user(user_id) 
+ALTER TABLE interaction
+ADD CONSTRAINT interaction_fk_user
+FOREIGN KEY (int_user_id) REFERENCES user(user_id) 
 ON DELETE NO ACTION ON UPDATE NO ACTION;  
 
-alter table interaction
-add constraint interaction_fk_toil
-foreign key (int_toil_id) references toilet(toil_id) 
+ALTER TABLE interaction
+ADD CONSTRAINT interaction_fk_toil
+FOREIGN KEY (int_toil_id) REFERENCES toilet(toil_id) 
 ON DELETE NO ACTION ON UPDATE NO ACTION;
             
-alter table functime
-add constraint functime_fk_toilet
-foreign key (ft_toil_id) references toilet(toil_id) 
+ALTER TABLE functime
+ADD CONSTRAINT functime_fk_toilet
+FOREIGN KEY (ft_toil_id) REFERENCES toilet(toil_id) 
 ON DELETE NO ACTION ON UPDATE NO ACTION;  
 
-alter table functime
-add constraint functime_fk_day
-foreign key (ft_day_id) references day(day_id) 
+ALTER TABLE functime
+ADD CONSTRAINT functime_fk_day
+FOREIGN KEY (ft_day_id) REFERENCES day(day_id) 
 ON DELETE NO ACTION ON UPDATE NO ACTION;
 
-alter table functime
-add constraint functime_fk_state
-foreign key (ft_state_id) references state(state_id) 
+ALTER TABLE functime
+ADD CONSTRAINT functime_fk_state
+FOREIGN KEY (ft_state_id) REFERENCES state(state_id) 
 ON DELETE NO ACTION ON UPDATE NO ACTION;
 
-alter table extra 
-add constraint extra_fk_toilet
-foreign key (extra_toil_id) references toilet(toil_id) 
+ALTER TABLE extra 
+ADD CONSTRAINT extra_fk_toilet
+FOREIGN KEY (extra_toil_id) REFERENCES toilet(toil_id) 
 ON DELETE NO ACTION ON UPDATE NO ACTION; 
                         
-alter table extra 
-add constraint extra_fk_typeextra
-foreign key (extra_tex_id) references typeextra(tex_id) 
+ALTER TABLE extra 
+ADD CONSTRAINT extra_fk_typeextra
+FOREIGN KEY (extra_tex_id) REFERENCES typeextra(tex_id) 
 ON DELETE NO ACTION ON UPDATE NO ACTION; 
 
-alter table city 
-add constraint city_fk_country
-foreign key (city_country_id) references country(country_id) 
+ALTER TABLE city 
+ADD CONSTRAINT city_fk_country
+FOREIGN KEY (city_country_id) REFERENCES country(country_id) 
 ON DELETE NO ACTION ON UPDATE NO ACTION; 
 
-alter table comment 
-add constraint comment_fk_interaction
-foreign key (cmm_int_id) references interaction(int_id) 
+ALTER TABLE comment 
+ADD CONSTRAINT comment_fk_interaction
+FOREIGN KEY (cmm_int_id) REFERENCES interaction(int_id) 
 ON DELETE NO ACTION ON UPDATE NO ACTION; 
 
-alter table reaction
-add constraint reaction_fk_user
-foreign key (react_user_id) references user(user_id) 
+ALTER TABLE reaction
+ADD CONSTRAINT reaction_fk_user
+FOREIGN KEY (react_user_id) REFERENCES user(user_id) 
 ON DELETE NO ACTION ON UPDATE NO ACTION; 
 
-alter table reaction
-add constraint reaction_fk_comment
-foreign key (react_cmm_id) references comment(cmm_id) 
+ALTER TABLE reaction
+ADD CONSTRAINT reaction_fk_comment
+FOREIGN KEY (react_cmm_id) REFERENCES comment(cmm_id) 
 ON DELETE NO ACTION ON UPDATE NO ACTION;
 
-alter table reaction
-add constraint reaction_fk_typereaction
-foreign key (react_trc_id) references typereaction(trc_id) 
+ALTER TABLE reaction
+ADD CONSTRAINT reaction_fk_typereaction
+FOREIGN KEY (react_trc_id) REFERENCES typereaction(trc_id) 
 ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 
@@ -239,13 +239,14 @@ LEFT JOIN (
 
 CREATE VIEW vw_rating AS
 SELECT
-    i.int_toil_id 'toil_id',
-    AVG(c.cmm_rclean) 'avg_clean',
-    COALESCE((tt.tt_paper_true * 100.0) / COUNT(c.cmm_rpaper), 0) 'ratio_paper',
-    AVG(c.cmm_rstructure) 'avg_structure',
-    AVG(c.cmm_raccessibility) 'avg_accessibility'
-FROM comment c
-INNER JOIN interaction i ON i.int_id = c.cmm_int_id
+    t.toil_id,
+    COALESCE(AVG(c.cmm_rclean), 0) AS avg_clean,
+    COALESCE((tt.tt_paper_true * 100.0) / COUNT(c.cmm_rpaper), 0) AS ratio_paper,
+    COALESCE(AVG(c.cmm_rstructure), 0) AS avg_structure,
+    COALESCE(AVG(c.cmm_raccessibility), 0) AS avg_accessibility
+FROM toilet t
+LEFT JOIN interaction i ON t.toil_id = i.int_toil_id
+LEFT JOIN comment c ON i.int_id = c.cmm_int_id
 LEFT JOIN (
     SELECT
         i.int_toil_id AS tt_id,
@@ -254,17 +255,22 @@ LEFT JOIN (
     INNER JOIN interaction i ON i.int_id = c.cmm_int_id
     WHERE c.cmm_rpaper = TRUE
     GROUP BY i.int_toil_id
-) tt ON i.int_toil_id = tt.tt_id
-GROUP BY i.int_toil_id;
+) tt ON t.toil_id = tt.tt_id
+GROUP BY t.toil_id;
 
 CREATE VIEW vw_count_comment_toilet AS
-SELECT i.int_toil_id 'toil_id', COUNT(c.cmm_id) 'comments'
-FROM interaction i
-INNER JOIN comment c ON c.cmm_int_id = i.int_id
-GROUP BY i.int_toil_id;
+SELECT
+    t.toil_id AS toil_id,
+    COALESCE(COUNT(c.cmm_id), 0) AS comments
+FROM toilet t
+LEFT JOIN interaction i ON t.toil_id = i.int_toil_id
+LEFT JOIN comment c ON c.cmm_int_id = i.int_id
+GROUP BY t.toil_id;
 
 CREATE VIEW vw_count_comment_user AS
-SELECT i.int_user_id 'user_id', COUNT(c.cmm_id) 'comments'
-FROM interaction i
-INNER JOIN comment c ON c.cmm_int_id = i.int_id
-GROUP BY i.int_user_id;
+SELECT u.user_id AS user_id,
+       COALESCE(COUNT(c.cmm_id), 0) AS comments
+FROM user u
+INNER JOIN interaction i ON u.user_id = i.int_user_id
+LEFT JOIN comment c ON c.cmm_int_id = i.int_id
+GROUP BY u.user_id;

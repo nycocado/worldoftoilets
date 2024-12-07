@@ -5,12 +5,12 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class ErrorResponse {
+public class ApiResponse {
     private int status;
     private String message;
     private String timestamp;
 
-    public ErrorResponse(int status, String message) {
+    public ApiResponse(int status, String message) {
         this.status = status;
         this.message = message;
         this.timestamp = LocalDateTime.now().toString();

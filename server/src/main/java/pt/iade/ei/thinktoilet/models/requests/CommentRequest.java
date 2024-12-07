@@ -1,4 +1,4 @@
-package pt.iade.ei.thinktoilet.models.dtos;
+package pt.iade.ei.thinktoilet.models.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

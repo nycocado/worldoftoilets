@@ -10,7 +10,6 @@ import pt.iade.ei.thinktoilet.repositories.CountCommentUserRepository;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -19,8 +18,7 @@ public class UserMapper {
     private CountCommentUserRepository countCommentUserRepository;
 
     public UserDTO mapUserDTO(User user) {
-        CountCommentUser countComment = Optional.ofNullable(countCommentUserRepository.findCountCommentUserByUserId(user.getId()))
-                .orElse(new CountCommentUser(user.getId(), 0));
+        CountCommentUser countComment = countCommentUserRepository.findCountCommentUserByUserId(user.getId());
         return new UserDTO(
                 user.getId(),
                 user.getName(),
@@ -38,7 +36,7 @@ public class UserMapper {
                 .collect(Collectors.toMap(CountCommentUser::getUserId, CountCommentUser::getNum));
 
         return users.stream().map(user -> {
-            int numComments = countCommentUserMap.getOrDefault(user.getId(), 0);
+            int numComments = countCommentUserMap.get(user.getId());
             return new UserDTO(
                     user.getId(),
                     user.getName(),

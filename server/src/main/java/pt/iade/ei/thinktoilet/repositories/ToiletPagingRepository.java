@@ -12,7 +12,8 @@ import pt.iade.ei.thinktoilet.models.entities.Toilet;
 public interface ToiletPagingRepository extends PagingAndSortingRepository<Toilet, Integer> {
     @EntityGraph(attributePaths = {"city", "city.country", "access"})
     @Query("SELECT t " +
-            "FROM Toilet t ")
+            "FROM Toilet t " +
+            "ORDER BY t.id")
     Page<Toilet> findUsers(Pageable pageable);
 
     @EntityGraph(attributePaths = {"city", "city.country", "access"})

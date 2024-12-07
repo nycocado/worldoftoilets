@@ -1,16 +1,19 @@
 package pt.iade.ei.thinktoilet.controllers;
 
+import org.apache.coyote.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pt.iade.ei.thinktoilet.models.dtos.LoginRequest;
-import pt.iade.ei.thinktoilet.models.dtos.RegisterRequest;
+import pt.iade.ei.thinktoilet.models.requests.LoginRequest;
+import pt.iade.ei.thinktoilet.models.requests.RegisterRequest;
 import pt.iade.ei.thinktoilet.models.dtos.UserDTO;
+import pt.iade.ei.thinktoilet.models.response.ApiResponse;
 import pt.iade.ei.thinktoilet.services.AuthService;
 
 @RestController
@@ -29,7 +32,7 @@ public class AuthController {
     }
 
     @PostMapping(path = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
-    public UserDTO register(
+    public ResponseEntity<ApiResponse> register(
             @RequestBody RegisterRequest request
     ) {
         logger.info("Registering user {}", request.getName());

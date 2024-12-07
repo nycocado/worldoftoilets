@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.iade.ei.thinktoilet.exceptions.DatabaseSaveException;
 import pt.iade.ei.thinktoilet.exceptions.NotFoundException;
 import pt.iade.ei.thinktoilet.models.dtos.CommentDTO;
-import pt.iade.ei.thinktoilet.models.dtos.CommentRequest;
+import pt.iade.ei.thinktoilet.models.requests.CommentRequest;
 import pt.iade.ei.thinktoilet.models.entities.*;
 import pt.iade.ei.thinktoilet.models.mappers.CommentMapper;
 import pt.iade.ei.thinktoilet.repositories.*;

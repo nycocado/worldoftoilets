@@ -2,7 +2,6 @@ package pt.iade.ei.thinktoilet.models.mappers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import pt.iade.ei.thinktoilet.exceptions.NotFoundException;
 import pt.iade.ei.thinktoilet.models.dtos.ToiletDTO;
 import pt.iade.ei.thinktoilet.models.entities.Extra;
 import pt.iade.ei.thinktoilet.models.entities.Toilet;
@@ -16,7 +15,6 @@ import pt.iade.ei.thinktoilet.repositories.RatingRepository;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -29,19 +27,15 @@ public class ToiletMapper {
     CountCommentToiletRepository countCommentToiletRepository;
 
     public ToiletDTO mapToiletDTO(Toilet toilet){
-        List<Extra> extras = Optional.ofNullable(extraRepository.findExtrasByToilet_Id(toilet.getId()))
-                .orElseThrow(() -> new NotFoundException("Extra", "Toilet", "id"));
-        Rating rating = Optional.ofNullable(ratingRepository.findRatingByToiletId(toilet.getId()))
-                .orElse(new Rating(toilet.getId(), 0f, 0f, 0f, 0f));
-        CountCommentToilet countComment = Optional.ofNullable(countCommentToiletRepository.findCountCommentToiletByToiletId(toilet.getId()))
-                .orElse(new CountCommentToilet(toilet.getId(), 0));
-        List<TypeExtra> extrasToilet = extras.stream().map(Extra::getTypeExtra).toList();
+        List<TypeExtra> extras = extraRepository.findExtrasByToilet_Id(toilet.getId()).stream().map(Extra::getTypeExtra).toList();
+        Rating rating = ratingRepository.findRatingByToiletId(toilet.getId());
+        CountCommentToilet countComment = countCommentToiletRepository.findCountCommentToiletByToiletId(toilet.getId());
         return new ToiletDTO(
                 toilet.getId(),
                 toilet.getName(),
                 toilet.getAddress(),
                 rating,
-                extrasToilet,
+                extras,
                 toilet.getLatitude(),
                 toilet.getLongitude(),
                 countComment.getNum(),
@@ -51,12 +45,9 @@ public class ToiletMapper {
 
     public List<ToiletDTO> mapToiletDTOS(Collection<Toilet> toilets){
         List<Integer> toiletIds = toilets.stream().map(Toilet::getId).toList();
-        List<Extra> extras = Optional.ofNullable(extraRepository.findExtrasByToilet_IdIn(toiletIds))
-                .orElseThrow(() -> new NotFoundException("Extra", "Toilet", "ids"));
-        List<Rating> ratings = Optional.ofNullable(ratingRepository.findRatingsByToiletIdIn(toiletIds))
-                .orElseThrow(() -> new NotFoundException("Rating", "Toilet", "ids"));
-        List<CountCommentToilet> countComments = Optional.ofNullable(countCommentToiletRepository.findCountCommentToiletByToiletIdIn(toiletIds))
-                .orElseThrow(() -> new NotFoundException("CountCommentToilet", "Toilet", "ids"));
+        List<Extra> extras = extraRepository.findExtrasByToilet_IdIn(toiletIds);
+        List<Rating> ratings = ratingRepository.findRatingsByToiletIdIn(toiletIds);
+        List<CountCommentToilet> countComments = countCommentToiletRepository.findCountCommentToiletByToiletIdIn(toiletIds);
 
         Map<Integer, Rating> ratingMap = ratings.stream()
                 .collect(Collectors.toMap(Rating::getToiletId, rating -> rating));
@@ -66,8 +57,8 @@ public class ToiletMapper {
                 .collect(Collectors.groupingBy(extra -> extra.getToilet().getId(), Collectors.mapping(Extra::getTypeExtra, Collectors.toList())));
 
         return toilets.stream().map(toilet -> {
-            Rating rating = ratingMap.getOrDefault(toilet.getId(), new Rating());
-            int numComments = commentCountMap.getOrDefault(toilet.getId(), 0);
+            Rating rating = ratingMap.get(toilet.getId());
+            int numComments = commentCountMap.get(toilet.getId());
             List<TypeExtra> extrasToilet = extrasMap.getOrDefault(toilet.getId(), List.of());
             return new ToiletDTO(
                     toilet.getId(),

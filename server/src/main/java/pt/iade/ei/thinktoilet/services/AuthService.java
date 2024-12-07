@@ -1,16 +1,22 @@
 package pt.iade.ei.thinktoilet.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pt.iade.ei.thinktoilet.exceptions.DatabaseSaveException;
 import pt.iade.ei.thinktoilet.exceptions.EmailAlreadyInUseException;
 import pt.iade.ei.thinktoilet.exceptions.InvalidPasswordException;
-import pt.iade.ei.thinktoilet.models.dtos.LoginRequest;
-import pt.iade.ei.thinktoilet.models.dtos.RegisterRequest;
+import pt.iade.ei.thinktoilet.models.requests.LoginRequest;
+import pt.iade.ei.thinktoilet.models.requests.RegisterRequest;
 import pt.iade.ei.thinktoilet.models.dtos.UserDTO;
 import pt.iade.ei.thinktoilet.models.entities.User;
 import pt.iade.ei.thinktoilet.models.mappers.UserMapper;
+import pt.iade.ei.thinktoilet.models.response.ApiResponse;
+
+import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -33,7 +39,7 @@ public class AuthService {
     }
 
     @Transactional
-    public UserDTO register(RegisterRequest request){
+    public ResponseEntity<ApiResponse> register(RegisterRequest request){
         if(userService.existsUserByEmail(request.getEmail())){
             throw new EmailAlreadyInUseException("Email already in use.");
         }
@@ -47,8 +53,9 @@ public class AuthService {
         user.setBirthDate(request.getBirthDate());
         user.setCreationDate(java.time.LocalDate.now());
 
-        User savedUser = userService.saveUser(user);
+        userService.saveUser(user);
 
-        return userMapper.mapUserDTO(savedUser);
+        ApiResponse response = new ApiResponse(HttpStatus.CREATED.value(), "User registered successfully.");
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

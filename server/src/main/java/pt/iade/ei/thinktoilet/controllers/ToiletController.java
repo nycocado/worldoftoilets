@@ -10,9 +10,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pt.iade.ei.thinktoilet.exceptions.NotFoundException;
 import pt.iade.ei.thinktoilet.models.dtos.CommentDTO;
-import pt.iade.ei.thinktoilet.models.dtos.CommentRequest;
+import pt.iade.ei.thinktoilet.models.requests.CommentRequest;
 import pt.iade.ei.thinktoilet.models.dtos.ToiletDTO;
+import pt.iade.ei.thinktoilet.models.entities.Reaction;
+import pt.iade.ei.thinktoilet.models.requests.ReactionRequest;
+import pt.iade.ei.thinktoilet.models.response.ApiResponse;
 import pt.iade.ei.thinktoilet.services.CommentService;
+import pt.iade.ei.thinktoilet.services.ReactionService;
 import pt.iade.ei.thinktoilet.services.ToiletService;
 
 import java.util.List;
@@ -25,6 +29,8 @@ public class ToiletController {
     private ToiletService toiletService;
     @Autowired
     private CommentService commentService;
+    @Autowired
+    private ReactionService reactionService;
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ToiletDTO> getToilets(
@@ -89,19 +95,27 @@ public class ToiletController {
 
     @PostMapping(path = "/comments", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public CommentDTO addComment(
-            @RequestBody CommentRequest commentRequest
+            @RequestBody CommentRequest request
     ) {
-        logger.info("Adding comment to toilet with id {} and user with id {}", commentRequest.getToiletId(), commentRequest.getUserId());
-        return commentService.addComment(commentRequest);
+        logger.info("Adding comment to toilet with id {} and user with id {}", request.getToiletId(), request.getUserId());
+        return commentService.addComment(request);
+    }
+
+    @PostMapping(path = "/comments/reaction", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse> addReaction(
+            @RequestBody ReactionRequest request
+    ) {
+        logger.info("Adding reaction to comment with id {} and user with id {}", request.getCommentId(), request.getUserId());
+        return reactionService.addReaction(request);
     }
 
     @PostMapping(path = "{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void uploadImage(
+    public ResponseEntity<ApiResponse> uploadImage(
             @PathVariable int id,
             @RequestParam(required = true, name = "image") MultipartFile image
     ) {
         logger.info("Uploading image to toilet with id {}", id);
-        toiletService.uploadImage(id, image);
+        return toiletService.uploadImage(id, image);
     }
 
     @GetMapping(path = "/{id}/image", produces = MediaType.IMAGE_JPEG_VALUE)

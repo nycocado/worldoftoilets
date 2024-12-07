@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,6 +16,7 @@ import pt.iade.ei.thinktoilet.exceptions.NotFoundException;
 import pt.iade.ei.thinktoilet.models.dtos.ToiletDTO;
 import pt.iade.ei.thinktoilet.models.entities.Toilet;
 import pt.iade.ei.thinktoilet.models.mappers.ToiletMapper;
+import pt.iade.ei.thinktoilet.models.response.ApiResponse;
 import pt.iade.ei.thinktoilet.repositories.*;
 
 import java.io.File;
@@ -110,7 +113,7 @@ public class ToiletService {
     }
 
     @Transactional
-    public void uploadImage(int id, MultipartFile image) {
+    public ResponseEntity<ApiResponse> uploadImage(int id, MultipartFile image) {
         getToiletById(id);
 
         if(image.isEmpty()) {
@@ -129,6 +132,9 @@ public class ToiletService {
         } catch (Exception e) {
             throw new NotFoundException(e.getMessage(), "Image", "image");
         }
+
+        ApiResponse response = new ApiResponse(HttpStatus.OK.value(), "Image uploaded successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     public Resource getImage(int id) {
