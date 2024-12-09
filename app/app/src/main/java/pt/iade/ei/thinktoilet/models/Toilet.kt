@@ -1,6 +1,9 @@
 package pt.iade.ei.thinktoilet.models
 
+import android.net.Uri
+import androidx.compose.runtime.Composable
 import com.google.gson.annotations.SerializedName
+import pt.iade.ei.thinktoilet.BuildConfig
 import java.io.Serializable
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -8,11 +11,10 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 data class Toilet(
-    @SerializedName("id") var id: Int?,
+    @SerializedName("id") var id: Int,
     @SerializedName("name") val name: String,
     @SerializedName("address") val address: String,
     @SerializedName("rating") var rating: Rating,
-    @SerializedName("extras") val extras: List<Extra>,
     @SerializedName("latitude") val latitude: Double,
     @SerializedName("longitude") val longitude: Double,
     @SerializedName("numComments") var numComments: Int,
@@ -40,5 +42,20 @@ data class Toilet(
         } else {
             "${distance.toInt()} km"
         }
+    }
+
+    fun getMapsUrl(): String {
+        val lat = latitude.toString().replace(",", ".")
+        val lon = longitude.toString().replace(",", ".")
+        if (placeId != null) {
+            return "https://www.google.com/maps/search/?api=1&query=$lat,$lon&query_place_id=$placeId"
+        }
+        return "https://www.google.com/maps/search/?api=1&query=$lat,$lon"
+    }
+
+    @Composable
+    fun getImageUrl(): Uri {
+        val url = BuildConfig.API_URL + "toilets/${this.id}/image?API_KEY=" + BuildConfig.API_KEY
+        return Uri.parse(url)
     }
 }

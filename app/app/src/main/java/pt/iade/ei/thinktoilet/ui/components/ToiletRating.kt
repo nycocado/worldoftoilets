@@ -10,13 +10,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.tests.generateRandomToilet
-import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
 
          /**
@@ -41,7 +41,7 @@ import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 @Composable
 fun ToiletRating(
     toilet: Toilet,
-    context: Context
+    context: Context = LocalContext.current
 ) {
     Row(
         modifier = Modifier.padding(horizontal = 8.dp),
@@ -85,13 +85,9 @@ fun ToiletRating(
         }
     }
 }
+
+@Preview(showBackground = true)
 @Composable
-@Preview
-fun PreviewToiletRating() {
-    AppTheme {
-        ToiletRating(
-            toilet = generateRandomToilet(),
-            context = androidx.compose.ui.platform.LocalContext.current
-        )
-    }
+fun ToiletRatingPreview() {
+    ToiletRating(generateRandomToilet())
 }

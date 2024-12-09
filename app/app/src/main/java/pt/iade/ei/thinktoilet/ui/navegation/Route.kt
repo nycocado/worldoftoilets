@@ -12,15 +12,70 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import pt.iade.ei.thinktoilet.R
 
-object Routes{
+object AppGraph {
+    val initial = RootGraph
+    val auth = AuthGraph
+    val main = MainGraph
+    val bottomSheet = BottomSheetGraph
+    val suggest = SuggestGraph
+    val report = ReportGraph
+    val rating = RatingGraph
+    val profileEdit = ProfileEditGraph
+}
+
+object RootGraph {
+    const val ROOT = "root_graph"
+}
+
+object AuthGraph {
+    const val ROOT = "auth_graph"
+    const val LOGIN = "login"
+    const val REGISTER = "register"
+}
+
+object MainGraph {
+    const val ROOT = "main_graph"
     const val HOME = "home"
+    const val HOME_TOILET_DETAIL = "home/{toiletId}"
     const val HISTORY = "history"
     const val PROFILE = "profile"
-    const val RATING = "rating/{toiletId}"
-    const val HOME_TOILET_DETAIL = "home/{toiletId}"
 
     fun homeToiletDetail(toiletId: Int) = "home/$toiletId"
+}
+
+object BottomSheetGraph {
+    const val ROOT = "bottom_sheet_graph"
+    const val TOILET_LIST = "toilet_list"
+    const val TOILET_DETAILS = "toilet_details/{toiletId}"
+
+    fun toiletDetail(toiletId: Int) = "toilet_details/$toiletId"
+}
+
+object SuggestGraph {
+    const val ROOT = "suggest_graph"
+    const val SUGGEST_START = "suggest_start"
+    const val SUGGEST_LOCATION = "suggest_location"
+    const val SUGGEST_DETAILS = "suggest_details"
+    const val SUGGEST_CONFIRMATION = "suggest_confirmation"
+}
+
+object ReportGraph {
+    const val ROOT = "report_graph"
+    const val REPORT_TOILET = "report_start/{toilet}"
+    const val REPORT_COMMENT = "report_start/{comment}"
+    const val REPORT_CONFIRMATION = "report_confirmation"
+}
+
+object RatingGraph {
+    const val ROOT = "rating_graph"
+    const val RATING = "rating/{toiletId}"
+
     fun rating(toiletId: Int) = "rating/$toiletId"
+}
+
+object ProfileEditGraph {
+    const val ROOT = "profile_edit_graph"
+    const val PROFILE_EDIT = "profile_edit"
 }
 
 sealed class NavRoute(
@@ -36,7 +91,7 @@ sealed class NavRoute(
         selectedIcon = Icons.Filled.LocationOn,
         unselectedIcon = Icons.Outlined.LocationOn,
         hasNews = false,
-        route = Routes.HOME
+        route = AppGraph.main.HOME
     ) {
         override fun getTitle(): String {
             return context.getString(R.string.home)
@@ -47,8 +102,8 @@ sealed class NavRoute(
         selectedIcon = Icons.Filled.Info,
         unselectedIcon = Icons.Outlined.Info,
         hasNews = false,
-        route = Routes.HISTORY
-    ){
+        route = AppGraph.main.HISTORY
+    ) {
         override fun getTitle(): String {
             return context.getString(R.string.history)
         }
@@ -58,8 +113,8 @@ sealed class NavRoute(
         selectedIcon = Icons.Filled.Person,
         unselectedIcon = Icons.Outlined.Person,
         hasNews = false,
-        route = Routes.PROFILE
-    ){
+        route = AppGraph.main.PROFILE
+    ) {
         override fun getTitle(): String {
             return context.getString(R.string.profile)
         }

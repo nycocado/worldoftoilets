@@ -12,165 +12,195 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import pt.iade.ei.thinktoilet.R
-import pt.iade.ei.thinktoilet.viewmodel.LocalViewModel
+import pt.iade.ei.thinktoilet.models.User
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
-    navController: NavController = rememberNavController(),
-    viewModel: LocalViewModel = viewModel()
+    loginStateFlow: StateFlow<Result<User>?>,
+    onLogin: (email: String, password: String) -> Unit = { _, _ -> },
+    onLoginSuccess: @Composable (user: User) -> Unit = { },
+    navigateToRegister: () -> Unit = { }
 ) {
-    var entryArgument by remember { mutableStateOf("") }
+    val loginState = loginStateFlow.collectAsState().value
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var emailSupportText by remember { mutableStateOf("") }
+    var passwordSupportText by remember { mutableStateOf("") }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-    ) {
-        LazyColumn {
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 20.dp),
-                    horizontalArrangement = Arrangement.Center
-                ) {
+    val context = LocalContext.current
+
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
                     Text(
-                        text = "Login",
+                        text = context.getString(R.string.app_name),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
                 }
-            }
-
-            item {
-                Row(
-                    modifier = Modifier
-                        .padding(50.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Image(
+            )
+        }
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            LazyColumn {
+                item {
+                    Row(
                         modifier = Modifier
-                            .size(200.dp),
-                        painter = painterResource(R.drawable.logo),
-                        contentDescription = "Logo Icon"
-                    )
+                            .padding(50.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Image(
+                            modifier = Modifier
+                                .size(200.dp),
+                            painter = painterResource(R.drawable.logo),
+                            contentDescription = "Logo Icon"
+                        )
+                    }
+                }
+
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        OutlinedTextField(
+                            value = email,
+                            onValueChange = {
+                                email = it
+                            },
+                            label = { Text("Email") },
+                            isError = emailSupportText.isNotEmpty(),
+                            supportingText = { Text(emailSupportText) }
+                        )
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp),
+                        horizontalArrangement = Arrangement.Center
+
+                    ) {
+                        OutlinedTextField(
+                            value = password,
+                            onValueChange = {
+                                password = it
+                            },
+                            label = { Text("Palavra-passe") },
+                            isError = passwordSupportText.isNotEmpty(),
+                            supportingText = { Text(passwordSupportText) }
+                        )
+                    }
+                }
+
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp),
+                        horizontalArrangement = Arrangement.Center
+
+                    ) {
+                        Button(
+                            onClick = { onLogin(email, password) },
+                            modifier = Modifier.padding(top = 10.dp),
+                            colors = ButtonColors(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                                disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(
+                                    alpha = 0.5f
+                                ),
+                                disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(
+                                    alpha = 0.5f
+                                )
+                            )
+                        ) {
+                            Text(
+                                text = "Iniciar Sessão",
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 60.dp)
+                            .fillMaxWidth()
+                            .padding(top = 10.dp),
+                        horizontalArrangement = Arrangement.Center
+
+                    ) {
+                        Button(
+                            onClick = { navigateToRegister() },
+                            colors = ButtonColors(
+                                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                                disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(
+                                    alpha = 0.5f
+                                ),
+                                disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(
+                                    alpha = 0.5f
+                                )
+                            )
+                        ) {
+                            Text(
+                                text = "Criar Conta",
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
                 }
             }
+        }
+    }
 
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    OutlinedTextField(
-                        value = entryArgument,
-                        onValueChange = {
-                            entryArgument = it
-                        },
-                        label = { Text("Nome de Usuário ou Email") }
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp),
-                    horizontalArrangement = Arrangement.Center
+    loginState?.onSuccess { user ->
+        emailSupportText = ""
+        passwordSupportText = ""
 
-                ) {
-                    OutlinedTextField(
-                        value = password,
-                        onValueChange = {
-                            password = it
-                        },
-                        label = { Text("Palavra-passe") }
-                    )
-                }
+        onLoginSuccess(user)
+    }
+
+    loginState?.onFailure { error ->
+        when {
+            error.message?.contains("email") == true -> {
+                emailSupportText = "Email inválido"
+                passwordSupportText = ""
             }
-
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp),
-                    horizontalArrangement = Arrangement.Center
-
-                ) {
-                    Button(
-                        onClick = { /*TODO*/ },
-                        modifier = Modifier.padding(top = 10.dp),
-                        colors = ButtonColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
-                            disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f)
-                        )
-                    ) {
-                        Text(
-                            text = "Iniciar Sessão",
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Surface(
-                        onClick = { },
-                    ) {
-                        Text(
-                            text = "Esqueces-te da palavra-passe?",
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-                Row(
-                    modifier = Modifier
-                        .padding(top = 60.dp)
-                        .fillMaxWidth()
-                        .padding(top = 10.dp),
-                    horizontalArrangement = Arrangement.Center
-
-                ) {
-                    Button(
-                        onClick = { /*TODO*/ },
-                        colors = ButtonColors(
-                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
-                            disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f)
-                        )
-                    ) {
-                        Text(
-                            text = "Criar Conta",
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                }
+            error.message?.contains("password") == true -> {
+                passwordSupportText = "Palavra-passe inválida"
+                emailSupportText = ""
+            }
+            else -> {
+                emailSupportText = "Erro ao iniciar sessão"
             }
         }
     }
@@ -180,5 +210,7 @@ fun LoginScreen(
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    ProfileScreen()
+    LoginScreen(
+        loginStateFlow = MutableStateFlow(Result.success(User(1, "name", "email", "iconId", 3, 2)))
+    )
 }

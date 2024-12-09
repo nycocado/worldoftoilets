@@ -17,4 +17,6 @@
     <string name="your_critics">Suas Críticas</string>
     <string name="error_image">Erro ao carregar imagem</string>
     <string name="comments">Comentários</string>
+    <string name="content_description_toilet_image">Imagem da casa de banho</string>\
+    <string name="maps_uri">android-app://com.google.android.apps.maps</string>
 </resources>

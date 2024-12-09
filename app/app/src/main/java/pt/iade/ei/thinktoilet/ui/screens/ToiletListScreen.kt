@@ -1,5 +1,6 @@
 package pt.iade.ei.thinktoilet.ui.screens
 
+import android.location.Location
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,18 +14,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.StateFlow
+import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.models.UiState
+import pt.iade.ei.thinktoilet.tests.generateLocationStateFlow
+import pt.iade.ei.thinktoilet.tests.generateToiletsNearbyIdsStateFlow
+import pt.iade.ei.thinktoilet.tests.generateToiletsStateFlow
 import pt.iade.ei.thinktoilet.ui.components.LocationCard
-import pt.iade.ei.thinktoilet.viewmodel.LocalViewModel
 
 @Composable
 fun ToiletListScreen(
-    localViewModel: LocalViewModel,
-    onToiletSelected: (Int) -> Unit
+    toiletsStateFlow: StateFlow<Map<Int, Toilet>>,
+    toiletsNearbyIdsStateFlow: StateFlow<UiState<List<Int>>>,
+    locationStateFlow: StateFlow<Location>,
+    navigateToToiletDetail: (Int) -> Unit = {}
 ) {
-    val toiletIds = localViewModel.toiletsNearbyIds.collectAsState().value
-    val toilets = localViewModel.toilets.collectAsState().value
+    val toilets = toiletsStateFlow.collectAsState().value
+    val toiletIds = toiletsNearbyIdsStateFlow.collectAsState().value
 
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -45,23 +53,43 @@ fun ToiletListScreen(
             }
 
             is UiState.Success -> {
-                val toiletList = toilets
-                    .filter { it.id in toiletIds.data }
-                    .sortedBy { toiletIds.data.indexOf(it.id) }
+                val toiletList = toiletIds.data.mapNotNull { toilets[it] }
                 LazyColumn {
                     items(toiletList) { toilet ->
                         LocationCard(
                             toilet = toilet,
-                            location = localViewModel.location.value!!,
-                            onClick = onToiletSelected
+                            location = locationStateFlow.collectAsState().value,
+                            onClick = navigateToToiletDetail
                         )
                     }
                 }
             }
 
             is UiState.Error -> {
-                Text(text = toiletIds.message)
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = toiletIds.message)
+                }
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ToiletListPreview() {
+    val toiletsStateFlow = generateToiletsStateFlow()
+    val toilets = toiletsStateFlow.collectAsState().value
+    val toiletsNearbyIdsStateFlow = generateToiletsNearbyIdsStateFlow(toilets)
+    val locationStateFlow = generateLocationStateFlow()
+    ToiletListScreen(
+        toiletsStateFlow = toiletsStateFlow,
+        toiletsNearbyIdsStateFlow = toiletsNearbyIdsStateFlow,
+        locationStateFlow = locationStateFlow
+    )
 }

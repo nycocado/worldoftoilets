@@ -1,14 +1,12 @@
 package pt.iade.ei.thinktoilet.tests
 
-import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.runtime.Composable
-import pt.iade.ei.thinktoilet.models.CommentItem
-import pt.iade.ei.thinktoilet.models.Extra
+import android.location.Location
+import kotlinx.coroutines.flow.MutableStateFlow
+import pt.iade.ei.thinktoilet.models.Comment
 import pt.iade.ei.thinktoilet.models.Rating
 import pt.iade.ei.thinktoilet.models.Toilet
+import pt.iade.ei.thinktoilet.models.UiState
 import pt.iade.ei.thinktoilet.models.User
-import pt.iade.ei.thinktoilet.models.UserMain
 import java.time.LocalDateTime
 
 fun generateRandomRatingCategory(): Rating {
@@ -24,20 +22,12 @@ fun generateRandomDistance(): Double {
     return (0..5000).random().toDouble()
 }
 
-fun generateExtra(): List<Extra> {
-    val extras = mutableListOf<Extra>()
-    extras.add(Extra(1))
-    extras.add(Extra(2))
-    return extras
-}
-
 fun generateRandomToilet(id: Int = (1..100).random(), numComments: Int = (1..40).random()): Toilet {
     return Toilet(
         id = id,
         name = "Toilet $id",
         address = "Address ${(0..100).random()}",
         rating = generateRandomRatingCategory(),
-        extras = generateExtra(),
         latitude = (0..100).random().toDouble(),
         longitude = (0..100).random().toDouble(),
         numComments = 0,
@@ -45,8 +35,8 @@ fun generateRandomToilet(id: Int = (1..100).random(), numComments: Int = (1..40)
     )
 }
 
-fun generateComment(): CommentItem {
-    return CommentItem(
+fun generateComment(): Comment {
+    return Comment(
         id = (0..100).random(),
         toiletId = 1,
         userId = 1,
@@ -72,16 +62,14 @@ fun generateUser(): User {
     )
 }
 
-fun generateUserMain(): UserMain {
-    return UserMain(
-        user = generateUser(),
-        email = "Lohanneguedes@fake.com",
-        password = "nothing_here"
-    )
+fun generateUserMain(): User {
+    val user = generateUser()
+    user.email = "luan.ribeiro@gmail.com"
+    return user
 }
 
-fun generateCommentsList(numComments: Int = (10..40).random()): List<CommentItem> {
-    val commentsList = mutableListOf<CommentItem>()
+fun generateCommentsList(numComments: Int = (10..40).random()): List<Comment> {
+    val commentsList = mutableListOf<Comment>()
     for (i in 1..numComments) {
         commentsList.add(generateComment())
     }
@@ -108,7 +96,6 @@ fun generateUsers(numUsers: Int): List<User> {
     return users
 }
 
-
 fun generateCarouselImage(): List<String> {
     return listOf(
         //filme muito bom
@@ -121,3 +108,27 @@ fun generateCarouselImage(): List<String> {
     )
 }
 
+fun generateToiletsStateFlow(numToilets: Int = (10..20).random(), preferenceId: Int? = null): MutableStateFlow<Map<Int, Toilet>> {
+    val toilets = generateRandomToilets(numToilets)
+    if(preferenceId != null) {
+        val toilet = generateRandomToilet(preferenceId)
+        toilets.plus(toilet)
+    }
+    val toiletsMap = mutableMapOf<Int, Toilet>()
+    for (toilet in toilets) {
+        toiletsMap[toilet.id] = toilet
+    }
+    return MutableStateFlow(toiletsMap)
+}
+
+fun generateToiletsNearbyIdsStateFlow(toilets: Map<Int, Toilet>): MutableStateFlow<UiState<List<Int>>> {
+    val toiletIds = toilets.keys.toList()
+    return MutableStateFlow(UiState.Success(toiletIds))
+}
+
+fun generateLocationStateFlow(): MutableStateFlow<Location> {
+    return MutableStateFlow(Location("mockprovider").apply {
+        latitude = 0.0
+        longitude = 0.0
+    })
+}

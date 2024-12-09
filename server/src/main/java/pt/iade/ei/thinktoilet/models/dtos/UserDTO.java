@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class UserDTO {
     private int id;
     private String name;
+    private String email;
     private int points;
     private String iconId;
     private int numComments;

@@ -39,22 +39,22 @@ public class CommentService {
                 .orElseThrow(() -> new NotFoundException(String.valueOf(id), "Comment", "id"));
     }
 
-    public List<Comment> getCommentByToiletId(int toiletId) {
+    public List<Comment> getCommentsByToiletId(int toiletId) {
         return Optional.ofNullable(commentRepository.findCommentsByInteractionToiletId(toiletId))
                 .orElseThrow(() -> new NotFoundException(String.valueOf(toiletId), "Comment", "toilet id"));
     }
 
-    public List<Comment> getCommentByUserId(int userId) {
+    public List<Comment> getCommentsByUserId(int userId) {
         return Optional.ofNullable(commentRepository.findCommentsByInteractionUserId(userId))
                 .orElseThrow(() -> new NotFoundException(String.valueOf(userId), "Comment", "user id"));
     }
 
-    public Page<Comment> getCommentByToiletIdPaging(int toiletId, Pageable pageable) {
+    public Page<Comment> getCommentsByToiletIdPaging(int toiletId, Pageable pageable) {
         return Optional.ofNullable(commentPagingRepository.findCommentsByInteractionToiletId(toiletId, pageable))
                 .orElseThrow(() -> new NotFoundException(String.valueOf(toiletId), "Comment", "toilet id"));
     }
 
-    public Page<Comment> getCommentByUserIdPaging(int userId, Pageable pageable) {
+    public Page<Comment> getCommentsByUserIdPaging(int userId, Pageable pageable) {
         return Optional.ofNullable(commentPagingRepository.findCommentsByInteractionUserId(userId, pageable))
                 .orElseThrow(() -> new NotFoundException(String.valueOf(userId), "Comment", "user id"));
     }
@@ -66,27 +66,27 @@ public class CommentService {
 
     @Transactional
     public List<CommentDTO> findCommentsByToiletId(int toiletId) {
-        List<Comment> comments = getCommentByToiletId(toiletId);
+        List<Comment> comments = getCommentsByToiletId(toiletId);
         return commentMapper.mapCommentDTOS(comments);
     }
 
     @Transactional
     public List<CommentDTO> findCommentsByUserId(int userId) {
-        List<Comment> comments = getCommentByUserId(userId);
+        List<Comment> comments = getCommentsByUserId(userId);
         return commentMapper.mapCommentDTOS(comments);
     }
 
     @Transactional
     public Page<CommentDTO> findCommentsByToiletIdPaging(int toiletId, int page, int size) {
         PageRequest pageable = PageRequest.of(page, size);
-        Page<Comment> comments = getCommentByToiletIdPaging(toiletId, pageable);
+        Page<Comment> comments = getCommentsByToiletIdPaging(toiletId, pageable);
         return new PageImpl<>(commentMapper.mapCommentDTOS(comments.getContent()), pageable, comments.getTotalElements());
     }
 
     @Transactional
     public Page<CommentDTO> findCommentsByUserIdPaging(int userId, int page, int size) {
         PageRequest pageable = PageRequest.of(page, size);
-        Page<Comment> comments = getCommentByUserIdPaging(userId, pageable);
+        Page<Comment> comments = getCommentsByUserIdPaging(userId, pageable);
         return new PageImpl<>(commentMapper.mapCommentDTOS(comments.getContent()), pageable, comments.getTotalElements());
     }
 

@@ -35,7 +35,7 @@ public class AuthService {
             throw new InvalidPasswordException();
         }
 
-        return userMapper.mapUserDTO(user);
+        return userMapper.mapLoginResponse(user, request.getEmail());
     }
 
     @Transactional

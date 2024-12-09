@@ -1,44 +1,43 @@
 package pt.iade.ei.thinktoilet.view
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import pt.iade.ei.thinktoilet.ui.navegation.BottomNavigationBar
-import pt.iade.ei.thinktoilet.ui.navegation.MainNavigation
+import pt.iade.ei.thinktoilet.ui.navegation.MainNavigationGraph
+import pt.iade.ei.thinktoilet.ui.permission.CheckAndRequestLocationPermission
 import pt.iade.ei.thinktoilet.viewmodel.LocalViewModel
 
-val LocalMainNavController =
-    compositionLocalOf<NavHostController> { error("NavHostController ERRO") }
-
 @Composable
-fun MainView() {
-    val navController = rememberNavController()
-    val localViewModel: LocalViewModel = hiltViewModel<LocalViewModel>()
-
-    CompositionLocalProvider(
-        LocalMainNavController provides navController
-    ) {
-        Scaffold(
-            bottomBar = {
-                Column{
-                    BottomNavigationBar(navController)
-                }
-            }
-        ) { innerPadding ->
-            Box(
-                Modifier
-                    .padding(innerPadding)
-            ) {
-                MainNavigation(navController, localViewModel)
-            }
+fun MainView(
+    rootController: NavController,
+    localViewModel: LocalViewModel,
+    navController: NavHostController = rememberNavController()
+) {
+    CheckAndRequestLocationPermission(
+        onPermissionGranted = {
+            localViewModel.loadLocation()
+        },
+        onPermissionDenied = {
+            // Não vai carregar os banheiros próximos
         }
+    )
+    Scaffold(
+        bottomBar = {
+            BottomNavigationBar(navController, rootController, localViewModel.isUserLoggedIn)
+        }
+    ) { innerPadding ->
+        Box(
+            Modifier
+                .padding(innerPadding)
+        ) {
+            MainNavigationGraph(navController, rootController, localViewModel)
+        }
+
     }
 }

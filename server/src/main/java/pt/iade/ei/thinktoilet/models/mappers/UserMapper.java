@@ -17,11 +17,24 @@ public class UserMapper {
     @Autowired
     private CountCommentUserRepository countCommentUserRepository;
 
+    public UserDTO mapLoginResponse(User user, String email) {
+        CountCommentUser countComment = countCommentUserRepository.findCountCommentUserByUserId(user.getId());
+        return new UserDTO(
+                user.getId(),
+                user.getName(),
+                email,
+                user.getPoints(),
+                user.getIconId(),
+                countComment.getNum()
+        );
+    }
+
     public UserDTO mapUserDTO(User user) {
         CountCommentUser countComment = countCommentUserRepository.findCountCommentUserByUserId(user.getId());
         return new UserDTO(
                 user.getId(),
                 user.getName(),
+                null,
                 user.getPoints(),
                 user.getIconId(),
                 countComment.getNum()
@@ -40,6 +53,7 @@ public class UserMapper {
             return new UserDTO(
                     user.getId(),
                     user.getName(),
+                    null,
                     user.getPoints(),
                     user.getIconId(),
                     numComments

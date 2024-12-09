@@ -1,6 +1,5 @@
 package pt.iade.ei.thinktoilet.ui.components
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
@@ -8,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProgressIndicatorDefaults.drawStopIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -41,7 +41,7 @@ import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 fun ProgressBar(
     progress: Float,
     text: String,
-    maxValue : Float = 5f
+    maxValue: Float = 5f
 ) {
     Row(
         modifier = Modifier.padding(vertical = 2.dp),
@@ -51,17 +51,21 @@ fun ProgressBar(
         LinearProgressIndicator(
             modifier = Modifier
                 .weight(1f)
-                .height(10.dp)
-                .border(
-                    width = 3.dp,
-                    color = Color.Black,
-                    shape = MaterialTheme.shapes.small
-                ),
+                .height(5.dp),
             progress = {
                 progress / maxValue
             },
             strokeCap = StrokeCap.Round,
-            color = MaterialTheme.colorScheme.secondary
+            color = MaterialTheme.colorScheme.secondary,
+            trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
+            drawStopIndicator = {
+                drawStopIndicator(
+                    drawScope = this,
+                    stopSize = 0.dp,
+                    color = Color.Transparent,
+                    strokeCap = StrokeCap.Round
+                )
+            }
         )
         Text(
             modifier = Modifier
@@ -77,7 +81,7 @@ fun ProgressBar(
 }
 
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun PreviewProgressBarCategories() {
     AppTheme {

@@ -9,32 +9,30 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-fun BottomNavigationBar(navController: NavController) {
+fun BottomNavigationBar(
+    navController: NavController = rememberNavController(),
+    rootController: NavController = rememberNavController(),
+    isUserLoggedInStateFlow: StateFlow<Boolean>
+) {
     val context = LocalContext.current
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-    var selectedItemIndex by rememberSaveable {
-        mutableIntStateOf(0)
-    }
-
     val bottomRoutes = getBottomRoutes(context)
-
-    LaunchedEffect(currentRoute) {
-        selectedItemIndex = bottomRoutes.indexOfFirst {
-            currentRoute?.startsWith(it.route) == true
-        }
+    var selectedItemIndex = bottomRoutes.indexOfFirst {
+        currentRoute?.startsWith(it.route) == true
     }
+    val isUserLoggedIn = isUserLoggedInStateFlow.collectAsState().value
 
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -53,6 +51,10 @@ fun BottomNavigationBar(navController: NavController) {
                 selected = currentRoute?.startsWith(item.route) == true,
                 onClick = {
                     selectedItemIndex = index
+                    if(item.route != AppGraph.main.HOME && !isUserLoggedIn) {
+                        rootController.navigate(AppGraph.auth.LOGIN)
+                        return@NavigationBarItem
+                    }
                     navController.navigate(item.route) {
                         popUpTo(navController.graph.startDestinationId) {
                             saveState = true
@@ -65,7 +67,7 @@ fun BottomNavigationBar(navController: NavController) {
                     Text(
                         text = item.getTitle(),
                         style = MaterialTheme.typography.titleSmall,
-                        fontWeight = if(index == selectedItemIndex) FontWeight.Bold else FontWeight.Normal,
+                        fontWeight = if (index == selectedItemIndex) FontWeight.Bold else FontWeight.Normal,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -94,5 +96,12 @@ fun BottomNavigationBar(navController: NavController) {
                 }
             )
         }
+
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun BottomNavigationBarPreview() {
+    BottomNavigationBar(isUserLoggedInStateFlow = MutableStateFlow(true))
 }

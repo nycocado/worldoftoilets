@@ -10,16 +10,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProgressIndicatorDefaults.drawStopIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.User
+import pt.iade.ei.thinktoilet.tests.generateUserMain
 
          /**
          * Exibe o status do perfil do usuário.
@@ -41,12 +45,12 @@ import pt.iade.ei.thinktoilet.models.User
 @Composable
 fun ProfileStatus(
     user: User,
-    context: Context
+    context: Context = LocalContext.current
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()
     ) {
-        var nivel = Int // Altera Processo de Nivel
+        var nivel = Int
 
         Text(
             text = if (user.points > 9000) {
@@ -84,40 +88,52 @@ fun ProfileStatus(
         ) {
             Column {
                 Text(
-                    text = context.getString(R.string.level) + " 1", // Altera Processode Nivel
+                    text = context.getString(R.string.level) + " 1",
                     fontWeight = FontWeight.SemiBold,
                     style = MaterialTheme.typography.titleSmall
                 )
             }
             Column(
                 modifier = Modifier
-                    .height(25.dp)
+                    .height(20.dp)
                     .padding(horizontal = 10.dp)
             ) {
                 val progress = (0..100).random().toFloat()
 
                 LinearProgressIndicator(
                     modifier = Modifier
-                        .weight(1f)
-                        .height(1.dp)
-                        .border(
-                            width = 4.dp,
-                            color = Color.Black,
-                            shape = MaterialTheme.shapes.extraLarge
-                        ), progress = {
-                        progress / 100f // Altera Processo de Nivel
+                        .weight(1f),
+                    progress = {
+                        progress / 100f
                     },
                     strokeCap = StrokeCap.Round,
-                    color = MaterialTheme.colorScheme.primaryContainer
+                    color = MaterialTheme.colorScheme.secondary,
+                    trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
+                    drawStopIndicator = {
+                        drawStopIndicator(
+                            drawScope = this,
+                            stopSize = 0.dp,
+                            color = Color.Transparent,
+                            strokeCap = StrokeCap.Round
+                        )
+                    }
                 )
             }
             Column {
                 Text(
-                    text = context.getString(R.string.level) + " 2",  // Altera Processo de Nivel
+                    text = context.getString(R.string.level) + " 2",
                     fontWeight = FontWeight.SemiBold,
                     style = MaterialTheme.typography.titleSmall
                 )
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ProfileStatusPreview() {
+    ProfileStatus(
+        user = generateUserMain()
+    )
 }

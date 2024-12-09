@@ -30,5 +30,5 @@ public class Rating {
     private double avgAccessibility;
 
     @Column(name = "ratio_paper")
-    private double avgPaper;
+    private double ratioPaper;
 }

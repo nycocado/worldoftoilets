@@ -2,7 +2,7 @@ package pt.iade.ei.thinktoilet.ui.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -34,8 +34,10 @@ import androidx.compose.ui.unit.dp
 fun RatingComment(
     commentInput: String = "",
     onCommentChange: (String) -> Unit = {}
-)
- {
+) {
+    val maxLength = 260
+    var textError = commentInput.length > maxLength
+
     Row(
         modifier = Modifier
             .padding(
@@ -52,10 +54,9 @@ fun RatingComment(
     }
     TextField(
         value = commentInput,
-        singleLine = false,
         modifier = Modifier
             .fillMaxWidth()
-            .height(125.dp),
+            .heightIn(min = 150.dp),
         shape = RoundedCornerShape(topEnd = 10.dp, topStart = 10.dp),
         onValueChange = { newText ->
             onCommentChange(newText)
@@ -67,12 +68,27 @@ fun RatingComment(
                 fontWeight = FontWeight.Normal,
             )
         },
+        isError = textError,
+        supportingText = {
+            if (textError) {
+                Text(
+                    text = "Máximo de $maxLength caracteres",
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = FontWeight.Normal,
+                )
+            } else {
+                Text(
+                    text = "${commentInput.length}/$maxLength",
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = FontWeight.Normal,
+                )
+            }
+        },
     )
 }
-@Composable
+
 @Preview(showBackground = true)
+@Composable
 fun RatingCommentPreview() {
-    RatingComment(
-        commentInput = ""
-    )
+    RatingComment()
 }

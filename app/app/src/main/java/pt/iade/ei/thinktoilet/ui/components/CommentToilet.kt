@@ -27,7 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pt.iade.ei.thinktoilet.R
-import pt.iade.ei.thinktoilet.models.CommentItem
+import pt.iade.ei.thinktoilet.models.Comment
 import pt.iade.ei.thinktoilet.models.User
 import pt.iade.ei.thinktoilet.tests.generateComment
 import pt.iade.ei.thinktoilet.tests.generateUser
@@ -54,8 +54,8 @@ import pt.iade.ei.thinktoilet.ui.theme.AppTheme
          * ```
          */
 @Composable
-fun Comment(
-    comment: CommentItem,
+fun CommentToilet(
+    comment: Comment,
     user: User
 ) {
     var likePressed by remember { mutableStateOf(false) }
@@ -193,7 +193,7 @@ fun UserComment(user: User) {
 @Composable
 fun CommentPreview() {
     AppTheme {
-        Comment(
+        CommentToilet(
             comment = generateComment(),
             user = generateUser()
         )

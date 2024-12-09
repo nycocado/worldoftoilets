@@ -46,7 +46,7 @@ import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 @Composable
 fun LocationCard(
     toilet: Toilet,
-    location: Location,
+    location: Location?,
     onClick: (Int) -> Unit
 ) {
     Card(
@@ -70,19 +70,19 @@ fun LocationCard(
         ),
         elevation = CardDefaults.cardElevation(2.dp),
         onClick = {
-            onClick(toilet.id!!)
+            onClick(toilet.id)
         }
-    ) { // Container (Serve para aplicar o border radius)
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 15.dp),
             verticalAlignment = Alignment.CenterVertically
-        ) { // Todos os elementos são colocados em linha
+        ) {
             Column(
                 modifier = Modifier.weight(1f)
-            ) { // Informações do local
-                Row { // Nome
+            ) {
+                Row {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         text = toilet.name,
@@ -94,7 +94,7 @@ fun LocationCard(
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically
-                ) { // Estrelas
+                ) {
                     Stars(toilet.getAverageRating(), size = 14.dp)
                     Text(
                         modifier = Modifier.padding(horizontal = 2.dp),
@@ -104,7 +104,7 @@ fun LocationCard(
                         lineHeight = 1.sp
                     )
                 }
-                Row { // Endereço
+                Row {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         text = toilet.address,
@@ -115,14 +115,16 @@ fun LocationCard(
                     )
                 }
             }
-            Column { // Distância
-                Text(
-                    modifier = Modifier.padding(horizontal = 10.dp),
-                    text = toilet.distanceToString(location.latitude, location.longitude),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 1
-                )
+            if (location != null) {
+                Column {
+                    Text(
+                        modifier = Modifier.padding(horizontal = 10.dp),
+                        text = toilet.distanceToString(location.latitude, location.longitude),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1
+                    )
+                }
             }
         }
     }

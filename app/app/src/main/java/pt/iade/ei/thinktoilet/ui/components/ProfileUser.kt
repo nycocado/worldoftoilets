@@ -15,12 +15,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.iade.ei.thinktoilet.R
-import pt.iade.ei.thinktoilet.models.UserMain
+import pt.iade.ei.thinktoilet.models.User
 import pt.iade.ei.thinktoilet.tests.generateUserMain
 
 /**
@@ -42,8 +43,8 @@ import pt.iade.ei.thinktoilet.tests.generateUserMain
           */
 @Composable
 fun ProfileUser(
-    userMain: UserMain,
-    context: Context
+    user: User,
+    context: Context = LocalContext.current
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -61,27 +62,32 @@ fun ProfileUser(
             contentDescription = "Profile Icon"
         )
         Text(
-            text = userMain.user.name,
+            text = user.name,
             modifier = Modifier.padding(top = 10.dp),
             fontWeight = FontWeight.SemiBold,
             style = MaterialTheme.typography.titleLarge,
             maxLines = 1,
         )
         Text(
-            text = userMain.email,
+            text = user.email!!,
             modifier = Modifier.padding(5.dp),
             fontWeight = FontWeight.Normal,
             style = MaterialTheme.typography.titleMedium,
             maxLines = 1,
         )
+        Text(
+            modifier = Modifier.padding(top = 8.dp),
+            text = user.points.toString() + " " + context.getString(R.string.points),
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.secondary,
+            style = MaterialTheme.typography.titleLarge,
+            maxLines = 1,
+        )
     }
 }
 
-@Composable
 @Preview(showBackground = true)
+@Composable
 fun ProfileUserPreview() {
-    ProfileUser(
-        userMain = generateUserMain(),
-        context = androidx.compose.ui.platform.LocalContext.current
-    )
+    ProfileUser(generateUserMain())
 }

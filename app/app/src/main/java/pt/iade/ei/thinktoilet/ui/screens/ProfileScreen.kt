@@ -15,7 +15,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -23,45 +23,39 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import pt.iade.ei.thinktoilet.R
+import pt.iade.ei.thinktoilet.models.Comment
+import pt.iade.ei.thinktoilet.models.Toilet
+import pt.iade.ei.thinktoilet.models.User
+import pt.iade.ei.thinktoilet.tests.generateCommentsList
+import pt.iade.ei.thinktoilet.tests.generateRandomToilet
+import pt.iade.ei.thinktoilet.tests.generateUserMain
 import pt.iade.ei.thinktoilet.ui.components.ProfileStatus
 import pt.iade.ei.thinktoilet.ui.components.ProfileUser
 import pt.iade.ei.thinktoilet.ui.components.ToiletReview
-import pt.iade.ei.thinktoilet.viewmodel.LocalViewModel
 
 @Composable
 fun ProfileScreen(
-    navController: NavController = rememberNavController(),
-    localViewModel: LocalViewModel = viewModel()
+    toiletsStateFlow: StateFlow<Map<Int, Toilet>>,
+    userStateFlow: StateFlow<User?>,
+    commentsStateFlow: StateFlow<List<Comment>>
 ) {
-    val userMain = localViewModel.userMain.value!!
-    val comments = localViewModel.commentsUser.observeAsState().value?.filter { it.userId == userMain.user.id }.orEmpty()
+    val user = userStateFlow.collectAsState().value
+    val comments = commentsStateFlow.collectAsState().value
     val context = LocalContext.current
-
-    if (comments.isEmpty()) {
-        localViewModel.getUserComments(userMain.user.id!!)
-    }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
-        LazyColumn {
+        LazyColumn(
+            modifier = Modifier.padding(top = 80.dp)
+        ) {
             item {
-                Text(
-                    modifier = Modifier.padding(vertical = 20.dp),
-                    text = context.getString(R.string.profile),
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.headlineLarge
-                )
-            }
-
-            item {
-                ProfileUser(userMain, context)
+                ProfileUser(user!!)
             }
 
             item {
@@ -74,13 +68,16 @@ fun ProfileScreen(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Button(
-                        onClick = {
-                            println("Botão de editar perfil pressionado")
-                        }, colors = ButtonColors(
+                        onClick = { /*TODO*/ },
+                        colors = ButtonColors(
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
                             contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
-                            disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f)
+                            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(
+                                alpha = 0.5f
+                            ),
+                            disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(
+                                alpha = 0.5f
+                            )
                         )
                     ) {
                         Text(
@@ -91,6 +88,11 @@ fun ProfileScreen(
                     }
                 }
             }
+
+            item {
+                ProfileStatus(user!!)
+            }
+
             item {
                 HorizontalDivider(
                     modifier = Modifier
@@ -119,8 +121,8 @@ fun ProfileScreen(
                 }
             } else {
                 items(comments) { comment ->
-                    val toilet = localViewModel.toilets.value?.find { it.id == comment.toiletId }
-                    if(toilet != null){
+                    val toilet = toiletsStateFlow.collectAsState().value[comment.toiletId]
+                    if (toilet != null) {
                         ToiletReview(
                             comment = comment,
                             toilet = toilet
@@ -132,3 +134,19 @@ fun ProfileScreen(
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun ProfileScreenPreview() {
+    val userStateFlow = MutableStateFlow(generateUserMain())
+    val toiletsStateFlow = MutableStateFlow(
+        mapOf(
+            1 to generateRandomToilet(1),
+        )
+    )
+    val commentsStateFlow = MutableStateFlow(generateCommentsList())
+    ProfileScreen(
+        toiletsStateFlow = toiletsStateFlow,
+        userStateFlow = userStateFlow,
+        commentsStateFlow = commentsStateFlow
+    )
+}

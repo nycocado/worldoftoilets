@@ -19,9 +19,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,34 +28,41 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.SubcomposeAsyncImage
-import coil.request.ImageRequest
+import coil3.compose.LocalPlatformContext
+import coil3.compose.SubcomposeAsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import pt.iade.ei.thinktoilet.BuildConfig
 import pt.iade.ei.thinktoilet.R
-import pt.iade.ei.thinktoilet.ui.components.Comment
+import pt.iade.ei.thinktoilet.models.Comment
+import pt.iade.ei.thinktoilet.models.Toilet
+import pt.iade.ei.thinktoilet.models.User
+import pt.iade.ei.thinktoilet.tests.generateCommentsList
+import pt.iade.ei.thinktoilet.tests.generateRandomToilet
+import pt.iade.ei.thinktoilet.tests.generateUserMain
+import pt.iade.ei.thinktoilet.ui.components.CommentToilet
 import pt.iade.ei.thinktoilet.ui.components.Stars
 import pt.iade.ei.thinktoilet.ui.components.ToiletRating
-import pt.iade.ei.thinktoilet.viewmodel.LocalViewModel
 
 @Composable
 fun ToiletDetailScreen(
-    localViewModel: LocalViewModel,
     toiletId: Int,
-    onToiletDetailedToRatingScreen: (Int) -> Unit
+    toiletsStateFlow: StateFlow<Map<Int, Toilet>>,
+    commentsStateFlow: StateFlow<List<Comment>>,
+    usersStateFlow: StateFlow<Map<Int, User>>,
+    navigateToRating: (Int) -> Unit
 ) {
+    val toilet = toiletsStateFlow.collectAsState().value[toiletId]!!
+    val comments = commentsStateFlow.collectAsState().value.filter { it.toiletId == toiletId }
+    val users = usersStateFlow.collectAsState().value
+
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val toilet = localViewModel.toilets.collectAsState().value.find { it.id == toiletId }
-    val comments =
-        localViewModel.commentsToilet.observeAsState().value?.filter { it.toiletId == toiletId }
-            .orEmpty()
-    val url = BuildConfig.API_URL + "toilets/${toilet!!.id}/image?API_KEY=" + BuildConfig.API_KEY
-
-    LaunchedEffect(Unit) {
-        localViewModel.getToiletComments(toiletId)
-    }
+    val platformContext = LocalPlatformContext.current
 
     LazyColumn(
         modifier = Modifier.padding(16.dp)
@@ -89,11 +94,11 @@ fun ToiletDetailScreen(
 
         item {
             SubcomposeAsyncImage(
-                model = ImageRequest.Builder(context)
-                    .data(url)
+                model = ImageRequest.Builder(platformContext)
+                    .data(toilet.getImageUrl())
                     .crossfade(true)
                     .build(),
-                contentDescription = "Imagem da casa de banho",
+                contentDescription = context.getString(R.string.content_description_toilet_image) + ": " + toilet.name,
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(MaterialTheme.shapes.medium)
@@ -146,14 +151,13 @@ fun ToiletDetailScreen(
                 Column {
                     Button(
                         onClick = {
-                            val destination = Uri.encode(toilet.address)
                             val intent = Intent(
                                 Intent.ACTION_VIEW,
-                                Uri.parse("https://www.google.com/maps/dir/?api=1&destination=${destination}QVB&destination_place_id=${toilet.placeId}&travelmode=walking")
+                                Uri.parse(toilet.getMapsUrl())
                             ).apply {
                                 putExtra(
                                     Intent.EXTRA_REFERRER,
-                                    Uri.parse("android-app://com.google.android.apps.maps")
+                                    Uri.parse(context.getString(R.string.maps_uri))
                                 )
                             }
                             context.startActivity(intent)
@@ -180,7 +184,7 @@ fun ToiletDetailScreen(
         }
 
         item {
-            ToiletRating(toilet, context)
+            ToiletRating(toilet)
         }
 
         item {
@@ -191,7 +195,7 @@ fun ToiletDetailScreen(
                         top = 16.dp,
                         bottom = 8.dp
                     ),
-                onClick = { scope.launch { onToiletDetailedToRatingScreen(toiletId) } },
+                onClick = { scope.launch { navigateToRating(toilet.id) } },
                 colors = ButtonColors(
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                     contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
@@ -237,11 +241,38 @@ fun ToiletDetailScreen(
             }
         } else {
             items(comments) { comment ->
-                val user = localViewModel.users.value?.find { it.id == comment.userId }
+                val user = users[comment.userId]
                 if (user != null) {
-                    Comment(comment = comment, user = user)
+                    CommentToilet(
+                        comment = comment,
+                        user = user
+                    )
                 }
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ToiletDetailScreenPreview() {
+    val toiletsStateFlow = MutableStateFlow(
+        mapOf(
+            1 to generateRandomToilet(1)
+        )
+    )
+    val commentsStateFlow = MutableStateFlow(generateCommentsList())
+    val usersStateFlow = MutableStateFlow(
+        mapOf(
+            1 to generateUserMain()
+        )
+    )
+
+    ToiletDetailScreen(
+        toiletId = 1,
+        toiletsStateFlow = toiletsStateFlow,
+        commentsStateFlow = commentsStateFlow,
+        usersStateFlow = usersStateFlow,
+        navigateToRating = {}
+    )
 }

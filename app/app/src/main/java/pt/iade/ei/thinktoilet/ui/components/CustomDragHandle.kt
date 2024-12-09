@@ -67,8 +67,8 @@ fun CustomDragHandle(
     }
 }
 
+@Preview(showBackground = true)
 @Composable
-@Preview
 fun CustomDragHandlePreview() {
     CustomDragHandle()
 }

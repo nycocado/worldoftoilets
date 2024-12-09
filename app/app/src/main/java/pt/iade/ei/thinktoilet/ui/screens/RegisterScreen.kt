@@ -22,10 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun RegisterScreen(
-//    navController: NavController = rememberNavController(),
-//    localViewModel: LocalViewModel = viewModel()
-) {
+fun RegisterScreen() {
     var text by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -134,8 +131,12 @@ fun RegisterScreen(
                         colors = ButtonColors(
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
                             contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
-                            disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f)
+                            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(
+                                alpha = 0.5f
+                            ),
+                            disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(
+                                alpha = 0.5f
+                            )
                         )
                     ) {
                         Text(

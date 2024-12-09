@@ -3,7 +3,7 @@ package pt.iade.ei.thinktoilet.models
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-data class CommentItem(
+data class Comment(
     @SerializedName("id") var id: Int?,
     @SerializedName("toiletId") var toiletId: Int,
     @SerializedName("userId") val userId: Int,

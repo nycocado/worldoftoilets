@@ -58,13 +58,8 @@ fun RatingItem(
     }
 }
 
-@Composable
 @Preview(showBackground = true)
+@Composable
 fun RatingItemPreview() {
-    AppTheme{
-        RatingItem(
-            title = "Qualidade",
-            rating = 3.5f
-        )
-    }
+    RatingItem(title = "Limpeza", rating = 4.5f)
 }
