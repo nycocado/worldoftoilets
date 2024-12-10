@@ -32,6 +32,14 @@ public class Toilet {
     )
     private Access access;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "toil_state_id",
+            referencedColumnName = "state_id",
+            nullable = false
+    )
+    private State state;
+
     @Column(name = "toil_name")
     private String name;
 

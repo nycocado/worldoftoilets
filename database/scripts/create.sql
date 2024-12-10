@@ -16,6 +16,7 @@ CREATE TABLE toilet (
 					toil_id INT NOT NULL auto_increment,
 					toil_city_id INT NOT NULL,
 					toil_acs_id INT NOT NULL,
+					toil_state_id INT NOT NULL,
 					toil_name VARCHAR(50) NOT NULL,
 					toil_lat DOUBLE NOT NULL,
 					toil_long DOUBLE NOT NULL,
@@ -41,17 +42,6 @@ CREATE TABLE interaction (
 					PRIMARY KEY (int_id),
 					UNIQUE (int_user_id, int_toil_id)
 );
-		    
-CREATE TABLE functime (
-					ft_id INT NOT NULL auto_increment,
-          		    ft_toil_id INT NOT NULL,				
-					ft_day_id INT NOT NULL,				
-					ft_state_id INT NOT NULL,
-					ft_timestart TIME NOT NULL,
-					ft_timeend TIME NOT NULL,
-					ft_cdate DATE NOT NULL,
-					PRIMARY KEY (ft_id)
-);		
 		            		                 		     
 CREATE TABLE extra (
 					extra_id INT NOT NULL auto_increment,
@@ -97,12 +87,6 @@ CREATE TABLE typeextra (
 					PRIMARY KEY (tex_id)
 );
 
-CREATE TABLE day (
-					day_id INT NOT NULL auto_increment,
-					day_name VARCHAR(50) NOT NULL,		
-					PRIMARY KEY (day_id)
-);
-
 CREATE TABLE state (
 					state_id INT NOT NULL auto_increment,
 					state_name VARCHAR(50) NOT NULL,			
@@ -145,6 +129,11 @@ ADD CONSTRAINT toil_fk_access
 FOREIGN KEY (toil_acs_id) REFERENCES access(acs_id) 
 ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+ALTER TABLE toilet
+ADD CONSTRAINT toil_fk_state
+FOREIGN KEY (toil_state_id) REFERENCES state(state_id) 
+ON DELETE NO ACTION ON UPDATE NO ACTION;  
+
 ALTER TABLE report
 ADD CONSTRAINT report_fk_typereport
 FOREIGN KEY (rep_trp_id) REFERENCES typereport(trp_id) 
@@ -163,21 +152,6 @@ ON DELETE NO ACTION ON UPDATE NO ACTION;
 ALTER TABLE interaction
 ADD CONSTRAINT interaction_fk_toil
 FOREIGN KEY (int_toil_id) REFERENCES toilet(toil_id) 
-ON DELETE NO ACTION ON UPDATE NO ACTION;
-            
-ALTER TABLE functime
-ADD CONSTRAINT functime_fk_toilet
-FOREIGN KEY (ft_toil_id) REFERENCES toilet(toil_id) 
-ON DELETE NO ACTION ON UPDATE NO ACTION;  
-
-ALTER TABLE functime
-ADD CONSTRAINT functime_fk_day
-FOREIGN KEY (ft_day_id) REFERENCES day(day_id) 
-ON DELETE NO ACTION ON UPDATE NO ACTION;
-
-ALTER TABLE functime
-ADD CONSTRAINT functime_fk_state
-FOREIGN KEY (ft_state_id) REFERENCES state(state_id) 
 ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE extra 

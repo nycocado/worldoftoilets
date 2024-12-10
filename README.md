@@ -215,7 +215,7 @@ Este caso trata da busca por uma casa de banho específica pelo utilizador: [(Ex
 | **5. Documentação**                 | - Criação do relatório final do projeto. (Todos)                                                                                                                                                                                                                   | Entrega 3: [12/01/2024] |
 
 ## Descrição da Solução
-O projeto **[Think Toilet](https://github.com/nycocado/think-toilet)** é uma aplicação móvel que ajuda os utilizadores a encontrar e avaliar casas de banho próximas. A aplicação exibe um mapa interativo com as casas de banho mais bem avaliadas e fornece informações como preço, acessibilidade e restrições de uso (gratuito, público ou para clientes). Os utilizadores podem avaliar critérios como limpeza, acessibilidade, papel disponível e estrutura, além de deixar comentários. A aplicação também permite sugerir novas casas de banho, denunciar locais ou comentários inadequados e visualizar seu histórico de avaliações. Com integração ao Google Maps, oferece rotas para facilitar o acesso aos locais.
+O projeto **[Think Toilet](https://github.com/nycocado/think-toilet)** é uma aplicação móvel que ajuda os utilizadores a encontrar e avaliar casas de banho próximas. A aplicação exibe um mapa interativo com as casas de banho mais bem avaliadas e fornece informações como acessibilidade e restrições de uso (gratuito, público ou para clientes). Os utilizadores podem avaliar critérios como limpeza, acessibilidade, papel disponível e estrutura, além de deixar comentários. A aplicação também permite sugerir novas casas de banho, denunciar locais ou comentários inadequados e visualizar seu histórico de avaliações. Com integração ao Google Maps, oferece rotas para facilitar o acesso aos locais.
 
 ## Enquadramento das Unidades Curriculares
 ### Programação de Dispositivos Móveis
@@ -239,7 +239,7 @@ Esta disciplina será essencial para melhorar a comunicação interna da equipa 
 ## Requisitos Técnicos
 ### Requisitos Funcionais
 - Os usuários devem poder buscar casas de banho próximas por localização no mapa.
-- Os usuários devem poder visualizar detalhes das casas de banho, incluindo preço, acessibilidade, condições e avaliações, com a média das avaliações categóricas e a média geral das avaliações.
+- Os usuários devem poder visualizar detalhes das casas de banho, acessibilidade, condições e avaliações, com a média das avaliações categóricas e a média geral das avaliações.
 - Os usuários devem poder avaliar casas de banho, deixando comentários e notas sobre limpeza, acessibilidade, disponibilidade de papel e estrutura.
 - Os usuários devem poder sugerir novas casas de banho.
 - Os usuários devem poder ver seu histórico de avaliações.
@@ -401,7 +401,7 @@ Além disso, agora as avaliações da categoria **papel** são valores **boolean
 - [Sugerir Casa de Banho 05](documents/primeira_entrega/interface/suggest_page/suggest05.png)
 
 ## Conclusão
-O **[Think Toilet](https://github.com/nycocado/think-toilet)** tem como principal objetivo fornecer uma solução eficaz para facilitar a localização de casas de banho públicas e privadas, ao mesmo tempo que melhora a experiência do utilizador através de um sistema de avaliações detalhadas. A aplicação permite que os utilizadores encontrem rapidamente casas de banho próximas, com base em critérios como limpeza, acessibilidade e preço. Além disso, o projeto visa promover a colaboração dos utilizadores através de sugestões de novos locais e avaliações, criando assim um banco de dados sempre atualizado e confiável.
+O **[Think Toilet](https://github.com/nycocado/think-toilet)** tem como principal objetivo fornecer uma solução eficaz para facilitar a localização de casas de banho públicas e privadas, ao mesmo tempo que melhora a experiência do utilizador através de um sistema de avaliações detalhadas. A aplicação permite que os utilizadores encontrem rapidamente casas de banho próximas, com base em critérios como limpeza e acessibilidade. Além disso, o projeto visa promover a colaboração dos utilizadores através de sugestões de novos locais e avaliações, criando assim um banco de dados sempre atualizado e confiável.
 
 Outro objetivo central é o incentivo à participação ativa, implementando um sistema de gamificação, onde os utilizadores são recompensados com pontos por suas contribuições, seja avaliando casas de banho ou sugerindo novos locais. Com a integração ao [Google Maps](https://www.google.pt/maps), a aplicação também visa facilitar o acesso, fornecendo rotas diretas para os utilizadores. Ao final, **[Think Toilet](https://github.com/nycocado/think-toilet)** busca não apenas atender a uma necessidade prática, mas também criar uma comunidade de utilizadores colaborativa e engajada, proporcionando uma solução abrangente e útil para o cotidiano de todos.
 
