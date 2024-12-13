@@ -9,11 +9,33 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
+
+/**
+         * Função que representa um complemento de uma reclamação com sistema de avaliação em estrelas.
+         *
+         * @param title Título exibido ao lado das estrelas, descrevendo o critério de avaliação.
+         * @param rating Valor inicial da avaliação representado como um número decimal (ex.: 3.5).
+         * @param onClick Um `mutableStateOf()` que retornará o valor da estrela selecionada, permitindo capturar a interação do usuário.
+         *
+         * Esta função permite ao usuário interagir com as estrelas, atribuindo um valor à variável associada.
+         *
+         * Exemplo de uso:
+         * ```kotlin
+         * RatingItem(
+         *     title = "Qualidade",
+         *     rating = 3.5f,
+         *     onClick = { selectedRating -> println("Avaliação selecionada: $selectedRating") }
+         * )
+         * ```
+         */
 @Composable
 fun RatingItem(
-    title: String, rating: Float,
+    title: String,
+    rating: Float,
     onClick: ((Int) -> Unit)? = null
 ) {
     Row(
@@ -33,5 +55,16 @@ fun RatingItem(
                 onClick(it)
             }
         }
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun RatingItemPreview() {
+    AppTheme{
+        RatingItem(
+            title = "Qualidade",
+            rating = 3.5f
+        )
     }
 }

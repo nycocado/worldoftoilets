@@ -33,6 +33,26 @@ import pt.iade.ei.thinktoilet.tests.generateComment
 import pt.iade.ei.thinktoilet.tests.generateUser
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
+
+        /**
+         * Função que mostra um Comentário.
+         *
+         * @param comment O comentário a ser exibido.
+         * @param user O usuário.
+         *
+         *
+         * Esta função permite ao usuário interagir com um comentário, incluindo
+         *a possibilidade de clicar nos botões de "like" ou "dislike".
+         *
+         *
+         * Exemplo de uso:
+         * ```
+         * ReportComplement(
+         *     comment = "Gostei da Casa de Banho.",
+         *     user = User
+         * )
+         * ```
+         */
 @Composable
 fun Comment(
     comment: CommentItem,

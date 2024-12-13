@@ -11,13 +11,31 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
+        /**
+         * Função que mostra uma caixa de texto para o usuário inserir um comentário.
+         *
+         * @param commentInput O texto atualmente inserido na caixa de texto.
+         * @param onCommentChange Callback que retorna o texto inserido na caixa de texto, permitindo acompanhar e atualizar seu conteúdo.
+         *
+         * Esta função permite ao usuário inserir um comentário em uma caixa de texto, fornecendo uma maneira simples de capturar entradas de texto.
+         *
+         * Exemplo de uso:
+         * ```kotlin
+         * RatingComment(
+         *     commentInput = "",
+         *     onCommentChange = { newText -> println("Comentário atualizado: $newText") }
+         * )
+         * ```
+         */
 @Composable
 fun RatingComment(
     commentInput: String = "",
     onCommentChange: (String) -> Unit = {}
-) {
+)
+ {
     Row(
         modifier = Modifier
             .padding(
@@ -49,5 +67,12 @@ fun RatingComment(
                 fontWeight = FontWeight.Normal,
             )
         },
+    )
+}
+@Composable
+@Preview(showBackground = true)
+fun RatingCommentPreview() {
+    RatingComment(
+        commentInput = ""
     )
 }

@@ -56,7 +56,7 @@ fun SettingsScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 20.dp),
+                        .padding(vertical = 5.dp),
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(
@@ -175,7 +175,7 @@ fun SettingsScreen(
                             text = "Salvar Alterações",
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.SemiBold
-                        )
+                        )//igual...
                     }
                 }
             }

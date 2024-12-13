@@ -20,9 +20,33 @@ import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 import pt.iade.ei.thinktoilet.ui.util.NoRippleInteractionSource
 
+
+         /**
+         * Exibe um ícone de DisLike com um contador.
+         *
+         * @param count Valor do contador que indica o número de interações (curtidas ou descurtidas).
+         * @param size Tamanho do ícone, especificado como um valor de dimensões (ex.: dp).
+         * @param isPressed Estado do ícone, indicando se ele foi pressionado pelo usuário.
+         * @param onThumbDown Callback acionado quando o ícone de Like é pressionado.
+         *
+         *
+         * Esta função tem como objetivo:
+         * - Exibir botões de interação visual (Like e Dislike) com um contador associado.
+         * - Permitir personalização do tamanho e estado do ícone.
+         *
+         * Exemplo de uso:
+         * ```kotlin
+         * ThumbUp(
+         *     count = 10,
+         *     size = 28.dp,
+         *     isPressed = false,
+         *     onThumbUp = { /* Lógica para registrar a interação */ }
+         * )
+         *```
+         */
 @Composable
 fun ThumbDown(
-    count: Int,
+    count: Int = 0,
     size: Dp = 28.dp,
     isPressed: Boolean = false,
     onThumbDown: (Boolean) -> Unit = {},
@@ -61,6 +85,6 @@ fun ThumbDown(
 @Composable
 fun ThumbDownPreview() {
     AppTheme {
-        ThumbDown(0)
+        ThumbDown()
     }
 }

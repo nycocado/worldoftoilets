@@ -21,6 +21,22 @@ import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.tests.generateRandomToilet
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
+
+         /**
+         * Exibe as informações de um Toilet de forma simplificada utilizando um Card.
+         *
+         * @param toilet Objeto que contém os detalhes do Toilet a serem exibidos.
+         *
+         * Esta função apresenta as informações do Toilet de maneira concisa e visualmente organizada,
+         * utilizando um componente Card para exibição.
+         *
+         * Exemplo de uso:
+         * ```
+         * HistoryCard(
+         *     toilet = toilet
+         * )
+         * ```
+         */
 @Composable
 fun HistoryCard(
     toilet: Toilet,

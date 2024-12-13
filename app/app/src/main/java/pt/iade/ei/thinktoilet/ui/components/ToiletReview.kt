@@ -19,8 +19,30 @@ import pt.iade.ei.thinktoilet.tests.generateComment
 import pt.iade.ei.thinktoilet.tests.generateRandomToilet
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
+         /**
+         * Exibe os comentários (Reviews) relacionados a um Toilet.
+         *
+         * @param comment Objeto que contém as informações de um comentário, representado por um CommentItem.
+         * @param toilet Objeto que contém os detalhes do Toilet associado ao comentário.
+         *
+         * Esta função apresenta os comentários de um Toilet, incluindo:
+         * - O nome do Toilet.
+         * - A avaliação média do Toilet.
+         * - O texto do comentário.
+         *
+         * Exemplo de uso:
+         * ```
+         * ToiletReview(
+         *     comment = CommentItem,
+         *     toilet = Toilet
+         * )
+         * ```
+         */
 @Composable
-fun ToiletReview(comment: CommentItem, toilet: Toilet) {
+fun ToiletReview(
+            comment: CommentItem,
+            toilet: Toilet
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -71,6 +93,8 @@ fun ToiletReview(comment: CommentItem, toilet: Toilet) {
 @Composable
 fun PreviewToiletReviews() {
     AppTheme {
-        ToiletReview(comment = generateComment(), toilet = generateRandomToilet())
+        ToiletReview(
+            comment = generateComment(),
+            toilet = generateRandomToilet())
     }
 }

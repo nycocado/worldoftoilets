@@ -17,6 +17,28 @@ import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 import pt.iade.ei.thinktoilet.ui.util.NoRippleInteractionSource
 import kotlin.math.round
 
+        /**
+         * Exibe um ícone de estrela com base em uma nota fornecida.
+         *
+         * @param rating Valor da nota a ser exibida, representando a quantidade de estrelas preenchidas (ex.: 3.5).
+         * @param size Tamanho do ícone, especificado como um valor de dimensões (ex.: dp).
+         * @param horizontalPadding Espaçamento horizontal ao redor do ícone.
+         * @param onClick Callback opcional acionado quando o ícone é pressionado, que retorna o índice da estrela clicada.
+         *
+         * Esta função tem como objetivo:
+         * - Exibir uma representação visual da avaliação em estrelas.
+         * - Permitir interação ao clicar nas estrelas, caso um callback seja fornecido.
+         *
+         * Exemplo de uso:
+         * ```kotlin
+         * Stars(
+         *     rating = 3.5f,
+         *     size = 24.dp,
+         *     horizontalPadding = 8.dp,
+         *     onClick = { index -> println("Estrela clicada: $index") }
+         * )
+         * ```
+         */
 @Composable
 fun Stars(
     rating: Float,
@@ -62,6 +84,6 @@ fun Stars(
 @Composable
 fun StarsPreview() {
     AppTheme {
-        Stars(3.5f)
+        Stars(rating = 3.5f)
     }
 }

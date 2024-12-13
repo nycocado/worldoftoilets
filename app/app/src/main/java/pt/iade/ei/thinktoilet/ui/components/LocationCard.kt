@@ -2,7 +2,6 @@ package pt.iade.ei.thinktoilet.ui.components
 
 import android.location.Location
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,7 +21,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.tests.generateRandomToilet
+import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
+
+/**
+         * Exibe as informações de um Toilet de maneira avançada usando um Card.
+         *
+         * @param toilet Objeto que contém as informações do Toilet a serem exibidas.
+         * @param location Objeto que contém as informações do Toilet a serem exibidas.
+         * @param onClick contém as informações do Toilet a serem exibidas.
+         *
+         * Esta função exibe as informações de um Toilet em um Card, incluindo
+         * avaliação, nome, endereço e distância.
+         *
+         * Exemplo de uso:
+         * ```
+         * LocationCard(
+         *         toilet = Toleits // Class Toilet
+         *         location = Location(""),
+         *         onClick = {}
+         *     )
+         * ```
+         */
 @Composable
 fun LocationCard(
     toilet: Toilet,
@@ -111,9 +131,11 @@ fun LocationCard(
 @Preview(showBackground = true)
 @Composable
 fun LocationCardPreview() {
-    LocationCard(
-        toilet = generateRandomToilet(numComments = 10),
-        location = Location(""),
-        onClick = {}
-    )
+    AppTheme{
+        LocationCard(
+            toilet = generateRandomToilet(numComments = 10),
+            location = Location(""),
+            onClick = {}
+        )
+    }
 }

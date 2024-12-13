@@ -20,6 +20,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
+         /**
+          * Exibe um ProgressBar com um texto ao lado.
+          *
+          * @param progress Valor do progresso.
+          * @param text Texto a ser exibido ao lado do ProgressBar.
+          * @param maxValue Valor máximo do progresso.
+          *
+          * Esta função exibe um ProgressBar com um texto ao lado.
+          *
+          * Exemplo de uso:
+          * ```
+          * ProgressBar(
+          *     progress = 4.5f,
+          *     text = "Teste"
+          * )
+          * ```
+          */
 @Composable
 fun ProgressBar(
     progress: Float,

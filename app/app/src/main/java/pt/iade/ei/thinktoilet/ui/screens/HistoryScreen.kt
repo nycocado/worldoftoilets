@@ -13,7 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import pt.iade.ei.thinktoilet.tests.generateUserMain
 import pt.iade.ei.thinktoilet.ui.components.HistoryCard
+import pt.iade.ei.thinktoilet.ui.components.SettingsCarousel
 import pt.iade.ei.thinktoilet.viewmodel.LocalViewModel
 
 @Composable
@@ -37,6 +39,7 @@ fun HistoryScreen(
         if(toilets.isNullOrEmpty()) {
             CircularProgressIndicator()
         } else {
+              //SettingsScreen()
             LazyColumn {
                 items(toilets) { toilet ->
                     HistoryCard(

@@ -11,10 +11,32 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.Toilet
+import pt.iade.ei.thinktoilet.tests.generateRandomToilet
+import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
+
+         /**
+         * Exibe as avaliações de um Toilet em um sistema visual.
+         *
+         * @param context Contexto da aplicação, necessário para carregar recursos e exibir informações.
+         * @param toilet Objeto que contém as informações do toilet, incluindo as notas e critérios de avaliação.
+         *
+         * Esta função tem como objetivo:
+         * - Mostrar a média das notas atribuídas ao toilet.
+         * - Detalhar os valores correspondentes a cada critério de avaliação, permitindo uma análise detalhada.
+         *
+         * Exemplo de uso:
+         * ```kotlin
+         * ToiletRating(
+         *     toilet = Toilet,
+         *     context = LocalContext.current
+         * )
+         *  ```
+         */
 @SuppressLint("DefaultLocale")
 @Composable
 fun ToiletRating(
@@ -61,5 +83,15 @@ fun ToiletRating(
                 maxValue = 100f
             )
         }
+    }
+}
+@Composable
+@Preview
+fun PreviewToiletRating() {
+    AppTheme {
+        ToiletRating(
+            toilet = generateRandomToilet(),
+            context = androidx.compose.ui.platform.LocalContext.current
+        )
     }
 }

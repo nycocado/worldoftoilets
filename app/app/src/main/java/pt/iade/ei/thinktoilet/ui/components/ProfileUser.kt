@@ -17,10 +17,29 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.UserMain
+import pt.iade.ei.thinktoilet.tests.generateUserMain
 
+/**
+          * Exibe as informações do usuário de maneira simplificada.
+          *
+          * @param userMain Objeto que contém as informações do usuário a serem exibidas.
+          * @param context Contexto da aplicação.
+          *
+          * Esta função exibe as informações do usuário de maneira simplificada, incluindo
+          * nome, email e pontos.
+          *
+          * Exemplo de uso:
+          * ```
+          * ProfileUser(
+          *     userMain = userMain,
+          *     context = context
+          * )
+          * ```
+          */
 @Composable
 fun ProfileUser(
     userMain: UserMain,
@@ -64,4 +83,13 @@ fun ProfileUser(
             maxLines = 1,
         )
     }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun ProfileUserPreview() {
+    ProfileUser(
+        userMain = generateUserMain(),
+        context = androidx.compose.ui.platform.LocalContext.current
+    )
 }

@@ -21,6 +21,23 @@ import androidx.compose.ui.unit.dp
 import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.User
 
+         /**
+         * Exibe o status do perfil do usuário.
+         *
+         * @param user Objeto que contém as informações do usuário a serem exibidas.
+         * @param context Contexto da aplicação.
+         *
+         * Esta função exibe o status do perfil do usuário, incluindo
+         * nível e progresso.
+         *
+         * Exemplo de uso:
+         * ```
+         * ProfileStatus(
+         *     user = user,
+         *     context = context
+         * )
+         * ```
+         */
 @Composable
 fun ProfileStatus(
     user: User,

@@ -34,6 +34,32 @@ import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 import kotlin.math.absoluteValue
 
 
+        /**
+         * Exibe um ícone de imagem por meio de um carrossel.
+         *
+         * @param imageList Lista de imagens a serem exibidas no carrossel.
+         * @param pagerState Estado do carrossel, indicando a página ou imagem selecionada.
+         * @param user Informações do usuário relacionadas ao contexto da exibição.
+         *
+         *
+         * Esta função tem como objetivo:
+         * - Exibir uma lista de imagens de forma interativa e navegável.
+         * - Fornecer suporte para manipular o estado do carrossel e personalizar a interação.
+         *
+         *
+         * Exemplo de uso:
+         * ```kotlin
+         * val imageList = ListImage
+         * val pagerState = rememberPagerState(initialPage = 0) {
+         *     imageList.size
+         * }
+         *     SettingsCarousel(
+         *         imageList = imageList,
+         *         pagerState = pagerState,
+         *         user = UserMain
+         *     )
+         * ```
+         */
 @Composable
 fun SettingsCarousel(
     imageList: List<String>,
@@ -43,8 +69,10 @@ fun SettingsCarousel(
 
     Column {
         Row(
-            Modifier.fillMaxWidth(),
+            Modifier.fillMaxWidth()
+                .padding(10.dp),
             horizontalArrangement = Arrangement.Center,
+
         ) {
             Text(
                 text = "Role para mudar",
@@ -106,11 +134,10 @@ fun CardContent(index: Int, pagerState: PagerState, imageList: List<String>) {
         shape = RoundedCornerShape(10.dp),
         modifier = Modifier
             .width(250.dp)  //Basicamente  o Quadrado onde a imagem vai estar N é quadrado
-            .height(200.dp)
-            .padding(5.dp)
+            .height(150.dp)
             .graphicsLayer {
                 lerp(
-                    start = 0.6f.dp, // imagem das laterais menores
+                    start = 0.8f.dp, // imagem das laterais menores
                     stop = 1f.dp,    // imagem do meio maior
                     fraction = 1f - pageOffset.absoluteValue.coerceIn(0f, 1f)
                 ).also { scale ->

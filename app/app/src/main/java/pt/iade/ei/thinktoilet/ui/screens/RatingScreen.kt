@@ -118,13 +118,19 @@ fun RatingScreen(
             }
 
             item {
-                RatingItem(title = "Limpeza", rating = ratingClean) {
+                RatingItem(
+                    title = "Limpeza",
+                    rating = ratingClean) {
                     ratingClean = it.toFloat()
                 }
-                RatingItem(title = "Estrutura", rating = ratingStructure) {
+                RatingItem(
+                    title = "Estrutura",
+                    rating = ratingStructure) {
                     ratingStructure = it.toFloat()
                 }
-                RatingItem(title = "Acessibilidade", rating = ratingAccessibility) {
+                RatingItem(
+                    title = "Acessibilidade",
+                    rating = ratingAccessibility) {
                     ratingAccessibility = it.toFloat()
                 }
                 Row(
