@@ -51,16 +51,17 @@ fun BottomNavigationBar(
                 selected = currentRoute?.startsWith(item.route) == true,
                 onClick = {
                     selectedItemIndex = index
-                    if(item.route != AppGraph.main.HOME && !isUserLoggedIn) {
+                    if (item.route != AppGraph.main.HOME && !isUserLoggedIn) {
                         rootController.navigate(AppGraph.auth.LOGIN)
                         return@NavigationBarItem
                     }
                     navController.navigate(item.route) {
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
+                        popUpTo(navController.graph.startDestinationRoute!!) {
+                            if (item.route == AppGraph.main.HOME) {
+                                inclusive = true
+                            }
                         }
                         launchSingleTop = true
-                        restoreState = true
                     }
                 },
                 label = {

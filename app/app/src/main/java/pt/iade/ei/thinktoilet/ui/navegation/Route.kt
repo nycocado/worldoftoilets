@@ -10,6 +10,8 @@ import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import pt.iade.ei.thinktoilet.R
 
 object AppGraph {
@@ -36,17 +38,29 @@ object AuthGraph {
 object MainGraph {
     const val ROOT = "main_graph"
     const val HOME = "home"
-    const val HOME_TOILET_DETAIL = "home/{toiletId}"
+    const val HOME_WITH_ARGUMENTS = "home?toiletId={toiletId}"
+    val HOME_ARGUMENTS = listOf(
+        navArgument("toiletId") {
+            type = NavType.StringType
+            defaultValue = null
+            nullable = true
+        }
+    )
     const val HISTORY = "history"
     const val PROFILE = "profile"
 
-    fun homeToiletDetail(toiletId: Int) = "home/$toiletId"
+    fun homeToiletDetail(toiletId: Int) = "home?toiletId=$toiletId"
 }
 
 object BottomSheetGraph {
     const val ROOT = "bottom_sheet_graph"
     const val TOILET_LIST = "toilet_list"
     const val TOILET_DETAILS = "toilet_details/{toiletId}"
+    val TOILET_DETAILS_ARGUMENTS = listOf (
+        navArgument("toiletId") {
+            type = NavType.IntType
+        }
+    )
 
     fun toiletDetail(toiletId: Int) = "toilet_details/$toiletId"
 }

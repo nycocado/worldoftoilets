@@ -1,5 +1,6 @@
 package pt.iade.ei.thinktoilet.ui.components
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -38,53 +39,54 @@ fun RatingComment(
     val maxLength = 260
     var textError = commentInput.length > maxLength
 
-    Row(
-        modifier = Modifier
-            .padding(
-                top = 40.dp,
-                bottom = 10.dp
-            )
-    ) {
-        Text(
-            text = "Comentar",
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Normal,
-        )
-
-    }
-    TextField(
-        value = commentInput,
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(min = 150.dp),
-        shape = RoundedCornerShape(topEnd = 10.dp, topStart = 10.dp),
-        onValueChange = { newText ->
-            onCommentChange(newText)
-        },
-        label = {
+    Column {
+        Row(
+            modifier = Modifier
+                .padding(
+                    bottom = 10.dp
+                )
+        ) {
             Text(
-                text = "Escreva seu Comentário...",
-                style = MaterialTheme.typography.titleMedium,
+                text = "Comentar",
+                style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Normal,
             )
-        },
-        isError = textError,
-        supportingText = {
-            if (textError) {
+
+        }
+        TextField(
+            value = commentInput,
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 150.dp),
+            shape = RoundedCornerShape(topEnd = 10.dp, topStart = 10.dp),
+            onValueChange = { newText ->
+                onCommentChange(newText)
+            },
+            label = {
                 Text(
-                    text = "Máximo de $maxLength caracteres",
-                    style = MaterialTheme.typography.bodySmall,
+                    text = "Escreva seu Comentário...",
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Normal,
                 )
-            } else {
-                Text(
-                    text = "${commentInput.length}/$maxLength",
-                    style = MaterialTheme.typography.bodySmall,
-                    fontWeight = FontWeight.Normal,
-                )
-            }
-        },
-    )
+            },
+            isError = textError,
+            supportingText = {
+                if (textError) {
+                    Text(
+                        text = "Máximo de $maxLength caracteres",
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.Normal,
+                    )
+                } else {
+                    Text(
+                        text = "${commentInput.length}/$maxLength",
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.Normal,
+                    )
+                }
+            },
+        )
+    }
 }
 
 @Preview(showBackground = true)

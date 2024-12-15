@@ -2,6 +2,7 @@ package pt.iade.ei.thinktoilet.viewmodel
 
 import android.location.Location
 import android.util.Log
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -42,19 +43,9 @@ class LocalViewModel @Inject constructor(
     private val _toiletsHistoryIds = MutableStateFlow<UiState<List<Int>>>(UiState.Loading)
     val toiletsHistoryIds: StateFlow<UiState<List<Int>>> get() = _toiletsHistoryIds
 
-    val userMain: StateFlow<User?> = userPreferencesRepository.userFlow
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = null
-        )
+    val userMain: StateFlow<User?> = userPreferencesRepository.userStateFlow
 
-    val isUserLoggedIn: StateFlow<Boolean> = userMain.map { it != null }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = false
-        )
+    val isUserLoggedIn: StateFlow<Boolean> = userPreferencesRepository.isUserLoggedIn()
 
     private val _users = MutableStateFlow<Map<Int, User>>(emptyMap())
     val users: StateFlow<Map<Int, User>> get() = _users
@@ -254,6 +245,14 @@ class LocalViewModel @Inject constructor(
                 Log.e("ToiletViewModel", "Erro ao fazer registro", e)
             }
         }
+    }
+
+    fun clearLoginState() {
+        _loginState.value = null
+    }
+
+    fun clearRegisterState() {
+        _registerState.value = null
     }
 
     fun saveUser(user: User) {

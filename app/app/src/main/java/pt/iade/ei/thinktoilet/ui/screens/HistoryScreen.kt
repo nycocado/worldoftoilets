@@ -31,7 +31,6 @@ fun HistoryScreen(
     val toilets = toiletsStateFlow.collectAsState().value
     val toiletIds = toiletIdsStateFlow.collectAsState().value
 
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -46,7 +45,6 @@ fun HistoryScreen(
                 ){
                     CircularProgressIndicator()
                 }
-
             }
 
             is UiState.Success -> {

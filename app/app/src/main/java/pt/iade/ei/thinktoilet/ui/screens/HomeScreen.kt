@@ -36,7 +36,6 @@ fun HomeScreen(
     selectedToiletId: Int? = null,
     navController: NavHostController = rememberNavController()
 ) {
-
     val scope = rememberCoroutineScope()
     val bottomSheetCurrentRoute =
         navController.currentBackStackEntryAsState().value?.destination?.route
@@ -50,9 +49,15 @@ fun HomeScreen(
         )
     )
 
+    LaunchedEffect(Unit) {
+        localViewModel.loadLocation()
+    }
+
     LaunchedEffect(selectedToiletId) {
         if (selectedToiletId != null) {
-            navController.navigate(AppGraph.bottomSheet.toiletDetail(selectedToiletId))
+            navController.navigate(AppGraph.bottomSheet.toiletDetail(selectedToiletId)){
+                launchSingleTop = true
+            }
         }
     }
 
@@ -73,6 +78,7 @@ fun HomeScreen(
             }
         }
     }
+
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
         sheetPeekHeight = 140.dp,

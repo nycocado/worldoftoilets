@@ -40,6 +40,9 @@ fun RootNavigationGraph(
             RatingScreen(
                 onClickRating = {
                     navController.popBackStack()
+                },
+                onClickBack = {
+                    navController.popBackStack()
                 }
             )
         }
@@ -58,11 +61,11 @@ fun MainNavigationGraph(
         route = AppGraph.main.ROOT,
         startDestination = AppGraph.main.HOME
     ) {
-        composable(AppGraph.main.HOME) {
-            HomeScreen(rootNavController, localViewModel)
-        }
-        composable(AppGraph.main.HOME_TOILET_DETAIL) { backStackEntry ->
-            val toiletId = backStackEntry.arguments?.getString("toiletId")!!.toInt()
+        composable(
+            route = AppGraph.main.HOME_WITH_ARGUMENTS,
+            arguments = AppGraph.main.HOME_ARGUMENTS
+        ) { backStackEntry ->
+            val toiletId = backStackEntry.arguments?.getString("toiletId")?.toInt()
             HomeScreen(rootNavController, localViewModel, toiletId)
         }
         composable(AppGraph.main.HISTORY) {
@@ -92,7 +95,18 @@ fun MainNavigationGraph(
                     localViewModel.loadUserComments(userId)
                 }
             }
-            ProfileScreen(toilets, user, comments)
+            ProfileScreen(toilets, user, comments,
+                onClickLogout = {
+                    localViewModel.clearUser().also {
+                        rootNavController.navigate(AppGraph.auth.LOGIN) {
+                            popUpTo(rootNavController.graph.startDestinationRoute!!) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+                    }
+                }
+            )
         }
     }
 }
@@ -126,17 +140,27 @@ fun BottomSheetNavigationGraph(
                 }
             )
         }
-        composable(AppGraph.bottomSheet.TOILET_DETAILS) { backStackEntry ->
-            val toiletId = backStackEntry.arguments?.getString("toiletId")!!.toInt()
+        composable(
+            route = AppGraph.bottomSheet.TOILET_DETAILS,
+            arguments = AppGraph.bottomSheet.TOILET_DETAILS_ARGUMENTS
+        ) { backStackEntry ->
+            val toiletId = backStackEntry.arguments?.getInt("toiletId")!!
             val toilets = localViewModel.toiletsCache
             val comments = localViewModel.commentsToilet
             val users = localViewModel.users
             LaunchedEffect(Unit) {
                 localViewModel.loadToiletComments(toiletId)
             }
-            ToiletDetailScreen(toiletId, toilets, comments, users, navigateToRating = {
-                rootNavController.navigate(AppGraph.rating.rating(it))
-            })
+            ToiletDetailScreen(toiletId, toilets, comments, users,
+                navigateToRating = {
+                    rootNavController.navigate(AppGraph.rating.rating(it)) {
+                        launchSingleTop = true
+                    }
+                },
+                onClickBack = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }
@@ -158,15 +182,13 @@ fun NavGraphBuilder.authNavGraph(
                 },
                 onLoginSuccess = { user ->
                     localViewModel.saveUser(user)
-                    LaunchedEffect(Unit) {
-                        navController.navigate(AppGraph.main.ROOT) {
-                            popUpTo(navController.graph.startDestinationRoute!!) {
-                                inclusive = true
-                            }
-                            launchSingleTop = true
+                    localViewModel.clearLoginState()
+                    navController.navigate(AppGraph.main.ROOT) {
+                        popUpTo(navController.graph.startDestinationRoute!!) {
+                            inclusive = true
                         }
+                        launchSingleTop = true
                     }
-
                 },
                 navigateToRegister = {
                     navController.navigate(AppGraph.auth.REGISTER)
@@ -174,7 +196,11 @@ fun NavGraphBuilder.authNavGraph(
             )
         }
         composable(AppGraph.auth.REGISTER) {
-            RegisterScreen()
+            RegisterScreen(
+                onClickBack = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

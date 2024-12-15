@@ -10,11 +10,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -29,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,18 +41,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
+import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.ui.components.RatingComment
 import pt.iade.ei.thinktoilet.ui.components.RatingItem
 import pt.iade.ei.thinktoilet.ui.components.Stars
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 import pt.iade.ei.thinktoilet.viewmodel.LocalViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RatingScreen(
-    navController: NavController = rememberNavController(),
-    localViewModel: LocalViewModel = viewModel(),
-    toiletId: Int,
-    onRatingToBack: () -> Unit = {}
+    onClickRating: () -> Unit = {},
+    onClickBack: () -> Unit = {}
 ) {
     var ratingClean by remember { mutableFloatStateOf(0f) }
     var ratingPaper by remember { mutableStateOf(false) }
@@ -65,31 +70,43 @@ fun RatingScreen(
     var commentInput by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-    ) {
-        LazyColumn {
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            top = 20.dp,
-                            bottom = 10.dp
-                        ),
-                    horizontalArrangement = Arrangement.Center
-                ) {
+    val context = LocalContext.current
+
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
                     Text(
-                        text = "Avaliar",
-                        style = MaterialTheme.typography.headlineLarge,
+                        text = context.getString(R.string.register),
+                        style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        onClickBack()
+                    }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
                 }
+            )
+        }
+    ) { innerPadding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(horizontal = 16.dp)
+        ) {
+            item {
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 30.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Stars(averageRating, size = 35.dp, horizontalPadding = 5.dp)
@@ -118,19 +135,13 @@ fun RatingScreen(
             }
 
             item {
-                RatingItem(
-                    title = "Limpeza",
-                    rating = ratingClean) {
+                RatingItem(title = "Limpeza", rating = ratingClean) {
                     ratingClean = it.toFloat()
                 }
-                RatingItem(
-                    title = "Estrutura",
-                    rating = ratingStructure) {
+                RatingItem(title = "Estrutura", rating = ratingStructure) {
                     ratingStructure = it.toFloat()
                 }
-                RatingItem(
-                    title = "Acessibilidade",
-                    rating = ratingAccessibility) {
+                RatingItem(title = "Acessibilidade", rating = ratingAccessibility) {
                     ratingAccessibility = it.toFloat()
                 }
                 Row(
@@ -174,7 +185,7 @@ fun RatingScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Button(
-                        onClick = { scope.launch { onRatingToBack() } },
+                        onClick = { scope.launch { onClickRating() } },
                         modifier = Modifier
                             .padding(bottom = 10.dp),
                         colors = ButtonColors(

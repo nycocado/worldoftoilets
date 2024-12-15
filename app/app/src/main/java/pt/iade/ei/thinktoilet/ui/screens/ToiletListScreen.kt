@@ -34,47 +34,43 @@ fun ToiletListScreen(
     val toilets = toiletsStateFlow.collectAsState().value
     val toiletIds = toiletsNearbyIdsStateFlow.collectAsState().value
 
-    Column(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        when (toiletIds) {
-            UiState.Loading -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    CircularProgressIndicator(
-                        color = MaterialTheme.colorScheme.primary
+    when (toiletIds) {
+        UiState.Loading -> {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CircularProgressIndicator(
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+
+        is UiState.Success -> {
+            val toiletList = toiletIds.data.mapNotNull { toilets[it] }
+            LazyColumn {
+                items(toiletList) { toilet ->
+                    LocationCard(
+                        toilet = toilet,
+                        location = locationStateFlow.collectAsState().value,
+                        onClick = navigateToToiletDetail
                     )
                 }
             }
+        }
 
-            is UiState.Success -> {
-                val toiletList = toiletIds.data.mapNotNull { toilets[it] }
-                LazyColumn {
-                    items(toiletList) { toilet ->
-                        LocationCard(
-                            toilet = toilet,
-                            location = locationStateFlow.collectAsState().value,
-                            onClick = navigateToToiletDetail
-                        )
-                    }
-                }
-            }
-
-            is UiState.Error -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(text = toiletIds.message)
-                }
+        is UiState.Error -> {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = toiletIds.message)
             }
         }
     }

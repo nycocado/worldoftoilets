@@ -8,14 +8,21 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -54,7 +61,8 @@ fun ToiletDetailScreen(
     toiletsStateFlow: StateFlow<Map<Int, Toilet>>,
     commentsStateFlow: StateFlow<List<Comment>>,
     usersStateFlow: StateFlow<Map<Int, User>>,
-    navigateToRating: (Int) -> Unit
+    navigateToRating: (Int) -> Unit,
+    onClickBack: () -> Unit = {}
 ) {
     val toilet = toiletsStateFlow.collectAsState().value[toiletId]!!
     val comments = commentsStateFlow.collectAsState().value.filter { it.toiletId == toiletId }
@@ -65,30 +73,58 @@ fun ToiletDetailScreen(
     val platformContext = LocalPlatformContext.current
 
     LazyColumn(
-        modifier = Modifier.padding(16.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
         item {
-            Text(
-                text = toilet.name,
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
             Row(
-                modifier = Modifier.padding(
-                    top = 4.dp,
-                    bottom = 14.dp
-                ),
-                verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.padding(bottom = 16.dp)
             ) {
-                Stars(
-                    rating = toilet.getAverageRating(), size = 22.dp
-                )
-                Text(
-                    modifier = Modifier.padding(horizontal = 4.dp),
-                    text = "%.1f".format(toilet.getAverageRating()),
-                    fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
-                    fontWeight = FontWeight.SemiBold
-                )
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = toilet.name,
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Row(
+                        modifier = Modifier.padding(
+                            top = 4.dp,
+                        ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Stars(
+                            rating = toilet.getAverageRating(), size = 22.dp
+                        )
+                        Text(
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                            text = "%.1f".format(toilet.getAverageRating()),
+                            fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+                FilledIconButton(
+                    onClick = { onClickBack() },
+                    modifier = Modifier.size(38.dp),
+                    colors = IconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                        disabledContainerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(
+                            alpha = 0.5f
+                        ),
+                        disabledContentColor = MaterialTheme.colorScheme.onTertiaryContainer.copy(
+                            alpha = 0.5f
+                        )
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Voltar"
+                    )
+                }
             }
         }
 
@@ -199,8 +235,12 @@ fun ToiletDetailScreen(
                 colors = ButtonColors(
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                     contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                    disabledContainerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.5f),
-                    disabledContentColor = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.5f)
+                    disabledContainerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(
+                        alpha = 0.5f
+                    ),
+                    disabledContentColor = MaterialTheme.colorScheme.onTertiaryContainer.copy(
+                        alpha = 0.5f
+                    )
                 )
             ) {
                 Text(

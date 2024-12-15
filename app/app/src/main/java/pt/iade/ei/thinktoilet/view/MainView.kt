@@ -21,7 +21,7 @@ fun MainView(
 ) {
     CheckAndRequestLocationPermission(
         onPermissionGranted = {
-            localViewModel.loadLocation()
+            // Vai carregar os banheiros próximos
         },
         onPermissionDenied = {
             // Não vai carregar os banheiros próximos
