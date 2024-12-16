@@ -71,13 +71,15 @@ class LocalViewModel @Inject constructor(
     private val _toiletNearbyLoaded = mutableStateOf(false)
     private val _toiletHistoryLoaded = mutableStateOf(false)
 
-    fun loadLocation() {
+    fun loadLocation(onlyLocation: Boolean = false) {
         locationRepository.getCurrentLocation().observeForever {
             if (it != null) {
                 _location.value = it
             }
-            it?.let { location ->
-                loadToiletsNearby(location.latitude, location.longitude)
+            if(!onlyLocation) {
+                it?.let { location ->
+                    loadToiletsNearby(location.latitude, location.longitude)
+                }
             }
         }
     }
@@ -233,8 +235,8 @@ class LocalViewModel @Inject constructor(
         name: String,
         email: String,
         password: String,
-        iconId: String,
-        birthDate: LocalDate
+        iconId: String?,
+        birthDate: String?
     ) {
         viewModelScope.launch {
             try {

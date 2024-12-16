@@ -40,7 +40,7 @@ class UserPreferencesRepository @Inject constructor(
             prefs[Keys.USER_ID] = user.id ?: 0
             prefs[Keys.USER_NAME] = user.name
             prefs[Keys.USER_EMAIL] = user.email ?: ""
-            prefs[Keys.USER_ICON_ID] = user.iconId
+            prefs[Keys.USER_ICON_ID] = user.iconId?: ""
             prefs[Keys.USER_NUM_COMMENTS] = user.numComments
             prefs[Keys.USER_POINTS] = user.points
         }
@@ -52,7 +52,7 @@ class UserPreferencesRepository @Inject constructor(
         dataStore.data.map { prefs ->
             val id = prefs[Keys.USER_ID] ?: return@map null
             val name = prefs[Keys.USER_NAME] ?: return@map null
-            val email = prefs[Keys.USER_EMAIL]
+            val email = prefs[Keys.USER_EMAIL] ?: return@map null
             val iconId = prefs[Keys.USER_ICON_ID] ?: return@map null
             val numComments = prefs[Keys.USER_NUM_COMMENTS] ?: 0
             val points = prefs[Keys.USER_POINTS] ?: 0

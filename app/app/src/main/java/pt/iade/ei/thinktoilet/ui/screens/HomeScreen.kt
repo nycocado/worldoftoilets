@@ -1,9 +1,7 @@
 package pt.iade.ei.thinktoilet.ui.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -12,18 +10,17 @@ import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
-import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.ui.components.CustomDragHandle
+import pt.iade.ei.thinktoilet.ui.components.OpenStreetMapsView
 import pt.iade.ei.thinktoilet.ui.navegation.AppGraph
 import pt.iade.ei.thinktoilet.ui.navegation.BottomSheetNavigationGraph
 import pt.iade.ei.thinktoilet.viewmodel.LocalViewModel
@@ -49,7 +46,9 @@ fun HomeScreen(
         )
     )
 
-    LaunchedEffect(Unit) {
+    val location = localViewModel.location.collectAsState().value
+
+    LaunchedEffect(location, Unit) {
         localViewModel.loadLocation()
     }
 
@@ -97,11 +96,7 @@ fun HomeScreen(
             }
         },
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.map_placeholder),
-            contentDescription = "Mapa",
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
+        val location = localViewModel.location
+        OpenStreetMapsView(location)
     }
 }

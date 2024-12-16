@@ -245,6 +245,6 @@ CREATE VIEW vw_count_comment_user AS
 SELECT u.user_id AS user_id,
        COALESCE(COUNT(c.cmm_id), 0) AS comments
 FROM user u
-INNER JOIN interaction i ON u.user_id = i.int_user_id
+LEFT JOIN interaction i ON u.user_id = i.int_user_id
 LEFT JOIN comment c ON c.cmm_int_id = i.int_id
 GROUP BY u.user_id;

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -21,12 +22,13 @@ fun MainView(
 ) {
     CheckAndRequestLocationPermission(
         onPermissionGranted = {
-            // Vai carregar os banheiros próximos
+            localViewModel.loadLocation(true)
         },
         onPermissionDenied = {
             // Não vai carregar os banheiros próximos
         }
     )
+
     Scaffold(
         bottomBar = {
             BottomNavigationBar(navController, rootController, localViewModel.isUserLoggedIn)

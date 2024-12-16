@@ -34,8 +34,8 @@ class AuthRepository @Inject constructor() {
         name: String,
         email: String,
         password: String,
-        iconId: String,
-        birthDate: LocalDate
+        iconId: String?,
+        birthDate: String?
     ): Result<ApiResponse> {
         return try {
             val response = authService.register(

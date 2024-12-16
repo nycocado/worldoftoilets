@@ -196,7 +196,21 @@ fun NavGraphBuilder.authNavGraph(
             )
         }
         composable(AppGraph.auth.REGISTER) {
+            val register = localViewModel.registerState
             RegisterScreen(
+                registerStateFlow = register,
+                onRegister = { name, email, password, iconId, birthDate ->
+                    localViewModel.register(name, email, password, iconId, birthDate)
+                },
+                onRegisterSuccess = {
+                    localViewModel.clearRegisterState()
+                    navController.navigate(AppGraph.auth.LOGIN) {
+                        popUpTo(navController.graph.startDestinationRoute!!) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
+                },
                 onClickBack = {
                     navController.popBackStack()
                 }

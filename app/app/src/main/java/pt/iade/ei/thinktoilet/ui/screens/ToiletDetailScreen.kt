@@ -75,7 +75,7 @@ fun ToiletDetailScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
     ) {
         item {
             Row(

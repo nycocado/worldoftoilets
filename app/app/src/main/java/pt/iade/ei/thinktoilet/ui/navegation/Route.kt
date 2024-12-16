@@ -75,8 +75,8 @@ object SuggestGraph {
 
 object ReportGraph {
     const val ROOT = "report_graph"
-    const val REPORT_TOILET = "report_start/{toilet}"
-    const val REPORT_COMMENT = "report_start/{comment}"
+    const val REPORT_TOILET = "report_start/toilet/{typeId}"
+    const val REPORT_COMMENT = "report_start/comment/{typeId}"
     const val REPORT_CONFIRMATION = "report_confirmation"
 }
 

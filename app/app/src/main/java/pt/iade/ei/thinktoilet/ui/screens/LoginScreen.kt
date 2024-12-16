@@ -1,7 +1,9 @@
 package pt.iade.ei.thinktoilet.ui.screens
 
 
+import android.util.Patterns
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -56,11 +58,21 @@ fun LoginScreen(
     val context = LocalContext.current
 
     LaunchedEffect(email) {
-        emailSupportText = ""
+        emailSupportText = if (email.isEmpty()) {
+            "O e-mail é obrigatório"
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            "O e-mail é inválido"
+        } else {
+            ""
+        }
     }
 
     LaunchedEffect(password) {
-        passwordSupportText = ""
+        passwordSupportText = if (password.isEmpty()) {
+            "A palavra-passe é obrigatória"
+        } else {
+            ""
+        }
     }
 
     LaunchedEffect(loginState) {
@@ -96,7 +108,7 @@ fun LoginScreen(
                 title = {
                     Text(
                         text = context.getString(R.string.login),
-                        style = MaterialTheme.typography.headlineSmall,
+                        style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -108,13 +120,15 @@ fun LoginScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(horizontal = 68.dp),
+            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
                 Image(
                     modifier = Modifier
-                        .padding(50.dp)
-                        .size(200.dp),
+                        .fillMaxWidth()
+                        .padding(horizontal = 40.dp)
+                        .padding(bottom = 30.dp),
                     painter = painterResource(R.drawable.logo),
                     contentDescription = "Logo Icon"
                 )
@@ -161,8 +175,11 @@ fun LoginScreen(
 
             item {
                 Button(
-                    onClick = { onLogin(email, password) },
-                    modifier = Modifier.padding(vertical = 10.dp),
+                    onClick = {
+                        if (emailSupportText.isEmpty() && passwordSupportText.isEmpty())
+                            onLogin(email, password)
+                    },
+                    modifier = Modifier.padding(top = 10.dp),
                     colors = ButtonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -182,7 +199,7 @@ fun LoginScreen(
                 }
                 Button(
                     onClick = { navigateToRegister() },
-                    modifier = Modifier.padding(vertical = 10.dp),
+                    modifier = Modifier.padding(top = 40.dp),
                     colors = ButtonColors(
                         containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                         contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
