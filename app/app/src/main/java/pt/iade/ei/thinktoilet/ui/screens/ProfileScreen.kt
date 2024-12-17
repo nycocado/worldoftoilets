@@ -69,7 +69,7 @@ fun ProfileScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(
-                            vertical = 15.dp
+                            horizontal = 15.dp
                         ),
                     horizontalArrangement = Arrangement.Center
                 ) {
@@ -91,16 +91,11 @@ fun ProfileScreen(
                     }
                 }
             }
-
-            item {
-                ProfileStatus(userMain.user, context)
-            }
-
             item {
                 HorizontalDivider(
                     modifier = Modifier
                         .padding(
-                            top = 30.dp,
+                            top = 15.dp,
                             bottom = 20.dp
                         )
                         .fillMaxWidth(1f),
@@ -137,8 +132,3 @@ fun ProfileScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun ProfileScreenPreview() {
-    ProfileScreen()
-}

@@ -74,14 +74,6 @@ fun ProfileUser(
             style = MaterialTheme.typography.titleMedium,
             maxLines = 1,
         )
-        Text(
-            modifier = Modifier.padding(top = 8.dp),
-            text = userMain.user.points.toString() + " " + context.getString(R.string.points),
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.secondary,
-            style = MaterialTheme.typography.titleLarge,
-            maxLines = 1,
-        )
     }
 }
 
