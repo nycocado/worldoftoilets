@@ -1,10 +1,5 @@
 package pt.iade.ei.thinktoilet.ui.screens
 
-<<<<<<< HEAD
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-=======
->>>>>>> 378e3ff (Implementada funcionalidade de postar comentários)
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,6 +20,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text

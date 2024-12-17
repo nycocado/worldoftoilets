@@ -25,55 +25,57 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
-import pt.iade.ei.thinktoilet.models.UserMain
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
+import pt.iade.ei.thinktoilet.models.User
 import pt.iade.ei.thinktoilet.tests.generateCarouselImage
 import pt.iade.ei.thinktoilet.tests.generateUserMain
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 import kotlin.math.absoluteValue
 
 
-        /**
-         * Exibe um ícone de imagem por meio de um carrossel.
-         *
-         * @param imageList Lista de imagens a serem exibidas no carrossel.
-         * @param pagerState Estado do carrossel, indicando a página ou imagem selecionada.
-         * @param user Informações do usuário relacionadas ao contexto da exibição.
-         *
-         *
-         * Esta função tem como objetivo:
-         * - Exibir uma lista de imagens de forma interativa e navegável.
-         * - Fornecer suporte para manipular o estado do carrossel e personalizar a interação.
-         *
-         *
-         * Exemplo de uso:
-         * ```kotlin
-         * val imageList = ListImage
-         * val pagerState = rememberPagerState(initialPage = 0) {
-         *     imageList.size
-         * }
-         *     SettingsCarousel(
-         *         imageList = imageList,
-         *         pagerState = pagerState,
-         *         user = UserMain
-         *     )
-         * ```
-         */
+/**
+ * Exibe um ícone de imagem por meio de um carrossel.
+ *
+ * @param imageList Lista de imagens a serem exibidas no carrossel.
+ * @param pagerState Estado do carrossel, indicando a página ou imagem selecionada.
+ * @param user Informações do usuário relacionadas ao contexto da exibição.
+ *
+ *
+ * Esta função tem como objetivo:
+ * - Exibir uma lista de imagens de forma interativa e navegável.
+ * - Fornecer suporte para manipular o estado do carrossel e personalizar a interação.
+ *
+ *
+ * Exemplo de uso:
+ * ```kotlin
+ * val imageList = ListImage
+ * val pagerState = rememberPagerState(initialPage = 0) {
+ *     imageList.size
+ * }
+ *     SettingsCarousel(
+ *         imageList = imageList,
+ *         pagerState = pagerState,
+ *         user = UserMain
+ *     )
+ * ```
+ */
 @Composable
 fun SettingsCarousel(
     imageList: List<String>,
     pagerState: PagerState,
-    user: UserMain
+    user: User
 ) {
 
     Column {
         Row(
-            Modifier.fillMaxWidth()
+            Modifier
+                .fillMaxWidth()
                 .padding(10.dp),
             horizontalArrangement = Arrangement.Center,
 
-        ) {
+            ) {
             Text(
                 text = "Role para mudar",
                 style = MaterialTheme.typography.titleSmall,
@@ -103,19 +105,17 @@ fun SettingsCarousel(
                 horizontalArrangement = Arrangement.Center,
             ) {
                 Text(
-                    text = user.user.name,
+                    text = user.name,
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.SemiBold,
-
-
-                    )
+                )
             }
             Row(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
             ) {
                 Text(
-                    text = user.email,
+                    text = user.email!!,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primaryContainer
 
