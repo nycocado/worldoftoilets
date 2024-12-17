@@ -35,13 +35,34 @@ fun RootNavigationGraph(
         composable(AppGraph.main.ROOT) {
             MainView(navController, localViewModel)
         }
-        composable(AppGraph.rating.RATING) { backStackEntry ->
-            val toiletId = backStackEntry.arguments?.getString("toiletId")!!.toInt()
+        composable(
+            route = AppGraph.rating.RATING,
+            arguments = AppGraph.rating.RATING_ARGUMENTS
+        ) { backStackEntry ->
+            val toiletIdArg = backStackEntry.arguments?.getInt("toiletId")!!
+            val toilet = localViewModel.toiletsCache.collectAsState().value[toiletIdArg]
+            val user = localViewModel.userMain.collectAsState().value
+            val rating = localViewModel.ratingState
             RatingScreen(
-                onClickRating = {
+                toilet = toilet!!,
+                user = user!!,
+                ratingStateFlow = rating,
+                onRating = { toiletId, userId, text, ratingClean, ratingPaper, ratingStructure, ratingAccessibility ->
+                    localViewModel.requestComment(
+                        toiletId,
+                        userId,
+                        text,
+                        ratingClean,
+                        ratingPaper,
+                        ratingStructure,
+                        ratingAccessibility
+                    )
+                },
+                onRatingSuccess = {
+                    localViewModel.clearRatingState()
                     navController.popBackStack()
                 },
-                onClickBack = {
+                navigateToBack = {
                     navController.popBackStack()
                 }
             )
@@ -75,7 +96,7 @@ fun MainNavigationGraph(
                 localViewModel.loadToiletsHistory()
             }
             HistoryScreen(toilets, toiletIds,
-                onNavigateToHomeScreen = { selectedToiletId ->
+                navigateToHomeScreen = { selectedToiletId ->
                     navController.navigate(AppGraph.main.homeToiletDetail(selectedToiletId!!)) {
                         popUpTo(navController.graph.startDestinationRoute!!) {
                             inclusive = true
@@ -98,10 +119,13 @@ fun MainNavigationGraph(
             ProfileScreen(toilets, user, comments,
                 onClickLogout = {
                     localViewModel.clearUser().also {
-                        rootNavController.navigate(AppGraph.auth.LOGIN) {
+                        navController.navigate(AppGraph.main.HOME) {
                             popUpTo(rootNavController.graph.startDestinationRoute!!) {
                                 inclusive = true
                             }
+                            launchSingleTop = true
+                        }
+                        rootNavController.navigate(AppGraph.auth.LOGIN) {
                             launchSingleTop = true
                         }
                     }
@@ -134,9 +158,9 @@ fun BottomSheetNavigationGraph(
                         rootNavController.navigate(AppGraph.auth.LOGIN) {
                             launchSingleTop = true
                         }
-                        return@ToiletListScreen
+                    } else {
+                        navController.navigate(AppGraph.bottomSheet.toiletDetail(toiletId))
                     }
-                    navController.navigate(AppGraph.bottomSheet.toiletDetail(toiletId))
                 }
             )
         }
@@ -157,7 +181,7 @@ fun BottomSheetNavigationGraph(
                         launchSingleTop = true
                     }
                 },
-                onClickBack = {
+                navigateToBack = {
                     navController.popBackStack()
                 }
             )
@@ -178,7 +202,7 @@ fun NavGraphBuilder.authNavGraph(
             LoginScreen(
                 loginStateFlow = login,
                 onLogin = { email, password ->
-                    localViewModel.login(email, password)
+                    localViewModel.requestLogin(email, password)
                 },
                 onLoginSuccess = { user ->
                     localViewModel.saveUser(user)
@@ -200,18 +224,13 @@ fun NavGraphBuilder.authNavGraph(
             RegisterScreen(
                 registerStateFlow = register,
                 onRegister = { name, email, password, iconId, birthDate ->
-                    localViewModel.register(name, email, password, iconId, birthDate)
+                    localViewModel.requestRegister(name, email, password, iconId, birthDate)
                 },
                 onRegisterSuccess = {
                     localViewModel.clearRegisterState()
-                    navController.navigate(AppGraph.auth.LOGIN) {
-                        popUpTo(navController.graph.startDestinationRoute!!) {
-                            inclusive = true
-                        }
-                        launchSingleTop = true
-                    }
+                    navController.popBackStack()
                 },
-                onClickBack = {
+                navigateToBack = {
                     navController.popBackStack()
                 }
             )

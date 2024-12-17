@@ -26,7 +26,7 @@ import pt.iade.ei.thinktoilet.ui.components.HistoryCard
 fun HistoryScreen(
     toiletsStateFlow: StateFlow<Map<Int, Toilet>>,
     toiletIdsStateFlow: StateFlow<UiState<List<Int>>>,
-    onNavigateToHomeScreen: (Int?) -> Unit = {},
+    navigateToHomeScreen: (Int?) -> Unit = {},
 ) {
     val toilets = toiletsStateFlow.collectAsState().value
     val toiletIds = toiletIdsStateFlow.collectAsState().value
@@ -54,7 +54,7 @@ fun HistoryScreen(
                         HistoryCard(
                             toilet = toilet,
                             onClick = { selectedToiletId ->
-                                onNavigateToHomeScreen(selectedToiletId)
+                                navigateToHomeScreen(selectedToiletId)
                             }
                         )
                     }

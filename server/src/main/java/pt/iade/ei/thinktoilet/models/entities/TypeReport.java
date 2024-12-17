@@ -14,6 +14,6 @@ public class TypeReport {
     @Column(name = "trp_id")
     private int id;
 
-    @Column(name = "trp_name")
+    @Column(name = "trp_name", length = 50)
     private String name;
 }

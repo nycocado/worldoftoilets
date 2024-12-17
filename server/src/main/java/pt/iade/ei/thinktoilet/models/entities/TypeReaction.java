@@ -14,6 +14,6 @@ public class TypeReaction {
     @Column(name = "trc_id")
     private int id;
 
-    @Column(name = "trc_name")
+    @Column(name = "trc_name", length = 50)
     private String name;
 }

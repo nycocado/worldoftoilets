@@ -14,6 +14,6 @@ public class TypeExtra {
     @Column(name = "tex_id")
     private int id;
 
-    @Column(name = "tex_name")
+    @Column(name = "tex_name", length = 50)
     private String name;
 }

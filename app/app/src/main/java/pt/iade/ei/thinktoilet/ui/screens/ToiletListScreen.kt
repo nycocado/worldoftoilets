@@ -12,11 +12,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.models.UiState
 import pt.iade.ei.thinktoilet.tests.generateLocationStateFlow
@@ -33,6 +35,7 @@ fun ToiletListScreen(
 ) {
     val toilets = toiletsStateFlow.collectAsState().value
     val toiletIds = toiletsNearbyIdsStateFlow.collectAsState().value
+    val scope = rememberCoroutineScope()
 
     when (toiletIds) {
         UiState.Loading -> {
@@ -56,7 +59,7 @@ fun ToiletListScreen(
                     LocationCard(
                         toilet = toilet,
                         location = locationStateFlow.collectAsState().value,
-                        onClick = navigateToToiletDetail
+                        onClick = { scope.launch { navigateToToiletDetail(it) } }
                     )
                 }
             }

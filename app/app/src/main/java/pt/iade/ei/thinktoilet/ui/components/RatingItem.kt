@@ -34,8 +34,7 @@ import pt.iade.ei.thinktoilet.ui.theme.AppTheme
          */
 @Composable
 fun RatingItem(
-    title: String,
-    rating: Float,
+    title: String, rating: Int,
     onClick: ((Int) -> Unit)? = null
 ) {
     Row(
@@ -50,7 +49,7 @@ fun RatingItem(
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Normal,
         )
-        Stars(rating = rating, size = 40.dp, horizontalPadding = 3.dp) {
+        Stars(rating = rating.toFloat(), size = 40.dp, horizontalPadding = 3.dp) {
             if (onClick != null) {
                 onClick(it)
             }
@@ -61,5 +60,5 @@ fun RatingItem(
 @Preview(showBackground = true)
 @Composable
 fun RatingItemPreview() {
-    RatingItem(title = "Limpeza", rating = 4.5f)
+    RatingItem(title = "Limpeza", rating = 4)
 }

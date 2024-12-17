@@ -83,6 +83,11 @@ object ReportGraph {
 object RatingGraph {
     const val ROOT = "rating_graph"
     const val RATING = "rating/{toiletId}"
+    val RATING_ARGUMENTS = listOf (
+        navArgument("toiletId") {
+            type = NavType.IntType
+        }
+    )
 
     fun rating(toiletId: Int) = "rating/$toiletId"
 }

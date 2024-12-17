@@ -40,7 +40,7 @@ public class Toilet {
     )
     private State state;
 
-    @Column(name = "toil_name")
+    @Column(name = "toil_name", length = 50)
     private String name;
 
     @Column(name = "toil_lat")

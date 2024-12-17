@@ -2,16 +2,10 @@ package pt.iade.ei.thinktoilet.ui.screens
 
 import android.annotation.SuppressLint
 import android.util.Patterns
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -28,29 +22,28 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import pt.iade.ei.thinktoilet.R
-import pt.iade.ei.thinktoilet.models.ApiResponse
+import pt.iade.ei.thinktoilet.models.responses.ApiResponse
 import pt.iade.ei.thinktoilet.ui.components.CustomDatePickerDialog
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -61,7 +54,7 @@ fun RegisterScreen(
     registerStateFlow: StateFlow<Result<ApiResponse>?> = MutableStateFlow(null),
     onRegister: (name: String, email: String, password: String, iconId: String?, birthDate: String?) -> Unit = { _, _, _, _, _ -> },
     onRegisterSuccess: () -> Unit = {},
-    onClickBack: () -> Unit = {}
+    navigateToBack: () -> Unit = {}
 ) {
     val registerState = registerStateFlow.collectAsState().value
     var name by remember { mutableStateOf("") }
@@ -74,6 +67,7 @@ fun RegisterScreen(
     var passwordSupportText by remember { mutableStateOf("") }
     var confirmPasswordSupportText by remember { mutableStateOf("") }
 
+    val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
     var showDatePicker by remember { mutableStateOf(false) }
@@ -81,6 +75,8 @@ fun RegisterScreen(
     LaunchedEffect(name) {
         nameSupportText = if (name.isEmpty()) {
             "O nome é obrigatório"
+        } else if (name.length > 50) {
+            "O nome é muito longo"
         } else if (name.length < 6) {
             "O nome deve ter pelo menos 6 caracteres"
         } else {
@@ -91,6 +87,8 @@ fun RegisterScreen(
     LaunchedEffect(email) {
         emailSupportText = if (email.isEmpty()) {
             "O e-mail é obrigatório"
+        } else if (email.length > 100) {
+            "O e-mail é muito longo"
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             "O e-mail é inválido"
         } else {
@@ -125,7 +123,7 @@ fun RegisterScreen(
             passwordSupportText = ""
             confirmPasswordSupportText = ""
 
-            onRegisterSuccess()
+            scope.launch { onRegisterSuccess() }
         }
 
         registerState?.onFailure { error ->
@@ -159,7 +157,7 @@ fun RegisterScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = {
-                        onClickBack()
+                        navigateToBack()
                     }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -270,7 +268,7 @@ fun RegisterScreen(
                 Button(
                     onClick = {
                         if (nameSupportText.isEmpty() && emailSupportText.isEmpty() && passwordSupportText.isEmpty() && confirmPasswordSupportText.isEmpty())
-                            onRegister(name, email, password, null, formatBirthDate(birthDate))
+                            scope.launch { onRegister(name, email, password, null, formatBirthDate(birthDate)) }
                     },
                     modifier = Modifier.padding(top = 10.dp),
                     colors = ButtonColors(

@@ -1,4 +1,4 @@
-package pt.iade.ei.thinktoilet.models
+package pt.iade.ei.thinktoilet.models.requests
 
 import com.google.gson.annotations.SerializedName
 

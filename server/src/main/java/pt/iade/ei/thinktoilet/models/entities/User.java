@@ -16,10 +16,10 @@ public class User {
     @Column(name = "user_id")
     private int id;
 
-    @Column(name = "user_name")
+    @Column(name = "user_name", length = 50)
     private String name;
 
-    @Column(name = "user_email", unique = true)
+    @Column(name = "user_email", unique = true, length = 100)
     private String email;
 
     @Column(name = "user_pwd")

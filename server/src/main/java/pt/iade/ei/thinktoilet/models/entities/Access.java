@@ -14,6 +14,6 @@ public class Access {
     @Column(name = "acs_id")
     private int id;
 
-    @Column(name = "acs_name")
+    @Column(name = "acs_name", length = 50)
     private String name;
 }

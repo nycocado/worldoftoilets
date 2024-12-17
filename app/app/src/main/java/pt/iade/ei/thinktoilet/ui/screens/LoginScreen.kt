@@ -26,6 +26,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.User
 
@@ -55,11 +57,14 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") }
     var emailSupportText by remember { mutableStateOf("") }
     var passwordSupportText by remember { mutableStateOf("") }
+    val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
     LaunchedEffect(email) {
         emailSupportText = if (email.isEmpty()) {
             "O e-mail é obrigatório"
+        } else if (email.length > 100) {
+            "O e-mail é muito longo"
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             "O e-mail é inválido"
         } else {
@@ -80,7 +85,7 @@ fun LoginScreen(
             emailSupportText = ""
             passwordSupportText = ""
 
-            onLoginSuccess(user)
+            scope.launch { onLoginSuccess(user) }
         }
 
         loginState?.onFailure { error ->
@@ -177,7 +182,7 @@ fun LoginScreen(
                 Button(
                     onClick = {
                         if (emailSupportText.isEmpty() && passwordSupportText.isEmpty())
-                            onLogin(email, password)
+                            scope.launch { onLogin(email, password) }
                     },
                     modifier = Modifier.padding(top = 10.dp),
                     colors = ButtonColors(

@@ -7,9 +7,4 @@ import dagger.hilt.android.HiltAndroidApp
 import org.osmdroid.config.Configuration
 
 @HiltAndroidApp
-class ThinkToiletApplication: Application(){
-    override fun onCreate() {
-        super.onCreate()
-        Configuration.getInstance().load(this, getSharedPreferences("OSM", MODE_PRIVATE))
-    }
-}
+class ThinkToiletApplication: Application()

@@ -23,7 +23,7 @@ public class Comment {
     )
     private Interaction interaction;
 
-    @Column(name = "cmm_text")
+    @Column(name = "cmm_text", length = 280)
     private String text;
 
     @Column(name = "cmm_rclean")

@@ -2,18 +2,14 @@ package pt.iade.ei.thinktoilet.viewmodel
 
 import android.location.Location
 import android.util.Log
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import pt.iade.ei.thinktoilet.models.ApiResponse
+import pt.iade.ei.thinktoilet.models.responses.ApiResponse
 import pt.iade.ei.thinktoilet.models.Comment
 import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.models.UiState
@@ -23,7 +19,6 @@ import pt.iade.ei.thinktoilet.repositories.LocationRepository
 import pt.iade.ei.thinktoilet.repositories.ToiletRepository
 import pt.iade.ei.thinktoilet.repositories.UserPreferencesRepository
 import pt.iade.ei.thinktoilet.repositories.UserRepository
-import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -67,6 +62,9 @@ class LocalViewModel @Inject constructor(
 
     private val _registerState = MutableStateFlow<Result<ApiResponse>?>(null)
     val registerState: StateFlow<Result<ApiResponse>?> get() = _registerState
+
+    private val _ratingState = MutableStateFlow<Result<Comment>?>(null)
+    val ratingState: StateFlow<Result<Comment>?> get() = _ratingState
 
     private val _toiletNearbyLoaded = mutableStateOf(false)
     private val _toiletHistoryLoaded = mutableStateOf(false)
@@ -219,7 +217,7 @@ class LocalViewModel @Inject constructor(
         }
     }
 
-    fun login(email: String, password: String) {
+    fun requestLogin(email: String, password: String) {
         viewModelScope.launch {
             try {
                 val result = authRepository.login(email, password)
@@ -231,7 +229,7 @@ class LocalViewModel @Inject constructor(
         }
     }
 
-    fun register(
+    fun requestRegister(
         name: String,
         email: String,
         password: String,
@@ -249,12 +247,44 @@ class LocalViewModel @Inject constructor(
         }
     }
 
+    fun requestComment(
+        toiletId: Int,
+        userId: Int,
+        text: String,
+        ratingClean: Int,
+        ratingPaper: Boolean,
+        ratingStructure: Int,
+        ratingAccessibility: Int
+    ) {
+        viewModelScope.launch {
+            try {
+                val result = toiletRepository.postComment(
+                    toiletId,
+                    userId,
+                    text,
+                    ratingClean,
+                    ratingPaper,
+                    ratingStructure,
+                    ratingAccessibility
+                )
+                _ratingState.value = result
+            } catch (e: Exception) {
+                _error.value = "Erro ao fazer comentário: ${e.message}"
+                Log.e("ToiletViewModel", "Erro ao fazer comentário", e)
+            }
+        }
+    }
+
     fun clearLoginState() {
         _loginState.value = null
     }
 
     fun clearRegisterState() {
         _registerState.value = null
+    }
+
+    fun clearRatingState() {
+        _ratingState.value = null
     }
 
     fun saveUser(user: User) {

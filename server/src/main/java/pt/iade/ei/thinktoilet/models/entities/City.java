@@ -14,7 +14,7 @@ public class City {
     @Column(name = "city_id")
     private int id;
 
-    @Column(name = "city_name")
+    @Column(name = "city_name", length = 50)
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)

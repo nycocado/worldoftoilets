@@ -14,6 +14,6 @@ public class Country {
     @Column(name = "country_id")
     private int id;
 
-    @Column(name = "country_name")
+    @Column(name = "country_name", length = 50)
     private String name;
 }

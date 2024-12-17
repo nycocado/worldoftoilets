@@ -62,7 +62,7 @@ fun ToiletDetailScreen(
     commentsStateFlow: StateFlow<List<Comment>>,
     usersStateFlow: StateFlow<Map<Int, User>>,
     navigateToRating: (Int) -> Unit,
-    onClickBack: () -> Unit = {}
+    navigateToBack: () -> Unit = {}
 ) {
     val toilet = toiletsStateFlow.collectAsState().value[toiletId]!!
     val comments = commentsStateFlow.collectAsState().value.filter { it.toiletId == toiletId }
@@ -107,7 +107,7 @@ fun ToiletDetailScreen(
                     }
                 }
                 FilledIconButton(
-                    onClick = { onClickBack() },
+                    onClick = { navigateToBack() },
                     modifier = Modifier.size(38.dp),
                     colors = IconButtonColors(
                         containerColor = MaterialTheme.colorScheme.tertiaryContainer,

@@ -12,7 +12,7 @@ data class Comment(
     @SerializedName("ratingPaper") val ratingPaper: Boolean,
     @SerializedName("ratingStructure") val ratingStructure: Int,
     @SerializedName("ratingAccessibility") val ratingAccessibility: Int,
-    @SerializedName("datetime") val datetime: String,
+    @SerializedName("datetime") val dateTime: String,
     @SerializedName("numLikes") var like: Int,
     @SerializedName("numDislikes") var dislike: Int,
     @SerializedName("score") var score: Int,

@@ -1,8 +1,8 @@
 package pt.iade.ei.thinktoilet.network
 
-import pt.iade.ei.thinktoilet.models.ApiResponse
-import pt.iade.ei.thinktoilet.models.LoginRequest
-import pt.iade.ei.thinktoilet.models.RegisterRequest
+import pt.iade.ei.thinktoilet.models.responses.ApiResponse
+import pt.iade.ei.thinktoilet.models.requests.LoginRequest
+import pt.iade.ei.thinktoilet.models.requests.RegisterRequest
 import pt.iade.ei.thinktoilet.models.User
 import retrofit2.Response
 import retrofit2.http.Body

@@ -45,7 +45,7 @@ fun generateComment(): Comment {
         ratingPaper = true,
         ratingStructure = (0..5).random(),
         ratingAccessibility = (0..5).random(),
-        datetime = LocalDateTime.now().toString(),
+        dateTime = LocalDateTime.now().toString(),
         like = (0..1000).random(),
         dislike = (0..1000).random(),
         score = (0..1000).random(),
