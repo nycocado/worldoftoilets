@@ -47,9 +47,8 @@ fun HomeScreen(
     )
 
     val locationStateFlow = localViewModel.location
-    val location = locationStateFlow.collectAsState().value
 
-    LaunchedEffect(location, Unit) {
+    LaunchedEffect(Unit) {
         scope.launch { localViewModel.loadLocation() }
     }
 

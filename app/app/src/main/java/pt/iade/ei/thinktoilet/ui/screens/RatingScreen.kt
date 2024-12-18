@@ -117,7 +117,7 @@ fun RatingScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = context.getString(R.string.register),
+                        text = context.getString(R.string.rate),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )

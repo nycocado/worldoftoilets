@@ -18,8 +18,6 @@ public class UserController {
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
     @Autowired
     private UserService userService;
-    @Autowired
-    private CommentService commentService;
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<UserDTO> getUsers(
@@ -38,19 +36,5 @@ public class UserController {
     ) {
         logger.info("Sending user with id {}", id);
         return userService.findUserById(id);
-    }
-
-    @GetMapping(path = "/{id}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<CommentDTO> getUserComments(
-            @PathVariable int id,
-            @RequestParam(defaultValue = "false", required = false) boolean pageable,
-            @RequestParam(defaultValue = "0", required = false) int page,
-            @RequestParam(defaultValue = "20", required = false) int size
-    ) {
-        logger.info("Sending comments from user with id {}", id);
-        if (pageable)
-            return commentService.findCommentsByUserIdPaging(id, page, size).getContent();
-        else
-            return commentService.findCommentsByUserId(id);
     }
 }

@@ -1,17 +1,23 @@
 package pt.iade.ei.thinktoilet.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,15 +34,13 @@ import pt.iade.ei.thinktoilet.tests.generateUserMain
 import pt.iade.ei.thinktoilet.ui.components.SettingsCarousel
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-//    navController: NavController = rememberNavController(),
-//    localViewModel: LocalViewModel = viewModel()
+    navigateToBack: () -> Unit = {}
 ) {
-
     val imageList = generateCarouselImage()
-    // numero da imagem selecionada
+
     val pagerState = rememberPagerState(initialPage = 0) {
         imageList.size
     }
@@ -45,108 +50,73 @@ fun SettingsScreen(
     var userNewPassword: String by remember { mutableStateOf("") }
     var userNewPasswordVerification: String by remember { mutableStateOf("") }
 
+    val context = LocalContext.current
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-    ) {
-        LazyColumn {
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 5.dp),
-                    horizontalArrangement = Arrangement.Center
-                ) {
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
                     Text(
                         text = "Configurações",
-                        style = MaterialTheme.typography.headlineSmall,
+                        style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold
                     )
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = { navigateToBack() }
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
                 }
-            }
-
+            )
+        }
+    ) { innerPadding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(horizontal = 16.dp)
+        ) {
             item {
-                Row {
-                    SettingsCarousel(
-                        imageList = imageList,
-                        pagerState = pagerState,
-                        user = generateUserMain()
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 10.dp),
-                ) {
-                    Text(
-                        text = "Alterar a Nome do Usuario",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
-                ) {
-                    OutlinedTextField(value = userName, onValueChange = {
-                        userName = it
-                    }, label = { Text("Alterar Nome do Usuario") })
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 10.dp),
-                ) {
-                    Text(
-                        text = "Alterar a Email",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
-                ) {
-                    OutlinedTextField(value = userEmail, onValueChange = {
-                        userEmail = it
-                    }, label = { Text("Alterar Email") })
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 10.dp),
-                ) {
-                    Text(
-                        text = "Alterar a Palavra-passe",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
-
-                ) {
-                    OutlinedTextField(value = userOldPassword, onValueChange = {
-                        userOldPassword = it
-                    }, label = { Text("Palavra-passe Atual") })
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
-
-                ) {
-                    OutlinedTextField(value = userNewPassword, onValueChange = {
-                        userNewPassword = it
-                    }, label = { Text("Nova Palavra-passe") })
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
-
-                ) {
-                    OutlinedTextField(value = userNewPasswordVerification, onValueChange = {
-                        userNewPasswordVerification = it
-                    }, label = { Text("Confirmar palavra-passe") })
-                }
+                SettingsCarousel(
+                    imageList = imageList,
+                    pagerState = pagerState,
+                    user = generateUserMain()
+                )
+                Text(
+                    text = "Alterar a Nome do Usuario",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                OutlinedTextField(value = userName, onValueChange = {
+                    userName = it
+                }, label = { Text("Alterar Nome do Usuario") })
+                Text(
+                    text = "Alterar a Email",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                OutlinedTextField(value = userEmail, onValueChange = {
+                    userEmail = it
+                }, label = { Text("Alterar Email") })
+                Text(
+                    text = "Alterar a Palavra-passe",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                OutlinedTextField(value = userOldPassword, onValueChange = {
+                    userOldPassword = it
+                }, label = { Text("Palavra-passe Atual") })
+                OutlinedTextField(value = userNewPassword, onValueChange = {
+                    userNewPassword = it
+                }, label = { Text("Nova Palavra-passe") })
+                OutlinedTextField(value = userNewPasswordVerification, onValueChange = {
+                    userNewPasswordVerification = it
+                }, label = { Text("Confirmar palavra-passe") })
             }
 
             item {
@@ -158,7 +128,7 @@ fun SettingsScreen(
 
                 ) {
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = { navigateToBack() },
                         modifier = Modifier.padding(top = 10.dp),
                         colors = ButtonColors(
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -175,7 +145,7 @@ fun SettingsScreen(
                             text = "Salvar Alterações",
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.SemiBold
-                        )//igual...
+                        )
                     }
                 }
             }

@@ -54,7 +54,8 @@ fun ProfileScreen(
     toiletsStateFlow: StateFlow<Map<Int, Toilet>>,
     userStateFlow: StateFlow<User?>,
     commentsStateFlow: StateFlow<List<Comment>>,
-    onClickLogout: () -> Unit = { }
+    onClickLogout: () -> Unit = { },
+    onClickEditProfile: () -> Unit = { }
 ) {
     val user = userStateFlow.collectAsState().value
     val comments = commentsStateFlow.collectAsState().value
@@ -113,7 +114,7 @@ fun ProfileScreen(
                 horizontalArrangement = Arrangement.Center
             ) {
                 Button(
-                    onClick = { scope.launch { } },
+                    onClick = { onClickEditProfile() },
                     colors = ButtonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer,

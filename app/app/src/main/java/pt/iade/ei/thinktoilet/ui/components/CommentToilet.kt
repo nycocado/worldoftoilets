@@ -15,10 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,40 +28,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.Comment
+import pt.iade.ei.thinktoilet.models.Reaction
+import pt.iade.ei.thinktoilet.models.TypeReaction
 import pt.iade.ei.thinktoilet.models.User
 import pt.iade.ei.thinktoilet.tests.generateComment
 import pt.iade.ei.thinktoilet.tests.generateUser
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
-
-/**
-         * Função que mostra um Comentário.
-         *
-         * @param comment O comentário a ser exibido.
-         * @param user O usuário.
-         *
-         *
-         * Esta função permite ao usuário interagir com um comentário, incluindo
-         *a possibilidade de clicar nos botões de "like" ou "dislike".
-         *
-         *
-         * Exemplo de uso:
-         * ```
-         * ReportComplement(
-         *     comment = "Gostei da Casa de Banho.",
-         *     user = User
-         * )
-         * ```
-         */
 @Composable
 fun CommentToilet(
     comment: Comment,
-    user: User
+    reaction: Reaction,
+    user: User,
+    onReaction: (Int, TypeReaction) -> Unit = { _, _ -> }
 ) {
-    var likePressed by remember { mutableStateOf(false) }
-    var dislikePressed by remember { mutableStateOf(false) }
-    val context = LocalContext.current
-
     HorizontalDivider(
         thickness = 2.dp,
         color = Color.LightGray
@@ -73,7 +49,42 @@ fun CommentToilet(
     Column(
         modifier = Modifier.padding(top = 12.dp)
     ) {
-        UserComment(user)
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                modifier = Modifier
+                    .size(60.dp)
+                    .clip(CircleShape)
+                    .border(
+                        width = 2.dp,
+                        color = Color.Gray,
+                        shape = CircleShape
+                    ),
+                painter = painterResource(R.drawable.image_test),
+                contentDescription = "Like Icon"
+            )
+            Column(
+                modifier = Modifier.padding(10.dp)
+            ) {
+                Row {
+                    Text(
+                        text = user.name,
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+                Row {
+                    Text(
+                        text = "${user.numComments} Avaliações",
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                }
+            }
+        }
         Row(
             modifier = Modifier.padding(
                 top = 5.dp,
@@ -114,17 +125,12 @@ fun CommentToilet(
             ) {
                 ThumbUp(
                     count = comment.like,
-                    isPressed = likePressed
+                    isPressed = reaction.typeReaction == TypeReaction.LIKE
                 ) {
-                    likePressed = !it
-                    if (likePressed && !dislikePressed) {
-                        comment.like += 1
-                    } else if (!likePressed && !dislikePressed) {
-                        comment.like -= 1
-                    } else if (likePressed && dislikePressed) {
-                        comment.like += 1
-                        comment.dislike -= 1
-                        dislikePressed = false
+                    if (reaction.typeReaction == TypeReaction.LIKE) {
+                        onReaction(comment.id!!, TypeReaction.NONE)
+                    } else {
+                        onReaction(comment.id!!, TypeReaction.LIKE)
                     }
                 }
             }
@@ -134,17 +140,12 @@ fun CommentToilet(
             ) {
                 ThumbDown(
                     count = comment.dislike,
-                    isPressed = dislikePressed
+                    isPressed = reaction.typeReaction == TypeReaction.DISLIKE
                 ) {
-                    dislikePressed = !it
-                    if (dislikePressed && !likePressed) {
-                        comment.dislike += 1
-                    } else if (!dislikePressed && !likePressed) {
-                        comment.dislike -= 1
-                    } else if (dislikePressed && likePressed) {
-                        comment.dislike += 1
-                        comment.like -= 1
-                        likePressed = false
+                    if (reaction.typeReaction == TypeReaction.DISLIKE) {
+                        onReaction(comment.id!!, TypeReaction.NONE)
+                    } else {
+                        onReaction(comment.id!!, TypeReaction.DISLIKE)
                     }
                 }
             }
@@ -176,53 +177,18 @@ fun CommentToilet(
     }
 }
 
-@Composable
-fun UserComment(user: User) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            modifier = Modifier
-                .size(60.dp)
-                .clip(CircleShape)
-                .border(
-                    width = 2.dp,
-                    color = Color.Gray,
-                    shape = CircleShape
-                ),
-            painter = painterResource(R.drawable.image_test),
-            contentDescription = "Like Icon"
-        )
-        Column(
-            modifier = Modifier.padding(10.dp)
-        ) {
-            Row {
-                Text(
-                    text = user.name,
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-            Row {
-                Text(//
-                    text = user.numComments.toString() + " " + LocalContext.current.getString(R.string.commentToilet),
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.SemiBold,
-                )
-            }
-        }
-    }
-}
-
-
 @Preview(showBackground = true)
 @Composable
 fun CommentPreview() {
     AppTheme {
+        val comment = generateComment()
+        val reaction = Reaction(
+            commentId = comment.id!!,
+            typeReaction = TypeReaction.LIKE
+        )
         CommentToilet(
-            comment = generateComment(),
+            comment = comment,
+            reaction = reaction,
             user = generateUser()
         )
     }

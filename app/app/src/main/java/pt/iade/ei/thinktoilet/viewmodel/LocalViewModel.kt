@@ -11,10 +11,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import pt.iade.ei.thinktoilet.models.responses.ApiResponse
 import pt.iade.ei.thinktoilet.models.Comment
+import pt.iade.ei.thinktoilet.models.Reaction
 import pt.iade.ei.thinktoilet.models.Toilet
+import pt.iade.ei.thinktoilet.models.TypeReaction
 import pt.iade.ei.thinktoilet.models.UiState
 import pt.iade.ei.thinktoilet.models.User
 import pt.iade.ei.thinktoilet.repositories.AuthRepository
+import pt.iade.ei.thinktoilet.repositories.CommentRepository
 import pt.iade.ei.thinktoilet.repositories.LocationRepository
 import pt.iade.ei.thinktoilet.repositories.ToiletRepository
 import pt.iade.ei.thinktoilet.repositories.UserPreferencesRepository
@@ -25,6 +28,7 @@ import javax.inject.Inject
 class LocalViewModel @Inject constructor(
     private val toiletRepository: ToiletRepository,
     private val userRepository: UserRepository,
+    private val commentRepository: CommentRepository,
     private val authRepository: AuthRepository,
     private val locationRepository: LocationRepository,
     private val userPreferencesRepository: UserPreferencesRepository
@@ -50,6 +54,9 @@ class LocalViewModel @Inject constructor(
 
     private val _commentsUser = MutableStateFlow<List<Comment>>(emptyList())
     val commentsUser: StateFlow<List<Comment>> get() = _commentsUser
+
+    private val _reactions = MutableStateFlow<Map<Int, Reaction>>(emptyMap())
+    val reactions: StateFlow<Map<Int, Reaction>> get() = _reactions
 
     private val _location = MutableStateFlow<Location>(Location(""))
     val location: StateFlow<Location> get() = _location
@@ -161,7 +168,7 @@ class LocalViewModel @Inject constructor(
     fun loadToiletComments(toiletId: Int) {
         viewModelScope.launch {
             try {
-                val fetchedComments = toiletRepository.getToiletComment(toiletId)
+                val fetchedComments = commentRepository.getCommentsByToiletId(toiletId)
 
                 val userIds = fetchedComments
                     .filter { comment -> _users.value.none { user -> user.key == comment.userId } }
@@ -181,6 +188,10 @@ class LocalViewModel @Inject constructor(
                     }
                 }
                 _commentsToilet.value = fetchedComments
+                if(fetchedComments.isNotEmpty()) {
+                    val commentIds = fetchedComments.map { it.id!! }
+                    loadReactions(userMain.value?.id!!, commentIds)
+                }
             } catch (e: Exception) {
                 _error.value = "Erro ao carregar comentários: ${e.message}"
                 Log.e("ToiletViewModel", "Erro ao carregar comentários para toiletId=$toiletId", e)
@@ -191,7 +202,7 @@ class LocalViewModel @Inject constructor(
     fun loadUserComments(userId: Int) {
         viewModelScope.launch {
             try {
-                val fetchedComments = userRepository.getUserComments(userId)
+                val fetchedComments = commentRepository.getCommentsByUserId(userId)
                 val toiletIds = fetchedComments
                     .filter { comment -> _toiletsCache.value.none { toilet -> toilet.value.id == comment.toiletId } }
                     .map { it.toiletId }
@@ -213,6 +224,66 @@ class LocalViewModel @Inject constructor(
             } catch (e: Exception) {
                 _error.value = "Erro ao carregar comentários: ${e.message}"
                 Log.e("ToiletViewModel", "Erro ao carregar comentários para userId=$userId", e)
+            }
+        }
+    }
+
+    private fun loadReactions(userId: Int, commentIds: List<Int>) {
+        viewModelScope.launch {
+            try {
+                val fetchedReactions = commentRepository.getReactionsByUserId(userId, commentIds)
+                _reactions.value = _reactions.value.toMutableMap().apply {
+                    for (id in commentIds) {
+                        this[id] = fetchedReactions.find { it.commentId == id } ?: Reaction(id, TypeReaction.NONE)
+                    }
+                }
+            } catch (e: Exception) {
+                _error.value = "Erro ao carregar reações: ${e.message}"
+                Log.e("ToiletViewModel", "Erro ao carregar reações para userId=$userId", e)
+            }
+        }
+    }
+
+    fun updateReaction(commentId: Int, typeReaction: TypeReaction) {
+        viewModelScope.launch {
+            try {
+                val initialReaction = _reactions.value[commentId]
+                val reaction = Reaction(commentId, typeReaction)
+                _reactions.value = _reactions.value.toMutableMap().apply {
+                    this[commentId] = reaction
+                }
+                _commentsToilet.value = _commentsToilet.value.toMutableList().apply {
+                    val comment = this.find { it.id == commentId }
+                    if (comment != null) {
+                        when (typeReaction) {
+                            TypeReaction.LIKE -> {
+                                comment.like++
+                                if (initialReaction?.typeReaction == TypeReaction.DISLIKE) {
+                                    comment.dislike--
+                                }
+                                commentRepository.postReaction(commentId, userMain.value?.id!!, typeReaction.value)
+                            }
+                            TypeReaction.DISLIKE -> {
+                                comment.dislike++
+                                if (initialReaction?.typeReaction == TypeReaction.LIKE) {
+                                    comment.like--
+                                }
+                                commentRepository.postReaction(commentId, userMain.value?.id!!, typeReaction.value)
+                            }
+                            TypeReaction.NONE -> {
+                                if (initialReaction?.typeReaction == TypeReaction.LIKE) {
+                                    comment.like--
+                                } else if (initialReaction?.typeReaction == TypeReaction.DISLIKE) {
+                                    comment.dislike--
+                                }
+                                commentRepository.deleteReaction(commentId, userMain.value?.id!!)
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                _error.value = "Erro ao atualizar reações: ${e.message}"
+                Log.e("ToiletViewModel", "Erro ao atualizar reações para commentId=$commentId", e)
             }
         }
     }
@@ -258,7 +329,7 @@ class LocalViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             try {
-                val result = toiletRepository.postComment(
+                val result = commentRepository.postComment(
                     toiletId,
                     userId,
                     text,

@@ -16,23 +16,17 @@ import pt.iade.ei.thinktoilet.R
 
 object AppGraph {
     val initial = RootGraph
-    val auth = AuthGraph
     val main = MainGraph
     val bottomSheet = BottomSheetGraph
-    val suggest = SuggestGraph
-    val report = ReportGraph
+    val auth = AuthGraph
     val rating = RatingGraph
-    val profileEdit = ProfileEditGraph
+    val settings = SettingsGraph
+    val report = ReportGraph
+    val suggest = SuggestGraph
 }
 
 object RootGraph {
     const val ROOT = "root_graph"
-}
-
-object AuthGraph {
-    const val ROOT = "auth_graph"
-    const val LOGIN = "login"
-    const val REGISTER = "register"
 }
 
 object MainGraph {
@@ -65,6 +59,29 @@ object BottomSheetGraph {
     fun toiletDetail(toiletId: Int) = "toilet_details/$toiletId"
 }
 
+object AuthGraph {
+    const val ROOT = "auth_graph"
+    const val LOGIN = "login"
+    const val REGISTER = "register"
+}
+
+object RatingGraph {
+    const val ROOT = "rating_graph"
+    const val RATING = "rating/{toiletId}"
+    val RATING_ARGUMENTS = listOf (
+        navArgument("toiletId") {
+            type = NavType.IntType
+        }
+    )
+
+    fun rating(toiletId: Int) = "rating/$toiletId"
+}
+
+object SettingsGraph {
+    const val ROOT = "settings_graph"
+    const val SETTINGS = "settings"
+}
+
 object SuggestGraph {
     const val ROOT = "suggest_graph"
     const val SUGGEST_START = "suggest_start"
@@ -80,22 +97,7 @@ object ReportGraph {
     const val REPORT_CONFIRMATION = "report_confirmation"
 }
 
-object RatingGraph {
-    const val ROOT = "rating_graph"
-    const val RATING = "rating/{toiletId}"
-    val RATING_ARGUMENTS = listOf (
-        navArgument("toiletId") {
-            type = NavType.IntType
-        }
-    )
 
-    fun rating(toiletId: Int) = "rating/$toiletId"
-}
-
-object ProfileEditGraph {
-    const val ROOT = "profile_edit_graph"
-    const val PROFILE_EDIT = "profile_edit"
-}
 
 sealed class NavRoute(
     val selectedIcon: ImageVector,

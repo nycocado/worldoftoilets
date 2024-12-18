@@ -49,10 +49,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.Comment
+import pt.iade.ei.thinktoilet.models.Reaction
 import pt.iade.ei.thinktoilet.models.Toilet
+import pt.iade.ei.thinktoilet.models.TypeReaction
 import pt.iade.ei.thinktoilet.models.User
 import pt.iade.ei.thinktoilet.tests.generateCommentsList
 import pt.iade.ei.thinktoilet.tests.generateRandomToilet
+import pt.iade.ei.thinktoilet.tests.generateReactions
 import pt.iade.ei.thinktoilet.tests.generateUserMain
 import pt.iade.ei.thinktoilet.ui.components.CommentToilet
 import pt.iade.ei.thinktoilet.ui.components.Stars
@@ -64,12 +67,15 @@ fun ToiletDetailScreen(
     toiletId: Int,
     toiletsStateFlow: StateFlow<Map<Int, Toilet>>,
     commentsStateFlow: StateFlow<List<Comment>>,
+    reactionsStateFlow: StateFlow<Map<Int, Reaction>>,
     usersStateFlow: StateFlow<Map<Int, User>>,
     navigateToRating: (Int) -> Unit,
-    navigateToBack: () -> Unit = {}
+    navigateToBack: () -> Unit = {},
+    onReaction: (comment: Int, typeReaction: TypeReaction) -> Unit = { _, _ -> }
 ) {
     val toilet = toiletsStateFlow.collectAsState().value[toiletId]!!
     val comments = commentsStateFlow.collectAsState().value.filter { it.toiletId == toiletId }
+    val reactions = reactionsStateFlow.collectAsState().value
     val users = usersStateFlow.collectAsState().value
 
     val scope = rememberCoroutineScope()
@@ -318,10 +324,16 @@ fun ToiletDetailScreen(
             items(comments) { comment ->
                 val user = users[comment.userId]
                 if (user != null) {
-                    CommentToilet(
-                        comment = comment,
-                        user = user
-                    )
+                    reactions[comment.id!!]?.let {
+                        CommentToilet(
+                            comment = comment,
+                            reaction = it,
+                            user = user,
+                            onReaction = { commentId, typeReaction ->
+                                onReaction(commentId, typeReaction)
+                            },
+                        )
+                    }
                 }
             }
         }
@@ -337,19 +349,21 @@ fun ToiletDetailScreenPreview() {
         )
     )
     val commentsStateFlow = MutableStateFlow(generateCommentsList())
+    val comments = commentsStateFlow.collectAsState().value
+    val reactionsStateFlow = MutableStateFlow(generateReactions(comments.map { it.id!! })
+    )
     val usersStateFlow = MutableStateFlow(
         mapOf(
             1 to generateUserMain()
         )
     )
 
-    AppTheme {
-        ToiletDetailScreen(
-            toiletId = 1,
-            toiletsStateFlow = toiletsStateFlow,
-            commentsStateFlow = commentsStateFlow,
-            usersStateFlow = usersStateFlow,
-            navigateToRating = {}
-        )
-    }
+    ToiletDetailScreen(
+        toiletId = 1,
+        toiletsStateFlow = toiletsStateFlow,
+        commentsStateFlow = commentsStateFlow,
+        reactionsStateFlow = reactionsStateFlow,
+        usersStateFlow = usersStateFlow,
+        navigateToRating = {}
+    )
 }

@@ -4,7 +4,9 @@ import android.location.Location
 import kotlinx.coroutines.flow.MutableStateFlow
 import pt.iade.ei.thinktoilet.models.Comment
 import pt.iade.ei.thinktoilet.models.Rating
+import pt.iade.ei.thinktoilet.models.Reaction
 import pt.iade.ei.thinktoilet.models.Toilet
+import pt.iade.ei.thinktoilet.models.TypeReaction
 import pt.iade.ei.thinktoilet.models.UiState
 import pt.iade.ei.thinktoilet.models.User
 import java.time.LocalDateTime
@@ -16,10 +18,6 @@ fun generateRandomRatingCategory(): Rating {
         structure = (0..5).random().toFloat(),
         accessibility = (0..5).random().toFloat(),
     )
-}
-
-fun generateRandomDistance(): Double {
-    return (0..5000).random().toDouble()
 }
 
 fun generateRandomToilet(id: Int = (1..100).random(), numComments: Int = (1..40).random()): Toilet {
@@ -63,6 +61,17 @@ fun generateComment(): Comment {
         dislike = (0..1000).random(),
         score = (0..1000).random(),
     )
+}
+
+fun generateReactions(comments: List<Int>): Map<Int, Reaction> {
+    val reactions = mutableMapOf<Int, Reaction>()
+    for (commentId in comments) {
+        reactions[commentId] = Reaction(
+            commentId = commentId,
+            typeReaction = TypeReaction.LIKE
+        )
+    }
+    return reactions
 }
 
 fun generateUser(): User {
@@ -111,7 +120,6 @@ fun generateUsers(numUsers: Int): List<User> {
 
 fun generateCarouselImage(): List<String> {
     return listOf(
-        //filme muito bom
         "https://media.themoviedb.org/t/p/w440_and_h660_face/bOVr292mwn3jxr1e0NmUPM1rcjo.jpg",
         "https://media.themoviedb.org/t/p/w440_and_h660_face/t5v2Zsb5sa6PSP9jMUWY4GdIb3c.jpg",
         "https://media.themoviedb.org/t/p/w440_and_h660_face/4BtyJ4KAyuptcjnFgoxJgEcPmrY.jpg",

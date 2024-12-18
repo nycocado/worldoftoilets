@@ -1,6 +1,5 @@
 package pt.iade.ei.thinktoilet.ui.components
 
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -33,7 +32,6 @@ import pt.iade.ei.thinktoilet.tests.generateCarouselImage
 import pt.iade.ei.thinktoilet.tests.generateUserMain
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 import kotlin.math.absoluteValue
-
 
 /**
  * Exibe um ícone de imagem por meio de um carrossel.

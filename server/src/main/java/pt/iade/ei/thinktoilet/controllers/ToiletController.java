@@ -27,10 +27,6 @@ public class ToiletController {
     private final Logger logger = LoggerFactory.getLogger(ToiletController.class);
     @Autowired
     private ToiletService toiletService;
-    @Autowired
-    private CommentService commentService;
-    @Autowired
-    private ReactionService reactionService;
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ToiletDTO> getToilets(
@@ -71,42 +67,12 @@ public class ToiletController {
             return toiletService.findToiletsNearby(lat, lon);
     }
 
-    @GetMapping(path = "/{id}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<CommentDTO> getToiletComments(
-            @PathVariable int id,
-            @RequestParam(defaultValue = "false", required = false) boolean pageable,
-            @RequestParam(defaultValue = "0", required = false) int page,
-            @RequestParam(defaultValue = "20", required = false) int size
-    ) {
-        logger.info("Sending comments from toilet with id {}", id);
-        if (pageable)
-            return commentService.findCommentsByToiletIdPaging(id, page, size).getContent();
-        else
-            return commentService.findCommentsByToiletId(id);
-    }
-
     @GetMapping(path = "/users/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ToiletDTO> getToiletByUserId(
             @PathVariable int id
     ) {
         logger.info("Sending toilet ids from user with id {}", id);
         return toiletService.findToiletsByUserId(id);
-    }
-
-    @PostMapping(path = "/comments", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommentDTO addComment(
-            @RequestBody CommentRequest request
-    ) {
-        logger.info("Adding comment to toilet with id {} and user with id {}", request.getToiletId(), request.getUserId());
-        return commentService.addComment(request);
-    }
-
-    @PostMapping(path = "/comments/reaction", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> addReaction(
-            @RequestBody ReactionRequest request
-    ) {
-        logger.info("Adding reaction to comment with id {} and user with id {}", request.getCommentId(), request.getUserId());
-        return reactionService.addReaction(request);
     }
 
     @PostMapping(path = "{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

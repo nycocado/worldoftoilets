@@ -17,6 +17,7 @@ import pt.iade.ei.thinktoilet.ui.screens.LoginScreen
 import pt.iade.ei.thinktoilet.ui.screens.ProfileScreen
 import pt.iade.ei.thinktoilet.ui.screens.RatingScreen
 import pt.iade.ei.thinktoilet.ui.screens.RegisterScreen
+import pt.iade.ei.thinktoilet.ui.screens.SettingsScreen
 import pt.iade.ei.thinktoilet.ui.screens.ToiletDetailScreen
 import pt.iade.ei.thinktoilet.ui.screens.ToiletListScreen
 import pt.iade.ei.thinktoilet.view.MainView
@@ -62,6 +63,13 @@ fun RootNavigationGraph(
                     localViewModel.clearRatingState()
                     navController.popBackStack()
                 },
+                navigateToBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+        composable(AppGraph.settings.SETTINGS) {
+            SettingsScreen(
                 navigateToBack = {
                     navController.popBackStack()
                 }
@@ -129,6 +137,11 @@ fun MainNavigationGraph(
                             launchSingleTop = true
                         }
                     }
+                },
+                onClickEditProfile = {
+                    rootNavController.navigate(AppGraph.settings.SETTINGS) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -171,11 +184,12 @@ fun BottomSheetNavigationGraph(
             val toiletId = backStackEntry.arguments?.getInt("toiletId")!!
             val toilets = localViewModel.toiletsCache
             val comments = localViewModel.commentsToilet
+            val reactions = localViewModel.reactions
             val users = localViewModel.users
             LaunchedEffect(Unit) {
                 localViewModel.loadToiletComments(toiletId)
             }
-            ToiletDetailScreen(toiletId, toilets, comments, users,
+            ToiletDetailScreen(toiletId, toilets, comments, reactions, users,
                 navigateToRating = {
                     rootNavController.navigate(AppGraph.rating.rating(it)) {
                         launchSingleTop = true
@@ -183,6 +197,9 @@ fun BottomSheetNavigationGraph(
                 },
                 navigateToBack = {
                     navController.popBackStack()
+                },
+                onReaction = { commentId, typeReaction ->
+                    localViewModel.updateReaction(commentId, typeReaction)
                 }
             )
         }
