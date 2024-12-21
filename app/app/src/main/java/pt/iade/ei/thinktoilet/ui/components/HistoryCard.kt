@@ -1,7 +1,6 @@
 package pt.iade.ei.thinktoilet.ui.components
 
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,24 +18,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.tests.generateRandomToilet
-import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
-
-         /**
-         * Exibe as informações de um Toilet de forma simplificada utilizando um Card.
-         *
-         * @param toilet Objeto que contém os detalhes do Toilet a serem exibidos.
-         *
-         * Esta função apresenta as informações do Toilet de maneira concisa e visualmente organizada,
-         * utilizando um componente Card para exibição.
-         *
-         * Exemplo de uso:
-         * ```
-         * HistoryCard(
-         *     toilet = toilet
-         * )
-         * ```
-         */
+/**
+* Exibe as informações de um Toilet de forma simplificada utilizando um Card.
+*
+* @param toilet [Toilet] que contém os detalhes da casa de banho.
+* @param onClick Callback a ser executado quando o Card é clicado.
+*/
 @Composable
 fun HistoryCard(
     toilet: Toilet,
@@ -48,12 +36,8 @@ fun HistoryCard(
             .padding(
                 horizontal = 20.dp,
                 vertical = 8.dp
-            )
-            .border(
-                width = 2.dp,
-                color = Color.LightGray,
-                shape = MaterialTheme.shapes.medium
             ),
+        border = BorderStroke(2.dp, Color.LightGray),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
@@ -63,7 +47,7 @@ fun HistoryCard(
         ),
         elevation = CardDefaults.cardElevation(2.dp),
         onClick = {
-            onClick(toilet.id!!)
+            onClick(toilet.id)
         }
     ) {
         Row(
@@ -72,35 +56,25 @@ fun HistoryCard(
                 .padding(horizontal = 20.dp, vertical = 25.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = toilet.name,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-            Column(
-                modifier = Modifier.padding(horizontal = 10.dp),
-            ) {
-                Stars(
-                    rating = toilet.getAverageRating(),
-                )
-            }
+            Text(
+                modifier = Modifier.weight(1f),
+                text = toilet.name,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Stars(
+                rating = toilet.getAverageRating(),
+            )
         }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun ProfileCard() {
-    AppTheme {
-        HistoryCard(
-            toilet = generateRandomToilet()
-        )
-    }
+private fun ProfileCard() {
+    HistoryCard(
+        toilet = generateRandomToilet()
+    )
 }

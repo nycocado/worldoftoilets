@@ -1,40 +1,86 @@
 <resources>
     <!-- App -->
     <string name="app_name" translatable="false">Think Toilet</string>
+    <string name="logo">App logo</string>
 
     <!-- Rotas -->
     <string name="home">Home</string>
-    <string name="history">Histórico</string>
-    <string name="profile">Perfil</string>
-    <string name="rate">Avaliar</string>
+    <string name="history">History</string>
+    <string name="profile">Profile</string>
+    <string name="rate">Rating</string>
     <string name="login">Login</string>
-    <string name="register">Registo</string>
+    <string name="register">Register</string>
+    <string name="settings">Settings</string>
 
     <!-- Botões -->
-    <string name="go_to_maps">Ir para o Maps</string>
-    <string name="edit_profile">Editar Perfil</string>
+    <string name="go_to_maps">Go to Maps</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="checked">Checked</string>
+
+    <!-- Login -->
+    <string name="login_action">Log In</string>
+    <string name="email">E-mail</string>
+    <string name="password">Password</string>
+
+    <!-- Registo -->
+    <string name="register_action">Register</string>
+    <string name="name">Name</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="birthdate">Birthdate</string>
 
     <!-- Avaliação -->
-    <string name="clean">Limpeza</string>
-    <string name="paper">Papel</string>
-    <string name="structure">Estrutura</string>
-    <string name="accessibility">Acessibilidade</string>
+    <string name="clean">Clean</string>
+    <string name="paper">Paper</string>
+    <string name="structure">Structure</string>
+    <string name="accessibility">Accessibility</string>
+    <string name="ratings">Ratings</string>
 
     <!-- Perfil -->
-    <string name="level">Nível</string>
-    <string name="points">Pontos</string>
-    <string name="progress">Progresso</string>
-    <string name="your_critics">Suas Críticas</string>
+    <string name="level">Level</string>
+    <string name="points">Points</string>
+    <string name="progress">Progress</string>
+    <string name="your_critics">Your Reviews</string>
+    <string name="roll_to_change">Roll to change</string>
+
+    <!-- Configurações -->
+    <string name="change_name">Change Name</string>
+    <string name="change_email">Change E-mail</string>
+    <string name="change_password">Change Password</string>
 
     <!-- Comentário -->
-    <string name="comments">Comentários</string>
+    <string name="comments">Comments</string>
+    <string name="comment">Comment</string>
+    <string name="insert_comment">Insert comment...</string>
 
     <!-- Content Descriptions -->
-    <string name="content_description_toilet_image">Imagem da casa de banho</string>
+    <string name="content_description_toilet_image">Image toilet</string>
+    <string name="content_description_profile_picture">Image profile</string>
+    <string name="content_description_like_button">Like button</string>
+    <string name="content_description_dislike_button">Dislike button</string>
+    <string name="content_description_date_button">Select date button</string>
+    <string name="content_description_change_name_button">Change name button</string>
+    <string name="content_description_change_email_button">Change email button</string>
+    <string name="content_description_change_password_button">Change password button</string>
 
     <!-- Erros -->
-    <string name="error_image">Erro ao carregar imagem</string>
+    <string name="error_image">Error loading image</string>
+    <string name="error_login">Error logging in</string>
+    <string name="error_register">Error registering</string>
+
+    <!-- Erros de autenticação -->
+    <string name="error_required_name">Required</string>
+    <string name="error_required_email">Required</string>
+    <string name="error_required_password">Required</string>
+    <string name="error_required_confirm_password">Required</string>
+    <string name="error_too_long_name">Maximum 50 characters</string>
+    <string name="error_too_long_email">Maximum 100 characters</string>
+    <string name="error_too_short_name">Must be at least 6 characters long</string>
+    <string name="error_too_short_password">Must be at least 6 characters long</string>
+    <string name="error_invalid_email">Invalid e-mail</string>
+    <string name="error_invalid_password">Invalid password</string>
+    <string name="error_passwords_do_not_match">Passwords do not match</string>
+    <string name="error_in_use_email">E-mail already in use</string>
 
     <!-- Links -->
-    <string name="maps_uri">android-app://com.google.android.apps.maps</string>
+    <string name="maps_uri" translatable="false">android-app://com.google.android.apps.maps</string>
 </resources>

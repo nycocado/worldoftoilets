@@ -21,7 +21,7 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import pt.iade.ei.thinktoilet.R
 
-val cartoLightTileSource = XYTileSource(
+private val cartoLightTileSource = XYTileSource(
     "Carto Light",
     0,
     20,
@@ -30,7 +30,7 @@ val cartoLightTileSource = XYTileSource(
     arrayOf("https://basemaps.cartocdn.com/light_all/")
 )
 
-val cartoDarkTileSource = XYTileSource(
+private val cartoDarkTileSource = XYTileSource(
     "Carto Dark",
     0,
     20,
@@ -39,6 +39,11 @@ val cartoDarkTileSource = XYTileSource(
     arrayOf("https://basemaps.cartocdn.com/dark_all/")
 )
 
+/**
+ * Exibe um mapa utilizando a biblioteca OpenStreetMaps.
+ *
+ * @param locationStateFlow [StateFlow] que contém um [Location] com a localização atual do usuário.
+ */
 @SuppressLint("UseCompatLoadingForDrawables")
 @Composable
 fun OpenStreetMapsView(

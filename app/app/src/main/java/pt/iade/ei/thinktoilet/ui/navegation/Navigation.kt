@@ -5,6 +5,8 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -21,12 +23,24 @@ import pt.iade.ei.thinktoilet.ui.screens.SettingsScreen
 import pt.iade.ei.thinktoilet.ui.screens.ToiletDetailScreen
 import pt.iade.ei.thinktoilet.ui.screens.ToiletListScreen
 import pt.iade.ei.thinktoilet.view.MainView
+import pt.iade.ei.thinktoilet.viewmodel.AuthViewModel
 import pt.iade.ei.thinktoilet.viewmodel.LocalViewModel
+import pt.iade.ei.thinktoilet.viewmodel.UserViewModel
 
+/**
+* Navegação raiz da aplicação.
+*
+* @param navController [NavHostController] que será utilizado para navegar entre os destinos.
+* @param localViewModel [LocalViewModel] é um [ViewModel] que contém os dados locais da aplicação.
+* @param userViewModel [UserViewModel] é um [ViewModel] que contém os dados do usuário.
+* @param authViewModel [AuthViewModel] é um [ViewModel] que contém os dados de autenticação.
+*/
 @Composable
 fun RootNavigationGraph(
     navController: NavHostController,
-    localViewModel: LocalViewModel
+    localViewModel: LocalViewModel,
+    userViewModel: UserViewModel,
+    authViewModel: AuthViewModel
 ) {
     NavHost(
         navController = navController,
@@ -34,7 +48,7 @@ fun RootNavigationGraph(
         startDestination = AppGraph.main.ROOT
     ) {
         composable(AppGraph.main.ROOT) {
-            MainView(navController, localViewModel)
+            MainView(navController, localViewModel, userViewModel)
         }
         composable(
             route = AppGraph.rating.RATING,
@@ -42,7 +56,7 @@ fun RootNavigationGraph(
         ) { backStackEntry ->
             val toiletIdArg = backStackEntry.arguments?.getInt("toiletId")!!
             val toilet = localViewModel.toiletsCache.collectAsState().value[toiletIdArg]
-            val user = localViewModel.userMain.collectAsState().value
+            val user = userViewModel.user.collectAsState().value
             val rating = localViewModel.ratingState
             RatingScreen(
                 toilet = toilet!!,
@@ -69,21 +83,32 @@ fun RootNavigationGraph(
             )
         }
         composable(AppGraph.settings.SETTINGS) {
+            val user = userViewModel.user.collectAsState().value!!
             SettingsScreen(
+                user = user,
                 navigateToBack = {
                     navController.popBackStack()
                 }
             )
         }
-        authNavGraph(navController, localViewModel)
+        authNavGraph(navController, userViewModel, authViewModel)
     }
 }
 
+/**
+ * Navegação principal da aplicação.
+ *
+ * @param navController [NavHostController] que será utilizado para navegar entre os destinos da navegação principal.
+ * @param rootNavController [NavController] que será utilizado para navegar entre os destinos da navegação raiz.
+ * @param localViewModel [LocalViewModel] é um [ViewModel] que contém os dados locais da aplicação.
+ * @param userViewModel [UserViewModel] é um [ViewModel] que contém os dados do usuário.
+ */
 @Composable
 fun MainNavigationGraph(
     navController: NavHostController,
     rootNavController: NavController,
-    localViewModel: LocalViewModel
+    localViewModel: LocalViewModel,
+    userViewModel: UserViewModel
 ) {
     NavHost(
         navController = navController,
@@ -95,13 +120,14 @@ fun MainNavigationGraph(
             arguments = AppGraph.main.HOME_ARGUMENTS
         ) { backStackEntry ->
             val toiletId = backStackEntry.arguments?.getString("toiletId")?.toInt()
-            HomeScreen(rootNavController, localViewModel, toiletId)
+            HomeScreen(rootNavController, localViewModel, userViewModel, toiletId)
         }
         composable(AppGraph.main.HISTORY) {
             val toilets = localViewModel.toiletsCache
             val toiletIds = localViewModel.toiletsHistoryIds
+            val userId = userViewModel.user.collectAsState().value?.id
             LaunchedEffect(Unit) {
-                localViewModel.loadToiletsHistory()
+                localViewModel.loadToiletsHistory(userId!!)
             }
             HistoryScreen(toilets, toiletIds,
                 navigateToHomeScreen = { selectedToiletId ->
@@ -116,7 +142,7 @@ fun MainNavigationGraph(
         }
         composable(AppGraph.main.PROFILE) {
             val toilets = localViewModel.toiletsCache
-            val user = localViewModel.userMain
+            val user = userViewModel.user
             val userId = user.collectAsState().value?.id
             val comments = localViewModel.commentsUser
             LaunchedEffect(Unit) {
@@ -126,7 +152,7 @@ fun MainNavigationGraph(
             }
             ProfileScreen(toilets, user, comments,
                 onClickLogout = {
-                    localViewModel.clearUser().also {
+                    userViewModel.clearUser().also {
                         navController.navigate(AppGraph.main.HOME) {
                             popUpTo(rootNavController.graph.startDestinationRoute!!) {
                                 inclusive = true
@@ -148,11 +174,20 @@ fun MainNavigationGraph(
     }
 }
 
+/**
+ * Navegação da barra inferior da aplicação.
+ *
+ * @param navController [NavHostController] que será utilizado para navegar entre os destinos da bottom sheet, presente na tela principal.
+ * @param rootNavController [NavController] que será utilizado para navegar entre os destinos da navegação raiz.
+ * @param localViewModel [LocalViewModel] é um [ViewModel] que contém os dados locais da aplicação.
+ * @param userViewModel [UserViewModel] é um [ViewModel] que contém os dados do usuário.
+ */
 @Composable
 fun BottomSheetNavigationGraph(
     navController: NavHostController,
     rootNavController: NavController,
-    localViewModel: LocalViewModel
+    localViewModel: LocalViewModel,
+    userViewModel: UserViewModel
 ) {
     NavHost(
         navController = navController,
@@ -166,7 +201,7 @@ fun BottomSheetNavigationGraph(
             val location = localViewModel.location
             ToiletListScreen(toilets, toiletIds, location,
                 navigateToToiletDetail = { toiletId ->
-                    val isUserLoggedIn = localViewModel.isUserLoggedIn.value
+                    val isUserLoggedIn = userViewModel.isUserLoggedIn.value
                     if (!isUserLoggedIn) {
                         rootNavController.navigate(AppGraph.auth.LOGIN) {
                             launchSingleTop = true
@@ -182,12 +217,13 @@ fun BottomSheetNavigationGraph(
             arguments = AppGraph.bottomSheet.TOILET_DETAILS_ARGUMENTS
         ) { backStackEntry ->
             val toiletId = backStackEntry.arguments?.getInt("toiletId")!!
+            val userId = userViewModel.user.collectAsState().value?.id
             val toilets = localViewModel.toiletsCache
             val comments = localViewModel.commentsToilet
             val reactions = localViewModel.reactions
             val users = localViewModel.users
             LaunchedEffect(Unit) {
-                localViewModel.loadToiletComments(toiletId)
+                localViewModel.loadToiletComments(toiletId, userId!!)
             }
             ToiletDetailScreen(toiletId, toilets, comments, reactions, users,
                 navigateToRating = {
@@ -199,31 +235,39 @@ fun BottomSheetNavigationGraph(
                     navController.popBackStack()
                 },
                 onReaction = { commentId, typeReaction ->
-                    localViewModel.updateReaction(commentId, typeReaction)
+                    localViewModel.updateReaction(commentId, typeReaction, userId!!)
                 }
             )
         }
     }
 }
 
+/**
+ * Navegação de autenticação da aplicação.
+ *
+ * @param navController [NavHostController] que será utilizado para navegar entre os destinos da navegação de autenticação.
+ * @param userViewModel [UserViewModel] é um [ViewModel] que contém os dados do usuário.
+ * @param authViewModel [AuthViewModel] é um [ViewModel] que contém os dados de autenticação.
+ */
 fun NavGraphBuilder.authNavGraph(
     navController: NavHostController,
-    localViewModel: LocalViewModel
+    userViewModel: UserViewModel,
+    authViewModel: AuthViewModel
 ) {
     navigation(
         route = AppGraph.auth.ROOT,
         startDestination = AppGraph.auth.LOGIN,
     ) {
         composable(AppGraph.auth.LOGIN) {
-            val login = localViewModel.loginState
+            val login = authViewModel.loginState
             LoginScreen(
                 loginStateFlow = login,
                 onLogin = { email, password ->
-                    localViewModel.requestLogin(email, password)
+                    authViewModel.requestLogin(email, password)
                 },
                 onLoginSuccess = { user ->
-                    localViewModel.saveUser(user)
-                    localViewModel.clearLoginState()
+                    userViewModel.saveUser(user)
+                    authViewModel.clearLoginState()
                     navController.navigate(AppGraph.main.ROOT) {
                         popUpTo(navController.graph.startDestinationRoute!!) {
                             inclusive = true
@@ -237,14 +281,14 @@ fun NavGraphBuilder.authNavGraph(
             )
         }
         composable(AppGraph.auth.REGISTER) {
-            val register = localViewModel.registerState
+            val register = authViewModel.registerState
             RegisterScreen(
                 registerStateFlow = register,
                 onRegister = { name, email, password, iconId, birthDate ->
-                    localViewModel.requestRegister(name, email, password, iconId, birthDate)
+                    authViewModel.requestRegister(name, email, password, iconId, birthDate)
                 },
                 onRegisterSuccess = {
-                    localViewModel.clearRegisterState()
+                    authViewModel.clearRegisterState()
                     navController.popBackStack()
                 },
                 navigateToBack = {

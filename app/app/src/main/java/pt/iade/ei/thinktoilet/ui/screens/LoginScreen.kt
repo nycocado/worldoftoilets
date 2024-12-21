@@ -8,17 +8,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,9 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,6 +41,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.User
+import pt.iade.ei.thinktoilet.ui.components.EmailTextField
+import pt.iade.ei.thinktoilet.ui.components.PasswordTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,26 +57,22 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") }
     var emailSupportText by remember { mutableStateOf("") }
     var passwordSupportText by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    LaunchedEffect(email) {
-        emailSupportText = if (email.isEmpty()) {
-            "O e-mail é obrigatório"
-        } else if (email.length > 100) {
-            "O e-mail é muito longo"
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            "O e-mail é inválido"
-        } else {
-            ""
+    LaunchedEffect(email, password) {
+        emailSupportText = when {
+            email.isEmpty() -> context.getString(R.string.error_required_email)
+            email.length > 100 -> context.getString(R.string.error_too_long_email)
+            !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> context.getString(R.string.error_invalid_email)
+            else -> ""
         }
-    }
 
-    LaunchedEffect(password) {
-        passwordSupportText = if (password.isEmpty()) {
-            "A palavra-passe é obrigatória"
-        } else {
-            ""
+        passwordSupportText = when {
+            password.isEmpty() -> context.getString(R.string.error_required_password)
+            else -> ""
         }
     }
 
@@ -84,24 +80,35 @@ fun LoginScreen(
         loginState?.onSuccess { user ->
             emailSupportText = ""
             passwordSupportText = ""
+            isLoading = false
 
-            scope.launch { onLoginSuccess(user) }
+            scope.launch {
+                onLoginSuccess(user)
+            }
         }
 
         loginState?.onFailure { error ->
             when {
                 error.message?.contains("email") == true -> {
-                    emailSupportText = "Email inválido"
+                    emailSupportText = context.getString(R.string.error_invalid_email)
                     passwordSupportText = ""
+                    isLoading = false
                 }
 
                 error.message?.contains("password") == true -> {
-                    passwordSupportText = "Palavra-passe inválida"
+                    passwordSupportText = context.getString(R.string.error_invalid_password)
                     emailSupportText = ""
+                    isLoading = false
                 }
 
                 else -> {
-                    emailSupportText = "Erro ao iniciar sessão"
+                    emailSupportText = ""
+                    passwordSupportText = ""
+                    isLoading = false
+
+                    scope.launch {
+                        snackbarHostState.showSnackbar(context.getString(R.string.error_login))
+                    }
                 }
             }
         }
@@ -118,7 +125,8 @@ fun LoginScreen(
                     )
                 }
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
@@ -135,46 +143,20 @@ fun LoginScreen(
                         .padding(horizontal = 40.dp)
                         .padding(bottom = 30.dp),
                     painter = painterResource(R.drawable.logo),
-                    contentDescription = "Logo Icon"
+                    contentDescription = context.getString(R.string.logo),
                 )
             }
 
             item {
-                OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = email,
-                    onValueChange = {
-                        email = it
-                    },
-                    label = { Text("Email") },
-                    isError = emailSupportText.isNotEmpty(),
-                    supportingText = { Text(emailSupportText) },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Next
-                    )
+                EmailTextField(
+                    email = email,
+                    emailSupportText = emailSupportText,
+                    onEmailChange = { email = it }
                 )
-                OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = password,
-                    onValueChange = {
-                        password = it
-                    },
-                    label = { Text("Palavra-passe") },
-                    isError = passwordSupportText.isNotEmpty(),
-                    supportingText = { Text(passwordSupportText) },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password,
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            onLogin(email, password)
-                        }
-                    ),
-                    visualTransformation = PasswordVisualTransformation()
+                PasswordTextField(
+                    password = password,
+                    passwordSupportText = passwordSupportText,
+                    onPasswordChange = { password = it }
                 )
             }
 
@@ -182,9 +164,14 @@ fun LoginScreen(
                 Button(
                     onClick = {
                         if (emailSupportText.isEmpty() && passwordSupportText.isEmpty())
-                            scope.launch { onLogin(email, password) }
+                            scope.launch {
+                                onLogin(email, password)
+                                isLoading = true
+                            }
                     },
-                    modifier = Modifier.padding(top = 10.dp),
+                    modifier = Modifier
+                        .padding(top = 10.dp)
+                        .width(180.dp),
                     colors = ButtonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -196,15 +183,24 @@ fun LoginScreen(
                         )
                     )
                 ) {
-                    Text(
-                        text = "Iniciar Sessão",
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.SemiBold
-                    )
+                    if (!isLoading)
+                        Text(
+                            text = context.getString(R.string.login_action),
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    else
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                        )
                 }
                 Button(
                     onClick = { navigateToRegister() },
-                    modifier = Modifier.padding(top = 40.dp),
+                    modifier = Modifier
+                        .padding(top = 40.dp)
+                        .width(180.dp),
                     colors = ButtonColors(
                         containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                         contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
@@ -217,9 +213,11 @@ fun LoginScreen(
                     )
                 ) {
                     Text(
-                        text = "Criar Conta",
+                        text = context.getString(R.string.register_action),
                         style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }

@@ -29,9 +29,7 @@ class LocalViewModel @Inject constructor(
     private val toiletRepository: ToiletRepository,
     private val userRepository: UserRepository,
     private val commentRepository: CommentRepository,
-    private val authRepository: AuthRepository,
-    private val locationRepository: LocationRepository,
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val locationRepository: LocationRepository
 ) : ViewModel() {
     private val _toiletsCache = MutableStateFlow<Map<Int, Toilet>>(emptyMap())
     val toiletsCache: StateFlow<Map<Int, Toilet>> get() = _toiletsCache
@@ -41,10 +39,6 @@ class LocalViewModel @Inject constructor(
 
     private val _toiletsHistoryIds = MutableStateFlow<UiState<List<Int>>>(UiState.Loading)
     val toiletsHistoryIds: StateFlow<UiState<List<Int>>> get() = _toiletsHistoryIds
-
-    val userMain: StateFlow<User?> = userPreferencesRepository.userStateFlow
-
-    val isUserLoggedIn: StateFlow<Boolean> = userPreferencesRepository.isUserLoggedIn()
 
     private val _users = MutableStateFlow<Map<Int, User>>(emptyMap())
     val users: StateFlow<Map<Int, User>> get() = _users
@@ -58,20 +52,14 @@ class LocalViewModel @Inject constructor(
     private val _reactions = MutableStateFlow<Map<Int, Reaction>>(emptyMap())
     val reactions: StateFlow<Map<Int, Reaction>> get() = _reactions
 
+    private val _ratingState = MutableStateFlow<Result<Comment>?>(null)
+    val ratingState: StateFlow<Result<Comment>?> get() = _ratingState
+
     private val _location = MutableStateFlow<Location>(Location(""))
     val location: StateFlow<Location> get() = _location
 
     private val _error = MutableStateFlow<String>("")
     val error: StateFlow<String> get() = _error
-
-    private val _loginState = MutableStateFlow<Result<User>?>(null)
-    val loginState: StateFlow<Result<User>?> get() = _loginState
-
-    private val _registerState = MutableStateFlow<Result<ApiResponse>?>(null)
-    val registerState: StateFlow<Result<ApiResponse>?> get() = _registerState
-
-    private val _ratingState = MutableStateFlow<Result<Comment>?>(null)
-    val ratingState: StateFlow<Result<Comment>?> get() = _ratingState
 
     private val _toiletNearbyLoaded = mutableStateOf(false)
     private val _toiletHistoryLoaded = mutableStateOf(false)
@@ -112,12 +100,12 @@ class LocalViewModel @Inject constructor(
         }
     }
 
-    fun loadToiletsHistory() {
+    fun loadToiletsHistory(userId: Int) {
         viewModelScope.launch {
             if (!_toiletHistoryLoaded.value)
                 _toiletsHistoryIds.emit(UiState.Loading)
             try {
-                val fetchedToilets = toiletRepository.getToiletsByUserId(userMain.value?.id!!)
+                val fetchedToilets = toiletRepository.getToiletsByUserId(userId)
 
                 _toiletsCache.value = _toiletsCache.value.toMutableMap().apply {
                     fetchedToilets.forEach { toilet ->
@@ -165,7 +153,7 @@ class LocalViewModel @Inject constructor(
         }
     }
 
-    fun loadToiletComments(toiletId: Int) {
+    fun loadToiletComments(toiletId: Int, userId: Int) {
         viewModelScope.launch {
             try {
                 val fetchedComments = commentRepository.getCommentsByToiletId(toiletId)
@@ -190,7 +178,7 @@ class LocalViewModel @Inject constructor(
                 _commentsToilet.value = fetchedComments
                 if(fetchedComments.isNotEmpty()) {
                     val commentIds = fetchedComments.map { it.id!! }
-                    loadReactions(userMain.value?.id!!, commentIds)
+                    loadReactions(userId, commentIds)
                 }
             } catch (e: Exception) {
                 _error.value = "Erro ao carregar comentários: ${e.message}"
@@ -244,7 +232,7 @@ class LocalViewModel @Inject constructor(
         }
     }
 
-    fun updateReaction(commentId: Int, typeReaction: TypeReaction) {
+    fun updateReaction(commentId: Int, typeReaction: TypeReaction, userId: Int) {
         viewModelScope.launch {
             try {
                 val initialReaction = _reactions.value[commentId]
@@ -261,14 +249,14 @@ class LocalViewModel @Inject constructor(
                                 if (initialReaction?.typeReaction == TypeReaction.DISLIKE) {
                                     comment.dislike--
                                 }
-                                commentRepository.postReaction(commentId, userMain.value?.id!!, typeReaction.value)
+                                commentRepository.postReaction(commentId, userId, typeReaction.value)
                             }
                             TypeReaction.DISLIKE -> {
                                 comment.dislike++
                                 if (initialReaction?.typeReaction == TypeReaction.LIKE) {
                                     comment.like--
                                 }
-                                commentRepository.postReaction(commentId, userMain.value?.id!!, typeReaction.value)
+                                commentRepository.postReaction(commentId, userId, typeReaction.value)
                             }
                             TypeReaction.NONE -> {
                                 if (initialReaction?.typeReaction == TypeReaction.LIKE) {
@@ -276,7 +264,7 @@ class LocalViewModel @Inject constructor(
                                 } else if (initialReaction?.typeReaction == TypeReaction.DISLIKE) {
                                     comment.dislike--
                                 }
-                                commentRepository.deleteReaction(commentId, userMain.value?.id!!)
+                                commentRepository.deleteReaction(commentId, userId)
                             }
                         }
                     }
@@ -284,36 +272,6 @@ class LocalViewModel @Inject constructor(
             } catch (e: Exception) {
                 _error.value = "Erro ao atualizar reações: ${e.message}"
                 Log.e("ToiletViewModel", "Erro ao atualizar reações para commentId=$commentId", e)
-            }
-        }
-    }
-
-    fun requestLogin(email: String, password: String) {
-        viewModelScope.launch {
-            try {
-                val result = authRepository.login(email, password)
-                _loginState.value = result
-            } catch (e: Exception) {
-                _error.value = "Erro ao fazer login: ${e.message}"
-                Log.e("ToiletViewModel", "Erro ao fazer login", e)
-            }
-        }
-    }
-
-    fun requestRegister(
-        name: String,
-        email: String,
-        password: String,
-        iconId: String?,
-        birthDate: String?
-    ) {
-        viewModelScope.launch {
-            try {
-                val result = authRepository.register(name, email, password, iconId, birthDate)
-                _registerState.value = result
-            } catch (e: Exception) {
-                _error.value = "Erro ao fazer registro: ${e.message}"
-                Log.e("ToiletViewModel", "Erro ao fazer registro", e)
             }
         }
     }
@@ -346,37 +304,7 @@ class LocalViewModel @Inject constructor(
         }
     }
 
-    fun clearLoginState() {
-        _loginState.value = null
-    }
-
-    fun clearRegisterState() {
-        _registerState.value = null
-    }
-
     fun clearRatingState() {
         _ratingState.value = null
-    }
-
-    fun saveUser(user: User) {
-        viewModelScope.launch {
-            try {
-                userPreferencesRepository.saveUser(user)
-            } catch (e: Exception) {
-                _error.value = "Erro ao salvar usuário: ${e.message}"
-                Log.e("ToiletViewModel", "Erro ao salvar usuário", e)
-            }
-        }
-    }
-
-    fun clearUser() {
-        viewModelScope.launch {
-            try {
-                userPreferencesRepository.clearUser()
-            } catch (e: Exception) {
-                _error.value = "Erro ao limpar usuário: ${e.message}"
-                Log.e("ToiletViewModel", "Erro ao limpar usuário", e)
-            }
-        }
     }
 }

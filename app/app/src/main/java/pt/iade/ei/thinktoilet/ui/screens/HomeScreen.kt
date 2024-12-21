@@ -24,12 +24,14 @@ import pt.iade.ei.thinktoilet.ui.components.OpenStreetMapsView
 import pt.iade.ei.thinktoilet.ui.navegation.AppGraph
 import pt.iade.ei.thinktoilet.ui.navegation.BottomSheetNavigationGraph
 import pt.iade.ei.thinktoilet.viewmodel.LocalViewModel
+import pt.iade.ei.thinktoilet.viewmodel.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     rootNavController: NavController,
     localViewModel: LocalViewModel,
+    userViewModel: UserViewModel,
     selectedToiletId: Int? = null,
     navController: NavHostController = rememberNavController()
 ) {
@@ -45,8 +47,6 @@ fun HomeScreen(
             }
         )
     )
-
-    val locationStateFlow = localViewModel.location
 
     LaunchedEffect(Unit) {
         scope.launch { localViewModel.loadLocation() }
@@ -92,10 +92,11 @@ fun HomeScreen(
             Box(
                 modifier = Modifier.fillMaxHeight(0.99f)
             ) {
-                BottomSheetNavigationGraph(navController, rootNavController, localViewModel)
+                BottomSheetNavigationGraph(navController, rootNavController, localViewModel, userViewModel)
             }
         },
     ) {
+        val locationStateFlow = localViewModel.location
         OpenStreetMapsView(locationStateFlow)
     }
 }

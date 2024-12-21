@@ -11,30 +11,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import pt.iade.ei.thinktoilet.ui.theme.AppTheme
-
 
 /**
-         * Função que representa um complemento de uma reclamação com sistema de avaliação em estrelas.
-         *
-         * @param title Título exibido ao lado das estrelas, descrevendo o critério de avaliação.
-         * @param rating Valor inicial da avaliação representado como um número decimal (ex.: 3.5).
-         * @param onClick Um `mutableStateOf()` que retornará o valor da estrela selecionada, permitindo capturar a interação do usuário.
-         *
-         * Esta função permite ao usuário interagir com as estrelas, atribuindo um valor à variável associada.
-         *
-         * Exemplo de uso:
-         * ```kotlin
-         * RatingItem(
-         *     title = "Qualidade",
-         *     rating = 3.5f,
-         *     onClick = { selectedRating -> println("Avaliação selecionada: $selectedRating") }
-         * )
-         * ```
-         */
+* Exibe um critério de avaliação interativo com estrelas.
+*
+* @param title [String] que representa o título do critério.
+* @param rating [Int] que representa a quantidade de estrelas selecionadas.
+* @param onClick Callback que será chamado quando uma estrela for clicada.
+*/
 @Composable
 fun RatingItem(
-    title: String, rating: Int,
+    title: String,
+    rating: Int,
     onClick: ((Int) -> Unit)? = null
 ) {
     Row(
@@ -49,16 +37,21 @@ fun RatingItem(
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Normal,
         )
-        Stars(rating = rating.toFloat(), size = 40.dp, horizontalPadding = 3.dp) {
-            if (onClick != null) {
-                onClick(it)
+        Stars(
+            rating = rating.toFloat(),
+            size = 40.dp,
+            horizontalPadding = 3.dp,
+            onClick = {
+                if (onClick != null) {
+                    onClick(it)
+                }
             }
-        }
+        )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun RatingItemPreview() {
+private fun RatingItemPreview() {
     RatingItem(title = "Limpeza", rating = 4)
 }

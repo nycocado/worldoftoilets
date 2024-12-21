@@ -10,7 +10,6 @@ import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,15 +19,21 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
+/**
+ * Exibe a barra de navegação inferior da aplicação.
+ *
+ * @param navController [NavController] que será utilizado para navegar entre os destinos.
+ * @param rootController [NavController] que será utilizado para navegar para a tela de login.
+ * @param isUserLoggedInStateFlow [StateFlow] que contém um [Boolean] que indica se o usuário está logado.
+ */
 @Composable
 fun BottomNavigationBar(
     navController: NavController = rememberNavController(),
     rootController: NavController = rememberNavController(),
     isUserLoggedInStateFlow: StateFlow<Boolean>
 ) {
-    val context = LocalContext.current
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-    val bottomRoutes = getBottomRoutes(context)
+    val bottomRoutes = getBottomRoutes()
     var selectedItemIndex = bottomRoutes.indexOfFirst {
         currentRoute?.startsWith(it.route) == true
     }

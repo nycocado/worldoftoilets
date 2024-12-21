@@ -16,11 +16,13 @@ import pt.iade.ei.thinktoilet.ui.navegation.BottomNavigationBar
 import pt.iade.ei.thinktoilet.ui.navegation.MainNavigationGraph
 import pt.iade.ei.thinktoilet.ui.permission.CheckAndRequestLocationPermission
 import pt.iade.ei.thinktoilet.viewmodel.LocalViewModel
+import pt.iade.ei.thinktoilet.viewmodel.UserViewModel
 
 @Composable
 fun MainView(
     rootController: NavController,
     localViewModel: LocalViewModel,
+    userViewModel: UserViewModel,
     navController: NavHostController = rememberNavController()
 ) {
     val scope = rememberCoroutineScope()
@@ -35,14 +37,14 @@ fun MainView(
 
     Scaffold(
         bottomBar = {
-            BottomNavigationBar(navController, rootController, localViewModel.isUserLoggedIn)
+            BottomNavigationBar(navController, rootController, userViewModel.isUserLoggedIn)
         }
     ) { innerPadding ->
         Box(
             Modifier
                 .padding(innerPadding)
         ) {
-            MainNavigationGraph(navController, rootController, localViewModel)
+            MainNavigationGraph(navController, rootController, localViewModel, userViewModel)
         }
 
     }

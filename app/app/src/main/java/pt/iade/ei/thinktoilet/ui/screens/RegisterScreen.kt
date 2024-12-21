@@ -4,14 +4,11 @@ import android.annotation.SuppressLint
 import android.util.Patterns
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -19,7 +16,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,9 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,7 +37,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.responses.ApiResponse
+import pt.iade.ei.thinktoilet.ui.components.BirthdateTextField
+import pt.iade.ei.thinktoilet.ui.components.ConfirmPasswordTextField
 import pt.iade.ei.thinktoilet.ui.components.CustomDatePickerDialog
+import pt.iade.ei.thinktoilet.ui.components.EmailTextField
+import pt.iade.ei.thinktoilet.ui.components.NameTextField
+import pt.iade.ei.thinktoilet.ui.components.PasswordTextField
 import java.text.ParseException
 import java.text.SimpleDateFormat
 
@@ -66,53 +64,38 @@ fun RegisterScreen(
     var emailSupportText by remember { mutableStateOf("") }
     var passwordSupportText by remember { mutableStateOf("") }
     var confirmPasswordSupportText by remember { mutableStateOf("") }
+    var showDatePicker by remember { mutableStateOf(false) }
+    val isAllowedToRegister =
+        nameSupportText.isEmpty() && emailSupportText.isEmpty() && passwordSupportText.isEmpty() && confirmPasswordSupportText.isEmpty()
 
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    var showDatePicker by remember { mutableStateOf(false) }
-
-    LaunchedEffect(name) {
-        nameSupportText = if (name.isEmpty()) {
-            "O nome é obrigatório"
-        } else if (name.length > 50) {
-            "O nome é muito longo"
-        } else if (name.length < 6) {
-            "O nome deve ter pelo menos 6 caracteres"
-        } else {
-            ""
+    LaunchedEffect(name, email, password, confirmPassword) {
+        nameSupportText = when {
+            name.isEmpty() -> context.getString(R.string.error_required_name)
+            name.length > 50 -> context.getString(R.string.error_too_long_name)
+            name.length < 6 -> context.getString(R.string.error_too_short_name)
+            else -> ""
         }
-    }
 
-    LaunchedEffect(email) {
-        emailSupportText = if (email.isEmpty()) {
-            "O e-mail é obrigatório"
-        } else if (email.length > 100) {
-            "O e-mail é muito longo"
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            "O e-mail é inválido"
-        } else {
-            ""
+        emailSupportText = when {
+            email.isEmpty() -> context.getString(R.string.error_required_email)
+            email.length > 100 -> context.getString(R.string.error_too_long_email)
+            !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> context.getString(R.string.error_invalid_email)
+            else -> ""
         }
-    }
 
-    LaunchedEffect(password) {
-        passwordSupportText = if (password.isEmpty()) {
-            "A palavra-passe é obrigatória"
-        } else if (password.length < 6) {
-            "A palavra-passe deve ter pelo menos 6 caracteres"
-        } else {
-            ""
+        passwordSupportText = when {
+            password.isEmpty() -> context.getString(R.string.error_required_password)
+            password.length < 6 -> context.getString(R.string.error_too_short_password)
+            else -> ""
         }
-    }
 
-    LaunchedEffect(confirmPassword, password) {
-        confirmPasswordSupportText = if (confirmPassword.isEmpty()) {
-            "A confirmação da palavra-passe é obrigatória"
-        } else if (confirmPassword != password) {
-            "As palavras-passe não coincidem"
-        } else {
-            ""
+        confirmPasswordSupportText = when {
+            confirmPassword.isEmpty() -> context.getString(R.string.error_required_confirm_password)
+            confirmPassword != password -> context.getString(R.string.error_passwords_do_not_match)
+            else -> ""
         }
     }
 
@@ -129,14 +112,14 @@ fun RegisterScreen(
         registerState?.onFailure { error ->
             when {
                 error.message?.contains("Email") == true -> {
-                    emailSupportText = "Email em uso"
+                    emailSupportText = context.getString(R.string.error_in_use_email)
                     nameSupportText = ""
                     passwordSupportText = ""
                     confirmPasswordSupportText = ""
                 }
 
                 else -> {
-                    nameSupportText = "Erro ao registar"
+                    nameSupportText = ""
                     emailSupportText = ""
                     passwordSupportText = ""
                     confirmPasswordSupportText = ""
@@ -177,100 +160,51 @@ fun RegisterScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
-                OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = name,
-                    onValueChange = {
-                        name = it
-                    },
-                    label = { Text("Nome") },
-                    isError = nameSupportText.isNotEmpty(),
-                    supportingText = { Text(nameSupportText) },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
-                    )
+                NameTextField(
+                    name = name,
+                    nameSupportText = nameSupportText,
+                    onNameChange = { name = it }
                 )
-                OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = email,
-                    onValueChange = {
-                        email = it
-                    },
-                    label = { Text("E-mail") },
-                    isError = emailSupportText.isNotEmpty(),
-                    supportingText = { Text(emailSupportText) },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Next
-                    )
+                EmailTextField(
+                    email = email,
+                    emailSupportText = emailSupportText,
+                    onEmailChange = { email = it }
                 )
-                OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = password,
-                    onValueChange = {
-                        password = it
-                    },
-                    label = { Text("Palavra-passe") },
-                    isError = passwordSupportText.isNotEmpty(),
-                    supportingText = { Text(passwordSupportText) },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password,
-                        imeAction = ImeAction.Next
-                    ),
-                    visualTransformation = PasswordVisualTransformation()
+                PasswordTextField(
+                    password = password,
+                    passwordSupportText = passwordSupportText,
+                    onPasswordChange = { password = it }
                 )
-                OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = confirmPassword,
-                    onValueChange = {
-                        confirmPassword = it
-                    },
-                    label = { Text("Confirmar palavra-passe") },
-                    isError = confirmPasswordSupportText.isNotEmpty(),
-                    supportingText = { Text(confirmPasswordSupportText) },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password,
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = { showDatePicker = true }
-                    ),
-                    visualTransformation = PasswordVisualTransformation()
+                ConfirmPasswordTextField(
+                    confirmPassword = confirmPassword,
+                    confirmPasswordSupportText = confirmPasswordSupportText,
+                    onConfirmPasswordChange = { confirmPassword = it }
                 )
-                OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = birthDate,
-                    onValueChange = {
-                        birthDate = it
-                    },
-                    label = { Text("Data de Nascimento") },
-                    singleLine = true,
-                    readOnly = true,
-                    trailingIcon = {
-                        IconButton(
-                            onClick = { showDatePicker = true }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.DateRange,
-                                contentDescription = "Select Date"
-                            )
-                        }
-                    }
+                BirthdateTextField(
+                    birthDate = birthDate,
+                    onBirthDateChange = { birthDate = it },
+                    onClick = { showDatePicker = true }
                 )
             }
 
             item {
                 Button(
                     onClick = {
-                        if (nameSupportText.isEmpty() && emailSupportText.isEmpty() && passwordSupportText.isEmpty() && confirmPasswordSupportText.isEmpty())
-                            scope.launch { onRegister(name, email, password, null, formatBirthDate(birthDate)) }
+                        if(isAllowedToRegister) {
+                            scope.launch {
+                                onRegister(
+                                    name,
+                                    email,
+                                    password,
+                                    null,
+                                    formatBirthDate(birthDate)
+                                )
+                            }
+                        }
                     },
-                    modifier = Modifier.padding(top = 10.dp),
+                    modifier = Modifier
+                        .padding(top = 20.dp)
+                        .width(180.dp),
                     colors = ButtonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -283,7 +217,7 @@ fun RegisterScreen(
                     )
                 ) {
                     Text(
-                        text = "Registar",
+                        text = context.getString(R.string.register_action),
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -302,7 +236,7 @@ fun RegisterScreen(
 
 @SuppressLint("SimpleDateFormat")
 private fun formatBirthDate(birthDate: String): String? {
-    if(birthDate.isEmpty()) return null
+    if (birthDate.isEmpty()) return null
 
     val inputFormat = SimpleDateFormat("dd/MM/yyyy")
     val outputFormat = SimpleDateFormat("yyyy-MM-dd")

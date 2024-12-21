@@ -177,7 +177,7 @@ fun RatingScreen(
                 Text(
                     modifier = Modifier
                         .padding(bottom = 10.dp),
-                    text = "Comentar",
+                    text = context.getString(R.string.comment),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Normal,
                 )
@@ -192,7 +192,7 @@ fun RatingScreen(
                     },
                     label = {
                         Text(
-                            text = "Insira o comentário...",
+                            text = context.getString(R.string.insert_comment),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Normal,
                         )
@@ -225,13 +225,13 @@ fun RatingScreen(
             }
 
             item {
-                RatingItem(title = "Limpeza", rating = ratingClean) {
+                RatingItem(title = context.getString(R.string.clean), rating = ratingClean) {
                     ratingClean = it
                 }
-                RatingItem(title = "Estrutura", rating = ratingStructure) {
+                RatingItem(title = context.getString(R.string.structure), rating = ratingStructure) {
                     ratingStructure = it
                 }
-                RatingItem(title = "Acessibilidade", rating = ratingAccessibility) {
+                RatingItem(title = context.getString(R.string.accessibility), rating = ratingAccessibility) {
                     ratingAccessibility = it
                 }
                 Row(
@@ -241,7 +241,7 @@ fun RatingScreen(
                 ) {
                     Text(
                         modifier = Modifier.weight(0.9f),
-                        text = "Papel",
+                        text = context.getString(R.string.paper),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Normal,
                     )
@@ -254,7 +254,7 @@ fun RatingScreen(
                             {
                                 Icon(
                                     imageVector = Icons.Filled.Check,
-                                    contentDescription = "Possui Papel Hiênico",
+                                    contentDescription = context.getString(R.string.checked),
                                     modifier = Modifier.size(SwitchDefaults.IconSize),
                                 )
                             }
@@ -303,7 +303,7 @@ fun RatingScreen(
                         )
                     ) {
                         Text(
-                            text = "Avaliar",
+                            text = context.getString(R.string.rate),
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.SemiBold
                         )

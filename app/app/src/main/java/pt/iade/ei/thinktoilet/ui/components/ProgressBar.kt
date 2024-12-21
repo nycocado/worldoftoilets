@@ -1,6 +1,5 @@
 package pt.iade.ei.thinktoilet.ui.components
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,25 +17,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
-         /**
-          * Exibe um ProgressBar com um texto ao lado.
-          *
-          * @param progress Valor do progresso.
-          * @param text Texto a ser exibido ao lado do ProgressBar.
-          * @param maxValue Valor máximo do progresso.
-          *
-          * Esta função exibe um ProgressBar com um texto ao lado.
-          *
-          * Exemplo de uso:
-          * ```
-          * ProgressBar(
-          *     progress = 4.5f,
-          *     text = "Teste"
-          * )
-          * ```
-          */
+/**
+* Exibe uma barra de progresso horizontal com um texto ao lado.
+*
+* @param progress [Float] que representa o progresso do ProgressBar.
+* @param text [String] que será exibido ao lado do ProgressBar.
+* @param maxValue [Float] que representa o valor máximo do ProgressBar.
+*/
 @Composable
 fun ProgressBar(
     progress: Float,
@@ -45,8 +33,7 @@ fun ProgressBar(
 ) {
     Row(
         modifier = Modifier.padding(vertical = 2.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        verticalAlignment = Alignment.CenterVertically
     ) {
         LinearProgressIndicator(
             modifier = Modifier
@@ -83,8 +70,6 @@ fun ProgressBar(
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewProgressBarCategories() {
-    AppTheme {
-        ProgressBar(4.5f, "Teste")
-    }
+private fun PreviewProgressBarCategories() {
+    ProgressBar(4.5f, "Teste")
 }

@@ -1,7 +1,5 @@
 package pt.iade.ei.thinktoilet.ui.components
 
-import android.content.Context
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,33 +23,21 @@ import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.User
 import pt.iade.ei.thinktoilet.tests.generateUserMain
 
-         /**
-         * Exibe o status do perfil do usuário.
-         *
-         * @param user Objeto que contém as informações do usuário a serem exibidas.
-         * @param context Contexto da aplicação.
-         *
-         * Esta função exibe o status do perfil do usuário, incluindo
-         * nível e progresso.
-         *
-         * Exemplo de uso:
-         * ```
-         * ProfileStatus(
-         *     user = user,
-         *     context = context
-         * )
-         * ```
-         */
+/**
+* Exibe o status do usuário de acordo com a quantidade de pontos que ele possui.
+*
+* @param user [User] que contém os detalhes do usuário.
+*/
 @Composable
 fun ProfileStatus(
-    user: User,
-    context: Context = LocalContext.current
+    user: User
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()
-    ) {
-        var nivel = Int
+    val context = LocalContext.current
 
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth()
+    ) {
         Text(
             text = if (user.points > 9000) {
                 "Immortal"
@@ -132,7 +118,7 @@ fun ProfileStatus(
 
 @Preview(showBackground = true)
 @Composable
-fun ProfileStatusPreview() {
+private fun ProfileStatusPreview() {
     ProfileStatus(
         user = generateUserMain()
     )

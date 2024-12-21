@@ -9,7 +9,7 @@ import java.time.temporal.ChronoUnit
 import kotlin.math.floor
 
 data class Comment(
-    @SerializedName("id") var id: Int?,
+    @SerializedName("id") var id: Int,
     @SerializedName("toiletId") var toiletId: Int,
     @SerializedName("userId") val userId: Int,
     @SerializedName("text") val text: String,

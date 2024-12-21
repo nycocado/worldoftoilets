@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -35,13 +36,23 @@ import pt.iade.ei.thinktoilet.tests.generateComment
 import pt.iade.ei.thinktoilet.tests.generateUser
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
+/**
+ * Exibe um comentário de um usuário sobre um Toilet.
+ *
+ * @param comment [Comment] que contém os detalhes do comentário.
+ * @param reaction [Reaction] que contém a reação do usuário ao comentário.
+ * @param user [User] que contém os detalhes do usuário que fez o comentário.
+ * @param onReaction Callback que é chamado quando o usuário reage ao comentário.
+ */
 @Composable
 fun CommentToilet(
     comment: Comment,
     reaction: Reaction,
     user: User,
-    onReaction: (Int, TypeReaction) -> Unit = { _, _ -> }
+    onReaction: (id: Int, typeReaction: TypeReaction) -> Unit = { _, _ -> },
 ) {
+    val context = LocalContext.current
+
     HorizontalDivider(
         thickness = 2.dp,
         color = Color.LightGray
@@ -62,7 +73,7 @@ fun CommentToilet(
                         shape = CircleShape
                     ),
                 painter = painterResource(R.drawable.image_test),
-                contentDescription = "Like Icon"
+                contentDescription = context.getString(R.string.content_description_profile_picture)
             )
             Column(
                 modifier = Modifier.padding(10.dp)
@@ -78,7 +89,7 @@ fun CommentToilet(
                 }
                 Row {
                     Text(
-                        text = "${user.numComments} Avaliações",
+                        text = user.numComments.toString() + " " + context.getString(R.string.ratings),
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.SemiBold,
                     )
@@ -125,14 +136,15 @@ fun CommentToilet(
             ) {
                 ThumbUp(
                     count = comment.like,
-                    isPressed = reaction.typeReaction == TypeReaction.LIKE
-                ) {
-                    if (reaction.typeReaction == TypeReaction.LIKE) {
-                        onReaction(comment.id!!, TypeReaction.NONE)
-                    } else {
-                        onReaction(comment.id!!, TypeReaction.LIKE)
+                    isPressed = reaction.typeReaction == TypeReaction.LIKE,
+                    onClick = {
+                        if (reaction.typeReaction == TypeReaction.LIKE) {
+                            onReaction(comment.id, TypeReaction.NONE)
+                        } else {
+                            onReaction(comment.id, TypeReaction.LIKE)
+                        }
                     }
-                }
+                )
             }
             Column(
                 modifier = Modifier
@@ -140,14 +152,15 @@ fun CommentToilet(
             ) {
                 ThumbDown(
                     count = comment.dislike,
-                    isPressed = reaction.typeReaction == TypeReaction.DISLIKE
-                ) {
-                    if (reaction.typeReaction == TypeReaction.DISLIKE) {
-                        onReaction(comment.id!!, TypeReaction.NONE)
-                    } else {
-                        onReaction(comment.id!!, TypeReaction.DISLIKE)
+                    isPressed = reaction.typeReaction == TypeReaction.DISLIKE,
+                    onClick = {
+                        if (reaction.typeReaction == TypeReaction.DISLIKE) {
+                            onReaction(comment.id, TypeReaction.NONE)
+                        } else {
+                            onReaction(comment.id, TypeReaction.DISLIKE)
+                        }
                     }
-                }
+                )
             }
             Column(
                 modifier = Modifier.fillMaxWidth()
@@ -179,19 +192,19 @@ fun CommentToilet(
 
 @Preview(showBackground = true)
 @Composable
-fun CommentPreview() {
+private fun CommentPreview() {
+    val comment = generateComment()
+    val reaction = Reaction(
+        commentId = comment.id,
+        typeReaction = TypeReaction.LIKE
+    )
+    val user = generateUser()
+
     AppTheme {
-        val comment = generateComment()
-        val reaction = Reaction(
-            commentId = comment.id!!,
-            typeReaction = TypeReaction.LIKE
-        )
         CommentToilet(
             comment = comment,
             reaction = reaction,
-            user = generateUser()
+            user = user
         )
     }
 }
-
-

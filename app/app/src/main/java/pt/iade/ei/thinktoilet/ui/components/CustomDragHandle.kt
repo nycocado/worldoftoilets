@@ -14,34 +14,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-
-        /**
-         * Exibe um controle deslizante personalizado.
-         *
-         * @param verticalPadding Espaçamento vertical do controle deslizante.
-         * @param color Cor do controle deslizante.
-         * @param shape Forma do controle deslizante.
-         * @param width Largura do controle deslizante.
-         * @param height Altura do controle deslizante.
-         * @param onClick Ação a ser executada quando o controle deslizante é clicado.
-
-         *
-         * Esta função tem como objetivo:
-         * - Exibir um `CustomDragHandle` personalizado.
-         *
-         *
-         * Exemplo de uso:
-         * ```kotlin
-         * CustomDragHandle(
-         *    verticalPadding = 14.dp,
-         *    color = MaterialTheme.colorScheme.outline,
-         *    shape = MaterialTheme.shapes.extraLarge,
-         *    width = 40.dp,
-         *    height = 4.dp,
-         *    onClick = {}
-         *    )
-         * ```
-         */
+/**
+* Exibe um controle deslizante personalizado.
+*
+* @param verticalPadding [Dp] de preenchimento vertical.
+* @param color [Color] do controle deslizante.
+* @param shape [CornerBasedShape] do controle deslizante.
+* @param width [Dp] de largura do controle deslizante.
+* @param height [Dp] de altura do controle deslizante.
+* @param onClick Callback para quando o controle deslizante for clicado.
+*/
 @Composable
 fun CustomDragHandle(
     verticalPadding: Dp = 14.dp,
@@ -69,6 +51,6 @@ fun CustomDragHandle(
 
 @Preview(showBackground = true)
 @Composable
-fun CustomDragHandlePreview() {
+private fun CustomDragHandlePreview() {
     CustomDragHandle()
 }
