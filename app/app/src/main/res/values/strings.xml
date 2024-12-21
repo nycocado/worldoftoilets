@@ -5,6 +5,9 @@
     <string name="profile">Perfil</string>
     <string name="go_to_maps">Ir para o Maps</string>
     <string name="rate">Avaliar</string>
+    <string name="report">Denunciar</string>
+    <string name="reportComment">Denunciar Comentário</string>
+    <string name="reportToilet">Denunciar\nCasa de Banho</string>
     <string name="clean">Limpeza</string>
     <string name="paper">Papel</string>
     <string name="structure">Estrutura</string>
@@ -21,4 +24,12 @@
     <string name="maps_uri">android-app://com.google.android.apps.maps</string>
     <string name="login">Login</string>
     <string name="register">Registo</string>
+    <string name="suggestionToilet">Sugestão de Casa de Banho</string>
+    <string name="toiletName">Nome do Estabelecimento</string>
+    <string name="toiletAddress">Morada</string>
+    <string name="toiletCity">Cidade</string>
+    <string name="toiletCountry">País ou Estado</string>
+    <string name="toiletPostalCode">Código Postal</string>
+    <string name="toiletSuggestionToiletButton">Sugerir Casa de Banho</string>
+    <string name="commentToilet">Avaliações</string>
 </resources>

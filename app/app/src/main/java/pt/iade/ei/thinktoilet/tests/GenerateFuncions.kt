@@ -34,6 +34,19 @@ fun generateRandomToilet(id: Int = (1..100).random(), numComments: Int = (1..40)
         placeId = "0"
     )
 }
+fun randomDateTime(): LocalDateTime {
+    val randomYear = (2018..2024).random()
+    val randomMonth = (1..12).random()
+    val randomDay = (1..28).random()
+    val randomHour = (0..23).random()
+    val randomMinute = (0..59).random()
+    val randomSecond = (0..59).random()
+    val randomNano = (0..999999999).random()
+
+    return LocalDateTime.of(randomYear, randomMonth, randomDay, randomHour, randomMinute, randomSecond, randomNano)
+
+}
+
 
 fun generateComment(): Comment {
     return Comment(
@@ -45,7 +58,7 @@ fun generateComment(): Comment {
         ratingPaper = true,
         ratingStructure = (0..5).random(),
         ratingAccessibility = (0..5).random(),
-        dateTime = LocalDateTime.now().toString(),
+        dateTime = randomDateTime().toString(),
         like = (0..1000).random(),
         dislike = (0..1000).random(),
         score = (0..1000).random(),

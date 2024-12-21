@@ -45,9 +45,9 @@ import pt.iade.ei.thinktoilet.models.User
 import pt.iade.ei.thinktoilet.tests.generateCommentsList
 import pt.iade.ei.thinktoilet.tests.generateRandomToilet
 import pt.iade.ei.thinktoilet.tests.generateUserMain
-import pt.iade.ei.thinktoilet.ui.components.ProfileStatus
 import pt.iade.ei.thinktoilet.ui.components.ProfileUser
 import pt.iade.ei.thinktoilet.ui.components.ToiletReview
+import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
 @Composable
 fun ProfileScreen(
@@ -113,7 +113,7 @@ fun ProfileScreen(
                 horizontalArrangement = Arrangement.Center
             ) {
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { scope.launch { } },
                     colors = ButtonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -131,19 +131,14 @@ fun ProfileScreen(
                         fontWeight = FontWeight.Bold
                     )
                 }
+
             }
         }
-
-        item {
-            if (user != null)
-                ProfileStatus(user)
-        }
-
         item {
             HorizontalDivider(
                 modifier = Modifier
                     .padding(
-                        top = 30.dp,
+                        top = 10.dp,
                         bottom = 20.dp
                     )
                     .fillMaxWidth(1f),
@@ -189,9 +184,11 @@ fun ProfileScreenPreview() {
         )
     )
     val commentsStateFlow = MutableStateFlow(generateCommentsList())
-    ProfileScreen(
-        toiletsStateFlow = toiletsStateFlow,
-        userStateFlow = userStateFlow,
-        commentsStateFlow = commentsStateFlow
-    )
+    AppTheme {
+        ProfileScreen(
+            toiletsStateFlow = toiletsStateFlow,
+            userStateFlow = userStateFlow,
+            commentsStateFlow = commentsStateFlow
+        )
+    }
 }

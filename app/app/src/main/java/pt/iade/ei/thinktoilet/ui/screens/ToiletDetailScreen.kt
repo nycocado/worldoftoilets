@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -24,6 +25,7 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -35,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.LocalPlatformContext
@@ -54,6 +57,7 @@ import pt.iade.ei.thinktoilet.tests.generateUserMain
 import pt.iade.ei.thinktoilet.ui.components.CommentToilet
 import pt.iade.ei.thinktoilet.ui.components.Stars
 import pt.iade.ei.thinktoilet.ui.components.ToiletRating
+import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
 @Composable
 fun ToiletDetailScreen(
@@ -229,7 +233,7 @@ fun ToiletDetailScreen(
                     .fillMaxWidth()
                     .padding(
                         top = 16.dp,
-                        bottom = 8.dp
+                        bottom = 4.dp
                     ),
                 onClick = { scope.launch { navigateToRating(toilet.id) } },
                 colors = ButtonColors(
@@ -253,25 +257,56 @@ fun ToiletDetailScreen(
 
         item {
             Row(
-                modifier = Modifier.padding(
-                    bottom = 8.dp
-                ),
-                verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+
             ) {
-                Text(
-                    modifier = Modifier.padding(
-                        end = 10.dp,
-                    ),
-                    text = context.getString(R.string.comments),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                )
-                Text(
-                    text = toilet.numComments.toString(),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.Gray
-                )
+                Column {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(
+                                end = 10.dp,
+                            ),
+                            text = context.getString(R.string.comments),
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Text(
+                            text = toilet.numComments.toString(),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.Gray
+                        )
+                    }
+                }
+                Column{
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
+                        ){
+                            Surface(
+                                onClick = { /*TODO*/ },
+                                color = Color.Transparent,
+                            ){
+                                Text(
+                                    text = context.getString(R.string.reportToilet),
+                                    modifier = Modifier
+                                        .width(125.dp)
+                                        .padding(10.dp),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = Color.Gray,
+                                    fontWeight = FontWeight.Normal,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -308,11 +343,13 @@ fun ToiletDetailScreenPreview() {
         )
     )
 
-    ToiletDetailScreen(
-        toiletId = 1,
-        toiletsStateFlow = toiletsStateFlow,
-        commentsStateFlow = commentsStateFlow,
-        usersStateFlow = usersStateFlow,
-        navigateToRating = {}
-    )
+    AppTheme {
+        ToiletDetailScreen(
+            toiletId = 1,
+            toiletsStateFlow = toiletsStateFlow,
+            commentsStateFlow = commentsStateFlow,
+            usersStateFlow = usersStateFlow,
+            navigateToRating = {}
+        )
+    }
 }

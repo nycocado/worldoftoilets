@@ -55,7 +55,6 @@ import pt.iade.ei.thinktoilet.tests.generateUser
 import pt.iade.ei.thinktoilet.ui.components.RatingItem
 import pt.iade.ei.thinktoilet.ui.components.Stars
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
-import pt.iade.ei.thinktoilet.viewmodel.LocalViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

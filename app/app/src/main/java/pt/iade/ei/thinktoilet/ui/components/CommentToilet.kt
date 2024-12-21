@@ -2,14 +2,17 @@ package pt.iade.ei.thinktoilet.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,8 +27,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.Comment
 import pt.iade.ei.thinktoilet.models.User
@@ -34,7 +38,7 @@ import pt.iade.ei.thinktoilet.tests.generateUser
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
 
-        /**
+/**
          * Função que mostra um Comentário.
          *
          * @param comment O comentário a ser exibido.
@@ -60,6 +64,7 @@ fun CommentToilet(
 ) {
     var likePressed by remember { mutableStateOf(false) }
     var dislikePressed by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     HorizontalDivider(
         thickness = 2.dp,
@@ -86,10 +91,9 @@ fun CommentToilet(
                 )
             }
             Text(
-                text = "há uma semana",
                 style = MaterialTheme.typography.bodySmall,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 12.sp
+                text = comment.getDateTimeString()
             )
         }
         Row(
@@ -144,6 +148,30 @@ fun CommentToilet(
                     }
                 }
             }
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ){
+                    Surface(
+                        onClick = { /*TODO*/ },
+                        color = Color.Transparent,
+                        ){
+                        Text(
+                            text = context.getString(R.string.reportComment),
+                            modifier = Modifier
+                                .width(100.dp)
+                                .padding(10.dp),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color.Gray,
+                            fontWeight = FontWeight.Normal,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -178,8 +206,8 @@ fun UserComment(user: User) {
                 )
             }
             Row {
-                Text(
-                    text = "${user.numComments} Avaliações",
+                Text(//
+                    text = user.numComments.toString() + " " + LocalContext.current.getString(R.string.commentToilet),
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold,
                 )

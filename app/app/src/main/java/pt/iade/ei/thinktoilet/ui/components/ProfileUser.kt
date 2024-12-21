@@ -1,6 +1,5 @@
 package pt.iade.ei.thinktoilet.ui.components
 
-import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -15,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,12 +21,11 @@ import androidx.compose.ui.unit.dp
 import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.User
 import pt.iade.ei.thinktoilet.tests.generateUserMain
+import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
 /**
           * Exibe as informações do usuário de maneira simplificada.
           *
-          * @param userMain Objeto que contém as informações do usuário a serem exibidas.
-          * @param context Contexto da aplicação.
           *
           * Esta função exibe as informações do usuário de maneira simplificada, incluindo
           * nome, email e pontos.
@@ -44,7 +41,6 @@ import pt.iade.ei.thinktoilet.tests.generateUserMain
 @Composable
 fun ProfileUser(
     user: User,
-    context: Context = LocalContext.current
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -75,19 +71,13 @@ fun ProfileUser(
             style = MaterialTheme.typography.titleMedium,
             maxLines = 1,
         )
-        Text(
-            modifier = Modifier.padding(top = 8.dp),
-            text = user.points.toString() + " " + context.getString(R.string.points),
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.secondary,
-            style = MaterialTheme.typography.titleLarge,
-            maxLines = 1,
-        )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun ProfileUserPreview() {
-    ProfileUser(generateUserMain())
+    AppTheme{
+        ProfileUser(generateUserMain())
+    }
 }
