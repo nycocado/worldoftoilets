@@ -9,14 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pt.iade.ei.thinktoilet.exceptions.NotFoundException;
-import pt.iade.ei.thinktoilet.models.dtos.CommentDTO;
-import pt.iade.ei.thinktoilet.models.requests.CommentRequest;
 import pt.iade.ei.thinktoilet.models.dtos.ToiletDTO;
-import pt.iade.ei.thinktoilet.models.entities.Reaction;
-import pt.iade.ei.thinktoilet.models.requests.ReactionRequest;
+import pt.iade.ei.thinktoilet.models.requests.ReportRequest;
 import pt.iade.ei.thinktoilet.models.response.ApiResponse;
-import pt.iade.ei.thinktoilet.services.CommentService;
-import pt.iade.ei.thinktoilet.services.ReactionService;
+import pt.iade.ei.thinktoilet.services.ReportService;
 import pt.iade.ei.thinktoilet.services.ToiletService;
 
 import java.util.List;
@@ -27,21 +23,27 @@ public class ToiletController {
     private final Logger logger = LoggerFactory.getLogger(ToiletController.class);
     @Autowired
     private ToiletService toiletService;
+    @Autowired
+    private ReportService reportService;
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ToiletDTO> getToilets(
+            @RequestParam(required = false) String state,
+            @RequestParam(required = false) Integer userId,
             @RequestParam(required = false) List<Integer> ids,
-            @RequestParam(required = false) boolean pageable,
+            @RequestParam(defaultValue = "false", required = false) boolean pageable,
             @RequestParam(defaultValue = "0", required = false) int page,
             @RequestParam(defaultValue = "20", required = false) int size
     ) {
-        logger.info("Sending all toilets");
-        if (ids != null)
+        if (ids != null) {
+            logger.info("Sending toilets with ids {}", ids);
             return toiletService.findToiletsByIds(ids);
-        else if (pageable)
-            return toiletService.findAllToiletsPaging(page, size).getContent();
-        else
-            return toiletService.findAllToilets();
+        }
+
+        logger.info("Sending toilets with state {} and user id {}", state, userId);
+        if (pageable)
+            return toiletService.findToilets(state, userId, page, size);
+        return toiletService.findToilets(state, userId);
     }
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -56,29 +58,54 @@ public class ToiletController {
     public List<ToiletDTO> getToiletsNearby(
             @RequestParam double lon,
             @RequestParam double lat,
+            @RequestParam(required = false) String state,
+            @RequestParam(required = false) Integer userId,
             @RequestParam(defaultValue = "false", required = false) boolean pageable,
             @RequestParam(defaultValue = "0", required = false) int page,
             @RequestParam(defaultValue = "20", required = false) int size
     ) {
-        logger.info("Sending toilets nearby");
+        logger.info("Sending toilets nearby with state {} and user id {}", state, userId);
         if (pageable)
-            return toiletService.findToiletsNearbyPaging(lat, lon, page, size).getContent();
-        else
-            return toiletService.findToiletsNearby(lat, lon);
+            return toiletService.findToiletsNearby(state, lat, lon, userId, page, size);
+        return toiletService.findToiletsNearby(state, lat, lon, userId);
     }
 
-    @GetMapping(path = "/users/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/users/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ToiletDTO> getToiletByUserId(
-            @PathVariable int id
+            @PathVariable int userId,
+            @RequestParam(required = false) String state,
+            @RequestParam(defaultValue = "false", required = false) boolean pageable,
+            @RequestParam(defaultValue = "0", required = false) int page,
+            @RequestParam(defaultValue = "20", required = false) int size
     ) {
-        logger.info("Sending toilet ids from user with id {}", id);
-        return toiletService.findToiletsByUserId(id);
+        logger.info("Sending toilet ids from user with id {}", userId);
+        if (pageable)
+            return toiletService.findToiletsByUserId(state, userId, page, size);
+        return toiletService.findToiletsByUserId(state, userId);
     }
+
+    @PostMapping(path = "/reports", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse> addReport(
+            @RequestBody ReportRequest request
+    ) {
+        logger.info("Adding report to toilet with id {} and user with id {}", request.getToiletId(), request.getUserId());
+        return reportService.addReport(request);
+    }
+
+    @DeleteMapping(path = "/reports", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse> deleteReport(
+            @RequestParam int toiletId,
+            @RequestParam int userId
+    ) {
+        logger.info("Deleting report from toilet with id {} and user with id {}", toiletId, userId);
+        return reportService.deleteReport(toiletId, userId);
+    }
+
 
     @PostMapping(path = "{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse> uploadImage(
             @PathVariable int id,
-            @RequestParam(required = true, name = "image") MultipartFile image
+            @RequestParam(name = "image") MultipartFile image
     ) {
         logger.info("Uploading image to toilet with id {}", id);
         return toiletService.uploadImage(id, image);

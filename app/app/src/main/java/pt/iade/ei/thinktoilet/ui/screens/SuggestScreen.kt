@@ -34,7 +34,7 @@ import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SuggestionToiletScreen() {
+fun SuggestScreen() {
     val context = LocalContext.current
     val verticalPadding = 10.dp
     var toiletName by remember { mutableStateOf("") }
@@ -48,7 +48,7 @@ fun SuggestionToiletScreen() {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = context.getString(R.string.suggestionToilet),
+                        text = context.getString(R.string.suggest),
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -67,7 +67,7 @@ fun SuggestionToiletScreen() {
                 SuggestionTextField(
                     value = toiletName,
                     onValueChange = { toiletName = it },
-                    label = context.getString(R.string.toiletName),
+                    label = context.getString(R.string.toilet_name),
                     verticalPadding = verticalPadding
                 )
             }
@@ -75,7 +75,7 @@ fun SuggestionToiletScreen() {
                 SuggestionTextField(
                     value = country,
                     onValueChange = { country = it },
-                    label = context.getString(R.string.toiletCountry),
+                    label = context.getString(R.string.toilet_country),
                     verticalPadding = verticalPadding
                 )
             }
@@ -83,7 +83,7 @@ fun SuggestionToiletScreen() {
                 SuggestionTextField(
                     value = address,
                     onValueChange = { address = it },
-                    label = context.getString(R.string.toiletAddress),
+                    label = context.getString(R.string.toilet_address),
                     verticalPadding = verticalPadding
                 )
             }
@@ -91,7 +91,7 @@ fun SuggestionToiletScreen() {
                 SuggestionTextField(
                     value = city,
                     onValueChange = { city = it },
-                    label = context.getString(R.string.toiletCity),
+                    label = context.getString(R.string.toilet_city),
                     verticalPadding = verticalPadding
                 )
             }
@@ -99,7 +99,7 @@ fun SuggestionToiletScreen() {
                 SuggestionTextField(
                     value = postalCode,
                     onValueChange = { postalCode = it },
-                    label = context.getString(R.string.toiletPostalCode),
+                    label = context.getString(R.string.toilet_postal_code),
                     verticalPadding = verticalPadding
                 )
             }
@@ -122,7 +122,7 @@ fun SuggestionToiletScreen() {
                         )
                     ) {
                         Text(
-                            text = context.getString(R.string.toiletSuggestionToiletButton),
+                            text = context.getString(R.string.suggest_toilet),
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -161,6 +161,6 @@ fun SuggestionTextField(
 @Preview(showBackground = true)
 fun SuggestionToiletScreenPreview() {
     AppTheme {
-        SuggestionToiletScreen()
+        SuggestScreen()
     }
 }

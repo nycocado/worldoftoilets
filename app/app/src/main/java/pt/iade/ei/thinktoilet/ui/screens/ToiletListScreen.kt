@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,17 +22,20 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.models.UiState
+import pt.iade.ei.thinktoilet.models.responses.PageResponse
 import pt.iade.ei.thinktoilet.tests.generateLocationStateFlow
 import pt.iade.ei.thinktoilet.tests.generateToiletsNearbyIdsStateFlow
 import pt.iade.ei.thinktoilet.tests.generateToiletsStateFlow
+import pt.iade.ei.thinktoilet.ui.components.LoadMoreCard
 import pt.iade.ei.thinktoilet.ui.components.LocationCard
 
 @Composable
 fun ToiletListScreen(
     toiletsStateFlow: StateFlow<Map<Int, Toilet>>,
-    toiletsNearbyIdsStateFlow: StateFlow<UiState<List<Int>>>,
+    toiletsNearbyIdsStateFlow: StateFlow<UiState<PageResponse<Int>>>,
     locationStateFlow: StateFlow<Location>,
-    navigateToToiletDetail: (Int) -> Unit = {}
+    navigateToToiletDetail: (Int) -> Unit = {},
+    onClickLoadMore: (PageResponse<Int>) -> Unit = {}
 ) {
     val toilets = toiletsStateFlow.collectAsState().value
     val toiletIds = toiletsNearbyIdsStateFlow.collectAsState().value
@@ -53,7 +57,7 @@ fun ToiletListScreen(
         }
 
         is UiState.Success -> {
-            val toiletList = toiletIds.data.mapNotNull { toilets[it] }
+            val toiletList = toiletIds.data.content.mapNotNull { toilets[it] }
             LazyColumn {
                 items(toiletList) { toilet ->
                     LocationCard(
@@ -61,6 +65,14 @@ fun ToiletListScreen(
                         location = locationStateFlow.collectAsState().value,
                         onClick = { scope.launch { navigateToToiletDetail(it) } }
                     )
+                }
+
+                if (!toiletIds.data.page.isLast){
+                    item {
+                        LoadMoreCard(
+                            onClick = { scope.launch { onClickLoadMore(toiletIds.data) } }
+                        )
+                    }
                 }
             }
         }

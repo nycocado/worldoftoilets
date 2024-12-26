@@ -39,9 +39,9 @@ public class ReactionService {
         return reactionRepository.findReactionByCommentIdAndUserId(commentId, userId);
     }
 
-    public TypeReaction getTypeReactionByName(String type) {
-        return Optional.ofNullable(typeReactionRepository.findTypeReactionByName(type))
-                .orElseThrow(() -> new NotFoundException(type, "TypeReaction", "name"));
+    public TypeReaction getTypeReactionByTechnicalName(String technicalName) {
+        return Optional.ofNullable(typeReactionRepository.findTypeReactionByTechnicalName(technicalName))
+                .orElseThrow(() -> new NotFoundException(technicalName, "TypeReaction", "technical_name"));
     }
 
     public Reaction saveReaction(Reaction reaction) {
@@ -61,7 +61,7 @@ public class ReactionService {
     public ResponseEntity<ApiResponse> addReaction(ReactionRequest request) {
         Comment comment = commentService.getCommentById(request.getCommentId());
         User user = userService.getUserById(request.getUserId());
-        TypeReaction typeReaction = getTypeReactionByName(request.getTypeReaction());
+        TypeReaction typeReaction = getTypeReactionByTechnicalName(request.getTypeReaction());
 
         Reaction reaction = Optional.ofNullable(getReactionByCommentIdAndUserId(comment.getId(), user.getId()))
                 .orElseGet(() -> {
@@ -82,7 +82,14 @@ public class ReactionService {
 
     @Transactional
     public ResponseEntity<ApiResponse> deleteReaction(int commentId, int userId) {
+        if(!commentService.existsCommentById(commentId)) {
+            throw new NotFoundException(String.valueOf(commentId), "Comment", "id");
+        }
+        if(!userService.existsUserById(userId)) {
+            throw new NotFoundException(String.valueOf(userId), "User", "id");
+        }
         Reaction reaction = getReactionByCommentIdAndUserId(commentId, userId);
+
         reactionRepository.delete(reaction);
 
         ApiResponse response = new ApiResponse(HttpStatus.OK.value(), "Reaction deleted successfully");

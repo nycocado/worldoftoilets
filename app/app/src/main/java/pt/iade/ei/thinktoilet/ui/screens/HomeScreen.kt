@@ -48,8 +48,12 @@ fun HomeScreen(
         )
     )
 
-    LaunchedEffect(Unit) {
-        scope.launch { localViewModel.loadLocation() }
+    val user = userViewModel.user.collectAsState().value
+    val locationStateFlow = localViewModel.location
+    val location = locationStateFlow.collectAsState().value
+
+    LaunchedEffect(Unit, location) {
+        scope.launch { localViewModel.loadLocation(userId = user?.id) }
     }
 
     LaunchedEffect(selectedToiletId) {
@@ -96,7 +100,6 @@ fun HomeScreen(
             }
         },
     ) {
-        val locationStateFlow = localViewModel.location
         OpenStreetMapsView(locationStateFlow)
     }
 }

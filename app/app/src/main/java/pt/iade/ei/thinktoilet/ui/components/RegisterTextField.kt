@@ -19,6 +19,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import pt.iade.ei.thinktoilet.R
+import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
 /**
  * Exibe um campo de texto para inserção do nome.
@@ -141,18 +142,24 @@ fun BirthdateTextField(
 @Preview(showBackground = true)
 @Composable
 private fun NameTextFieldPreview() {
-    NameTextField()
+    AppTheme {
+        NameTextField()
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun ConfirmPasswordTextFieldPreview() {
-   ConfirmPasswordTextField()
+    AppTheme {
+        ConfirmPasswordTextField()
+    }
 }
 
 
 @Preview(showBackground = true)
 @Composable
 private fun BirthdateTextFieldPreview() {
-    BirthdateTextField()
+    AppTheme {
+        BirthdateTextField()
+    }
 }

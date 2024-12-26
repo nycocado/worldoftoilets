@@ -5,9 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import pt.iade.ei.thinktoilet.models.dtos.CommentDTO;
 import pt.iade.ei.thinktoilet.models.dtos.UserDTO;
-import pt.iade.ei.thinktoilet.services.CommentService;
 import pt.iade.ei.thinktoilet.services.UserService;
 
 import java.util.List;
@@ -26,8 +24,7 @@ public class UserController {
         logger.info("Sending all users");
         if (ids != null)
             return userService.findUsersByIds(ids);
-        else
-            return userService.findAllUsers();
+        return userService.findAllUsers();
     }
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

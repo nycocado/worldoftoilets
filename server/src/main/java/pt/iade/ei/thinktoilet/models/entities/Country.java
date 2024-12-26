@@ -16,4 +16,7 @@ public class Country {
 
     @Column(name = "country_name", length = 50)
     private String name;
+
+    @Column(name = "country_technical_name", length = 50)
+    private String technicalName;
 }

@@ -70,5 +70,7 @@ fun ThumbUp(
 @Preview(showBackground = true)
 @Composable
 private fun ThumbUpPreview() {
-    ThumbUp()
+    AppTheme {
+        ThumbUp()
+    }
 }

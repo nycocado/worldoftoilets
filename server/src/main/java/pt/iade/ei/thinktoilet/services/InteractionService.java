@@ -2,6 +2,7 @@ package pt.iade.ei.thinktoilet.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pt.iade.ei.thinktoilet.exceptions.NotFoundException;
 import pt.iade.ei.thinktoilet.models.entities.Interaction;
 import pt.iade.ei.thinktoilet.models.entities.Toilet;
 import pt.iade.ei.thinktoilet.models.entities.User;
@@ -14,8 +15,13 @@ public class InteractionService {
     @Autowired
     private InteractionRepository interactionRepository;
 
-    public Interaction getInteractionById(Toilet toilet, User user) {
-        return Optional.ofNullable(interactionRepository.findInteractionByToiletIdAndUserId(toilet.getId(), user.getId()))
+    public Interaction getInteractionByToiletIdAndUserId(int toiletId, int userId) {
+        return Optional.ofNullable(interactionRepository.findInteractionByToiletIdAndUserId(toiletId, userId))
+                .orElseThrow(() -> new NotFoundException(String.valueOf(toiletId) + ", " + String.valueOf(userId), "Interaction", "toilet id and user id"));
+    }
+
+    public Interaction getInteractionByToiletAndUser(Toilet toilet, User user) {
+        return Optional.ofNullable(interactionRepository.findInteractionByToiletAndUser(toilet, user))
                 .orElseGet(() -> saveInteraction(toilet, user));
     }
 

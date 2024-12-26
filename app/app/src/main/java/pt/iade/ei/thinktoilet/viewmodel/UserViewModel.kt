@@ -16,6 +16,7 @@ class UserViewModel @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ): ViewModel() {
     val user: StateFlow<User?> = userPreferencesRepository.userStateFlow
+
     val isUserLoggedIn: StateFlow<Boolean> = userPreferencesRepository.isUserLoggedIn()
 
     private val _error = MutableStateFlow<String>("")

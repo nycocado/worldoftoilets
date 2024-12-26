@@ -12,17 +12,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import pt.iade.ei.thinktoilet.R
+import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 import pt.iade.ei.thinktoilet.ui.util.NoRippleInteractionSource
 import kotlin.math.round
 
 /**
-* Exibe cinco ícones de estrelas, representando uma avaliação.
-*
-* @param rating [Float] que representa a avaliação.
-* @param size [Dp] que representa o tamanho do ícone.
-* @param horizontalPadding [Dp] que representa o espaçamento horizontal entre os ícones.
-* @param onClick Callback que é chamado quando um ícone é clicado. (Optional)
-*/
+ * Exibe cinco ícones de estrelas, representando uma avaliação.
+ *
+ * @param rating [Float] que representa a avaliação.
+ * @param size [Dp] que representa o tamanho do ícone.
+ * @param horizontalPadding [Dp] que representa o espaçamento horizontal entre os ícones.
+ * @param onClick Callback que é chamado quando um ícone é clicado. (Optional)
+ */
 @Composable
 fun Stars(
     rating: Float,
@@ -65,5 +66,7 @@ fun Stars(
 @Preview(showBackground = true)
 @Composable
 private fun StarsPreview() {
-    Stars(rating = 3.5f)
+    AppTheme {
+        Stars(rating = 3.5f)
+    }
 }

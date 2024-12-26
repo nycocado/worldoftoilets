@@ -1,7 +1,7 @@
 -- Tables
 
 CREATE TABLE user (
-					user_id INT NOT NULL auto_increment,
+					user_id INT NOT NULL AUTO_INCREMENT,
 					user_name VARCHAR(50) NOT NULL, 
 					user_email VARCHAR(100) UNIQUE NOT NULL,											
 					user_pwd VARCHAR(255) NOT NULL, 							
@@ -13,7 +13,7 @@ CREATE TABLE user (
 );
 		     		     
 CREATE TABLE toilet (
-					toil_id INT NOT NULL auto_increment,
+					toil_id INT NOT NULL AUTO_INCREMENT,
 					toil_city_id INT NOT NULL,
 					toil_acs_id INT NOT NULL,
 					toil_state_id INT NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE toilet (
 );
 		           
 CREATE TABLE report (
-					rep_id INT NOT NULL auto_increment,
+					rep_id INT NOT NULL AUTO_INCREMENT,
 					rep_trp_id INT NOT NULL, 			
 					rep_int_id INT NOT NULL,
 					rep_cdate DATE NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE report (
 );	     
 		           
 CREATE TABLE interaction (
-					int_id INT NOT NULL auto_increment,
+					int_id INT NOT NULL AUTO_INCREMENT,
 					int_user_id INT NOT NULL, 			
 					int_toil_id INT NOT NULL, 				
 					PRIMARY KEY (int_id),
@@ -44,57 +44,64 @@ CREATE TABLE interaction (
 );
 		            		                 		     
 CREATE TABLE extra (
-					extra_id INT NOT NULL auto_increment,
+					extra_id INT NOT NULL AUTO_INCREMENT,
 					extra_toil_id INT NOT NULL,
 					extra_tex_id INT NOT NULL,				
 					PRIMARY KEY (extra_id)
 );
 
 CREATE TABLE city (
-					city_id INT NOT NULL auto_increment,
+					city_id INT NOT NULL AUTO_INCREMENT,
 					city_country_id INT NOT NULL,
 					city_name VARCHAR(50) NOT NULL,				
+					city_technical_name VARCHAR(50) NOT NULL,
 					PRIMARY KEY (city_id)
 );
 
 CREATE TABLE country (
-					country_id INT NOT NULL auto_increment,
+					country_id INT NOT NULL AUTO_INCREMENT,
 					country_name VARCHAR(50) NOT NULL,			
+					country_technical_name VARCHAR(50) NOT NULL,
 					PRIMARY KEY (country_id)
 );
 
 CREATE TABLE access (
-					acs_id int not null auto_increment,
-					acs_name VARCHAR(50) not null,		
+					acs_id INT NOT NULL AUTO_INCREMENT,
+					acs_name VARCHAR(50) NOT NULL,		
+					acs_technical_name VARCHAR(50) NOT NULL,
 					PRIMARY KEY (acs_id)
 );
 
 CREATE TABLE typereport (
-					trp_id INT NOT NULL auto_increment,
+					trp_id INT NOT NULL AUTO_INCREMENT,
 					trp_name VARCHAR(50) NOT NULL,			
+					trp_technical_name VARCHAR(50) NOT NULL,
 					PRIMARY KEY (trp_id)
 );
 
 CREATE TABLE typereaction (
-					trc_id INT NOT NULL auto_increment,
+					trc_id INT NOT NULL AUTO_INCREMENT,
 					trc_name VARCHAR(50) NOT NULL,			
+					trc_technical_name VARCHAR(50) NOT NULL,
 					PRIMARY KEY (trc_id)
 );
 
 CREATE TABLE typeextra (
-					tex_id INT NOT NULL auto_increment,
+					tex_id INT NOT NULL AUTO_INCREMENT,
 					tex_name VARCHAR(50) NOT NULL,			
+					tex_technical_name VARCHAR(50) NOT NULL,
 					PRIMARY KEY (tex_id)
 );
 
 CREATE TABLE state (
-					state_id INT NOT NULL auto_increment,
+					state_id INT NOT NULL AUTO_INCREMENT,
 					state_name VARCHAR(50) NOT NULL,			
+					state_technical_name VARCHAR(50) NOT NULL,
 					PRIMARY KEY (state_id)
 );
 
 CREATE TABLE comment (
-					cmm_id INT NOT NULL auto_increment,
+					cmm_id INT NOT NULL AUTO_INCREMENT,
 					cmm_int_id INT NOT NULL,
 					cmm_text VARCHAR(280) NOT NULL,		
 					cmm_rclean INT NOT NULL,
@@ -107,7 +114,7 @@ CREATE TABLE comment (
 );
 
 CREATE TABLE reaction (
-					react_id INT NOT NULL auto_increment,
+					react_id INT NOT NULL AUTO_INCREMENT,
 					react_user_id INT NOT NULL,
 					react_cmm_id INT NOT NULL,	
 					react_trc_id INT NOT NULL,
@@ -248,3 +255,14 @@ FROM user u
 LEFT JOIN interaction i ON u.user_id = i.int_user_id
 LEFT JOIN comment c ON c.cmm_int_id = i.int_id
 GROUP BY u.user_id;
+
+CREATE VIEW vw_user_report_comment AS
+SELECT c.cmm_id, r.react_user_id 'user_id'
+FROM comment c
+LEFT JOIN reaction r ON c.cmm_id = r.react_cmm_id
+WHERE r.react_trc_id NOT IN (1, 2);
+
+CREATE VIEW vw_user_report_toilet AS
+SELECT i.int_toil_id 'toil_id', i.int_user_id 'user_id'
+FROM interaction i
+INNER JOIN report r ON r.rep_int_id = i.int_id;

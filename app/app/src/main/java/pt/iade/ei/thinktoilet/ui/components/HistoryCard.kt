@@ -18,13 +18,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.tests.generateRandomToilet
+import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
 /**
-* Exibe as informações de um Toilet de forma simplificada utilizando um Card.
-*
-* @param toilet [Toilet] que contém os detalhes da casa de banho.
-* @param onClick Callback a ser executado quando o Card é clicado.
-*/
+ * Exibe as informações de um Toilet de forma simplificada utilizando um Card.
+ *
+ * @param toilet [Toilet] que contém os detalhes da casa de banho.
+ * @param onClick Callback a ser executado quando o Card é clicado.
+ */
 @Composable
 fun HistoryCard(
     toilet: Toilet,
@@ -74,7 +75,9 @@ fun HistoryCard(
 @Preview(showBackground = true)
 @Composable
 private fun ProfileCard() {
-    HistoryCard(
-        toilet = generateRandomToilet()
-    )
+    AppTheme {
+        HistoryCard(
+            toilet = generateRandomToilet()
+        )
+    }
 }

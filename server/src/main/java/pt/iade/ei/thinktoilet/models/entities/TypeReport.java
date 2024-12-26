@@ -16,4 +16,7 @@ public class TypeReport {
 
     @Column(name = "trp_name", length = 50)
     private String name;
+
+    @Column(name = "trp_technical_name", length = 50)
+    private String technicalName;
 }

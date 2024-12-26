@@ -4,8 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
@@ -26,9 +25,10 @@ fun MainView(
     navController: NavHostController = rememberNavController()
 ) {
     val scope = rememberCoroutineScope()
+    val user = userViewModel.user.collectAsState().value
     CheckAndRequestLocationPermission(
         onPermissionGranted = {
-            scope.launch { localViewModel.loadLocation(true) }
+            scope.launch { localViewModel.loadLocation(true, user?.id) }
         },
         onPermissionDenied = {
             // Não vai carregar os banheiros próximos

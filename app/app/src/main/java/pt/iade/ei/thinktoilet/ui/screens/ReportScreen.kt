@@ -1,132 +1,128 @@
 package pt.iade.ei.thinktoilet.ui.screens
 
-
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import pt.iade.ei.thinktoilet.ui.components.ReportComplement
+import pt.iade.ei.thinktoilet.R
+import pt.iade.ei.thinktoilet.models.enums.ReportType
+import pt.iade.ei.thinktoilet.models.enums.TypeReaction
+import pt.iade.ei.thinktoilet.models.enums.TypeReport
+import pt.iade.ei.thinktoilet.ui.components.ReportButton
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReportScreen(
-    state: Boolean
+    type: String,
+    id: Int,
+    navigateToBack: () -> Unit = {},
+    onToiletReport: (Int, TypeReport) -> Unit = { _, _ -> },
+    onCommentReport: (Int, TypeReaction) -> Unit = { _, _ -> }
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-    ) {
-        LazyColumn {
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 5.dp),
-                    horizontalArrangement = Arrangement.Center
-                ) {
+    val context = LocalContext.current
+    val reportType = ReportType.entries.find { it.value == type }!!
+    val invalidReactions = listOf(TypeReaction.LIKE, TypeReaction.DISLIKE, TypeReaction.NONE)
+    val invalidReports = listOf(TypeReport.NONE)
+
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
                     Text(
-                        text = "Report",
-                        style = MaterialTheme.typography.headlineSmall,
-                        textAlign = TextAlign.Center,
+                        text = context.getString(R.string.report),
+                        style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold
                     )
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        navigateToBack()
+                    }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
                 }
-                Row(
-                    modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
+            )
+        }
+    ) { innerPadding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 40.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        modifier = Modifier.padding(top = 40.dp, bottom = 20.dp),
-                        text = if (state) {
-                            "Porque estás a denunciar esta \ncasa de banho?"
-                        } else {
-                            "Porque estás a denunciar este comentário?"
+                        modifier = Modifier.padding(top = 60.dp, bottom = 20.dp),
+                        text = when (reportType) {
+                            ReportType.TOILET -> context.getString(R.string.report_why_toilet)
+                            ReportType.COMMENT -> context.getString(R.string.report_why_comment)
                         },
                         style = MaterialTheme.typography.titleLarge,
                         textAlign = TextAlign.Center,
                     )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 25.dp),
-                    horizontalArrangement = Arrangement.Center
-                ) {
                     Text(
-                        text = "A tua denúncia é anônima.",
+                        text = context.getString(R.string.report_anoymous),
                         style = MaterialTheme.typography.bodySmall,
-
-                        )
+                    )
                 }
             }
-            if (state) {
 
-                item {
-                    ReportComplement(
-                        title = "Informações incorretas",
-                        id = 1
-                    ) {}
-                    ReportComplement(
-                        title = "Condições insalubres",
-                        id = 2
-                    ) {}
-                    ReportComplement(
-                        title = "Violação de privacidade",
-                        id = 3
-                    ) {}
-                    ReportComplement(
-                        title = "Manutenção necessária",
-                        id = 4
-                    ) {}
-                    ReportComplement(
-                        title = "Equipamento ou instalações danificadas",
-                        id = 5
-                    ) {}
-                    ReportComplement(
-                        title = "Outras",
-                        id = 6
-                    ) {}
-
+            when (reportType) {
+                ReportType.TOILET -> {
+                    items(TypeReport.entries) { typeReport ->
+                        if (!invalidReports.contains(typeReport)) {
+                            ReportButton(
+                                title = context.getString(typeReport.value),
+                                id = typeReport.id
+                            ) {
+                                onToiletReport(id, typeReport)
+                            }
+                        }
+                    }
                 }
-            } else {
-                item {
-                    ReportComplement(
-                        title = "Pouco útil",
-                        id = 3
-                    ) {}
-                    ReportComplement(
-                        title = "Informação falsa",
-                        id = 4
-                    ) {}
-                    ReportComplement(
-                        title = "Conteúdo inapropriado",
-                        id = 5
-                    ) {}
-                    ReportComplement(
-                        title = "Ofensivo ou abusivo",
-                        id = 6
-                    ) {}
-                    ReportComplement(
-                        title = "Spam ou propaganda indesejada",
-                        id = 7
-                    ) {}
-                    ReportComplement(
-                        title = "Outros",
-                        id = 8
-                    ) {}
 
+                ReportType.COMMENT -> {
+                    items(TypeReaction.entries) { typeReaction ->
+                        if (!invalidReactions.contains(typeReaction)) {
+                            ReportButton(
+                                title = context.getString(typeReaction.value),
+                                id = typeReaction.id,
+                                onClick = {
+                                    onCommentReport(id, typeReaction)
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -136,11 +132,11 @@ fun ReportScreen(
 
 @Composable
 @Preview(showBackground = true)
-fun PreviewReportScreen(){
+fun PreviewReportScreen() {
     AppTheme {
         ReportScreen(
-            state = true
+            type = "toilet",
+            id = 1
         )
     }
-
 }

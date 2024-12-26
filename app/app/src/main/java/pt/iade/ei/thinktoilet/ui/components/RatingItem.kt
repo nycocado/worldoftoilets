@@ -11,14 +11,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
 /**
-* Exibe um critério de avaliação interativo com estrelas.
-*
-* @param title [String] que representa o título do critério.
-* @param rating [Int] que representa a quantidade de estrelas selecionadas.
-* @param onClick Callback que será chamado quando uma estrela for clicada.
-*/
+ * Exibe um critério de avaliação interativo com estrelas.
+ *
+ * @param title [String] que representa o título do critério.
+ * @param rating [Int] que representa a quantidade de estrelas selecionadas.
+ * @param onClick Callback que será chamado quando uma estrela for clicada.
+ */
 @Composable
 fun RatingItem(
     title: String,
@@ -53,5 +54,7 @@ fun RatingItem(
 @Preview(showBackground = true)
 @Composable
 private fun RatingItemPreview() {
-    RatingItem(title = "Limpeza", rating = 4)
+    AppTheme {
+        RatingItem(title = "Limpeza", rating = 4)
+    }
 }

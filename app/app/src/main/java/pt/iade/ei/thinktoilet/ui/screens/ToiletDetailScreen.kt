@@ -13,11 +13,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CircularProgressIndicator
@@ -25,7 +22,6 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -36,8 +32,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.LocalPlatformContext
@@ -51,7 +47,7 @@ import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.Comment
 import pt.iade.ei.thinktoilet.models.Reaction
 import pt.iade.ei.thinktoilet.models.Toilet
-import pt.iade.ei.thinktoilet.models.TypeReaction
+import pt.iade.ei.thinktoilet.models.enums.TypeReaction
 import pt.iade.ei.thinktoilet.models.User
 import pt.iade.ei.thinktoilet.tests.generateCommentsList
 import pt.iade.ei.thinktoilet.tests.generateRandomToilet
@@ -70,7 +66,10 @@ fun ToiletDetailScreen(
     commentsStateFlow: StateFlow<List<Comment>>,
     reactionsStateFlow: StateFlow<Map<Int, Reaction>>,
     usersStateFlow: StateFlow<Map<Int, User>>,
-    navigateToRating: (Int) -> Unit,
+    userMainStateFlow: StateFlow<User?>,
+    navigateToRating: (toiletId: Int) -> Unit = {},
+    navigateToToiletReport: (toiletId: Int) -> Unit = {},
+    navigateToCommentReport: (commentId: Int) -> Unit = {},
     navigateToBack: () -> Unit = {},
     onReaction: (comment: Int, typeReaction: TypeReaction) -> Unit = { _, _ -> }
 ) {
@@ -78,18 +77,20 @@ fun ToiletDetailScreen(
     val comments = commentsStateFlow.collectAsState().value.filter { it.toiletId == toiletId }
     val reactions = reactionsStateFlow.collectAsState().value
     val users = usersStateFlow.collectAsState().value
+    val userMain = userMainStateFlow.collectAsState().value
 
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val platformContext = LocalPlatformContext.current
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
     ) {
         Row(
             modifier = Modifier
                 .padding(bottom = 16.dp)
-                .padding(horizontal = 16.dp)
         ) {
             Column(
                 modifier = Modifier.weight(1f)
@@ -116,6 +117,30 @@ fun ToiletDetailScreen(
                     )
                 }
             }
+            Column(
+                modifier = Modifier.padding(end = 8.dp)
+            ) {
+                FilledIconButton(
+                    onClick = { navigateToToiletReport(toilet.id) },
+                    modifier = Modifier
+                        .size(38.dp),
+                    colors = IconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                        disabledContainerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(
+                            alpha = 0.5f
+                        ),
+                        disabledContentColor = MaterialTheme.colorScheme.onTertiaryContainer.copy(
+                            alpha = 0.5f
+                        )
+                    )
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.flag_filled_24px),
+                        contentDescription = "Denunciar"
+                    )
+                }
+            }
             FilledIconButton(
                 onClick = { navigateToBack() },
                 modifier = Modifier.size(38.dp),
@@ -131,7 +156,7 @@ fun ToiletDetailScreen(
                 )
             ) {
                 Icon(
-                    imageVector = Icons.Filled.Close,
+                    painter = painterResource(R.drawable.close_24px),
                     contentDescription = "Voltar"
                 )
             }
@@ -139,7 +164,6 @@ fun ToiletDetailScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp)
         ) {
             item {
                 SubcomposeAsyncImage(
@@ -342,11 +366,15 @@ fun ToiletDetailScreen(
                 items(comments) { comment ->
                     val user = users[comment.userId]
                     if (user != null) {
-                        reactions[comment.id!!]?.let {
+                        reactions[comment.id]?.let {
                             CommentToilet(
                                 comment = comment,
                                 reaction = it,
                                 user = user,
+                                userMain = userMain!!,
+                                navigateToReport = { commentId ->
+                                    navigateToCommentReport(commentId)
+                                },
                                 onReaction = { commentId, typeReaction ->
                                     onReaction(commentId, typeReaction)
                                 },
@@ -357,8 +385,6 @@ fun ToiletDetailScreen(
             }
         }
     }
-
-
 }
 
 @Preview(showBackground = true)
@@ -372,13 +398,15 @@ fun ToiletDetailScreenPreview() {
     val commentsStateFlow = MutableStateFlow(generateCommentsList())
     val comments = commentsStateFlow.collectAsState().value
     val reactionsStateFlow = MutableStateFlow(
-        generateReactions(comments.map { it.id!! })
+        generateReactions(comments.map { it.id })
     )
     val usersStateFlow = MutableStateFlow(
         mapOf(
             1 to generateUserMain()
         )
     )
+    val userMainStateFlow = MutableStateFlow(generateUserMain())
+
     AppTheme {
         ToiletDetailScreen(
             toiletId = 1,
@@ -386,6 +414,7 @@ fun ToiletDetailScreenPreview() {
             commentsStateFlow = commentsStateFlow,
             reactionsStateFlow = reactionsStateFlow,
             usersStateFlow = usersStateFlow,
+            userMainStateFlow = userMainStateFlow,
             navigateToRating = {}
         )
     }

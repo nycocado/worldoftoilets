@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pt.iade.ei.thinktoilet.exceptions.DatabaseSaveException;
 import pt.iade.ei.thinktoilet.exceptions.EmailAlreadyInUseException;
 import pt.iade.ei.thinktoilet.exceptions.InvalidPasswordException;
 import pt.iade.ei.thinktoilet.models.requests.LoginRequest;
@@ -15,8 +14,6 @@ import pt.iade.ei.thinktoilet.models.dtos.UserDTO;
 import pt.iade.ei.thinktoilet.models.entities.User;
 import pt.iade.ei.thinktoilet.models.mappers.UserMapper;
 import pt.iade.ei.thinktoilet.models.response.ApiResponse;
-
-import java.util.Optional;
 
 @Service
 public class AuthService {

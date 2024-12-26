@@ -3,12 +3,14 @@ package pt.iade.ei.thinktoilet.tests
 import android.location.Location
 import kotlinx.coroutines.flow.MutableStateFlow
 import pt.iade.ei.thinktoilet.models.Comment
+import pt.iade.ei.thinktoilet.models.Page
 import pt.iade.ei.thinktoilet.models.Rating
 import pt.iade.ei.thinktoilet.models.Reaction
 import pt.iade.ei.thinktoilet.models.Toilet
-import pt.iade.ei.thinktoilet.models.TypeReaction
+import pt.iade.ei.thinktoilet.models.enums.TypeReaction
 import pt.iade.ei.thinktoilet.models.UiState
 import pt.iade.ei.thinktoilet.models.User
+import pt.iade.ei.thinktoilet.models.responses.PageResponse
 import java.time.LocalDateTime
 
 fun generateRandomRatingCategory(): Rating {
@@ -142,9 +144,13 @@ fun generateToiletsStateFlow(numToilets: Int = (10..20).random(), preferenceId: 
     return MutableStateFlow(toiletsMap)
 }
 
-fun generateToiletsNearbyIdsStateFlow(toilets: Map<Int, Toilet>): MutableStateFlow<UiState<List<Int>>> {
-    val toiletIds = toilets.keys.toList()
-    return MutableStateFlow(UiState.Success(toiletIds))
+fun generateToiletsNearbyIdsStateFlow(toilets: Map<Int, Toilet>): MutableStateFlow<UiState<PageResponse<Int>>> {
+    return MutableStateFlow(UiState.Success(PageResponse(toilets.keys.toList(), Page(0, 20,false))))
+}
+
+fun generateToiletsHistoryIdsStateFlow(toilets: Map<Int, Toilet>): MutableStateFlow<UiState<PageResponse<Int>>> {
+    return MutableStateFlow(UiState.Success(PageResponse(toilets.keys.toList(), Page(0, 20,false)))
+    )
 }
 
 fun generateLocationStateFlow(): MutableStateFlow<Location> {

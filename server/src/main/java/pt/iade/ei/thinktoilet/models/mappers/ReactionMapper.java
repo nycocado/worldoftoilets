@@ -11,7 +11,7 @@ public class ReactionMapper {
     public ReactionDTO mapReactionDTO(Reaction reaction) {
         return new ReactionDTO(
                 reaction.getComment().getId(),
-                reaction.getTypeReaction().getName().toUpperCase()
+                reaction.getTypeReaction().getTechnicalName().toUpperCase().replace("-", "_")
         );
     }
 

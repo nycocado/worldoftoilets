@@ -9,18 +9,18 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import pt.iade.ei.thinktoilet.models.responses.ApiResponse
 import pt.iade.ei.thinktoilet.models.Comment
+import pt.iade.ei.thinktoilet.models.Page
 import pt.iade.ei.thinktoilet.models.Reaction
 import pt.iade.ei.thinktoilet.models.Toilet
-import pt.iade.ei.thinktoilet.models.TypeReaction
+import pt.iade.ei.thinktoilet.models.enums.TypeReaction
 import pt.iade.ei.thinktoilet.models.UiState
 import pt.iade.ei.thinktoilet.models.User
-import pt.iade.ei.thinktoilet.repositories.AuthRepository
+import pt.iade.ei.thinktoilet.models.enums.TypeReport
+import pt.iade.ei.thinktoilet.models.responses.PageResponse
 import pt.iade.ei.thinktoilet.repositories.CommentRepository
 import pt.iade.ei.thinktoilet.repositories.LocationRepository
 import pt.iade.ei.thinktoilet.repositories.ToiletRepository
-import pt.iade.ei.thinktoilet.repositories.UserPreferencesRepository
 import pt.iade.ei.thinktoilet.repositories.UserRepository
 import javax.inject.Inject
 
@@ -34,11 +34,11 @@ class LocalViewModel @Inject constructor(
     private val _toiletsCache = MutableStateFlow<Map<Int, Toilet>>(emptyMap())
     val toiletsCache: StateFlow<Map<Int, Toilet>> get() = _toiletsCache
 
-    private val _toiletsNearbyIds = MutableStateFlow<UiState<List<Int>>>(UiState.Loading)
-    val toiletsNearbyIds: StateFlow<UiState<List<Int>>> get() = _toiletsNearbyIds
+    private val _toiletsNearbyIds = MutableStateFlow<UiState<PageResponse<Int>>>(UiState.Loading)
+    val toiletsNearbyIds: StateFlow<UiState<PageResponse<Int>>> get() = _toiletsNearbyIds
 
-    private val _toiletsHistoryIds = MutableStateFlow<UiState<List<Int>>>(UiState.Loading)
-    val toiletsHistoryIds: StateFlow<UiState<List<Int>>> get() = _toiletsHistoryIds
+    private val _toiletsHistoryIds = MutableStateFlow<UiState<PageResponse<Int>>>(UiState.Loading)
+    val toiletsHistoryIds: StateFlow<UiState<PageResponse<Int>>> get() = _toiletsHistoryIds
 
     private val _users = MutableStateFlow<Map<Int, User>>(emptyMap())
     val users: StateFlow<Map<Int, User>> get() = _users
@@ -55,34 +55,49 @@ class LocalViewModel @Inject constructor(
     private val _ratingState = MutableStateFlow<Result<Comment>?>(null)
     val ratingState: StateFlow<Result<Comment>?> get() = _ratingState
 
-    private val _location = MutableStateFlow<Location>(Location(""))
+    private val _location = MutableStateFlow(Location(""))
     val location: StateFlow<Location> get() = _location
 
-    private val _error = MutableStateFlow<String>("")
+    private val _error = MutableStateFlow("")
     val error: StateFlow<String> get() = _error
 
     private val _toiletNearbyLoaded = mutableStateOf(false)
     private val _toiletHistoryLoaded = mutableStateOf(false)
 
-    fun loadLocation(onlyLocation: Boolean = false) {
+    fun loadLocation(
+        onlyLocation: Boolean = false,
+        userId: Int? = null
+    ) {
         locationRepository.getCurrentLocation().observeForever {
             if (it != null) {
                 _location.value = it
             }
-            if(!onlyLocation) {
+            if (!onlyLocation) {
                 it?.let { location ->
-                    loadToiletsNearby(location.latitude, location.longitude)
+                    loadToiletsNearby(location.latitude, location.longitude, userId)
                 }
             }
         }
     }
 
-    private fun loadToiletsNearby(latitude: Double, longitude: Double) {
+    private fun loadToiletsNearby(
+        latitude: Double,
+        longitude: Double,
+        userId: Int? = null
+    ) {
         viewModelScope.launch {
             if (!_toiletNearbyLoaded.value)
                 _toiletsNearbyIds.emit(UiState.Loading)
             try {
-                val fetchedToilets = toiletRepository.getToiletsNearby(latitude, longitude)
+                val page = Page(0, 5, false)
+                val fetchedToilets = toiletRepository.getToiletsNearby(
+                    latitude,
+                    longitude,
+                    userId,
+                    true,
+                    page.number,
+                    page.size
+                )
 
                 _toiletsCache.value = _toiletsCache.value.toMutableMap().apply {
                     fetchedToilets.forEach { toilet ->
@@ -90,12 +105,56 @@ class LocalViewModel @Inject constructor(
                     }
                 }
 
-                _toiletsNearbyIds.value = UiState.Success(fetchedToilets.map { it.id })
+                _toiletsNearbyIds.value =
+                    UiState.Success(PageResponse(fetchedToilets.map { it.id }, page))
                 _toiletNearbyLoaded.value = true
             } catch (e: Exception) {
                 _toiletsNearbyIds.value =
                     UiState.Error("Erro ao carregar banheiros próximos: ${e.message}")
                 Log.e("ToiletViewModel", "Erro ao carregar banheiros próximos", e)
+                _toiletNearbyLoaded.value = false
+            }
+        }
+    }
+
+    fun loadMoreToiletsNearby(
+        latitude: Double,
+        longitude: Double,
+        userId: Int? = null,
+        pageResponse: PageResponse<Int>
+    ) {
+        viewModelScope.launch {
+            try {
+                val fetchedToilets =
+                    toiletRepository.getToiletsNearby(
+                        latitude,
+                        longitude,
+                        userId,
+                        true,
+                        pageResponse.page.number + 1,
+                        pageResponse.page.size
+                    )
+
+                _toiletsCache.value = _toiletsCache.value.toMutableMap().apply {
+                    fetchedToilets.forEach { toilet ->
+                        toilet.id.let { id -> this[id] = toilet }
+                    }
+                }
+
+                _toiletsNearbyIds.value = UiState.Success(
+                    PageResponse(
+                        pageResponse.content + fetchedToilets.map { it.id },
+                        Page(
+                            pageResponse.page.number + 1,
+                            pageResponse.page.size,
+                            fetchedToilets.size < pageResponse.page.size
+                        )
+                    )
+                )
+            } catch (e: Exception) {
+                _toiletsNearbyIds.value =
+                    UiState.Error("Erro ao carregar mais banheiros próximos: ${e.message}")
+                Log.e("ToiletViewModel", "Erro ao carregar mais banheiros próximos", e)
             }
         }
     }
@@ -105,7 +164,9 @@ class LocalViewModel @Inject constructor(
             if (!_toiletHistoryLoaded.value)
                 _toiletsHistoryIds.emit(UiState.Loading)
             try {
-                val fetchedToilets = toiletRepository.getToiletsByUserId(userId)
+                val page = Page(0, 10, false)
+                val fetchedToilets =
+                    toiletRepository.getToiletsByUserId(userId, true, page.number, page.size)
 
                 _toiletsCache.value = _toiletsCache.value.toMutableMap().apply {
                     fetchedToilets.forEach { toilet ->
@@ -113,12 +174,52 @@ class LocalViewModel @Inject constructor(
                     }
                 }
 
-                _toiletsHistoryIds.value = UiState.Success(fetchedToilets.map { it.id })
+                _toiletsHistoryIds.value =
+                    UiState.Success(PageResponse(fetchedToilets.map { it.id }, page))
                 _toiletHistoryLoaded.value = true
             } catch (e: Exception) {
                 _toiletsHistoryIds.value =
                     UiState.Error("Erro ao carregar histórico de banheiros: ${e.message}")
                 Log.e("ToiletViewModel", "Erro ao carregar histórico de banheiros", e)
+                _toiletHistoryLoaded.value = false
+            }
+        }
+    }
+
+    fun loadMoreToiletsHistory(
+        userId: Int,
+        pageResponse: PageResponse<Int>
+    ) {
+        viewModelScope.launch {
+            try {
+                val fetchedToilets =
+                    toiletRepository.getToiletsByUserId(
+                        userId,
+                        true,
+                        pageResponse.page.number + 1,
+                        pageResponse.page.size
+                    )
+
+                _toiletsCache.value = _toiletsCache.value.toMutableMap().apply {
+                    fetchedToilets.forEach { toilet ->
+                        toilet.id.let { id -> this[id] = toilet }
+                    }
+                }
+
+                _toiletsHistoryIds.value = UiState.Success(
+                    PageResponse(
+                        pageResponse.content + fetchedToilets.map { it.id },
+                        Page(
+                            pageResponse.page.number + 1,
+                            pageResponse.page.size,
+                            fetchedToilets.size < pageResponse.page.size
+                        )
+                    )
+                )
+            } catch (e: Exception) {
+                _toiletsHistoryIds.value =
+                    UiState.Error("Erro ao carregar mais histórico de banheiros: ${e.message}")
+                Log.e("ToiletViewModel", "Erro ao carregar mais histórico de banheiros", e)
             }
         }
     }
@@ -153,10 +254,13 @@ class LocalViewModel @Inject constructor(
         }
     }
 
-    fun loadToiletComments(toiletId: Int, userId: Int) {
+    fun loadToiletComments(
+        toiletId: Int,
+        userId: Int
+    ) {
         viewModelScope.launch {
             try {
-                val fetchedComments = commentRepository.getCommentsByToiletId(toiletId)
+                val fetchedComments = commentRepository.getCommentsByToiletId(toiletId, userId)
 
                 val userIds = fetchedComments
                     .filter { comment -> _users.value.none { user -> user.key == comment.userId } }
@@ -176,8 +280,8 @@ class LocalViewModel @Inject constructor(
                     }
                 }
                 _commentsToilet.value = fetchedComments
-                if(fetchedComments.isNotEmpty()) {
-                    val commentIds = fetchedComments.map { it.id!! }
+                if (fetchedComments.isNotEmpty()) {
+                    val commentIds = fetchedComments.map { it.id }
                     loadReactions(userId, commentIds)
                 }
             } catch (e: Exception) {
@@ -216,13 +320,19 @@ class LocalViewModel @Inject constructor(
         }
     }
 
-    private fun loadReactions(userId: Int, commentIds: List<Int>) {
+    private fun loadReactions(
+        userId: Int,
+        commentIds: List<Int>
+    ) {
         viewModelScope.launch {
             try {
                 val fetchedReactions = commentRepository.getReactionsByUserId(userId, commentIds)
                 _reactions.value = _reactions.value.toMutableMap().apply {
                     for (id in commentIds) {
-                        this[id] = fetchedReactions.find { it.commentId == id } ?: Reaction(id, TypeReaction.NONE)
+                        this[id] = fetchedReactions.find { it.commentId == id } ?: Reaction(
+                            id,
+                            TypeReaction.NONE
+                        )
                     }
                 }
             } catch (e: Exception) {
@@ -232,7 +342,29 @@ class LocalViewModel @Inject constructor(
         }
     }
 
-    fun updateReaction(commentId: Int, typeReaction: TypeReaction, userId: Int) {
+    fun updateReport(
+        toiletId: Int,
+        userId: Int,
+        typeReport: TypeReport
+    ) {
+        viewModelScope.launch {
+            try {
+                _toiletsCache.value = _toiletsCache.value.toMutableMap().apply {
+                    remove(toiletId)
+                }
+                toiletRepository.postReport(toiletId, userId, typeReport.technicalValue)
+            } catch (e: Exception) {
+                _error.value = "Erro ao atualizar report: ${e.message}"
+                Log.e("ToiletViewModel", "Erro ao atualizar report para toiletId=$toiletId", e)
+            }
+        }
+    }
+
+    fun updateReaction(
+        commentId: Int,
+        userId: Int,
+        typeReaction: TypeReaction
+    ) {
         viewModelScope.launch {
             try {
                 val initialReaction = _reactions.value[commentId]
@@ -249,15 +381,25 @@ class LocalViewModel @Inject constructor(
                                 if (initialReaction?.typeReaction == TypeReaction.DISLIKE) {
                                     comment.dislike--
                                 }
-                                commentRepository.postReaction(commentId, userId, typeReaction.value)
+                                commentRepository.postReaction(
+                                    commentId,
+                                    userId,
+                                    typeReaction.technicalValue
+                                )
                             }
+
                             TypeReaction.DISLIKE -> {
                                 comment.dislike++
                                 if (initialReaction?.typeReaction == TypeReaction.LIKE) {
                                     comment.like--
                                 }
-                                commentRepository.postReaction(commentId, userId, typeReaction.value)
+                                commentRepository.postReaction(
+                                    commentId,
+                                    userId,
+                                    typeReaction.technicalValue
+                                )
                             }
+
                             TypeReaction.NONE -> {
                                 if (initialReaction?.typeReaction == TypeReaction.LIKE) {
                                     comment.like--
@@ -265,6 +407,15 @@ class LocalViewModel @Inject constructor(
                                     comment.dislike--
                                 }
                                 commentRepository.deleteReaction(commentId, userId)
+                            }
+
+                            else -> {
+                                remove(comment)
+                                commentRepository.postReaction(
+                                    commentId,
+                                    userId,
+                                    typeReaction.technicalValue
+                                )
                             }
                         }
                     }

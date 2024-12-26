@@ -11,11 +11,15 @@
     <string name="login">Login</string>
     <string name="register">Register</string>
     <string name="settings">Settings</string>
+    <string name="suggest">Suggest - Toilet</string>
+    <string name="report">Report</string>
 
     <!-- Botões -->
     <string name="go_to_maps">Go to Maps</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="checked">Checked</string>
+    <string name="suggest_toilet">Suggest</string>
+    <string name="load_more">Load More</string>
 
     <!-- Login -->
     <string name="login_action">Log In</string>
@@ -47,10 +51,40 @@
     <string name="change_email">Change E-mail</string>
     <string name="change_password">Change Password</string>
 
+    <!-- Sugestão -->
+    <string name="toilet_name">Name</string>
+    <string name="toilet_city">City</string>
+    <string name="toilet_country">Country</string>
+    <string name="toilet_address">Address</string>
+    <string name="toilet_postal_code">Postal Code</string>
+
+    <!-- Denúncia -->
+    <string name="report_why_toilet">Why are you reporting this toilet?</string>
+    <string name="report_why_comment">Why are you reporting this comment?</string>
+    <string name="report_anoymous">Your report will be anonymous</string>
+    <string name="report_none" translatable="false">None</string>
+    <string name="report_fake_information">Fake information</string>
+    <string name="report_unsanitary_conditions">Unsanitary conditions</string>
+    <string name="report_privacy_violation">Privacy violation</string>
+    <string name="report_maintenance_needed">Maintenance needed</string>
+    <string name="report_damaged_equipment">Damaged equipment</string>
+    <string name="report_others">Others</string>
+
+    <!-- Reação -->
+    <string name="reaction_none" translatable="false">None</string>
+    <string name="reaction_like" translatable="false">Like</string>
+    <string name="reaction_dislike" translatable="false">Dislike</string>
+    <string name="reaction_not_useful">Not useful</string>
+    <string name="reaction_fake_information">Fake information</string>
+    <string name="reaction_inappropriate_content">Inappropriate</string>
+    <string name="reaction_offensive_content">Offensive</string>
+    <string name="reaction_spam">Spam</string>
+    <string name="reaction_others">Others</string>
+
     <!-- Comentário -->
     <string name="comments">Comments</string>
     <string name="comment">Comment</string>
-    <string name="insert_comment">Insert comment...</string>
+    <string name="insert_comment">Insert comment…</string>
 
     <!-- Content Descriptions -->
     <string name="content_description_toilet_image">Image toilet</string>
@@ -80,6 +114,19 @@
     <string name="error_invalid_password">Invalid password</string>
     <string name="error_passwords_do_not_match">Passwords do not match</string>
     <string name="error_in_use_email">E-mail already in use</string>
+
+    <!-- Tempo -->
+    <string name="time_year_single">A year ago</string>
+    <string name="time_year_plural">%d years ago</string>
+    <string name="time_month_single">A month ago</string>
+    <string name="time_month_plural">%d months ago</string>
+    <string name="time_week_single">A week ago</string>
+    <string name="time_week_plural">%d weeks ago</string>
+    <string name="time_day_single">A day ago</string>
+    <string name="time_day_plural">%d days ago</string>
+    <string name="time_hour_single">An hour ago</string>
+    <string name="time_hour_plural">%d hours ago</string>
+    <string name="time_hour_less">Less than an hour ago</string>
 
     <!-- Links -->
     <string name="maps_uri" translatable="false">android-app://com.google.android.apps.maps</string>

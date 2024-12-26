@@ -2,17 +2,16 @@ package pt.iade.ei.thinktoilet.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,14 +23,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.Comment
 import pt.iade.ei.thinktoilet.models.Reaction
-import pt.iade.ei.thinktoilet.models.TypeReaction
 import pt.iade.ei.thinktoilet.models.User
+import pt.iade.ei.thinktoilet.models.enums.TypeReaction
 import pt.iade.ei.thinktoilet.tests.generateComment
 import pt.iade.ei.thinktoilet.tests.generateUser
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
@@ -49,6 +46,8 @@ fun CommentToilet(
     comment: Comment,
     reaction: Reaction,
     user: User,
+    userMain: User,
+    navigateToReport: (id: Int) -> Unit = { _ -> },
     onReaction: (id: Int, typeReaction: TypeReaction) -> Unit = { _, _ -> },
 ) {
     val context = LocalContext.current
@@ -58,27 +57,30 @@ fun CommentToilet(
         color = Color.LightGray
     )
     Column(
-        modifier = Modifier.padding(top = 12.dp)
+        modifier = Modifier.padding(top = 12.dp),
     ) {
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.Top
         ) {
-            Image(
-                modifier = Modifier
-                    .size(60.dp)
-                    .clip(CircleShape)
-                    .border(
-                        width = 2.dp,
-                        color = Color.Gray,
-                        shape = CircleShape
-                    ),
-                painter = painterResource(R.drawable.image_test),
-                contentDescription = context.getString(R.string.content_description_profile_picture)
-            )
-            Column(
-                modifier = Modifier.padding(10.dp)
+            Row(
+                modifier = Modifier.weight(1f),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row {
+                Image(
+                    modifier = Modifier
+                        .size(60.dp)
+                        .clip(CircleShape)
+                        .border(
+                            width = 2.dp,
+                            color = Color.Gray,
+                            shape = CircleShape
+                        ),
+                    painter = painterResource(R.drawable.image_test),
+                    contentDescription = context.getString(R.string.content_description_profile_picture)
+                )
+                Column(
+                    modifier = Modifier.padding(10.dp)
+                ) {
                     Text(
                         text = user.name,
                         style = MaterialTheme.typography.labelLarge,
@@ -86,12 +88,20 @@ fun CommentToilet(
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                     )
-                }
-                Row {
                     Text(
                         text = user.numComments.toString() + " " + context.getString(R.string.ratings),
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.SemiBold,
+                    )
+                }
+            }
+            if (userMain.id != user.id) {
+                IconButton(
+                    onClick = { navigateToReport(comment.id) }
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.flag_24px),
+                        contentDescription = "Report"
                     )
                 }
             }
@@ -162,30 +172,6 @@ fun CommentToilet(
                     }
                 )
             }
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ){
-                    Surface(
-                        onClick = { /*TODO*/ },
-                        color = Color.Transparent,
-                        ){
-                        Text(
-                            text = context.getString(R.string.reportComment),
-                            modifier = Modifier
-                                .width(100.dp)
-                                .padding(10.dp),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = Color.Gray,
-                            fontWeight = FontWeight.Normal,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-            }
         }
     }
 }
@@ -199,12 +185,14 @@ private fun CommentPreview() {
         typeReaction = TypeReaction.LIKE
     )
     val user = generateUser()
+    val userMain = generateUser()
 
     AppTheme {
         CommentToilet(
             comment = comment,
             reaction = reaction,
-            user = user
+            user = user,
+            userMain = userMain
         )
     }
 }

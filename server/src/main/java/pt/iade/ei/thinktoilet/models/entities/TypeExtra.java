@@ -16,4 +16,7 @@ public class TypeExtra {
 
     @Column(name = "tex_name", length = 50)
     private String name;
+
+    @Column(name = "tex_technical_name", length = 50)
+    private String technicalName;
 }

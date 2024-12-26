@@ -20,11 +20,11 @@ import pt.iade.ei.thinktoilet.tests.generateRandomToilet
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
 /**
-* Exibe um comentário simplificado de uma casa de banho.
-*
-* @param comment [Comment] que contém os detalhes do comentário.
-* @param toilet [Toilet] que contém os detalhes da casa de banho.
-*/
+ * Exibe um comentário simplificado de uma casa de banho.
+ *
+ * @param comment [Comment] que contém os detalhes do comentário.
+ * @param toilet [Toilet] que contém os detalhes da casa de banho.
+ */
 @Composable
 fun ToiletReview(
     comment: Comment,
@@ -52,7 +52,7 @@ fun ToiletReview(
             )
             Text(
                 modifier = Modifier.padding(start = 8.dp),
-                text = "há uma semana",
+                text = comment.getDateTimeString(),
                 fontWeight = FontWeight.SemiBold,
                 style = MaterialTheme.typography.labelLarge
             )
@@ -65,14 +65,15 @@ fun ToiletReview(
             style = MaterialTheme.typography.bodyMedium,
         )
     }
-
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun PreviewToiletReviews() {
-    ToiletReview(
-        comment = generateComment(),
-        toilet = generateRandomToilet()
-    )
+    AppTheme {
+        ToiletReview(
+            comment = generateComment(),
+            toilet = generateRandomToilet()
+        )
+    }
 }

@@ -1,66 +1,66 @@
-insert into country (country_name) values 
-('Portugal'),
-('Spain'),
-('France'),
-('Germany'),
-('Italy'),
-('Brazil'),
-('United States'),
-('Australia');
+insert into country (country_name, country_technical_name) values 
+('Portugal', 'portugal'),
+('Espanha', 'spain'),
+('França', 'france'),
+('Alemanha', 'germany'),
+('Itália', 'italy'),
+('Brasil', 'brazil'),
+('Estados Unidos', 'united-states'),
+('Austrália', 'australia');
     
     
-insert into city (city_country_id, city_name) values 
-(1, 'Lisbon'),
-(1, 'Odivelas'),
-(1, 'Loures'),
-(1, 'Porto'),
-(1, 'Braga'),
-(1, 'Coimbra'),
-(2, 'Madrid'),
-(2, 'Barcelona'),
-(2, 'Valencia'),
-(5, 'Rome'),
-(5, 'Milan');
+insert into city (city_country_id, city_name, city_technical_name) values 
+(1, 'Lisbon', 'lisbon'),
+(1, 'Odivelas', 'odivelas'),
+(1, 'Loures', 'loures'),
+(1, 'Porto', 'porto'),
+(1, 'Braga', 'braga'),
+(1, 'Coimbra', 'coimbra'),
+(2, 'Madrid', 'madrid'),
+(2, 'Barcelona', 'barcelona'),
+(2, 'Valencia', 'valencia'),
+(5, 'Roma', 'rome'),
+(5, 'Milão', 'milan');
     
     
-insert into access (acs_name) values 
-('Publico'),
-('Privado'),
-('Somente Consumidores');
+insert into access (acs_name, acs_technical_name) values 
+('Publico', 'public'),
+('Privado', 'private'),
+('Somente Consumidores', 'consumers-only');
     
     
-insert into typereport (trp_name) values 
-('Informacao Falsa'),    
-('Condições Insalubres'),    
-('Violação de Privacidade'),    
-('Manutenção Necessária'),    
-('Instalações Quebradas'),    
-('Outras Preocupações');    
+insert into typereport (trp_name, trp_technical_name) values 
+('Informação Falsa', 'fake-information'),    
+('Condições Insalubres', 'unsanitary-conditions'),    
+('Violação de Privacidade', 'privacy-violation'),    
+('Manutenção Necessária', 'maintenance-needed'),    
+('Instalações Quebradas', 'damaged-equipment'),    
+('Outros', 'others');
     
     
-insert into typereaction (trc_name) values 
-('Like'),
-('Dislike'),
-('Não é útil'),
-('Falso'),
-('Inapropriado'),
-('Ofensivo'),
-('Spam'),
-('Outras Preocupações');
+insert into typereaction (trc_name, trc_technical_name) values 
+('Like', 'like'),
+('Dislike', 'dislike'),
+('Não é Útil', 'not-useful'),
+('Informação Falsa', 'fake-information'),
+('Conteúdo Inapropriado', 'inappropriate-content'),
+('Conteúdo Ofensivo', 'offensive-content'),
+('Spam', 'spam'),
+('Outros', 'others');
     
     
-insert into typeextra (tex_name) values 
-('Acessível para Cadeiras de Rodas'),
-('Estação de Troca de Bebês'),
-('Estacionamento para Deficientes'),
-('Acessibilidade para Deficientes Visuais');
+insert into typeextra (tex_name, tex_technical_name) values 
+('Acessível para Cadeiras de Rodas', 'wheelchair-accessible'),
+('Estação de Troca de Fraldas', 'baby-changing-station'),
+('Estacionamento para Deficientes', 'disabled-parking'),
+('Acessibilidade para Deficientes Visuais', 'accessible-for-visually-impaired');
     
     
-insert into state (state_name) values 
-('Ativo'),
-('Desativado'),
-('Em análise'),
-('Sugerido');
+insert into state (state_name, state_technical_name) values 
+('Ativo', 'active'),
+('Desativado', 'inactive'),
+('Em análise', 'under-review'),
+('Sugerido', 'suggested');
     
     
 insert into user (user_name, user_email, user_pwd, user_points, user_iconid, user_bdate, user_cdate) values

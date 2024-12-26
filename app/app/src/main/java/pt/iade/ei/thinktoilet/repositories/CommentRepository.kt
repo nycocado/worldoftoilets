@@ -13,8 +13,8 @@ import javax.inject.Inject
 class CommentRepository @Inject constructor(){
     private val commentService = RetrofitClient.retrofit.create(CommentService::class.java)
 
-    suspend fun getCommentsByToiletId(toiletId: Int): List<Comment> {
-        return commentService.getCommentsByToiletId(toiletId)
+    suspend fun getCommentsByToiletId(toiletId: Int, userId: Int): List<Comment> {
+        return commentService.getCommentsByToiletId(toiletId, userId)
     }
 
     suspend fun getCommentsByUserId(userId: Int): List<Comment> {

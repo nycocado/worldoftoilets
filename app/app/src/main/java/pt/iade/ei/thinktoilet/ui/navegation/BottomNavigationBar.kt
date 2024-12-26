@@ -10,6 +10,7 @@ import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,14 +19,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
-/**
- * Exibe a barra de navegação inferior da aplicação.
- *
- * @param navController [NavController] que será utilizado para navegar entre os destinos.
- * @param rootController [NavController] que será utilizado para navegar para a tela de login.
- * @param isUserLoggedInStateFlow [StateFlow] que contém um [Boolean] que indica se o usuário está logado.
- */
 @Composable
 fun BottomNavigationBar(
     navController: NavController = rememberNavController(),
@@ -95,7 +90,12 @@ fun BottomNavigationBar(
                         }
                     ) {
                         Icon(
-                            imageVector = if (index == selectedItemIndex) item.selectedIcon else item.unselectedIcon,
+                            painter = painterResource(
+                                if (index == selectedItemIndex)
+                                    item.selectedIcon
+                                else
+                                    item.unselectedIcon
+                            ),
                             contentDescription = item.getTitle()
                         )
                     }
@@ -109,5 +109,7 @@ fun BottomNavigationBar(
 @Preview(showBackground = true)
 @Composable
 fun BottomNavigationBarPreview() {
-    BottomNavigationBar(isUserLoggedInStateFlow = MutableStateFlow(true))
+    AppTheme {
+        BottomNavigationBar(isUserLoggedInStateFlow = MutableStateFlow(true))
+    }
 }

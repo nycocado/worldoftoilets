@@ -28,15 +28,22 @@ public class CommentController {
     @GetMapping(path = "/toilets/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<CommentDTO> getCommentsByToiletId(
             @PathVariable int id,
+            @RequestParam(required = false) Integer userId,
             @RequestParam(defaultValue = "false", required = false) boolean pageable,
             @RequestParam(defaultValue = "0", required = false) int page,
             @RequestParam(defaultValue = "20", required = false) int size
     ) {
+        if (userId != null) {
+            logger.info("Sending comments for toilet with id {} and user with id {}", id, userId);
+            if (pageable)
+                return commentService.findCommentsByToiletIdForUserId(id, userId, page, size);
+            return commentService.findCommentsByToiletIdForUserId(id, userId);
+        }
+
         logger.info("Sending comments for toilet with id {}", id);
         if (pageable)
-            return commentService.findCommentsByToiletIdPaging(id, page, size).getContent();
-        else
-            return commentService.findCommentsByToiletId(id);
+            return commentService.findCommentsByToiletId(id, page, size);
+        return commentService.findCommentsByToiletId(id);
     }
 
     @GetMapping(path = "/users/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -48,9 +55,8 @@ public class CommentController {
     ) {
         logger.info("Sending comments for user with id {}", id);
         if (pageable)
-            return commentService.findCommentsByUserIdPaging(id, page, size).getContent();
-        else
-            return commentService.findCommentsByUserId(id);
+            return commentService.findCommentsByUserId(id, page, size);
+        return commentService.findCommentsByUserId(id);
     }
 
     @GetMapping(path = "/reactions", produces = MediaType.APPLICATION_JSON_VALUE)

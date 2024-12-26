@@ -30,6 +30,7 @@ import pt.iade.ei.thinktoilet.ui.components.SettingsCarousel
 import pt.iade.ei.thinktoilet.ui.components.ChangeEmailTextField
 import pt.iade.ei.thinktoilet.ui.components.ChangeNameTextField
 import pt.iade.ei.thinktoilet.ui.components.ChangePasswordTextField
+import pt.iade.ei.thinktoilet.ui.navegation.AppGraph
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,9 +38,7 @@ import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 fun SettingsScreen(
     user: User,
     navigateToBack: () -> Unit = {},
-    onChangeName: () -> Unit = {},
-    onChangeEmail: () -> Unit = {},
-    onChangePassword: () -> Unit = {}
+    onChange: (String) -> Unit = {},
 ) {
     val imageList = generateCarouselImage()
 
@@ -106,14 +105,20 @@ fun SettingsScreen(
                 ) {
                     ChangeNameTextField(
                         name = user.name,
-                        onClick = onChangeName
+                        onClick = {
+                            onChange(AppGraph.settings.SETTINGS_CHANGE_NAME)
+                        }
                     )
                     ChangeEmailTextField(
                         email = user.email!!,
-                        onClick = onChangeEmail
+                        onClick = {
+                            onChange(AppGraph.settings.SETTINGS_CHANGE_EMAIL)
+                        }
                     )
                     ChangePasswordTextField(
-                        onClick = onChangePassword
+                        onClick = {
+                            onChange(AppGraph.settings.SETTINGS_CHANGE_PASSWORD)
+                        }
                     )
                 }
             }

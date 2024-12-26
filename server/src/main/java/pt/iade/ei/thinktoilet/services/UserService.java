@@ -42,6 +42,10 @@ public class UserService {
                 .orElseThrow(() -> new EmailNotFoundException(email));
     }
 
+    public boolean existsUserById(int id) {
+        return userRepository.existsUserById(id);
+    }
+
     public boolean existsUserByEmail(String email) {
         return userRepository.existsUserByEmail(email);
     }

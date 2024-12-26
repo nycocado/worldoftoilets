@@ -16,4 +16,7 @@ public class Access {
 
     @Column(name = "acs_name", length = 50)
     private String name;
+
+    @Column(name = "acs_technical_name", length = 50)
+    private String technicalName;
 }

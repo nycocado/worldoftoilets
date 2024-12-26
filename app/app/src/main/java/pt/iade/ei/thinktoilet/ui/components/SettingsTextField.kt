@@ -4,7 +4,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
@@ -20,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.iade.ei.thinktoilet.R
+import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
 /**
  * Exibe um campo de texto para alterar o nome do usuário. (É clicável e somente leitura)
@@ -171,17 +171,23 @@ fun ChangePasswordTextField(
 @Preview(showBackground = true)
 @Composable
 private fun ChangeNameTextFieldPreview() {
-    ChangeNameTextField()
+    AppTheme {
+        ChangeNameTextField()
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun ChangeEmailTextFieldPreview() {
-    ChangeEmailTextField()
+    AppTheme {
+        ChangeEmailTextField()
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun ChangePasswordTextFieldPreview() {
-    ChangePasswordTextField()
+    AppTheme {
+        ChangePasswordTextField()
+    }
 }

@@ -16,4 +16,7 @@ public class TypeReaction {
 
     @Column(name = "trc_name", length = 50)
     private String name;
+
+    @Column(name = "trc_technical_name", length = 50)
+    private String technicalName;
 }

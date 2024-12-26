@@ -22,12 +22,13 @@ import androidx.compose.ui.unit.dp
 import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.User
 import pt.iade.ei.thinktoilet.tests.generateUserMain
+import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
 /**
-* Exibe o status do usuário de acordo com a quantidade de pontos que ele possui.
-*
-* @param user [User] que contém os detalhes do usuário.
-*/
+ * Exibe o status do usuário de acordo com a quantidade de pontos que ele possui.
+ *
+ * @param user [User] que contém os detalhes do usuário.
+ */
 @Composable
 fun ProfileStatus(
     user: User
@@ -119,7 +120,9 @@ fun ProfileStatus(
 @Preview(showBackground = true)
 @Composable
 private fun ProfileStatusPreview() {
-    ProfileStatus(
-        user = generateUserMain()
-    )
+    AppTheme {
+        ProfileStatus(
+            user = generateUserMain()
+        )
+    }
 }

@@ -12,6 +12,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import pt.iade.ei.thinktoilet.R
+import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
 /**
  * Exibe um campo de texto para inserção de email.
@@ -89,11 +90,15 @@ fun PasswordTextField(
 @Preview(showBackground = true)
 @Composable
 private fun EmailTextFieldPreview() {
-    EmailTextField()
+    AppTheme {
+        EmailTextField()
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun PasswordTextFieldPreview() {
-    PasswordTextField()
+    AppTheme {
+        PasswordTextField()
+    }
 }

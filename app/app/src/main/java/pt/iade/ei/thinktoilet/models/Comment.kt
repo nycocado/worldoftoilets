@@ -1,8 +1,10 @@
 package pt.iade.ei.thinktoilet.models
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import com.google.gson.annotations.SerializedName
+import pt.iade.ei.thinktoilet.R
 import java.io.Serializable
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -30,7 +32,9 @@ data class Comment(
         return ((ratingClean * 0.2f) + avgPaper + (ratingStructure * 0.2f) + (ratingAccessibility * 0.2f))
     }
 
+    @Composable
     fun getDateTimeString(): String {
+        val context = LocalContext.current
         val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
         val commentDate = LocalDateTime.parse(dateTime, formatter)
         val year = ChronoUnit.YEARS.between(commentDate, LocalDateTime.now())
@@ -39,18 +43,45 @@ data class Comment(
         val hours = ChronoUnit.HOURS.between(commentDate, LocalDateTime.now())
         val weeks = floor(days / 7.0).toInt()
 
-        return if (year >= 1) {
-            if (year.toInt() == 1) "Há um ano." else "Há mais de um ano."
-        } else if (month >= 1) {
-            if (month.toInt() == 1) "Há um mês." else "Há $month de um mês."
-        } else if (weeks >= 1) {
-            if (weeks == 1) "Há uma semana." else "Há $weeks semanas."
-        } else if (days.toInt() >= 1) {
-            if (days.toInt() == 1) "Há um dia." else "Há $days dias."
-        } else if (hours > 1) {
-            "Há $hours horas."
-        } else {
-            "Há uma hora."
+        return when {
+            year >= 1 -> {
+                if (year.toInt() == 1)
+                    context.getString(R.string.time_year_single)
+                else
+                    context.getString(R.string.time_year_plural, year.toInt())
+            }
+
+            month >= 1 -> {
+                if (month.toInt() == 1)
+                    context.getString(R.string.time_month_single)
+                else
+                    context.getString(R.string.time_month_plural, month.toInt())
+            }
+
+            weeks >= 1 -> {
+                if (weeks == 1)
+                    context.getString(R.string.time_week_single)
+                else
+                    context.getString(R.string.time_week_plural, weeks)
+            }
+
+            days.toInt() >= 1 -> {
+                if (days.toInt() == 1)
+                    context.getString(R.string.time_day_single)
+                else
+                    context.getString(R.string.time_day_plural, days.toInt())
+            }
+
+            hours >= 1 -> {
+                if (hours.toInt() == 1)
+                    context.getString(R.string.time_hour_single)
+                else
+                    context.getString(R.string.time_hour_plural, hours.toInt())
+            }
+
+            else -> {
+                context.getString(R.string.time_hour_less)
+            }
         }
     }
 }

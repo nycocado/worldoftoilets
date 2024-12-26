@@ -16,6 +16,7 @@ interface CommentService {
     @GET("comments/toilets/{id}")
     suspend fun getCommentsByToiletId(
         @Path("id") id: Int,
+        @Query("userId") userId: Int? = null,
         @Query("pageable") pageable: Boolean = false,
         @Query("page") page: Int = 0,
         @Query("size") size: Int = 20

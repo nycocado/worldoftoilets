@@ -14,58 +14,49 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
-
+import pt.iade.ei.thinktoilet.ui.util.NoRippleInteractionSource
 
 /**
-         * Função que representa um complemento de uma reclamação.
-         *
-         * Esta função permite ao usuário interagir com um texto e, ao clicar nele, uma interface aparecerá para adicionar um complemento ao texto.
-         *
-         * Exemplo de uso:
-         * ```
-         * ReportComplement(
-         *     title = "Outros", // Título
-         *     value = currentValue, // Valor atual do TextField atualmente vazio ""
-         *     onValueChange = { newValue -> /* remember { mutableStateOf("") } */ }
-         * )
-         * ```
-         */
+ * Exibe um botão para selecionar uma denúncia.
+ *
+ * @param title [String] que representa o título da denúncia.
+ * @param id [Int] que representa o id da denúncia.
+ * @param onClick Callback que será chamado quando o botão for clicado.
+ */
 @Composable
-fun ReportComplement(
+fun ReportButton(
     title: String,
     id: Int,
-    onClick: (Int) -> Unit
+    onClick: () -> Unit = {}
 ) {
-    Row(
+
+    Surface(
         modifier = Modifier
             .fillMaxWidth()
             .height(70.dp)
             .padding(vertical = 5.dp),
-        verticalAlignment = Alignment.CenterVertically
+        onClick = { onClick() },
+        interactionSource = NoRippleInteractionSource()
     ) {
-        Surface(
-            onClick = { onClick(id) },
+        Row(
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-
+                fontWeight = FontWeight.Bold
             )
         }
     }
 }
 
-
 @Composable
 @Preview(showBackground = true)
 fun ReportComplementPreview() {
-    AppTheme{
-        ReportComplement(
+    AppTheme {
+        ReportButton(
             title = "Title",
-            id = 1,
-        ){
-            println("Fui Clicado")
-        }
+            id = 1
+        )
     }
 }
