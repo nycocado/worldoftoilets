@@ -1,15 +1,20 @@
 package pt.iade.ei.thinktoilet.ui.screens
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -30,7 +35,9 @@ import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ConfirmationScreenOne() {
+fun ConfirmationScreenOne(
+    onClick: () -> Unit = {}
+) {
     val iconSize = 90.dp
 
     Scaffold(topBar = {
@@ -93,13 +100,41 @@ fun ConfirmationScreenOne() {
                     textAlign = TextAlign.Center
                 )
             }
+            item{
+                Button(
+                    onClick = { onClick() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .width(200.dp)
+                        .padding(top = 250.dp),
+                    colors = ButtonColors(
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                        disabledContainerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(
+                            alpha = 0.5f
+                        ),
+                        disabledContentColor = MaterialTheme.colorScheme.onTertiaryContainer.copy(
+                            alpha = 0.5f
+                        )
+                    )
+                ) {
+                    Text(
+                        text = "Confirmar",
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+            }
         }
     }
 }
 
 
 @Composable
-@Preview(showBackground = true)
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES, // LOL maneiro n é?
+    showBackground = true,
+    )
 fun ConfirmationScreenPreview() {
     AppTheme {
         ConfirmationScreenOne()
