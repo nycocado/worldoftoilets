@@ -92,4 +92,13 @@
     <string name="time_hour_single">Há uma hora</string>
     <string name="time_hour_plural">Há %d horas</string>
     <string name="time_hour_less">Há menos de uma hora</string>
+    <string name="confirm">Confirmar</string>
+    <string name="confirmation_report_success">Obrigado por denúnciar</string>
+    <string name="confirmation_suggest_success">Obrigado por sugerir</string>
+    <string name="confirmation_report_failure">Erro ao denúnciar</string>
+    <string name="confirmation_suggest_failure">Erro ao sugerir</string>
+    <string name="confirmation_report_success_text">Analisaremos o mais breve possível.</string>
+    <string name="confirmation_suggest_success_text">Analisaremos o mais breve possível.</string>
+    <string name="confirmation_report_failure_text">Por favor, tente novamente mais tarde</string>
+    <string name="confirmation_suggest_failure_text">Por favor, tente novamente mais tarde</string>
 </resources>

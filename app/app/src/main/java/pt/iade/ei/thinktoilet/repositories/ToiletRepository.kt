@@ -2,6 +2,7 @@ package pt.iade.ei.thinktoilet.repositories
 
 import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.models.requests.ReportRequest
+import pt.iade.ei.thinktoilet.models.responses.ApiResponse
 import pt.iade.ei.thinktoilet.network.RetrofitClient
 import pt.iade.ei.thinktoilet.network.ToiletService
 import javax.inject.Inject
@@ -43,7 +44,18 @@ class ToiletRepository @Inject constructor() {
         toiletId: Int,
         userId: Int,
         typeReport: String
-    ) {
-        toiletService.reportToilet(ReportRequest(toiletId, userId, typeReport))
+    ): Result<ApiResponse> {
+        return try {
+            val response = toiletService.reportToilet(ReportRequest(toiletId, userId, typeReport))
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    Result.success(it)
+                } ?: Result.failure(Exception("No response found"))
+            } else {
+                Result.failure(Exception("Error reporting toilet"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }

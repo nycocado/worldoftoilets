@@ -11,7 +11,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import pt.iade.ei.thinktoilet.models.enums.ConfirmationType
 import pt.iade.ei.thinktoilet.ui.screens.ChangeSettingsScreen
+import pt.iade.ei.thinktoilet.ui.screens.ConfirmationScreen
 import pt.iade.ei.thinktoilet.ui.screens.HistoryScreen
 import pt.iade.ei.thinktoilet.ui.screens.HomeScreen
 import pt.iade.ei.thinktoilet.ui.screens.LoginScreen
@@ -155,7 +157,12 @@ fun BottomSheetNavigationGraph(
                     }
                 },
                 onClickLoadMore = { pageResponse ->
-                    localViewModel.loadMoreToiletsNearby(location.value.latitude, location.value.longitude, user?.id, pageResponse)
+                    localViewModel.loadMoreToiletsNearby(
+                        location.value.latitude,
+                        location.value.longitude,
+                        user?.id,
+                        pageResponse
+                    )
                 }
             )
         }
@@ -302,10 +309,12 @@ private fun NavGraphBuilder.reportNavGraph(
             route = AppGraph.report.REPORT,
             arguments = AppGraph.report.REPORT_ARGUMENTS
         ) { backStackEntry ->
+            val report = localViewModel.reportState
             val typeId = backStackEntry.arguments?.getString("typeId")!!
             val user = userViewModel.user.collectAsState().value!!
             val id = backStackEntry.arguments?.getInt("id")!!
             ReportScreen(
+                reportStateFlow = report,
                 type = typeId,
                 id = id,
                 navigateToBack = {
@@ -313,17 +322,49 @@ private fun NavGraphBuilder.reportNavGraph(
                 },
                 onToiletReport = { toiletId, typeReport ->
                     localViewModel.updateReport(toiletId, user.id!!, typeReport)
-                    navController.navigate(AppGraph.main.ROOT) {
-                        popUpTo(navController.graph.startDestinationRoute!!) {
-                            inclusive = true
-                        }
-                        launchSingleTop = true
-                    }
                 },
                 onCommentReport = { commentId, typeReaction ->
                     localViewModel.updateReaction(commentId, user.id!!, typeReaction)
-                    navController.popBackStack()
                 },
+                onReportConfirmation = { confirmationType ->
+                    localViewModel.clearReportState()
+                    navController.navigate(
+                        AppGraph.report.reportConfirmation(
+                            confirmationType.type,
+                            confirmationType.confirmation
+                        )
+                    ) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+        composable(
+            route = AppGraph.report.REPORT_CONFIRMATION,
+            arguments = AppGraph.report.REPORT_CONFIRMATION_ARGUMENTS
+        ) { backStackEntry ->
+            val type = backStackEntry.arguments?.getString("type")!!
+            val confirmation = backStackEntry.arguments?.getString("confirmation")!!
+            val confirmationType =
+                ConfirmationType.entries.find { it.type == type && it.confirmation == confirmation }!!
+            ConfirmationScreen(
+                confirmation = confirmationType,
+                onClickConfirm = {
+                    if (it == ConfirmationType.REPORT_COMMENT_SUCCESS || it == ConfirmationType.REPORT_COMMENT_FAILURE) {
+                        navController.popBackStack()
+                        navController.popBackStack()
+                    } else {
+                        navController.navigate(AppGraph.main.ROOT) {
+                            popUpTo(navController.graph.startDestinationRoute!!) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+                    }
+                },
+                navigateToBack = {
+                    navController.popBackStack()
+                }
             )
         }
     }
@@ -358,7 +399,7 @@ private fun NavGraphBuilder.settingsNavGraph(
                     navController.popBackStack()
                 },
                 onChange = { path ->
-                    navController.navigate(path){
+                    navController.navigate(path) {
                         launchSingleTop = true
                     }
                 }
@@ -367,7 +408,7 @@ private fun NavGraphBuilder.settingsNavGraph(
         composable(
             route = AppGraph.settings.SETTINGS_CHANGE,
             arguments = AppGraph.settings.SETTINGS_CHANGE_ARGUMENTS
-        ){
+        ) {
             ChangeSettingsScreen(
                 navigateToBack = {
                     navController.popBackStack()

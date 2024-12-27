@@ -20,6 +20,7 @@
     <string name="checked">Checked</string>
     <string name="suggest_toilet">Suggest</string>
     <string name="load_more">Load More</string>
+    <string name="confirm">Confirm</string>
 
     <!-- Login -->
     <string name="login_action">Log In</string>
@@ -127,6 +128,16 @@
     <string name="time_hour_single">An hour ago</string>
     <string name="time_hour_plural">%d hours ago</string>
     <string name="time_hour_less">Less than an hour ago</string>
+
+    <!-- Confirmation -->
+    <string name="confirmation_report_success">Thanks for your report</string>
+    <string name="confirmation_suggest_success">Thanks for your suggestion</string>
+    <string name="confirmation_report_failure">Error reporting</string>
+    <string name="confirmation_suggest_failure">Error suggesting</string>
+    <string name="confirmation_report_success_text">We will analyze it as soon as possible.</string>
+    <string name="confirmation_suggest_success_text">We will analyze it as soon as possible.</string>
+    <string name="confirmation_report_failure_text">Please try again later.</string>
+    <string name="confirmation_suggest_failure_text">Please try again later.</string>
 
     <!-- Links -->
     <string name="maps_uri" translatable="false">android-app://com.google.android.apps.maps</string>

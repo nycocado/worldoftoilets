@@ -12,7 +12,10 @@ import javax.inject.Inject
 class AuthRepository @Inject constructor() {
     private val authService = RetrofitClient.retrofit.create(AuthService::class.java)
 
-    suspend fun login(email: String, password: String): Result<User> {
+    suspend fun login(
+        email: String,
+        password: String
+    ): Result<User> {
         return try {
             val response = authService.login(LoginRequest(email, password))
             if (response.isSuccessful) {

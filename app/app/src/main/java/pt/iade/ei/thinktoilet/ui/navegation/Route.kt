@@ -103,9 +103,7 @@ object SuggestGraph {
 object ReportGraph {
     const val ROOT = "report_graph"
     const val REPORT = "report/{typeId}/{id}"
-    const val REPORT_TOILET = "report/toilet/{id}"
-    const val REPORT_COMMENT = "report/comment/{id}"
-    const val REPORT_CONFIRMATION = "report/confirmation/{id}"
+    const val REPORT_CONFIRMATION = "report/confirmation/{type}/{confirmation}"
     val REPORT_ARGUMENTS = listOf (
         navArgument("typeId") {
             type = NavType.StringType
@@ -114,9 +112,15 @@ object ReportGraph {
             type = NavType.IntType
         }
     )
+    val REPORT_CONFIRMATION_ARGUMENTS = listOf (
+        navArgument("type") {
+            type = NavType.StringType
+        }
+    )
 
     fun reportToilet(toiletId: Int) = "report/toilet/$toiletId"
     fun reportComment(commentId: Int) = "report/comment/$commentId"
+    fun reportConfirmation(type: String, confirmation: String) = "report/confirmation/$type/$confirmation"
 }
 
 sealed class NavRoute(

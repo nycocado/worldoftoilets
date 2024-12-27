@@ -2,6 +2,8 @@ package pt.iade.ei.thinktoilet.network
 
 import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.models.requests.ReportRequest
+import pt.iade.ei.thinktoilet.models.responses.ApiResponse
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -43,5 +45,5 @@ interface ToiletService {
     ): List<Toilet>
 
     @POST("toilets/reports")
-    suspend fun reportToilet(@Body reportRequest: ReportRequest)
+    suspend fun reportToilet(@Body reportRequest: ReportRequest): Response<ApiResponse>
 }

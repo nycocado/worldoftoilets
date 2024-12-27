@@ -17,6 +17,7 @@ import pt.iade.ei.thinktoilet.models.enums.TypeReaction
 import pt.iade.ei.thinktoilet.models.UiState
 import pt.iade.ei.thinktoilet.models.User
 import pt.iade.ei.thinktoilet.models.enums.TypeReport
+import pt.iade.ei.thinktoilet.models.responses.ApiResponse
 import pt.iade.ei.thinktoilet.models.responses.PageResponse
 import pt.iade.ei.thinktoilet.repositories.CommentRepository
 import pt.iade.ei.thinktoilet.repositories.LocationRepository
@@ -54,6 +55,9 @@ class LocalViewModel @Inject constructor(
 
     private val _ratingState = MutableStateFlow<Result<Comment>?>(null)
     val ratingState: StateFlow<Result<Comment>?> get() = _ratingState
+
+    private val _reportState = MutableStateFlow<Result<ApiResponse>?>(null)
+    val reportState: StateFlow<Result<ApiResponse>?> get() = _reportState
 
     private val _location = MutableStateFlow(Location(""))
     val location: StateFlow<Location> get() = _location
@@ -349,10 +353,11 @@ class LocalViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             try {
+                val result = toiletRepository.postReport(toiletId, userId, typeReport.technicalValue)
                 _toiletsCache.value = _toiletsCache.value.toMutableMap().apply {
                     remove(toiletId)
                 }
-                toiletRepository.postReport(toiletId, userId, typeReport.technicalValue)
+                _reportState.value = result
             } catch (e: Exception) {
                 _error.value = "Erro ao atualizar report: ${e.message}"
                 Log.e("ToiletViewModel", "Erro ao atualizar report para toiletId=$toiletId", e)
@@ -411,11 +416,12 @@ class LocalViewModel @Inject constructor(
 
                             else -> {
                                 remove(comment)
-                                commentRepository.postReaction(
+                                val result = commentRepository.postReaction(
                                     commentId,
                                     userId,
                                     typeReaction.technicalValue
                                 )
+                                _reportState.value = result
                             }
                         }
                     }
@@ -457,5 +463,9 @@ class LocalViewModel @Inject constructor(
 
     fun clearRatingState() {
         _ratingState.value = null
+    }
+
+    fun clearReportState() {
+        _reportState.value = null
     }
 }

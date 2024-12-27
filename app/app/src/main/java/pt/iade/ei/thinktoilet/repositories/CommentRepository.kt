@@ -10,10 +10,13 @@ import pt.iade.ei.thinktoilet.network.CommentService
 import pt.iade.ei.thinktoilet.network.RetrofitClient
 import javax.inject.Inject
 
-class CommentRepository @Inject constructor(){
+class CommentRepository @Inject constructor() {
     private val commentService = RetrofitClient.retrofit.create(CommentService::class.java)
 
-    suspend fun getCommentsByToiletId(toiletId: Int, userId: Int): List<Comment> {
+    suspend fun getCommentsByToiletId(
+        toiletId: Int,
+        userId: Int
+    ): List<Comment> {
         return commentService.getCommentsByToiletId(toiletId, userId)
     }
 
@@ -21,7 +24,10 @@ class CommentRepository @Inject constructor(){
         return commentService.getCommentsByUserId(userId)
     }
 
-    suspend fun getReactionsByUserId(userId: Int, commentIds: List<Int>): List<Reaction> {
+    suspend fun getReactionsByUserId(
+        userId: Int,
+        commentIds: List<Int>
+    ): List<Reaction> {
         return commentService.getReactionsByUserId(userId, commentIds)
     }
 
@@ -60,11 +66,31 @@ class CommentRepository @Inject constructor(){
         }
     }
 
-    suspend fun postReaction(commentId: Int, userId: Int, typeReaction: String) {
-        commentService.postReaction(ReactionRequest(commentId, userId, typeReaction))
+    suspend fun postReaction(
+        commentId: Int,
+        userId: Int,
+        typeReaction: String
+    ): Result<ApiResponse> {
+        return try {
+            val response = commentService.postReaction(ReactionRequest(commentId, userId, typeReaction))
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    Result.success(it)
+                } ?: Result.failure(Exception("No response found"))
+            } else {
+                val errorBody = response.errorBody()?.string()
+                val errorResponse = Gson().fromJson(errorBody, ApiResponse::class.java)
+                Result.failure(Exception(errorResponse.message))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
-    suspend fun deleteReaction(commentId: Int, userId: Int) {
+    suspend fun deleteReaction(
+        commentId: Int,
+        userId: Int
+    ) {
         commentService.deleteReaction(commentId, userId)
     }
 }

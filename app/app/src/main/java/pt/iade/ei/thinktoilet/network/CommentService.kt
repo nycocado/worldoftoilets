@@ -4,6 +4,7 @@ import pt.iade.ei.thinktoilet.models.Comment
 import pt.iade.ei.thinktoilet.models.Reaction
 import pt.iade.ei.thinktoilet.models.requests.CommentRequest
 import pt.iade.ei.thinktoilet.models.requests.ReactionRequest
+import pt.iade.ei.thinktoilet.models.responses.ApiResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -40,7 +41,7 @@ interface CommentService {
     suspend fun postComment(@Body commentRequest: CommentRequest): Response<Comment>
 
     @POST("comments/reactions")
-    suspend fun postReaction(@Body reactionRequest: ReactionRequest)
+    suspend fun postReaction(@Body reactionRequest: ReactionRequest): Response<ApiResponse>
 
     @DELETE("comments/reactions")
     suspend fun deleteReaction(
