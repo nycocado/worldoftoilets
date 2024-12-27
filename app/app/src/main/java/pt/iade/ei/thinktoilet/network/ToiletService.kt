@@ -1,5 +1,6 @@
 package pt.iade.ei.thinktoilet.network
 
+import pt.iade.ei.thinktoilet.models.SearchToilet
 import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.models.requests.ReportRequest
 import pt.iade.ei.thinktoilet.models.responses.ApiResponse
@@ -22,7 +23,7 @@ interface ToiletService {
     ): List<Toilet>
 
     @GET("toilets/{id}")
-    suspend fun getToiletById(@Path("id") id: Int): Toilet
+    suspend fun getToiletById(@Path("id") id: Int): Response<Toilet>
 
     @GET("toilets/nearby")
     suspend fun getNearbyToilets(
@@ -46,4 +47,12 @@ interface ToiletService {
 
     @POST("toilets/reports")
     suspend fun reportToilet(@Body reportRequest: ReportRequest): Response<ApiResponse>
+
+    @GET("toilets/search/{query}")
+    suspend fun searchToilets(
+        @Path("query") query: String,
+        @Query("state") pageable: Boolean = false,
+        @Query("page") page: Int = 0,
+        @Query("size") size: Int = 5
+    ): List<SearchToilet>
 }

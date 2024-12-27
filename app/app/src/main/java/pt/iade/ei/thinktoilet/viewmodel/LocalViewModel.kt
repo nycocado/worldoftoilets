@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import pt.iade.ei.thinktoilet.models.Comment
 import pt.iade.ei.thinktoilet.models.Page
 import pt.iade.ei.thinktoilet.models.Reaction
+import pt.iade.ei.thinktoilet.models.SearchToilet
 import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.models.enums.TypeReaction
 import pt.iade.ei.thinktoilet.models.UiState
@@ -40,6 +41,12 @@ class LocalViewModel @Inject constructor(
 
     private val _toiletsHistoryIds = MutableStateFlow<UiState<PageResponse<Int>>>(UiState.Loading)
     val toiletsHistoryIds: StateFlow<UiState<PageResponse<Int>>> get() = _toiletsHistoryIds
+
+    private val _toiletsSearch = MutableStateFlow<List<SearchToilet>>(emptyList())
+    val toiletsSearch: StateFlow<List<SearchToilet>> get() = _toiletsSearch
+
+    private val _toiletSearchSelected = MutableStateFlow<Result<Toilet>?>(null)
+    val toiletSearchSelected: StateFlow<Result<Toilet>?> get() = _toiletSearchSelected
 
     private val _users = MutableStateFlow<Map<Int, User>>(emptyMap())
     val users: StateFlow<Map<Int, User>> get() = _users
@@ -228,36 +235,6 @@ class LocalViewModel @Inject constructor(
         }
     }
 
-    private fun loadToilets() {
-        viewModelScope.launch {
-            try {
-                val fetchedToilets = toiletRepository.getToilets()
-                _toiletsCache.value = _toiletsCache.value.toMutableMap().apply {
-                    fetchedToilets.forEach { toilet ->
-                        toilet.id.let { id -> this[id] = toilet }
-                    }
-                }
-            } catch (e: Exception) {
-                _error.value = "Erro ao carregar banheiros: ${e.message}"
-                Log.e("ToiletViewModel", "Erro ao carregar banheiros", e)
-            }
-        }
-    }
-
-    private fun loadUser(userId: Int) {
-        viewModelScope.launch {
-            try {
-                val fetchedUser = userRepository.getUserById(userId)
-                _users.value = _users.value.toMutableMap().apply {
-                    this[userId] = fetchedUser
-                }
-            } catch (e: Exception) {
-                _error.value = "Erro ao carregar usuário: ${e.message}"
-                Log.e("ToiletViewModel", "Erro ao carregar usuário", e)
-            }
-        }
-    }
-
     fun loadToiletComments(
         toiletId: Int,
         userId: Int
@@ -291,6 +268,37 @@ class LocalViewModel @Inject constructor(
             } catch (e: Exception) {
                 _error.value = "Erro ao carregar comentários: ${e.message}"
                 Log.e("ToiletViewModel", "Erro ao carregar comentários para toiletId=$toiletId", e)
+            }
+        }
+    }
+
+    fun loadToiletsSearch(query: String) {
+        viewModelScope.launch {
+            try {
+                val fetchedToilets = toiletRepository.searchToilets(query)
+                _toiletsSearch.value = fetchedToilets
+            } catch (e: Exception) {
+                _error.value = "Erro ao carregar banheiros: ${e.message}"
+                Log.e("ToiletViewModel", "Erro ao carregar banheiros", e)
+            }
+        }
+    }
+
+    fun loadToiletSearchSelected(toiletId: Int) {
+        viewModelScope.launch {
+            try {
+                val result = toiletRepository.getToiletById(toiletId)
+                result.isSuccess.let {
+                    _toiletsCache.value = _toiletsCache.value.toMutableMap().apply {
+                        result.getOrNull()?.let { toilet ->
+                            this[toilet.id] = toilet
+                        }
+                    }
+                }
+                _toiletSearchSelected.value = result
+            } catch (e: Exception) {
+                _error.value = "Erro ao carregar banheiro: ${e.message}"
+                Log.e("ToiletViewModel", "Erro ao carregar banheiro", e)
             }
         }
     }
@@ -467,5 +475,13 @@ class LocalViewModel @Inject constructor(
 
     fun clearReportState() {
         _reportState.value = null
+    }
+
+    fun clearSearchToilets() {
+        _toiletsSearch.value = emptyList()
+    }
+
+    fun clearToiletSearchSelected() {
+        _toiletSearchSelected.value = null
     }
 }

@@ -15,6 +15,8 @@ import pt.iade.ei.thinktoilet.models.dtos.ToiletDTO;
 import pt.iade.ei.thinktoilet.models.entities.Toilet;
 import pt.iade.ei.thinktoilet.models.mappers.ToiletMapper;
 import pt.iade.ei.thinktoilet.models.response.ApiResponse;
+import pt.iade.ei.thinktoilet.models.views.SearchToilet;
+import pt.iade.ei.thinktoilet.repositories.SearchToiletRepository;
 import pt.iade.ei.thinktoilet.repositories.ToiletRepository;
 
 import java.io.File;
@@ -31,6 +33,8 @@ public class ToiletService {
     private UserService userService;
     @Autowired
     private ToiletRepository toiletRepository;
+    @Autowired
+    private SearchToiletRepository searchToiletRepository;
     @Autowired
     private ToiletMapper toiletMapper;
 
@@ -196,6 +200,16 @@ public class ToiletService {
         }
     }
 
+    public List<SearchToilet> getSearchToilets(String query) {
+        return Optional.ofNullable(searchToiletRepository.searchToilets(query))
+                .orElseThrow(() -> new NotFoundException(query, "Toilet", "search"));
+    }
+
+    public List<SearchToilet> getSearchToilets(String query, Pageable pageable) {
+        return Optional.ofNullable(searchToiletRepository.searchToilets(query, pageable))
+                .orElseThrow(() -> new NotFoundException(query, "Toilet", "search"));
+    }
+
     public boolean existsToiletById(int id) {
         return toiletRepository.existsToiletById(id);
     }
@@ -249,6 +263,17 @@ public class ToiletService {
         Pageable pageable = PageRequest.of(page, size);
         List<Toilet> toilets = getToiletsByUserId(stateTechnicalName, userId, pageable);
         return toiletMapper.mapToiletDTOS(toilets);
+    }
+
+    @Transactional
+    public List<SearchToilet> searchToilets(String query) {
+        return getSearchToilets(query);
+    }
+
+    @Transactional
+    public List<SearchToilet> searchToilets(String query, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return getSearchToilets(query, pageable);
     }
 
     @Transactional

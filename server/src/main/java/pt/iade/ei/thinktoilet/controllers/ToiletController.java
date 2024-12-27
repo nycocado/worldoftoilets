@@ -12,6 +12,7 @@ import pt.iade.ei.thinktoilet.exceptions.NotFoundException;
 import pt.iade.ei.thinktoilet.models.dtos.ToiletDTO;
 import pt.iade.ei.thinktoilet.models.requests.ReportRequest;
 import pt.iade.ei.thinktoilet.models.response.ApiResponse;
+import pt.iade.ei.thinktoilet.models.views.SearchToilet;
 import pt.iade.ei.thinktoilet.services.ReportService;
 import pt.iade.ei.thinktoilet.services.ToiletService;
 
@@ -101,6 +102,18 @@ public class ToiletController {
         return reportService.deleteReport(toiletId, userId);
     }
 
+    @GetMapping(path = "/search/{query}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<SearchToilet> searchToilets(
+            @PathVariable String query,
+            @RequestParam(defaultValue = "false", required = false) boolean pageable,
+            @RequestParam(defaultValue = "0", required = false) int page,
+            @RequestParam(defaultValue = "20", required = false) int size
+    ) {
+        logger.info("Searching toilets with query {}", query);
+        if (pageable)
+            return toiletService.searchToilets(query, page, size);
+        return toiletService.searchToilets(query);
+    }
 
     @PostMapping(path = "{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse> uploadImage(

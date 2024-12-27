@@ -1,5 +1,6 @@
 package pt.iade.ei.thinktoilet.repositories
 
+import pt.iade.ei.thinktoilet.models.SearchToilet
 import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.models.requests.ReportRequest
 import pt.iade.ei.thinktoilet.models.responses.ApiResponse
@@ -18,6 +19,21 @@ class ToiletRepository @Inject constructor() {
         size: Int = 20
     ): List<Toilet> {
         return toiletService.getToilets(ids, userId, pageable, page, size)
+    }
+
+    suspend fun getToiletById(id: Int): Result<Toilet> {
+        return try {
+            val response = toiletService.getToiletById(id)
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    Result.success(it)
+                } ?: Result.failure(Exception("No response found"))
+            } else {
+                Result.failure(Exception("Error getting toilet"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
     suspend fun getToiletsNearby(
@@ -57,5 +73,9 @@ class ToiletRepository @Inject constructor() {
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    suspend fun searchToilets(query: String): List<SearchToilet> {
+        return toiletService.searchToilets(query)
     }
 }
