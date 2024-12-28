@@ -161,5 +161,11 @@ public interface ToiletRepository extends JpaRepository<Toilet, Integer> {
             "WHERE i.toilet.state.technicalName = :stateTechnicalName AND i.user.id = :userId")
     List<Toilet> findToiletsByUserIdAndState(String stateTechnicalName, int userId, Pageable pageable);
 
+    @EntityGraph(attributePaths = {"city", "city.country", "access", "state"})
+    @Query("SELECT t " +
+            "FROM Toilet t " +
+            "WHERE t.latitude >= :minLat AND t.latitude <= :maxLat AND t.longitude >= :minLon AND t.longitude <= :maxLon AND t.state.technicalName = 'active'")
+    List<Toilet> findToiletsByBoundingBox(double minLat, double maxLat, double minLon, double maxLon);
+
     boolean existsToiletById(int id);
 }

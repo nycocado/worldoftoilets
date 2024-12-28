@@ -210,6 +210,11 @@ public class ToiletService {
                 .orElseThrow(() -> new NotFoundException(query, "Toilet", "search"));
     }
 
+    public List<Toilet> getToiletsByBoundingBox(double maxLat, double minLat, double maxLon, double minLon) {
+        return Optional.ofNullable(toiletRepository.findToiletsByBoundingBox(maxLat, minLat, maxLon, minLon))
+                .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "bounding box"));
+    }
+
     public boolean existsToiletById(int id) {
         return toiletRepository.existsToiletById(id);
     }
@@ -274,6 +279,12 @@ public class ToiletService {
     public List<SearchToilet> searchToilets(String query, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return getSearchToilets(query, pageable);
+    }
+
+    @Transactional
+    public List<ToiletDTO> findToiletsByBoundingBox(double minLat, double maxLat, double minLon, double maxLon) {
+        List<Toilet> toilets = getToiletsByBoundingBox(minLat, maxLat, minLon, maxLon);
+        return toiletMapper.mapToiletDTOS(toilets);
     }
 
     @Transactional

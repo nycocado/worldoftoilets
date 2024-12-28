@@ -42,6 +42,9 @@ class LocalViewModel @Inject constructor(
     private val _toiletsHistoryIds = MutableStateFlow<UiState<PageResponse<Int>>>(UiState.Loading)
     val toiletsHistoryIds: StateFlow<UiState<PageResponse<Int>>> get() = _toiletsHistoryIds
 
+    private val _toiletsBoundingBoxIds = MutableStateFlow<List<Int>>(emptyList())
+    val toiletsBoundingBoxIds: StateFlow<List<Int>> get() = _toiletsBoundingBoxIds
+
     private val _toiletsSearch = MutableStateFlow<List<SearchToilet>>(emptyList())
     val toiletsSearch: StateFlow<List<SearchToilet>> get() = _toiletsSearch
 
@@ -299,6 +302,35 @@ class LocalViewModel @Inject constructor(
             } catch (e: Exception) {
                 _error.value = "Erro ao carregar banheiro: ${e.message}"
                 Log.e("ToiletViewModel", "Erro ao carregar banheiro", e)
+            }
+        }
+    }
+
+    fun loadToiletsBoundingBox(
+        minLat: Double,
+        maxLat: Double,
+        minLon: Double,
+        maxLon: Double
+    ) {
+        viewModelScope.launch {
+            try {
+                val fetchedToilets = toiletRepository.getToiletsInBoundingBox(
+                    minLat,
+                    maxLat,
+                    minLon,
+                    maxLon
+                )
+
+                _toiletsCache.value = _toiletsCache.value.toMutableMap().apply {
+                    fetchedToilets.forEach { toilet ->
+                        toilet.id.let { id -> this[id] = toilet }
+                    }
+                }
+
+                _toiletsBoundingBoxIds.value = fetchedToilets.map { it.id }
+            } catch (e: Exception) {
+                _error.value = "Erro ao carregar banheiros no bounding box: ${e.message}"
+                Log.e("ToiletViewModel", "Erro ao carregar banheiros no bounding box", e)
             }
         }
     }

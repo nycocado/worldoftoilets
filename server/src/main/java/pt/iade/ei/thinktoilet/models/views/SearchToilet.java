@@ -20,7 +20,4 @@ public class SearchToilet {
 
     @Column(name = "toil_name")
     public String name;
-
-    @Column(name = "toil_address")
-    public String address;
 }

@@ -55,4 +55,12 @@ interface ToiletService {
         @Query("page") page: Int = 0,
         @Query("size") size: Int = 5
     ): List<SearchToilet>
+
+    @GET("toilets/bounding")
+    suspend fun getToiletsInBoundingBox(
+        @Query("minLat") minLat: Double,
+        @Query("maxLat") maxLat: Double,
+        @Query("minLon") minLon: Double,
+        @Query("maxLon") maxLon: Double
+    ): List<Toilet>
 }

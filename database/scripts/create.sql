@@ -271,3 +271,11 @@ SELECT
 FROM
 	interaction i
 	INNER JOIN report r ON r.rep_int_id = i.int_id;
+
+CREATE VIEW
+	vw_search_toilet AS
+SELECT
+	t.toil_id,
+	t.toil_name
+FROM
+	toilet t;

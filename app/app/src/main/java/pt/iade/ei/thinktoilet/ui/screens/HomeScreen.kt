@@ -1,11 +1,12 @@
 package pt.iade.ei.thinktoilet.ui.screens
 
+import android.location.Location
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.BottomSheetScaffold
@@ -35,6 +36,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import pt.iade.ei.thinktoilet.ui.components.CustomDragHandle
 import pt.iade.ei.thinktoilet.ui.components.OpenStreetMapsView
@@ -72,7 +74,10 @@ fun HomeScreen(
     val toiletSearchSelected = localViewModel.toiletSearchSelected.collectAsState().value
 
     val user = userViewModel.user.collectAsState().value
-    val locationStateFlow = localViewModel.location
+    val toiletsStateFlow = localViewModel.toiletsCache
+    val toiletsBoundingBoxIdsStateFlow = localViewModel.toiletsBoundingBoxIds
+
+    val locationStateFlow: StateFlow<Location> = localViewModel.location
     val location = locationStateFlow.collectAsState().value
 
     LaunchedEffect(toiletSearchSelected) {
@@ -167,14 +172,17 @@ fun HomeScreen(
             colors = SearchBarDefaults.colors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                 dividerColor = MaterialTheme.colorScheme.onSurface,
-            )
+            ),
+            shadowElevation = 4.dp
         ) {
             LazyColumn {
-                items(toiletsSearch) { toilet ->
-                    HorizontalDivider(
-                        thickness = 1.dp,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+                itemsIndexed(toiletsSearch) { index, toilet ->
+                    if (index != 0) {
+                        HorizontalDivider(
+                            thickness = 1.dp,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                     Surface(
                         onClick = {
                             localViewModel.loadToiletSearchSelected(toilet.id)
@@ -194,6 +202,23 @@ fun HomeScreen(
                 }
             }
         }
-        OpenStreetMapsView(locationStateFlow)
+        OpenStreetMapsView(
+            locationStateFlow,
+            toiletsStateFlow,
+            toiletsBoundingBoxIdsStateFlow,
+            onRequestToiletsBoundingBox = { boundingBox ->
+                localViewModel.loadToiletsBoundingBox(
+                    boundingBox.latSouth,
+                    boundingBox.latNorth,
+                    boundingBox.lonWest,
+                    boundingBox.lonEast
+                )
+            },
+            onClickMarker = { toiletId ->
+                navController.navigate(AppGraph.bottomSheet.toiletDetail(toiletId)) {
+                    launchSingleTop = true
+                }
+            }
+        )
     }
 }

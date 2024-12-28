@@ -115,6 +115,17 @@ public class ToiletController {
         return toiletService.searchToilets(query);
     }
 
+    @GetMapping(path = "/bounding", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ToiletDTO> getToiletsByBoundingBox(
+            @RequestParam double minLat,
+            @RequestParam double maxLat,
+            @RequestParam double minLon,
+            @RequestParam double maxLon
+    ) {
+        logger.info("Sending toilets by bounding box with min lat {}, max lat {}, min lon {} and max lon {}", minLat, maxLat, minLon, maxLon);
+        return toiletService.findToiletsByBoundingBox(minLat, maxLat, minLon, maxLon);
+    }
+
     @PostMapping(path = "{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse> uploadImage(
             @PathVariable int id,

@@ -9,19 +9,19 @@ import java.util.List;
 
 public interface SearchToiletRepository extends JpaRepository<SearchToilet, Integer> {
     @Query(
-            value = "SELECT t.toil_id, t.toil_name, t.toil_address " +
-                    "FROM vw_search_toilet vst " +
-                    "INNER JOIN toilet t ON vst.toil_id = t.toil_id " +
-                    "WHERE MATCH(t.toil_name, t.toil_address) AGAINST(:query IN NATURAL LANGUAGE MODE) AND t.toil_state_id = 1",
+            value = "SELECT t.toil_id, t.toil_name " +
+                    "FROM toilet t " +
+                    "INNER JOIN state s ON t.toil_state_id = s.state_id " +
+                    "WHERE MATCH(t.toil_name, t.toil_address) AGAINST(:query IN NATURAL LANGUAGE MODE) AND s.state_technical_name = 'active'",
             nativeQuery = true
     )
     List<SearchToilet> searchToilets(String query);
 
     @Query(
-            value = "SELECT t.toil_id, t.toil_name, t.toil_address " +
-                    "FROM vw_search_toilet vst " +
-                    "INNER JOIN toilet t ON vst.toil_id = t.toil_id " +
-                    "WHERE MATCH(t.toil_name, t.toil_address) AGAINST(:query IN NATURAL LANGUAGE MODE) AND t.toil_state_id = 1",
+            value = "SELECT t.toil_id, t.toil_name " +
+                    "FROM toilet t " +
+                    "INNER JOIN state s ON t.toil_state_id = s.state_id " +
+                    "WHERE MATCH(t.toil_name, t.toil_address) AGAINST(:query IN NATURAL LANGUAGE MODE) AND s.state_technical_name = 'active'",
             nativeQuery = true
     )
     List<SearchToilet> searchToilets(String query, Pageable pageable);

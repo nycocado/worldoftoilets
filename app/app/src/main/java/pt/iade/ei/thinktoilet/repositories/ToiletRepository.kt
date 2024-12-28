@@ -78,4 +78,13 @@ class ToiletRepository @Inject constructor() {
     suspend fun searchToilets(query: String): List<SearchToilet> {
         return toiletService.searchToilets(query)
     }
+
+    suspend fun getToiletsInBoundingBox(
+        minLat: Double,
+        maxLat: Double,
+        minLon: Double,
+        maxLon: Double
+    ): List<Toilet> {
+        return toiletService.getToiletsInBoundingBox(minLat, maxLat, minLon, maxLon)
+    }
 }
