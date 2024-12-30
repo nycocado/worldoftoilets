@@ -3,23 +3,18 @@ package pt.iade.ei.thinktoilet.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -37,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.enums.ConfirmationType
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,7 +54,7 @@ fun ConfirmationScreen(
                     )
                 },
                 navigationIcon = {
-                    if (confirmation.confirmation == "failure") {
+                    if (!confirmation.confirmation) {
                         IconButton(
                             onClick = {
                                 navigateToBack()
@@ -76,33 +70,28 @@ fun ConfirmationScreen(
             )
         },
         bottomBar = {
-            Row(
+            Button(
+                onClick = { onClickConfirm(confirmation) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 50.dp)
                     .padding(top = 30.dp),
+                colors = ButtonColors(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                    disabledContainerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(
+                        alpha = 0.5f
+                    ),
+                    disabledContentColor = MaterialTheme.colorScheme.onTertiaryContainer.copy(
+                        alpha = 0.5f
+                    )
+                )
             ) {
-                Button(
-                    onClick = { onClickConfirm(confirmation) },
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    colors = ButtonColors(
-                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                        disabledContainerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(
-                            alpha = 0.5f
-                        ),
-                        disabledContentColor = MaterialTheme.colorScheme.onTertiaryContainer.copy(
-                            alpha = 0.5f
-                        )
-                    )
-                ) {
-                    Text(
-                        text = context.getString(R.string.confirm),
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
+                Text(
+                    text = context.getString(R.string.confirm),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold,
+                )
             }
         }
     ) { innerPadding ->
@@ -121,17 +110,14 @@ fun ConfirmationScreen(
                         .size(iconSize)
                         .background(
                             color = when (confirmation.confirmation) {
-                                "success" -> MaterialTheme.colorScheme.primaryContainer
-                                else -> MaterialTheme.colorScheme.error
+                                true -> MaterialTheme.colorScheme.primaryContainer
+                                false -> MaterialTheme.colorScheme.error
                             },
                             shape = CircleShape
                         ), contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = when (confirmation.confirmation) {
-                            "success" -> Icons.Default.Check
-                            else -> Icons.Default.Close
-                        },
+                        imageVector = confirmation.icon,
                         contentDescription = null,
                         tint = Color.White,
                         modifier = Modifier.size(iconSize * 0.85f)
@@ -140,29 +126,13 @@ fun ConfirmationScreen(
             }
             item {
                 Text(
-                    text = when (confirmation) {
-                        ConfirmationType.REPORT_TOILET_SUCCESS -> context.getString(R.string.confirmation_report_success)
-                        ConfirmationType.REPORT_TOILET_FAILURE -> context.getString(R.string.confirmation_report_failure)
-                        ConfirmationType.REPORT_COMMENT_SUCCESS -> context.getString(R.string.confirmation_report_success)
-                        ConfirmationType.REPORT_COMMENT_FAILURE -> context.getString(R.string.confirmation_report_failure)
-                        ConfirmationType.SUGGEST_TOILET_SUCCESS -> context.getString(R.string.confirmation_suggest_success)
-                        ConfirmationType.SUGGEST_TOILET_FAILURE -> context.getString(R.string.confirmation_suggest_failure)
-                    },
+                    text = context.getString(confirmation.title),
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    modifier = Modifier.padding(
-                        top = 18.dp
-                    ),
-                    text = when (confirmation) {
-                        ConfirmationType.REPORT_TOILET_SUCCESS -> context.getString(R.string.confirmation_report_success_text)
-                        ConfirmationType.REPORT_TOILET_FAILURE -> context.getString(R.string.confirmation_report_failure_text)
-                        ConfirmationType.REPORT_COMMENT_SUCCESS -> context.getString(R.string.confirmation_report_success_text)
-                        ConfirmationType.REPORT_COMMENT_FAILURE -> context.getString(R.string.confirmation_report_failure_text)
-                        ConfirmationType.SUGGEST_TOILET_SUCCESS -> context.getString(R.string.confirmation_suggest_success_text)
-                        ConfirmationType.SUGGEST_TOILET_FAILURE -> context.getString(R.string.confirmation_suggest_failure_text)
-                    },
+                    modifier = Modifier.padding(top = 18.dp),
+                    text = context.getString(confirmation.text),
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center
                 )

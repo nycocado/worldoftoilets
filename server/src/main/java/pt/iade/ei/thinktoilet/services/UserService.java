@@ -1,11 +1,10 @@
 package pt.iade.ei.thinktoilet.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pt.iade.ei.thinktoilet.exceptions.DatabaseSaveException;
-import pt.iade.ei.thinktoilet.exceptions.EmailNotFoundException;
-import pt.iade.ei.thinktoilet.exceptions.NotFoundException;
+import pt.iade.ei.thinktoilet.exceptions.*;
 import pt.iade.ei.thinktoilet.models.dtos.UserDTO;
 import pt.iade.ei.thinktoilet.models.entities.User;
 import pt.iade.ei.thinktoilet.models.mappers.UserMapper;
@@ -21,6 +20,8 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public List<User> getUsers() {
         return Optional.ofNullable(userRepository.findUsers())
@@ -71,5 +72,49 @@ public class UserService {
     public UserDTO findUserById(int id) {
         User user = getUserById(id);
         return userMapper.mapUserDTO(user);
+    }
+
+    @Transactional
+    public UserDTO editName(int id, String name, String password) {
+        User user = getUserById(id);
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new InvalidPasswordException();
+        }
+        user.setName(name);
+        User savedUser = saveUser(user);
+        return userMapper.mapLoginResponse(savedUser, savedUser.getEmail());
+    }
+
+    @Transactional
+    public UserDTO editEmail(int id, String email, String password) {
+        User user = getUserById(id);
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new InvalidPasswordException();
+        }
+        if (existsUserByEmail(email)) {
+            throw new EmailAlreadyInUseException();
+        }
+        user.setEmail(email);
+        User savedUser = saveUser(user);
+        return userMapper.mapLoginResponse(savedUser, savedUser.getEmail());
+    }
+
+    @Transactional
+    public UserDTO editPassword(int id, String newPassword, String password) {
+        User user = getUserById(id);
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new InvalidPasswordException();
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
+        User savedUser = saveUser(user);
+        return userMapper.mapLoginResponse(savedUser, savedUser.getEmail());
+    }
+
+    @Transactional
+    public UserDTO editIcon(int id, String iconId) {
+        User user = getUserById(id);
+        user.setIconId(iconId);
+        User savedUser = saveUser(user);
+        return userMapper.mapLoginResponse(savedUser, savedUser.getEmail());
     }
 }

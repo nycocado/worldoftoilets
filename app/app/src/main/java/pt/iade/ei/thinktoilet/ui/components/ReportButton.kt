@@ -26,7 +26,6 @@ import pt.iade.ei.thinktoilet.ui.util.NoRippleInteractionSource
 @Composable
 fun ReportButton(
     title: String,
-    id: Int,
     onClick: () -> Unit = {}
 ) {
 
@@ -55,8 +54,7 @@ fun ReportButton(
 fun ReportComplementPreview() {
     AppTheme {
         ReportButton(
-            title = "Title",
-            id = 1
+            title = "Title"
         )
     }
 }

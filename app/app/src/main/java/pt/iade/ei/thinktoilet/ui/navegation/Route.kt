@@ -1,18 +1,8 @@
 package pt.iade.ei.thinktoilet.ui.navegation
 
 import android.content.Context
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material.icons.outlined.Person
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import pt.iade.ei.thinktoilet.R
@@ -83,15 +73,14 @@ object RatingGraph {
 object SettingsGraph {
     const val ROOT = "settings_graph"
     const val SETTINGS_START = "settings/start"
-    const val SETTINGS_CHANGE = "settings/change/{settingId}"
-    const val SETTINGS_CHANGE_EMAIL = "settings/change/email"
-    const val SETTINGS_CHANGE_NAME = "settings/change/name"
-    const val SETTINGS_CHANGE_PASSWORD = "settings/change/password"
+    const val SETTINGS_CHANGE = "settings/change/{type}"
     val SETTINGS_CHANGE_ARGUMENTS = listOf (
-        navArgument("settingId") {
+        navArgument("type") {
             type = NavType.StringType
         }
     )
+
+    fun changeSetting(type: String) = "settings/change/$type"
 }
 
 object SuggestGraph {
@@ -115,12 +104,15 @@ object ReportGraph {
     val REPORT_CONFIRMATION_ARGUMENTS = listOf (
         navArgument("type") {
             type = NavType.StringType
+        },
+        navArgument("confirmation") {
+            type = NavType.BoolType
         }
     )
 
     fun reportToilet(toiletId: Int) = "report/toilet/$toiletId"
     fun reportComment(commentId: Int) = "report/comment/$commentId"
-    fun reportConfirmation(type: String, confirmation: String) = "report/confirmation/$type/$confirmation"
+    fun reportConfirmation(type: String, confirmation: Boolean) = "report/confirmation/$type/$confirmation"
 }
 
 sealed class NavRoute(

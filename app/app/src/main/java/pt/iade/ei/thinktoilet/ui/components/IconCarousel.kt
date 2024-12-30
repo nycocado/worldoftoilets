@@ -1,5 +1,6 @@
 package pt.iade.ei.thinktoilet.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
@@ -19,14 +20,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import pt.iade.ei.thinktoilet.R
-import pt.iade.ei.thinktoilet.tests.generateCarouselImage
+import pt.iade.ei.thinktoilet.models.enums.UserIcon
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 import kotlin.math.absoluteValue
 
@@ -37,8 +36,8 @@ import kotlin.math.absoluteValue
  * @param pagerState [PagerState] que controla o estado do carrossel.
  */
 @Composable
-fun SettingsCarousel(
-    imageList: List<String>,
+fun IconCarousel(
+    imageList: List<Int>,
     pagerState: PagerState
 ) {
     val context = LocalContext.current
@@ -47,7 +46,7 @@ fun SettingsCarousel(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            modifier = Modifier.padding(vertical = 10.dp),
+            modifier = Modifier.padding(bottom = 10.dp),
             text = context.getString(R.string.roll_to_change),
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.secondary
@@ -60,7 +59,7 @@ fun SettingsCarousel(
                 end = 130.dp
             )
         ) { index ->
-            CardContent(index, pagerState, imageList)
+            IconContent(index, pagerState, imageList)
         }
     }
 }
@@ -73,10 +72,10 @@ fun SettingsCarousel(
  * @param imageList Lista de [String] com os links das imagens.
  */
 @Composable
-fun CardContent(
+fun IconContent(
     index: Int,
     pagerState: PagerState,
-    imageList: List<String>
+    imageList: List<Int>
 ) {
     val pageOffset = (pagerState.currentPage - index) + pagerState.currentPageOffsetFraction
 
@@ -96,13 +95,12 @@ fun CardContent(
                 }
             },
     ) {
-        AsyncImage(
+        Image(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f)
                 .height(150.dp),
-            model = ImageRequest.Builder(LocalContext.current).data(imageList[index])
-                .crossfade(true).build(),
+            painter = painterResource(imageList[index]),
             contentDescription = "Image",
             contentScale = ContentScale.Crop
         )
@@ -112,24 +110,24 @@ fun CardContent(
 @Preview(showBackground = true)
 @Composable
 fun CardContentPreview() {
-    val imageList = generateCarouselImage()
+    val imageList = UserIcon.entries.map { it.icon }
     val pagerState = rememberPagerState(initialPage = 0) {
         imageList.size
     }
     AppTheme {
-        CardContent(0, pagerState, imageList)
+        IconContent(0, pagerState, imageList)
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun SettingsCarouselPreview() {
-    val imageList = generateCarouselImage()
+    val imageList = UserIcon.entries.map { it.icon }
     val pagerState = rememberPagerState(initialPage = 0) {
         imageList.size
     }
     AppTheme {
-        SettingsCarousel(
+        IconCarousel(
             imageList = imageList,
             pagerState = pagerState
         )

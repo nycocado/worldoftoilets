@@ -17,6 +17,8 @@
     <string name="points">Pontos</string>
     <string name="progress">Progresso</string>
     <string name="your_critics">Suas Críticas</string>
+    <string name="new_password">Nova Palavra-Passe</string>
+    <string name="confirm_new_password">Confirmar Nova Palavra-Passe</string>
     <string name="toilet_name">Nome</string>
     <string name="toilet_city">Cidade</string>
     <string name="toilet_country">País</string>
@@ -40,6 +42,7 @@
     <string name="comments">Comentários</string>
     <string name="content_description_toilet_image">Imagem da casa de banho</string>
     <string name="content_description_profile_picture">Imagem do perfil</string>
+    <string name="content_description_new_password_button">Botão para alterar senha</string>
     <string name="error_image">Erro ao carregar imagem</string>
     <string name="home">Início</string>
     <string name="ratings">Avaliações</string>
@@ -62,6 +65,7 @@
     <string name="logo">Logo da aplicação</string>
     <string name="suggest_toilet">Sugerir</string>
     <string name="load_more">Carregar Mais</string>
+    <string name="save">Salvar</string>
     <string name="login_action">Iniciar Sessão</string>
     <string name="register_action">Registar</string>
     <string name="error_login">Erro ao iniciar sessão</string>
@@ -101,4 +105,8 @@
     <string name="confirmation_suggest_success_text">Analisaremos o mais breve possível.</string>
     <string name="confirmation_report_failure_text">Por favor, tente novamente mais tarde</string>
     <string name="confirmation_suggest_failure_text">Por favor, tente novamente mais tarde</string>
+    <string name="extra_wheelchair_accessible">Acessivel para Cadeirantes</string>
+    <string name="extra_baby_changing_station">Fraudário</string>
+    <string name="extra_diasabled_parking">Estacionamento para Deficientes</string>
+    <string name="extra_accessible_for_visual_impairment">Acessivel para Deficientes Visuais</string>
 </resources>

@@ -24,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.content.ContextCompat
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
@@ -170,7 +169,7 @@ fun OpenStreetMapsView(
                     Marker(map).apply {
                         position = GeoPoint(toilet.latitude, toilet.longitude)
                         title = toilet.id.toString()
-                        icon = ContextCompat.getDrawable(map.context, R.drawable.pin)
+                        icon = map.context.getDrawable(R.drawable.pin)
                         setOnMarkerClickListener { marker, _ ->
                             onClickMarker(marker.title.toInt())
                             false

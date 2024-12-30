@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.compose.runtime.Composable
 import com.google.gson.annotations.SerializedName
 import pt.iade.ei.thinktoilet.BuildConfig
+import pt.iade.ei.thinktoilet.models.enums.TypeExtra
 import java.io.Serializable
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -18,13 +19,14 @@ data class Toilet(
     @SerializedName("latitude") val latitude: Double,
     @SerializedName("longitude") val longitude: Double,
     @SerializedName("numComments") var numComments: Int,
-    @SerializedName("placeId") val placeId: String? = null
+    @SerializedName("placeId") val placeId: String? = null,
+    @SerializedName("extras") val extras: List<TypeExtra>
 ) : Serializable {
     fun getAverageRating(): Float {
         return rating.average()
     }
 
-    fun distanceTo(lat: Double, lon: Double): Double {
+    private fun distanceTo(lat: Double, lon: Double): Double {
         val earthRadius = 6371.0
         val dLat = Math.toRadians(lat - latitude)
         val dLon = Math.toRadians(lon - longitude)

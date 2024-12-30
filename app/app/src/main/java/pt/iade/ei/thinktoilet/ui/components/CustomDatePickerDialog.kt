@@ -3,7 +3,6 @@ package pt.iade.ei.thinktoilet.ui.components
 import android.annotation.SuppressLint
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerColors
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SelectableDates

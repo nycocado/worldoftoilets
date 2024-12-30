@@ -47,12 +47,13 @@ import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.Comment
 import pt.iade.ei.thinktoilet.models.Reaction
 import pt.iade.ei.thinktoilet.models.Toilet
-import pt.iade.ei.thinktoilet.models.enums.TypeReaction
 import pt.iade.ei.thinktoilet.models.User
+import pt.iade.ei.thinktoilet.models.enums.TypeReaction
 import pt.iade.ei.thinktoilet.tests.generateCommentsList
 import pt.iade.ei.thinktoilet.tests.generateRandomToilet
 import pt.iade.ei.thinktoilet.tests.generateReactions
 import pt.iade.ei.thinktoilet.tests.generateUserMain
+import pt.iade.ei.thinktoilet.ui.components.ChipsToilet
 import pt.iade.ei.thinktoilet.ui.components.CommentToilet
 import pt.iade.ei.thinktoilet.ui.components.ProgressBar
 import pt.iade.ei.thinktoilet.ui.components.Stars
@@ -64,6 +65,7 @@ fun ToiletDetailScreen(
     toiletId: Int,
     toiletsStateFlow: StateFlow<Map<Int, Toilet>>,
     commentsStateFlow: StateFlow<List<Comment>>,
+    isLoadingCommentsToiletStateFlow: StateFlow<Boolean>,
     reactionsStateFlow: StateFlow<Map<Int, Reaction>>,
     usersStateFlow: StateFlow<Map<Int, User>>,
     userMainStateFlow: StateFlow<User?>,
@@ -75,6 +77,7 @@ fun ToiletDetailScreen(
 ) {
     val toilet = toiletsStateFlow.collectAsState().value[toiletId]!!
     val comments = commentsStateFlow.collectAsState().value.filter { it.toiletId == toiletId }
+    val isLoadingCommentsToilet = isLoadingCommentsToiletStateFlow.collectAsState().value
     val reactions = reactionsStateFlow.collectAsState().value
     val users = usersStateFlow.collectAsState().value
     val userMain = userMainStateFlow.collectAsState().value
@@ -206,14 +209,22 @@ fun ToiletDetailScreen(
 
             item {
                 Row(
-                    modifier = Modifier.padding(vertical = 16.dp),
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Column(
-                        modifier = Modifier.weight(1f)
+                    Row (
+                        modifier = Modifier.weight(1f),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Icon(
+                            painter = painterResource(R.drawable.location_on_filled_24px),
+                            contentDescription = null,
+                            modifier = Modifier.size(30.dp),
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
                         Text(
+                            modifier = Modifier.padding(horizontal = 6.dp),
                             text = toilet.address,
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Medium
@@ -255,8 +266,20 @@ fun ToiletDetailScreen(
             }
 
             item {
+                if (toilet.extras.isNotEmpty()) {
+                    Column(
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    ) {
+                        ChipsToilet(toilet.extras)
+                    }
+                }
+            }
+
+            item {
                 Row(
-                    modifier = Modifier.padding(horizontal = 8.dp),
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .padding(bottom = 16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(
@@ -311,7 +334,6 @@ fun ToiletDetailScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(
-                            top = 16.dp,
                             bottom = 8.dp
                         ),
                     onClick = { scope.launch { navigateToRating(toilet.id) } },
@@ -358,27 +380,31 @@ fun ToiletDetailScreen(
                 }
             }
 
-            if (comments.isEmpty()) {
-                item {
-                    CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+            when (isLoadingCommentsToilet) {
+                true -> {
+                    item {
+                        CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+                    }
                 }
-            } else {
-                items(comments) { comment ->
-                    val user = users[comment.userId]
-                    if (user != null) {
-                        reactions[comment.id]?.let {
-                            CommentToilet(
-                                comment = comment,
-                                reaction = it,
-                                user = user,
-                                userMain = userMain!!,
-                                navigateToReport = { commentId ->
-                                    navigateToCommentReport(commentId)
-                                },
-                                onReaction = { commentId, typeReaction ->
-                                    onReaction(commentId, typeReaction)
-                                },
-                            )
+
+                false -> {
+                    items(comments) { comment ->
+                        val user = users[comment.userId]
+                        if (user != null) {
+                            reactions[comment.id]?.let {
+                                CommentToilet(
+                                    comment = comment,
+                                    reaction = it,
+                                    user = user,
+                                    userMain = userMain!!,
+                                    navigateToReport = { commentId ->
+                                        navigateToCommentReport(commentId)
+                                    },
+                                    onReaction = { commentId, typeReaction ->
+                                        onReaction(commentId, typeReaction)
+                                    },
+                                )
+                            }
                         }
                     }
                 }
@@ -397,6 +423,7 @@ fun ToiletDetailScreenPreview() {
     )
     val commentsStateFlow = MutableStateFlow(generateCommentsList())
     val comments = commentsStateFlow.collectAsState().value
+    val isLoadingCommentsToiletStateFlow = MutableStateFlow(false)
     val reactionsStateFlow = MutableStateFlow(
         generateReactions(comments.map { it.id })
     )
@@ -412,6 +439,7 @@ fun ToiletDetailScreenPreview() {
             toiletId = 1,
             toiletsStateFlow = toiletsStateFlow,
             commentsStateFlow = commentsStateFlow,
+            isLoadingCommentsToiletStateFlow = isLoadingCommentsToiletStateFlow,
             reactionsStateFlow = reactionsStateFlow,
             usersStateFlow = usersStateFlow,
             userMainStateFlow = userMainStateFlow,

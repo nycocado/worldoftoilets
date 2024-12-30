@@ -33,6 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,8 +43,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.User
-import pt.iade.ei.thinktoilet.ui.components.EmailTextField
-import pt.iade.ei.thinktoilet.ui.components.PasswordTextField
+import pt.iade.ei.thinktoilet.ui.components.GoTextField
+import pt.iade.ei.thinktoilet.ui.components.NextTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,6 +60,7 @@ fun LoginScreen(
     var emailSupportText by remember { mutableStateOf("") }
     var passwordSupportText by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
+    val isAllowedToLogin = emailSupportText.isEmpty() && passwordSupportText.isEmpty()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -66,7 +69,9 @@ fun LoginScreen(
         emailSupportText = when {
             email.isEmpty() -> context.getString(R.string.error_required_email)
             email.length > 100 -> context.getString(R.string.error_too_long_email)
-            !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> context.getString(R.string.error_invalid_email)
+            !Patterns.EMAIL_ADDRESS.matcher(email)
+                .matches() -> context.getString(R.string.error_invalid_email)
+
             else -> ""
         }
 
@@ -148,22 +153,34 @@ fun LoginScreen(
             }
 
             item {
-                EmailTextField(
-                    email = email,
-                    emailSupportText = emailSupportText,
-                    onEmailChange = { email = it }
+                NextTextField(
+                    label = context.getString(R.string.email),
+                    value = email,
+                    supportText = emailSupportText,
+                    onValueChange = { email = it },
+                    keyboardType = KeyboardType.Email
                 )
-                PasswordTextField(
-                    password = password,
-                    passwordSupportText = passwordSupportText,
-                    onPasswordChange = { password = it }
+                GoTextField(
+                    label = context.getString(R.string.password),
+                    value = password,
+                    supportText = passwordSupportText,
+                    onValueChange = { password = it },
+                    onGo = {
+                        if (isAllowedToLogin)
+                            scope.launch {
+                                onLogin(email, password)
+                                isLoading = true
+                            }
+                    },
+                    keyboardType = KeyboardType.Password,
+                    visualTransformation = PasswordVisualTransformation()
                 )
             }
 
             item {
                 Button(
                     onClick = {
-                        if (emailSupportText.isEmpty() && passwordSupportText.isEmpty())
+                        if (isAllowedToLogin)
                             scope.launch {
                                 onLogin(email, password)
                                 isLoading = true
@@ -183,18 +200,19 @@ fun LoginScreen(
                         )
                     )
                 ) {
-                    if (!isLoading)
-                        Text(
+                    when (isLoading) {
+                        true -> CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp)
+                        )
+
+                        false -> Text(
                             text = context.getString(R.string.login_action),
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.SemiBold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                    else
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp),
-                        )
+                    }
                 }
                 Button(
                     onClick = { navigateToRegister() },

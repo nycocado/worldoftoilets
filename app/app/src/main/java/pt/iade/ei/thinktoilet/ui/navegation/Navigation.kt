@@ -1,5 +1,6 @@
 package pt.iade.ei.thinktoilet.ui.navegation
 
+import android.util.Log
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
@@ -11,6 +12,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import pt.iade.ei.thinktoilet.models.enums.ChangeSettingType
 import pt.iade.ei.thinktoilet.models.enums.ConfirmationType
 import pt.iade.ei.thinktoilet.ui.screens.ChangeSettingsScreen
 import pt.iade.ei.thinktoilet.ui.screens.ConfirmationScreen
@@ -98,12 +100,13 @@ fun MainNavigationGraph(
             val user = userViewModel.user
             val userId = user.collectAsState().value?.id
             val comments = localViewModel.commentsUser
+            val isLoadingCommentsUser = localViewModel.isLoadingCommentsUser
             LaunchedEffect(Unit) {
                 if (userId != null) {
                     localViewModel.loadUserComments(userId)
                 }
             }
-            ProfileScreen(toilets, user, comments,
+            ProfileScreen(toilets, user, comments, isLoadingCommentsUser,
                 onClickLogout = {
                     userViewModel.clearUser().also {
                         navController.navigate(AppGraph.main.HOME) {
@@ -174,13 +177,14 @@ fun BottomSheetNavigationGraph(
             val userId = userViewModel.user.collectAsState().value?.id
             val toilets = localViewModel.toiletsCache
             val comments = localViewModel.commentsToilet
+            val isLoadingCommentsToilet = localViewModel.isLoadingCommentsToilet
             val reactions = localViewModel.reactions
             val users = localViewModel.users
             val user = userViewModel.user
             LaunchedEffect(Unit) {
                 localViewModel.loadToiletComments(toiletId, userId!!)
             }
-            ToiletDetailScreen(toiletId, toilets, comments, reactions, users, user,
+            ToiletDetailScreen(toiletId, toilets, comments, isLoadingCommentsToilet, reactions, users, user,
                 navigateToRating = {
                     rootNavController.navigate(AppGraph.rating.rating(it)) {
                         launchSingleTop = true
@@ -344,7 +348,7 @@ private fun NavGraphBuilder.reportNavGraph(
             arguments = AppGraph.report.REPORT_CONFIRMATION_ARGUMENTS
         ) { backStackEntry ->
             val type = backStackEntry.arguments?.getString("type")!!
-            val confirmation = backStackEntry.arguments?.getString("confirmation")!!
+            val confirmation = backStackEntry.arguments?.getBoolean("confirmation")!!
             val confirmationType =
                 ConfirmationType.entries.find { it.type == type && it.confirmation == confirmation }!!
             ConfirmationScreen(
@@ -392,25 +396,54 @@ private fun NavGraphBuilder.settingsNavGraph(
         startDestination = AppGraph.settings.SETTINGS_START
     ) {
         composable(AppGraph.settings.SETTINGS_START) {
+            val editUser = userViewModel.editUser
             val user = userViewModel.user.collectAsState().value!!
+            val userId = user.id!!
             SettingsScreen(
+                editUserStateFlow = editUser,
                 user = user,
                 navigateToBack = {
                     navController.popBackStack()
                 },
-                onChange = { path ->
-                    navController.navigate(path) {
+                onChange = { type ->
+                    navController.navigate(AppGraph.settings.changeSetting(type.value)) {
                         launchSingleTop = true
                     }
+                },
+                onChangeIcon = { iconId ->
+                    userViewModel.editIcon(userId, iconId)
+                },
+                onChangeIconSuccess = { newUser ->
+                    userViewModel.saveUser(newUser)
                 }
             )
         }
         composable(
             route = AppGraph.settings.SETTINGS_CHANGE,
             arguments = AppGraph.settings.SETTINGS_CHANGE_ARGUMENTS
-        ) {
+        ) { backStackEntry ->
+            val type = backStackEntry.arguments?.getString("type")!!
+            val changeSettingType = ChangeSettingType.entries.find { it.value == type }!!
+            val userId = userViewModel.user.collectAsState().value?.id!!
+            val editUser = userViewModel.editUser
             ChangeSettingsScreen(
+                editUserStateFlow = editUser,
+                changeSettingType = changeSettingType,
                 navigateToBack = {
+                    navController.popBackStack()
+                },
+                onChangeName = { name, password ->
+                    userViewModel.editName(userId, name, password)
+                },
+                onChangeEmail = { email, password ->
+                    userViewModel.editEmail(userId, email, password)
+                },
+                onChangePassword = { password, newPassword ->
+                    userViewModel.editPassword(userId, password, newPassword)
+                },
+                onChangeSuccess = { user ->
+                    userViewModel.clearEditUser()
+                    userViewModel.saveUser(user)
                     navController.popBackStack()
                 }
             )

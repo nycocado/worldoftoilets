@@ -74,6 +74,7 @@ fun HomeScreen(
     val toiletSearchSelected = localViewModel.toiletSearchSelected.collectAsState().value
 
     val user = userViewModel.user.collectAsState().value
+    val isUserLoggedIn = userViewModel.isUserLoggedIn.collectAsState().value
     val toiletsStateFlow = localViewModel.toiletsCache
     val toiletsBoundingBoxIdsStateFlow = localViewModel.toiletsBoundingBoxIds
 
@@ -185,7 +186,11 @@ fun HomeScreen(
                     }
                     Surface(
                         onClick = {
-                            localViewModel.loadToiletSearchSelected(toilet.id)
+                            if (isUserLoggedIn) {
+                                localViewModel.loadToiletSearchSelected(toilet.id)
+                            } else {
+                                rootNavController.navigate(AppGraph.auth.LOGIN)
+                            }
                         },
                         interactionSource = NoRippleInteractionSource(),
                         modifier = Modifier
@@ -215,8 +220,12 @@ fun HomeScreen(
                 )
             },
             onClickMarker = { toiletId ->
-                navController.navigate(AppGraph.bottomSheet.toiletDetail(toiletId)) {
-                    launchSingleTop = true
+                if (isUserLoggedIn) {
+                    navController.navigate(AppGraph.bottomSheet.toiletDetail(toiletId)) {
+                        launchSingleTop = true
+                    }
+                } else {
+                    rootNavController.navigate(AppGraph.auth.LOGIN)
                 }
             }
         )

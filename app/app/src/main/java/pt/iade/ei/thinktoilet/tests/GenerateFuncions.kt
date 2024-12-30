@@ -10,6 +10,7 @@ import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.models.enums.TypeReaction
 import pt.iade.ei.thinktoilet.models.UiState
 import pt.iade.ei.thinktoilet.models.User
+import pt.iade.ei.thinktoilet.models.enums.TypeExtra
 import pt.iade.ei.thinktoilet.models.responses.PageResponse
 import java.time.LocalDateTime
 
@@ -22,7 +23,7 @@ fun generateRandomRatingCategory(): Rating {
     )
 }
 
-fun generateRandomToilet(id: Int = (1..100).random(), numComments: Int = (1..40).random()): Toilet {
+fun generateRandomToilet(id: Int = (1..100).random()): Toilet {
     return Toilet(
         id = id,
         name = "Toilet $id",
@@ -31,7 +32,8 @@ fun generateRandomToilet(id: Int = (1..100).random(), numComments: Int = (1..40)
         latitude = (0..100).random().toDouble(),
         longitude = (0..100).random().toDouble(),
         numComments = 0,
-        placeId = "0"
+        placeId = "0",
+        extras = TypeExtra.entries
     )
 }
 fun randomDateTime(): LocalDateTime {
@@ -80,7 +82,7 @@ fun generateUser(): User {
     return User(
         id = 1,
         name = "Luan Ribeiro",
-        iconId = "",
+        iconId = "icon_default",
         numComments = (0..200).random(),
         points = (0..10000).random(),
     )
@@ -101,13 +103,12 @@ fun generateCommentsList(numComments: Int = (10..40).random()): List<Comment> {
 }
 
 fun generateRandomToilets(
-    numToilets: Int = (10..20).random(),
-    numComments: Int = (10..40).random()
+    numToilets: Int = (10..20).random()
 ): List<Toilet> {
     val toilets = mutableListOf<Toilet>()
     toilets.add(generateRandomToilet(0))
     for (i in 1..numToilets) {
-        toilets.add(generateRandomToilet(numComments = numComments))
+        toilets.add(generateRandomToilet())
     }
     return toilets
 }
@@ -118,17 +119,6 @@ fun generateUsers(numUsers: Int): List<User> {
         users.add(generateUser())
     }
     return users
-}
-
-fun generateCarouselImage(): List<String> {
-    return listOf(
-        "https://media.themoviedb.org/t/p/w440_and_h660_face/bOVr292mwn3jxr1e0NmUPM1rcjo.jpg",
-        "https://media.themoviedb.org/t/p/w440_and_h660_face/t5v2Zsb5sa6PSP9jMUWY4GdIb3c.jpg",
-        "https://media.themoviedb.org/t/p/w440_and_h660_face/4BtyJ4KAyuptcjnFgoxJgEcPmrY.jpg",
-        "https://media.themoviedb.org/t/p/w440_and_h660_face/hhhJN8aJdTlzGmARCbwWflHXhwI.jpg",
-        "https://media.themoviedb.org/t/p/w440_and_h660_face/kOrGwksr5qlucIWtg4oRtyc5r1t.jpg",
-        "https://media.themoviedb.org/t/p/w1066_and_h600_bestv2/qU4HDNKv7gjdlvMu74r70rISPwn.jpg"
-    )
 }
 
 fun generateToiletsStateFlow(numToilets: Int = (10..20).random(), preferenceId: Int? = null): MutableStateFlow<Map<Int, Toilet>> {

@@ -1,13 +1,35 @@
 package pt.iade.ei.thinktoilet.models.enums
 
+import pt.iade.ei.thinktoilet.R
+
 enum class TypeExtra(
     val id: Int,
-    val value: String,
+    val value: Int,
+    val icon: Int,
     val technicalValue: String
 ) {
-    NONE(id = 0, value = "None", technicalValue = "none"),
-    WHEELCHAIR_ACCESSIBLE(id = 1, value = "Acessível para Cadeiras de Rodas", technicalValue = "wheelchair_accessible"),
-    BABY_CHANGING_STATION(id = 2, value = "Estação de Troca de Fraldas", technicalValue = "baby_changing_station"),
-    DISABLED_PARKING(id = 3, value = "Estacionamento para Deficientes", technicalValue = "disabled_parking"),
-    ACCESSIBLE_FOR_VISUAL_IMPAIRMENT(id = 4, value = "Acessível para Deficientes Visuais", technicalValue = "accessible-for-visually-impaired"),
+    WHEELCHAIR_ACCESSIBLE(
+        id = 1,
+        value = R.string.extra_wheelchair_accessible,
+        icon = R.drawable.accessible_24px,
+        technicalValue = "wheelchair_accessible"
+    ),
+    BABY_CHANGING_STATION(
+        id = 2,
+        value = R.string.extra_baby_changing_station,
+        icon = R.drawable.baby_changing_station_24px,
+        technicalValue = "baby_changing_station"
+    ),
+    DISABLED_PARKING(
+        id = 3,
+        value = R.string.extra_diasabled_parking,
+        icon = R.drawable.local_parking_24px,
+        technicalValue = "disabled_parking"
+    ),
+    ACCESSIBLE_FOR_VISUAL_IMPAIRMENT(
+        id = 4,
+        value = R.string.extra_accessible_for_visual_impairment,
+        icon = R.drawable.visibility_off_24px,
+        technicalValue = "accessible-for-visually-impaired"
+    )
 }

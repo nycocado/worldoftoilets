@@ -34,7 +34,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,11 +56,13 @@ fun ProfileScreen(
     toiletsStateFlow: StateFlow<Map<Int, Toilet>>,
     userStateFlow: StateFlow<User?>,
     commentsStateFlow: StateFlow<List<Comment>>,
+    isLoadingCommentsUserStateFlow: StateFlow<Boolean>,
     navigateToSettings: () -> Unit = { },
     onClickLogout: () -> Unit = { }
 ) {
     val user = userStateFlow.collectAsState().value
     val comments = commentsStateFlow.collectAsState().value
+    val isLoadingCommentsUser = isLoadingCommentsUserStateFlow.collectAsState().value
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var menuExpanded by remember { mutableStateOf(false) }
@@ -112,12 +113,12 @@ fun ProfileScreen(
                         .border(
                             width = 5.dp, color = Color.Gray, shape = CircleShape
                         ),
-                    painter = painterResource(R.drawable.image_test),
+                    painter = user.getIcon(),
                     contentDescription = context.getString(R.string.content_description_profile_picture)
                 )
                 Text(
                     text = user.name,
-                    modifier = Modifier.padding(top = 10.dp),
+                    modifier = Modifier.padding(top = 20.dp),
                     fontWeight = FontWeight.SemiBold,
                     style = MaterialTheme.typography.titleLarge,
                     maxLines = 1,
@@ -162,7 +163,7 @@ fun ProfileScreen(
             HorizontalDivider(
                 modifier = Modifier
                     .padding(
-                        top = 10.dp,
+                        top = 20.dp,
                         bottom = 20.dp
                     )
                     .fillMaxWidth(1f),
@@ -175,7 +176,7 @@ fun ProfileScreen(
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.Start
-            ){
+            ) {
                 Text(
                     text = context.getString(R.string.your_critics),
                     fontWeight = FontWeight.Bold,
@@ -185,18 +186,22 @@ fun ProfileScreen(
             }
         }
 
-        if (comments.isEmpty()) {
-            item {
-                CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+        when (isLoadingCommentsUser) {
+            true -> {
+                item {
+                    CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+                }
             }
-        } else {
-            items(comments) { comment ->
-                val toilet = toiletsStateFlow.collectAsState().value[comment.toiletId]
-                if (toilet != null) {
-                    ToiletReview(
-                        comment = comment,
-                        toilet = toilet
-                    )
+
+            false -> {
+                items(comments) { comment ->
+                    val toilet = toiletsStateFlow.collectAsState().value[comment.toiletId]
+                    if (toilet != null) {
+                        ToiletReview(
+                            comment = comment,
+                            toilet = toilet
+                        )
+                    }
                 }
             }
         }
@@ -213,11 +218,13 @@ fun ProfileScreenPreview() {
         )
     )
     val commentsStateFlow = MutableStateFlow(generateCommentsList())
+    val isLoadingCommentsUser = MutableStateFlow(false)
     AppTheme {
         ProfileScreen(
             toiletsStateFlow = toiletsStateFlow,
             userStateFlow = userStateFlow,
-            commentsStateFlow = commentsStateFlow
+            commentsStateFlow = commentsStateFlow,
+            isLoadingCommentsUserStateFlow = isLoadingCommentsUser
         )
     }
 }

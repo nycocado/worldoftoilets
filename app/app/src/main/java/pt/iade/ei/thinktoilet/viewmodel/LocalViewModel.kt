@@ -57,8 +57,14 @@ class LocalViewModel @Inject constructor(
     private val _commentsToilet = MutableStateFlow<List<Comment>>(emptyList())
     val commentsToilet: StateFlow<List<Comment>> get() = _commentsToilet
 
+    private val _isLoadingCommentsToilet = MutableStateFlow(false)
+    val isLoadingCommentsToilet get() = _isLoadingCommentsToilet
+
     private val _commentsUser = MutableStateFlow<List<Comment>>(emptyList())
     val commentsUser: StateFlow<List<Comment>> get() = _commentsUser
+
+    private val _isLoadingCommentsUser = MutableStateFlow(false)
+    val isLoadingCommentsUser get() = _isLoadingCommentsUser
 
     private val _reactions = MutableStateFlow<Map<Int, Reaction>>(emptyMap())
     val reactions: StateFlow<Map<Int, Reaction>> get() = _reactions
@@ -119,8 +125,16 @@ class LocalViewModel @Inject constructor(
                     }
                 }
 
-                _toiletsNearbyIds.value =
-                    UiState.Success(PageResponse(fetchedToilets.map { it.id }, page))
+                _toiletsNearbyIds.value = UiState.Success(
+                    PageResponse(
+                        fetchedToilets.map { it.id },
+                        Page(
+                            page.number,
+                            page.size,
+                            fetchedToilets.size < page.size
+                        )
+                    )
+                )
                 _toiletNearbyLoaded.value = true
             } catch (e: Exception) {
                 _toiletsNearbyIds.value =
@@ -188,8 +202,16 @@ class LocalViewModel @Inject constructor(
                     }
                 }
 
-                _toiletsHistoryIds.value =
-                    UiState.Success(PageResponse(fetchedToilets.map { it.id }, page))
+                _toiletsHistoryIds.value = UiState.Success(
+                    PageResponse(
+                        fetchedToilets.map { it.id },
+                        Page(
+                            page.number,
+                            page.size,
+                            fetchedToilets.size < page.size
+                        )
+                    )
+                )
                 _toiletHistoryLoaded.value = true
             } catch (e: Exception) {
                 _toiletsHistoryIds.value =
@@ -242,6 +264,7 @@ class LocalViewModel @Inject constructor(
         toiletId: Int,
         userId: Int
     ) {
+        _isLoadingCommentsToilet.value = true
         viewModelScope.launch {
             try {
                 val fetchedComments = commentRepository.getCommentsByToiletId(toiletId, userId)
@@ -268,9 +291,42 @@ class LocalViewModel @Inject constructor(
                     val commentIds = fetchedComments.map { it.id }
                     loadReactions(userId, commentIds)
                 }
+                _isLoadingCommentsToilet.value = false
             } catch (e: Exception) {
                 _error.value = "Erro ao carregar comentários: ${e.message}"
                 Log.e("ToiletViewModel", "Erro ao carregar comentários para toiletId=$toiletId", e)
+            }
+        }
+    }
+
+
+    fun loadUserComments(userId: Int) {
+        _isLoadingCommentsUser.value = true
+        viewModelScope.launch {
+            try {
+                val fetchedComments = commentRepository.getCommentsByUserId(userId)
+                val toiletIds = fetchedComments
+                    .filter { comment -> _toiletsCache.value.none { toilet -> toilet.value.id == comment.toiletId } }
+                    .map { it.toiletId }
+                    .distinct()
+                if (toiletIds.isNotEmpty()) {
+                    val fetchedToilets = toiletRepository.getToilets(toiletIds)
+                    _toiletsCache.value = _toiletsCache.value.toMutableMap().apply {
+                        fetchedToilets.forEach { toilet ->
+                            toilet.id.let { id -> this[id] = toilet }
+                        }
+                    }
+                }
+                _toiletsCache.value = _toiletsCache.value.toMutableMap().apply {
+                    fetchedComments.forEach { comment ->
+                        this[comment.toiletId]
+                    }
+                }
+                _commentsUser.value = fetchedComments
+                _isLoadingCommentsUser.value = false
+            } catch (e: Exception) {
+                _error.value = "Erro ao carregar comentários: ${e.message}"
+                Log.e("ToiletViewModel", "Erro ao carregar comentários para userId=$userId", e)
             }
         }
     }
@@ -335,35 +391,6 @@ class LocalViewModel @Inject constructor(
         }
     }
 
-    fun loadUserComments(userId: Int) {
-        viewModelScope.launch {
-            try {
-                val fetchedComments = commentRepository.getCommentsByUserId(userId)
-                val toiletIds = fetchedComments
-                    .filter { comment -> _toiletsCache.value.none { toilet -> toilet.value.id == comment.toiletId } }
-                    .map { it.toiletId }
-                    .distinct()
-                if (toiletIds.isNotEmpty()) {
-                    val fetchedToilets = toiletRepository.getToilets(toiletIds)
-                    _toiletsCache.value = _toiletsCache.value.toMutableMap().apply {
-                        fetchedToilets.forEach { toilet ->
-                            toilet.id.let { id -> this[id] = toilet }
-                        }
-                    }
-                }
-                _toiletsCache.value = _toiletsCache.value.toMutableMap().apply {
-                    fetchedComments.forEach { comment ->
-                        this[comment.toiletId]
-                    }
-                }
-                _commentsUser.value = fetchedComments
-            } catch (e: Exception) {
-                _error.value = "Erro ao carregar comentários: ${e.message}"
-                Log.e("ToiletViewModel", "Erro ao carregar comentários para userId=$userId", e)
-            }
-        }
-    }
-
     private fun loadReactions(
         userId: Int,
         commentIds: List<Int>
@@ -393,7 +420,8 @@ class LocalViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             try {
-                val result = toiletRepository.postReport(toiletId, userId, typeReport.technicalValue)
+                val result =
+                    toiletRepository.postReport(toiletId, userId, typeReport.technicalValue)
                 _toiletsCache.value = _toiletsCache.value.toMutableMap().apply {
                     remove(toiletId)
                 }

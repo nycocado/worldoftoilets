@@ -21,6 +21,7 @@
     <string name="suggest_toilet">Suggest</string>
     <string name="load_more">Load More</string>
     <string name="confirm">Confirm</string>
+    <string name="save">Save</string>
 
     <!-- Login -->
     <string name="login_action">Log In</string>
@@ -51,6 +52,8 @@
     <string name="change_name">Change Name</string>
     <string name="change_email">Change E-mail</string>
     <string name="change_password">Change Password</string>
+    <string name="new_password">New Password</string>
+    <string name="confirm_new_password">Confirm New Password</string>
 
     <!-- Sugestão -->
     <string name="toilet_name">Name</string>
@@ -138,6 +141,12 @@
     <string name="confirmation_suggest_success_text">We will analyze it as soon as possible.</string>
     <string name="confirmation_report_failure_text">Please try again later.</string>
     <string name="confirmation_suggest_failure_text">Please try again later.</string>
+
+    <!-- Extras -->
+    <string name="extra_wheelchair_accessible">Wheelchair Accessible</string>
+    <string name="extra_baby_changing_station">Baby Changing Station</string>
+    <string name="extra_diasabled_parking">Disabled Parking</string>
+    <string name="extra_accessible_for_visual_impairment">Accessible for Visual Impairment</string>
 
     <!-- Links -->
     <string name="maps_uri" translatable="false">android-app://com.google.android.apps.maps</string>

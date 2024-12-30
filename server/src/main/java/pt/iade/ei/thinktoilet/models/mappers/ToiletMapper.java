@@ -27,7 +27,8 @@ public class ToiletMapper {
     CountCommentToiletRepository countCommentToiletRepository;
 
     public ToiletDTO mapToiletDTO(Toilet toilet){
-        List<TypeExtra> extras = extraRepository.findExtrasByToilet_Id(toilet.getId()).stream().map(Extra::getTypeExtra).toList();
+        List<String> extras = extraRepository.findExtrasByToilet_Id(toilet.getId())
+                .stream().map( (Extra extra) -> extra.getTypeExtra().getTechnicalName().toUpperCase().replace("-", "_")).toList();
         Rating rating = ratingRepository.findRatingByToiletId(toilet.getId());
         CountCommentToilet countComment = countCommentToiletRepository.findCountCommentToiletByToiletId(toilet.getId());
         return new ToiletDTO(
@@ -53,13 +54,14 @@ public class ToiletMapper {
                 .collect(Collectors.toMap(Rating::getToiletId, rating -> rating));
         Map<Integer, Integer> commentCountMap = countComments.stream()
                 .collect(Collectors.toMap(CountCommentToilet::getToiletId, CountCommentToilet::getNum));
-        Map<Integer, List<TypeExtra>> extrasMap = extras.stream()
-                .collect(Collectors.groupingBy(extra -> extra.getToilet().getId(), Collectors.mapping(Extra::getTypeExtra, Collectors.toList())));
+        Map<Integer, List<String>> extrasMap = extras.stream()
+                .collect(Collectors.groupingBy(extra -> extra.getToilet().getId(),
+                        Collectors.mapping(extra -> extra.getTypeExtra().getTechnicalName().toUpperCase().replace("-", "_"), Collectors.toList())));
 
         return toilets.stream().map(toilet -> {
             Rating rating = ratingMap.get(toilet.getId());
             int numComments = commentCountMap.get(toilet.getId());
-            List<TypeExtra> extrasToilet = extrasMap.getOrDefault(toilet.getId(), List.of());
+            List<String> extrasToilet = extrasMap.getOrDefault(toilet.getId(), List.of());
             return new ToiletDTO(
                     toilet.getId(),
                     toilet.getName(),

@@ -9,17 +9,22 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import pt.iade.ei.thinktoilet.models.User
 import pt.iade.ei.thinktoilet.repositories.UserPreferencesRepository
+import pt.iade.ei.thinktoilet.repositories.UserRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
+    private val userRepository: UserRepository,
     private val userPreferencesRepository: UserPreferencesRepository
 ): ViewModel() {
     val user: StateFlow<User?> = userPreferencesRepository.userStateFlow
 
+    private val _editUser = MutableStateFlow<Result<User>?>(null)
+    val editUser: StateFlow<Result<User>?> get() = _editUser
+
     val isUserLoggedIn: StateFlow<Boolean> = userPreferencesRepository.isUserLoggedIn()
 
-    private val _error = MutableStateFlow<String>("")
+    private val _error = MutableStateFlow("")
     val error: StateFlow<String> get() = _error
 
     fun saveUser(user: User) {
@@ -33,6 +38,54 @@ class UserViewModel @Inject constructor(
         }
     }
 
+    fun editName(id: Int, name: String, password: String) {
+        viewModelScope.launch {
+            try {
+                val result = userRepository.editName(id, name, password)
+                _editUser.value = result
+            } catch (e: Exception) {
+                _error.value = "Erro ao editar nome: ${e.message}"
+                Log.e("ToiletViewModel", "Erro ao editar nome", e)
+            }
+        }
+    }
+
+    fun editEmail(id: Int, email: String, password: String) {
+        viewModelScope.launch {
+            try {
+                val result = userRepository.editEmail(id, email, password)
+                _editUser.value = result
+            } catch (e: Exception) {
+                _error.value = "Erro ao editar email: ${e.message}"
+                Log.e("ToiletViewModel", "Erro ao editar email", e)
+            }
+        }
+    }
+
+    fun editPassword(id: Int, password: String, newPassword: String) {
+        viewModelScope.launch {
+            try {
+                val result = userRepository.editPassword(id, password, newPassword)
+                _editUser.value = result
+            } catch (e: Exception) {
+                _error.value = "Erro ao editar senha: ${e.message}"
+                Log.e("ToiletViewModel", "Erro ao editar senha", e)
+            }
+        }
+    }
+
+    fun editIcon(id: Int, iconId: String) {
+        viewModelScope.launch {
+            try {
+                val result = userRepository.editIcon(id, iconId)
+                _editUser.value = result
+            } catch (e: Exception) {
+                _error.value = "Erro ao editar ícone: ${e.message}"
+                Log.e("ToiletViewModel", "Erro ao editar ícone", e)
+            }
+        }
+    }
+
     fun clearUser() {
         viewModelScope.launch {
             try {
@@ -42,5 +95,9 @@ class UserViewModel @Inject constructor(
                 Log.e("ToiletViewModel", "Erro ao limpar usuário", e)
             }
         }
+    }
+
+    fun clearEditUser() {
+        _editUser.value = null
     }
 }

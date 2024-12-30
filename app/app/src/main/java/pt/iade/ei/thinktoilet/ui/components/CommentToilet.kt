@@ -75,7 +75,7 @@ fun CommentToilet(
                             color = Color.Gray,
                             shape = CircleShape
                         ),
-                    painter = painterResource(R.drawable.image_test),
+                    painter = user.getIcon(),
                     contentDescription = context.getString(R.string.content_description_profile_picture)
                 )
                 Column(

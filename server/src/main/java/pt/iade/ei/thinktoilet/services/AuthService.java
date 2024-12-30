@@ -38,7 +38,7 @@ public class AuthService {
     @Transactional
     public ResponseEntity<ApiResponse> register(RegisterRequest request){
         if(userService.existsUserByEmail(request.getEmail())){
-            throw new EmailAlreadyInUseException("Email already in use.");
+            throw new EmailAlreadyInUseException();
         }
 
         User user = new User();

@@ -22,7 +22,7 @@ class AuthViewModel @Inject constructor(
     private val _registerState = MutableStateFlow<Result<ApiResponse>?>(null)
     val registerState: StateFlow<Result<ApiResponse>?> get() = _registerState
 
-    private val _error = MutableStateFlow<String>("")
+    private val _error = MutableStateFlow("")
     val error: StateFlow<String> get() = _error
 
     fun requestLogin(email: String, password: String) {

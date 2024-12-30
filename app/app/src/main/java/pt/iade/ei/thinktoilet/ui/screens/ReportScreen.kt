@@ -51,7 +51,6 @@ fun ReportScreen(
     val reportState = reportStateFlow.collectAsState().value
     val reportType = ReportType.entries.find { it.value == type }!!
     val invalidReactions = listOf(TypeReaction.LIKE, TypeReaction.DISLIKE, TypeReaction.NONE)
-    val invalidReports = listOf(TypeReport.NONE)
 
     LaunchedEffect(reportState){
         reportState?.onSuccess {
@@ -126,13 +125,10 @@ fun ReportScreen(
             when (reportType) {
                 ReportType.TOILET -> {
                     items(TypeReport.entries) { typeReport ->
-                        if (!invalidReports.contains(typeReport)) {
-                            ReportButton(
-                                title = context.getString(typeReport.value),
-                                id = typeReport.id
-                            ) {
-                                onToiletReport(id, typeReport)
-                            }
+                        ReportButton(
+                            title = context.getString(typeReport.value)
+                        ) {
+                            onToiletReport(id, typeReport)
                         }
                     }
                 }
@@ -142,7 +138,6 @@ fun ReportScreen(
                         if (!invalidReactions.contains(typeReaction)) {
                             ReportButton(
                                 title = context.getString(typeReaction.value),
-                                id = typeReaction.id,
                                 onClick = {
                                     onCommentReport(id, typeReaction)
                                 }

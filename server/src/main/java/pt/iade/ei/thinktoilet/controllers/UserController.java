@@ -34,4 +34,43 @@ public class UserController {
         logger.info("Sending user with id {}", id);
         return userService.findUserById(id);
     }
+
+    @PostMapping(path = "/edit/name/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public UserDTO editName(
+            @PathVariable int id,
+            @RequestParam String name,
+            @RequestParam String password
+    ) {
+        logger.info("Editing name of user with id {}", id);
+        return userService.editName(id, name, password);
+    }
+
+    @PostMapping(path = "/edit/email/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public UserDTO editEmail(
+            @PathVariable int id,
+            @RequestParam String email,
+            @RequestParam String password
+    ) {
+        logger.info("Editing email of user with id {}", id);
+        return userService.editEmail(id, email, password);
+    }
+
+    @PostMapping(path = "/edit/password/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public UserDTO editPassword(
+            @PathVariable int id,
+            @RequestParam String newPassword,
+            @RequestParam String password
+    ) {
+        logger.info("Editing password of user with id {}", id);
+        return userService.editPassword(id, newPassword, password);
+    }
+
+    @PostMapping(path = "/edit/icon/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public UserDTO editIcon(
+            @PathVariable int id,
+            @RequestParam String iconId
+    ) {
+        logger.info("Editing icon of user with id {}", id);
+        return userService.editIcon(id, iconId);
+    }
 }
