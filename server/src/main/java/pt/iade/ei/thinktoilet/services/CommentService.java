@@ -39,33 +39,27 @@ public class CommentService {
     }
 
     public List<Comment> getCommentsByToiletId(int toiletId) {
-        return Optional.ofNullable(commentRepository.findCommentsByToiletId(toiletId))
-                .orElseThrow(() -> new NotFoundException(String.valueOf(toiletId), "Comment", "toilet id"));
+        return commentRepository.findCommentsByToiletId(toiletId);
     }
 
     public List<Comment> getCommentsByToiletId(int toiletId, Pageable pageable) {
-        return Optional.ofNullable(commentRepository.findCommentsByToiletId(toiletId, pageable))
-                .orElseThrow(() -> new NotFoundException(String.valueOf(toiletId), "Comment", "toilet id"));
+        return commentRepository.findCommentsByToiletId(toiletId, pageable);
     }
 
     public List<Comment> getCommentsByToiletIdForUserId(int toiletId, int userId) {
-        return Optional.ofNullable(commentRepository.findCommentsByToiletIdForUserId(toiletId, userId))
-                .orElseThrow(() -> new NotFoundException(String.valueOf(toiletId), "Comment", "toilet id"));
+        return commentRepository.findCommentsByToiletIdForUserId(toiletId, userId);
     }
 
     public List<Comment> getCommentsByToiletIdForUserId(int toiletId, int userId, Pageable pageable) {
-        return Optional.ofNullable(commentRepository.findCommentsByToiletIdForUserId(toiletId, userId, pageable))
-                .orElseThrow(() -> new NotFoundException(String.valueOf(toiletId), "Comment", "toilet id"));
+        return commentRepository.findCommentsByToiletIdForUserId(toiletId, userId, pageable);
     }
 
     public List<Comment> getCommentsByUserId(int userId) {
-        return Optional.ofNullable(commentRepository.findCommentsByUserId(userId))
-                .orElseThrow(() -> new NotFoundException(String.valueOf(userId), "Comment", "user id"));
+        return commentRepository.findCommentsByUserId(userId);
     }
 
     public List<Comment> getCommentsByUserId(int userId, Pageable pageable) {
-        return Optional.ofNullable(commentRepository.findCommentsByUserId(userId, pageable))
-                .orElseThrow(() -> new NotFoundException(String.valueOf(userId), "Comment", "user id"));
+        return commentRepository.findCommentsByUserId(userId, pageable);
     }
 
     public boolean existsCommentById(int id) {

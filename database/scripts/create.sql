@@ -3,13 +3,14 @@ CREATE TABLE
 	user (
 		user_id INT NOT NULL AUTO_INCREMENT,
 		user_name VARCHAR(50) NOT NULL,
-		user_email VARCHAR(100) UNIQUE NOT NULL,
+		user_email VARCHAR(100) NOT NULL,
 		user_pwd VARCHAR(255) NOT NULL,
 		user_points INT NOT NULL,
-		user_iconid VARCHAR(255),
+		user_iconid VARCHAR(20) NOT NULL,
 		user_bdate DATE,
 		user_cdate DATE NOT NULL,
-		PRIMARY KEY (user_id)
+		PRIMARY KEY (user_id),
+		UNIQUE (user_email)
 	);
 
 CREATE TABLE
@@ -22,9 +23,10 @@ CREATE TABLE
 		toil_lat DOUBLE NOT NULL,
 		toil_long DOUBLE NOT NULL,
 		toil_address VARCHAR(255) NOT NULL,
-		toil_placeid VARCHAR(255) UNIQUE,
+		toil_placeid VARCHAR(255),
 		toil_cdate DATE NOT NULL,
 		PRIMARY KEY (toil_id),
+		UNIQUE (toil_placeid),
 		FULLTEXT (toil_name, toil_address)
 	);
 

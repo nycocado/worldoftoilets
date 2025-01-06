@@ -24,13 +24,11 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     public List<User> getUsers() {
-        return Optional.ofNullable(userRepository.findUsers())
-                .orElseThrow(() -> new NotFoundException("User", "User", "all"));
+        return userRepository.findUsers();
     }
 
     public List<User> getUsersByIds(Collection<Integer> ids) {
-        return Optional.ofNullable(userRepository.findUserByIdIn(ids))
-                .orElseThrow(() -> new NotFoundException("User", "User", "ids"));
+        return userRepository.findUserByIdIn(ids);
     }
 
     public User getUserById(int id) {
@@ -40,7 +38,7 @@ public class UserService {
 
     public User getUserByEmail(String email) {
         return Optional.ofNullable(userRepository.findUserByEmail(email))
-                .orElseThrow(() -> new EmailNotFoundException(email));
+                .orElseThrow(() -> new NotFoundException(email, "User", "email"));
     }
 
     public boolean existsUserById(int id) {

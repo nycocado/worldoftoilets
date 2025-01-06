@@ -21,12 +21,6 @@ public class GlobalExceptionHandler extends RuntimeException {
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(EmailNotFoundException.class)
-    public ResponseEntity<ApiResponse> handleUsernameNotFoundException(EmailNotFoundException ex) {
-        ApiResponse error = new ApiResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
-    }
-
     @ExceptionHandler(InvalidPasswordException.class)
     public ResponseEntity<ApiResponse> handleInvalidPasswordException(InvalidPasswordException ex) {
         ApiResponse error = new ApiResponse(HttpStatus.UNAUTHORIZED.value(), ex.getMessage());

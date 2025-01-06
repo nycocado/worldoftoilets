@@ -36,7 +36,7 @@ public class ReportService {
 
     public TypeReport getTypeReportByTechnicalName(String technicalName) {
         return Optional.ofNullable(typeReportRepository.findTypeReportByTechnicalName(technicalName))
-                .orElseThrow(() -> new NotFoundException(technicalName, "TypeReport", "technical_name"));
+                .orElseThrow(() -> new NotFoundException(technicalName, "TypeReport", "technical name"));
     }
 
     public Report saveReport(Report report) {

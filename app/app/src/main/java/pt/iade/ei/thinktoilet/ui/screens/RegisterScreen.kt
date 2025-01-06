@@ -275,11 +275,6 @@ fun RegisterScreen(
                             )
                         }
                     }
-                    Text(
-                        text = context.getString(R.string.register_action),
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.SemiBold
-                    )
                 }
             }
         }

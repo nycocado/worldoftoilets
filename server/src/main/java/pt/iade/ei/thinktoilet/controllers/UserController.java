@@ -35,7 +35,7 @@ public class UserController {
         return userService.findUserById(id);
     }
 
-    @PostMapping(path = "/edit/name/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/{id}/edit/name", produces = MediaType.APPLICATION_JSON_VALUE)
     public UserDTO editName(
             @PathVariable int id,
             @RequestParam String name,
@@ -45,7 +45,7 @@ public class UserController {
         return userService.editName(id, name, password);
     }
 
-    @PostMapping(path = "/edit/email/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/{id}/edit/email", produces = MediaType.APPLICATION_JSON_VALUE)
     public UserDTO editEmail(
             @PathVariable int id,
             @RequestParam String email,
@@ -55,7 +55,7 @@ public class UserController {
         return userService.editEmail(id, email, password);
     }
 
-    @PostMapping(path = "/edit/password/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/{id}/edit/password", produces = MediaType.APPLICATION_JSON_VALUE)
     public UserDTO editPassword(
             @PathVariable int id,
             @RequestParam String newPassword,
@@ -65,7 +65,7 @@ public class UserController {
         return userService.editPassword(id, newPassword, password);
     }
 
-    @PostMapping(path = "/edit/icon/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/{id}/edit/icon", produces = MediaType.APPLICATION_JSON_VALUE)
     public UserDTO editIcon(
             @PathVariable int id,
             @RequestParam String iconId

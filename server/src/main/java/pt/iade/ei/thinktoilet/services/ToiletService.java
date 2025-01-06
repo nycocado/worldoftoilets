@@ -49,26 +49,22 @@ public class ToiletService {
                 if (!userService.existsUserById(userId)) {
                     throw new NotFoundException(String.valueOf(userId), "User", "id");
                 }
-                return Optional.ofNullable(toiletRepository.findToiletsByStateTechnicalNameAndForUserId(stateTechnicalName, userId))
-                        .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "state and user id"));
+                return toiletRepository.findToiletsByStateTechnicalNameAndForUserId(stateTechnicalName, userId);
             }
 
             if (!stateService.existsStateByTechnicalName(stateTechnicalName)) {
                 throw new NotFoundException(stateTechnicalName, "State", "technical name");
             }
-            return Optional.ofNullable(toiletRepository.findToiletsByStateTechnicalName(stateTechnicalName))
-                    .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "state"));
+            return toiletRepository.findToiletsByStateTechnicalName(stateTechnicalName);
         }
 
         if (userId != null) {
             if (!userService.existsUserById(userId)) {
                 throw new NotFoundException(String.valueOf(userId), "User", "id");
             }
-            return Optional.ofNullable(toiletRepository.findToiletsForUserId(userId))
-                    .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "user id"));
+            return toiletRepository.findToiletsForUserId(userId);
         }
-        return Optional.ofNullable(toiletRepository.findToilets())
-                .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "all"));
+        return toiletRepository.findToilets();
     }
 
     public List<Toilet> getToilets(String stateTechnicalName, Integer userId, Pageable pageable) {
@@ -80,26 +76,22 @@ public class ToiletService {
                 if (!userService.existsUserById(userId)) {
                     throw new NotFoundException(String.valueOf(userId), "User", "id");
                 }
-                return Optional.ofNullable(toiletRepository.findToiletsByStateTechnicalNameAndForUserId(stateTechnicalName, userId, pageable))
-                        .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "state and user id"));
+                return toiletRepository.findToiletsByStateTechnicalNameAndForUserId(stateTechnicalName, userId, pageable);
             }
 
             if (!stateService.existsStateByTechnicalName(stateTechnicalName)) {
                 throw new NotFoundException(stateTechnicalName, "State", "technical name");
             }
-            return Optional.ofNullable(toiletRepository.findToiletsByStateTechnicalName(stateTechnicalName, pageable))
-                    .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "state"));
+            return toiletRepository.findToiletsByStateTechnicalName(stateTechnicalName, pageable);
         }
 
         if (userId != null) {
             if (!userService.existsUserById(userId)) {
                 throw new NotFoundException(String.valueOf(userId), "User", "id");
             }
-            return Optional.ofNullable(toiletRepository.findToiletsForUserId(userId, pageable))
-                    .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "user id"));
+            return toiletRepository.findToiletsForUserId(userId, pageable);
         }
-        return Optional.ofNullable(toiletRepository.findToilets(pageable))
-                .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "all"));
+        return toiletRepository.findToilets(pageable);
     }
 
     public Toilet getToiletById(int id) {
@@ -108,8 +100,7 @@ public class ToiletService {
     }
 
     public List<Toilet> getToiletsByIds(Collection<Integer> ids) {
-        return Optional.ofNullable(toiletRepository.findToiletsByIds(ids))
-                .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "ids"));
+        return toiletRepository.findToiletsByIds(ids);
     }
 
     public List<Toilet> getToiletsNearby(String stateTechnicalName, double lat, double lon, Integer userId) {
@@ -121,26 +112,22 @@ public class ToiletService {
                 if (!userService.existsUserById(userId)) {
                     throw new NotFoundException(String.valueOf(userId), "User", "id");
                 }
-                return Optional.ofNullable(toiletRepository.findToiletsByDistanceAndStateAndForUserId(stateTechnicalName, lat, lon, userId))
-                        .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "state and user id"));
+                return toiletRepository.findToiletsByDistanceAndStateAndForUserId(stateTechnicalName, lat, lon, userId);
             }
 
             if (!stateService.existsStateByTechnicalName(stateTechnicalName)) {
                 throw new NotFoundException(stateTechnicalName, "State", "technical name");
             }
-            return Optional.ofNullable(toiletRepository.findToiletsByDistanceAndState(stateTechnicalName, lat, lon))
-                    .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "nearby"));
+            return toiletRepository.findToiletsByDistanceAndState(stateTechnicalName, lat, lon);
         }
 
         if (userId != null) {
             if (!userService.existsUserById(userId)) {
                 throw new NotFoundException(String.valueOf(userId), "User", "id");
             }
-            return Optional.ofNullable(toiletRepository.findToiletsByDistanceAndForUserId(lat, lon, userId))
-                    .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "nearby and user id"));
+            return toiletRepository.findToiletsByDistanceAndForUserId(lat, lon, userId);
         }
-        return Optional.ofNullable(toiletRepository.findToiletsByDistance(lat, lon))
-                .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "nearby"));
+        return toiletRepository.findToiletsByDistance(lat, lon);
     }
 
     public List<Toilet> getToiletsNearby(String stateTechnicalName, double lat, double lon, Integer userId, Pageable pageable) {
@@ -152,67 +139,68 @@ public class ToiletService {
                 if (!userService.existsUserById(userId)) {
                     throw new NotFoundException(String.valueOf(userId), "User", "id");
                 }
-                return Optional.ofNullable(toiletRepository.findToiletsByDistanceAndStateAndForUserId(stateTechnicalName, lat, lon, userId, pageable))
-                        .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "state and user id"));
+                return toiletRepository.findToiletsByDistanceAndStateAndForUserId(stateTechnicalName, lat, lon, userId, pageable);
             }
 
             if (!stateService.existsStateByTechnicalName(stateTechnicalName)) {
                 throw new NotFoundException(stateTechnicalName, "State", "technical name");
             }
-            return Optional.ofNullable(toiletRepository.findToiletsByDistanceAndState(stateTechnicalName, lat, lon, pageable))
-                    .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "nearby"));
+            return toiletRepository.findToiletsByDistanceAndState(stateTechnicalName, lat, lon, pageable);
         }
 
         if (userId != null) {
             if (!userService.existsUserById(userId)) {
                 throw new NotFoundException(String.valueOf(userId), "User", "id");
             }
-            return Optional.ofNullable(toiletRepository.findToiletsByDistanceAndForUserId(lat, lon, userId, pageable))
-                    .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "nearby and user id"));
+            return toiletRepository.findToiletsByDistanceAndForUserId(lat, lon, userId, pageable);
         }
-        return Optional.ofNullable(toiletRepository.findToiletsByDistance(lat, lon, pageable))
-                .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "nearby"));
+        return toiletRepository.findToiletsByDistance(lat, lon, pageable);
     }
 
     public List<Toilet> getToiletsByUserId(String stateTechnicalName, int userId) {
         if (stateTechnicalName != null) {
+            if (!userService.existsUserById(userId)) {
+                throw new NotFoundException(String.valueOf(userId), "User", "id");
+            }
             if (!stateService.existsStateByTechnicalName(stateTechnicalName)) {
                 throw new NotFoundException(stateTechnicalName, "State", "technical name");
             }
-            return Optional.ofNullable(toiletRepository.findToiletsByUserIdAndState(stateTechnicalName, userId))
-                    .orElseThrow(() -> new NotFoundException(String.valueOf(userId), "Toilet", "user id"));
-        } else {
-            return Optional.ofNullable(toiletRepository.findToiletsByUserId(userId))
-                    .orElseThrow(() -> new NotFoundException(String.valueOf(userId), "Toilet", "user id"));
+            return toiletRepository.findToiletsByUserIdAndState(stateTechnicalName, userId);
         }
+
+        if (!userService.existsUserById(userId)) {
+            throw new NotFoundException(String.valueOf(userId), "User", "id");
+        }
+        return toiletRepository.findToiletsByUserId(userId);
     }
 
     public List<Toilet> getToiletsByUserId(String stateTechnicalName, int userId, Pageable pageable) {
         if (stateTechnicalName != null) {
+            if (!userService.existsUserById(userId)) {
+                throw new NotFoundException(String.valueOf(userId), "User", "id");
+            }
             if (!stateService.existsStateByTechnicalName(stateTechnicalName)) {
                 throw new NotFoundException(stateTechnicalName, "State", "technical name");
             }
-            return Optional.ofNullable(toiletRepository.findToiletsByUserIdAndState(stateTechnicalName, userId, pageable))
-                    .orElseThrow(() -> new NotFoundException(String.valueOf(userId), "Toilet", "user id"));
-        } else {
-            return Optional.ofNullable(toiletRepository.findToiletsByUserId(userId, pageable))
-                    .orElseThrow(() -> new NotFoundException(String.valueOf(userId), "Toilet", "user id"));
+            return toiletRepository.findToiletsByUserIdAndState(stateTechnicalName, userId, pageable);
         }
+
+        if (!userService.existsUserById(userId)) {
+            throw new NotFoundException(String.valueOf(userId), "User", "id");
+        }
+        return toiletRepository.findToiletsByUserId(userId, pageable);
     }
 
     public List<SearchToilet> getSearchToilets(String query) {
-        return Optional.ofNullable(searchToiletRepository.searchToilets(query))
-                .orElseThrow(() -> new NotFoundException(query, "Toilet", "search"));
+        return searchToiletRepository.searchToilets(query);
     }
 
     public List<SearchToilet> getSearchToilets(String query, Pageable pageable) {
-        return Optional.ofNullable(searchToiletRepository.searchToilets(query, pageable))
-                .orElseThrow(() -> new NotFoundException(query, "Toilet", "search"));
+        return searchToiletRepository.searchToilets(query, pageable);
     }
 
     public List<Toilet> getToiletsByBoundingBox(double maxLat, double minLat, double maxLon, double minLon) {
-        return Optional.ofNullable(toiletRepository.findToiletsByBoundingBox(maxLat, minLat, maxLon, minLon))
-                .orElseThrow(() -> new NotFoundException("Toilet", "Toilet", "bounding box"));
+        return toiletRepository.findToiletsByBoundingBox(maxLat, minLat, maxLon, minLon);
     }
 
     public boolean existsToiletById(int id) {
@@ -289,7 +277,9 @@ public class ToiletService {
 
     @Transactional
     public ResponseEntity<ApiResponse> uploadImage(int id, MultipartFile image) {
-        getToiletById(id);
+        if (!existsToiletById(id)) {
+            throw new NotFoundException(String.valueOf(id), "Toilet", "id");
+        }
 
         if (image.isEmpty()) {
             throw new NotFoundException("Image", "Image", "image");
@@ -313,6 +303,10 @@ public class ToiletService {
     }
 
     public Resource getImage(int id) {
+        if(!existsToiletById(id)){
+            throw new NotFoundException(String.valueOf(id), "Toilet", "id");
+        }
+
         String imagePath = IMAGE_DIR + "T" + id + ".jpeg";
         File file = new File(imagePath);
 

@@ -39,9 +39,13 @@ public class ReactionService {
         return reactionRepository.findReactionByCommentIdAndUserId(commentId, userId);
     }
 
+    public List<Reaction> getReactionByUserIdAndCommentIds(int userId, List<Integer> commentIds) {
+        return reactionRepository.findReactionsByUser_IdAndComment_IdIn(userId, commentIds);
+    }
+
     public TypeReaction getTypeReactionByTechnicalName(String technicalName) {
         return Optional.ofNullable(typeReactionRepository.findTypeReactionByTechnicalName(technicalName))
-                .orElseThrow(() -> new NotFoundException(technicalName, "TypeReaction", "technical_name"));
+                .orElseThrow(() -> new NotFoundException(technicalName, "TypeReaction", "technical name"));
     }
 
     public Reaction saveReaction(Reaction reaction) {
@@ -51,8 +55,10 @@ public class ReactionService {
 
     @Transactional
     public List<ReactionDTO> findReactionsByUserId(int userId, List<Integer> commentIds) {
-        List<Reaction> reactions = reactionRepository.findReactionsByUser_IdAndComment_IdIn(userId, commentIds).stream()
-                .filter(reaction -> reaction.getTypeReaction().getName().equals("Like") || reaction.getTypeReaction().getName().equals("Dislike")).toList();
+        if (!userService.existsUserById(userId)) {
+            throw new NotFoundException(String.valueOf(userId), "User", "id");
+        }
+        List<Reaction> reactions = getReactionByUserIdAndCommentIds(userId, commentIds);
 
         return reactionMapper.mapReactionDTOS(reactions);
     }

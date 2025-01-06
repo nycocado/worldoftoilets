@@ -17,7 +17,7 @@ public class InteractionService {
 
     public Interaction getInteractionByToiletIdAndUserId(int toiletId, int userId) {
         return Optional.ofNullable(interactionRepository.findInteractionByToiletIdAndUserId(toiletId, userId))
-                .orElseThrow(() -> new NotFoundException(String.valueOf(toiletId) + ", " + String.valueOf(userId), "Interaction", "toilet id and user id"));
+                .orElseThrow(() -> new NotFoundException(toiletId + ", " + userId, "Interaction", "toilet id and user id"));
     }
 
     public Interaction getInteractionByToiletAndUser(Toilet toilet, User user) {

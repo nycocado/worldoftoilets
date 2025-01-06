@@ -16,28 +16,28 @@ interface UserService {
     @GET("users/{id}")
     suspend fun getUserById(@Path("id") id: Int): User
 
-    @POST("users/edit/name/{id}")
+    @POST("users/{id}/edit/name")
     suspend fun editName(
         @Path("id") id: Int,
         @Query("name") name: String,
         @Query("password") password: String
     ): Response<User>
 
-    @POST("users/edit/email/{id}")
+    @POST("users/{id}/edit/email")
     suspend fun editEmail(
         @Path("id") id: Int,
         @Query("email") email: String,
         @Query("password") password: String
     ): Response<User>
 
-    @POST("users/edit/password/{id}")
+    @POST("users/{id}/edit/password")
     suspend fun editPassword(
         @Path("id") id: Int,
         @Query("password") password: String,
         @Query("newPassword") newPassword: String
     ): Response<User>
 
-    @POST("users/edit/icon/{id}")
+    @POST("users/{id}/edit/icon ")
     suspend fun editIcon(
         @Path("id") id: Int,
         @Query("iconId") iconId: String
