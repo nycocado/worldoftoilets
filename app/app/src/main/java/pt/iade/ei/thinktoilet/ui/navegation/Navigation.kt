@@ -1,6 +1,5 @@
 package pt.iade.ei.thinktoilet.ui.navegation
 
-import android.util.Log
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
@@ -24,7 +23,6 @@ import pt.iade.ei.thinktoilet.ui.screens.RatingScreen
 import pt.iade.ei.thinktoilet.ui.screens.RegisterScreen
 import pt.iade.ei.thinktoilet.ui.screens.ReportScreen
 import pt.iade.ei.thinktoilet.ui.screens.SettingsScreen
-import pt.iade.ei.thinktoilet.ui.screens.SuggestScreen
 import pt.iade.ei.thinktoilet.ui.screens.ToiletDetailScreen
 import pt.iade.ei.thinktoilet.ui.screens.ToiletListScreen
 import pt.iade.ei.thinktoilet.view.MainView
@@ -50,7 +48,6 @@ fun RootNavigationGraph(
         ratingNavGraph(localViewModel, userViewModel, navController)
         authNavGraph(navController, userViewModel, authViewModel)
         reportNavGraph(navController, userViewModel, localViewModel)
-        suggestNavGraph(navController)
         settingsNavGraph(navController, userViewModel)
     }
 }
@@ -370,19 +367,6 @@ private fun NavGraphBuilder.reportNavGraph(
                     navController.popBackStack()
                 }
             )
-        }
-    }
-}
-
-private fun NavGraphBuilder.suggestNavGraph(
-    navController: NavHostController
-) {
-    navigation(
-        route = AppGraph.suggest.ROOT,
-        startDestination = AppGraph.suggest.SUGGEST_START
-    ) {
-        composable(AppGraph.suggest.SUGGEST_START) {
-            SuggestScreen()
         }
     }
 }

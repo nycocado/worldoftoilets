@@ -22,7 +22,7 @@ enum class TypeExtra(
     ),
     DISABLED_PARKING(
         id = 3,
-        value = R.string.extra_diasabled_parking,
+        value = R.string.extra_disabled_parking,
         icon = R.drawable.local_parking_24px,
         technicalValue = "disabled_parking"
     ),

@@ -55,17 +55,10 @@
     <string name="new_password">New Password</string>
     <string name="confirm_new_password">Confirm New Password</string>
 
-    <!-- Sugestão -->
-    <string name="toilet_name">Name</string>
-    <string name="toilet_city">City</string>
-    <string name="toilet_country">Country</string>
-    <string name="toilet_address">Address</string>
-    <string name="toilet_postal_code">Postal Code</string>
-
     <!-- Denúncia -->
     <string name="report_why_toilet">Why are you reporting this toilet?</string>
     <string name="report_why_comment">Why are you reporting this comment?</string>
-    <string name="report_anoymous">Your report will be anonymous</string>
+    <string name="report_anonymous">Your report will be anonymous</string>
     <string name="report_none" translatable="false">None</string>
     <string name="report_fake_information">Fake information</string>
     <string name="report_unsanitary_conditions">Unsanitary conditions</string>
@@ -145,9 +138,10 @@
     <!-- Extras -->
     <string name="extra_wheelchair_accessible">Wheelchair Accessible</string>
     <string name="extra_baby_changing_station">Baby Changing Station</string>
-    <string name="extra_diasabled_parking">Disabled Parking</string>
+    <string name="extra_disabled_parking">Disabled Parking</string>
     <string name="extra_accessible_for_visual_impairment">Accessible for Visual Impairment</string>
 
     <!-- Links -->
     <string name="maps_uri" translatable="false">android-app://com.google.android.apps.maps</string>
+    <string name="content_description_new_password_button">Change password button</string>
 </resources>

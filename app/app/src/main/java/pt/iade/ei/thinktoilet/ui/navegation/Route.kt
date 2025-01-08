@@ -15,7 +15,6 @@ object AppGraph {
     val rating = RatingGraph
     val settings = SettingsGraph
     val report = ReportGraph
-    val suggest = SuggestGraph
 }
 
 object RootGraph {
@@ -81,12 +80,6 @@ object SettingsGraph {
     )
 
     fun changeSetting(type: String) = "settings/change/$type"
-}
-
-object SuggestGraph {
-    const val ROOT = "suggest_graph"
-    const val SUGGEST_START = "suggest/start"
-    const val SUGGEST_END = "suggest/end"
 }
 
 object ReportGraph {

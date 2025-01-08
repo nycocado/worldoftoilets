@@ -116,7 +116,7 @@ fun ReportScreen(
                         textAlign = TextAlign.Center,
                     )
                     Text(
-                        text = context.getString(R.string.report_anoymous),
+                        text = context.getString(R.string.report_anonymous),
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }

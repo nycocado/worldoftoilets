@@ -86,10 +86,9 @@ fun OpenStreetMapsView(
             modifier = Modifier.fillMaxSize(),
             factory = { context ->
                 MapView(context).apply {
-                    tileProvider.tileSource = if (isDarkTheme) {
-                        cartoDarkTileSource
-                    } else {
-                        cartoLightTileSource
+                    tileProvider.tileSource = when (isDarkTheme) {
+                        true -> cartoDarkTileSource
+                        false -> cartoLightTileSource
                     }
                     controller.setZoom(19.0)
                     controller.setCenter(GeoPoint(location.latitude, location.longitude))
@@ -134,7 +133,11 @@ fun OpenStreetMapsView(
         IconButton(
             onClick = {
                 scope.launch {
-                    mapView?.controller?.animateTo(GeoPoint(location.latitude, location.longitude), 19.0, 1000)
+                    mapView?.controller?.animateTo(
+                        GeoPoint(location.latitude, location.longitude),
+                        19.0,
+                        1000
+                    )
                 }
             },
             modifier = Modifier

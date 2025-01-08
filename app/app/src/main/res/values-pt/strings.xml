@@ -19,14 +19,9 @@
     <string name="your_critics">Suas Críticas</string>
     <string name="new_password">Nova Palavra-Passe</string>
     <string name="confirm_new_password">Confirmar Nova Palavra-Passe</string>
-    <string name="toilet_name">Nome</string>
-    <string name="toilet_city">Cidade</string>
-    <string name="toilet_country">País</string>
-    <string name="toilet_address">Endereço</string>
-    <string name="toilet_postal_code">Código Postal</string>
     <string name="report_why_toilet">Porque estás a denunciar esta casa de banho?</string>
     <string name="report_why_comment">Porque estás a denunciar este comentário?</string>
-    <string name="report_anoymous">A tua denúncia é anônima.</string>
+    <string name="report_anonymous">A tua denúncia é anônima.</string>
     <string name="report_fake_information">Informação Falsa</string>
     <string name="report_unsanitary_conditions">Condições Insalubres</string>
     <string name="report_privacy_violation">Invasão de Privacidade</string>
@@ -105,8 +100,8 @@
     <string name="confirmation_suggest_success_text">Analisaremos o mais breve possível.</string>
     <string name="confirmation_report_failure_text">Por favor, tente novamente mais tarde</string>
     <string name="confirmation_suggest_failure_text">Por favor, tente novamente mais tarde</string>
-    <string name="extra_wheelchair_accessible">Acessivel para Cadeirantes</string>
+    <string name="extra_wheelchair_accessible">Acessível para Cadeirantes</string>
     <string name="extra_baby_changing_station">Fraudário</string>
-    <string name="extra_diasabled_parking">Estacionamento para Deficientes</string>
-    <string name="extra_accessible_for_visual_impairment">Acessivel para Deficientes Visuais</string>
+    <string name="extra_disabled_parking">Estacionamento para Deficientes</string>
+    <string name="extra_accessible_for_visual_impairment">Acessível para Deficientes Visuais</string>
 </resources>
