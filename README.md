@@ -65,7 +65,13 @@
     - [Prototipação](#prototipação)
   - [Divisão de Tarefas](#divisão-de-tarefas)
   - [Planificação](#planificação)
-  - [Autoavaliação do Projeto (TODO)](#autoavaliação-do-projeto-todo)
+  - [Autoavaliação do Projeto](#autoavaliação-do-projeto)
+    - [API e Back-End](#api-e-back-end)
+    - [Front-End](#front-end)
+    - [Base de Dados](#base-de-dados)
+    - [Funcionalidades Implementadas](#funcionalidades-implementadas)
+    - [Conformidade com a Proposta](#conformidade-com-a-proposta)
+    - [Opinião e Nota Final](#opinião-e-nota-final)
   - [Documentações e Componentes](#documentações-e-componentes)
     - [Diagrama de Classes](#diagrama-de-classes)
     - [Base de Dados (BD Report)](#base-de-dados-bd-report)
@@ -433,10 +439,51 @@ Utilizando **[MySQL](https://www.mysql.com/)**, o banco de dados foi projetado p
 | Terceira Entrega | Banner                                                       | 0%      | 100%    | 0%    |
 
 ## Planificação 
-[Gráfico de Gantt](documents/primeira_entrega/gantt/gantt.pdf)  
+[Gráfico de Gantt](documents/terceira_entrega/gantt/gantt.pdf)  
 [ClickUp](https://app.clickup.com/9012385337/v/s/90121980334)
 
-## Autoavaliação do Projeto (TODO)
+## Autoavaliação do Projeto
+O ThinkToilet é um projeto que se destaca pela criatividade, atenção aos detalhes e pela dedicação em construir uma aplicação funcional, segura e intuitiva. Segue uma análise detalhada das áreas mais relevantes:
+### API e Back-End  
+A API foi desenvolvida seguindo boas práticas de arquitetura e design. Os endpoints são bem estruturados, e o tratamento de erros é robusto, com mensagens claras e informativas, que auxiliam no processo de debugging, tornando agradavel para desenvolvedores. Além disso, o sistema se mostrou escalável e flexível, pronto para futuras expansões.
+
+Um destaque importante é o cuidado com segurança. O back-end implementa:
+- **Criptografia de senhas com o método bcrypt**, garantindo a proteção dos dados sensíveis dos usuários.
+- **Uso de chaves de API**, reforçando a autenticação e a segurança no acesso aos recursos.
+Essas implementações demonstram a preocupação em proteger as informações dos usuários e mitigar riscos de segurança.
+
+### Front-End
+O front-end foi desenvolvida focando na usabilidade e experiência do usuário. A interface é limpa, intuitiva e responsiva, adaptando-se a diferentes dispositivos e tamanhos de tela. A integração com o Google Maps e OpenStreetMap API foi bem executada, proporcionando uma navegação suave e eficiente.
+Em especial, destacam-se:
+- **Aplicação bilíngue (português e inglês)**, ampliando o alcance e tornando o sistema mais inclusivo.
+- **Modo escuro**, cuidadosamente projetado com uma paleta de cores que garante conforto visual.
+- **Mapa interativo**, integrado com OpenStreetMap, que substituiu a Google Maps API de forma eficaz e econômica.
+
+### Base de Dados
+O banco de dados foi projetado de forma eficiente, com uma estrutura bem normalizada e otimizada para consultas rápidas e precisas. O dicionario de dados e o guia de dados fornecem informações detalhadas sobre as tabelas, campos e relacionamentos, facilitando a compreensão e manutenção do banco. As queries foram bem elaboradas, com uso adequado de índices e cláusulas para garantir a performance e integridade dos dados.
+- **Dados georreferenciados** para casas de banho, permitindo consultas otimizadas por localização e integração fluida com o mapa interativo no frontend.
+- **Suporte a consultas paginadas**, essencial para a busca de casas de banho e para manter a performance em listas grandes.
+
+### Funcionalidades Implementadas
+O ThinkToilet apresenta um conjunto robusto de funcionalidades:
+
+- **Sistema de busca com paginação**, essencial para lidar com grandes volumes de dados.
+- **Login e registro de usuários**, com autenticação segura.
+- **Avaliações detalhadas de casas de banho**, com cálculo de médias ponderadas.
+- **Histórico de interações e avaliações** para os usuários.
+- **Edição de informações do usuário**, adicionada como funcionalidade extra ao escopo inicial.
+- **Denúncia de casas de banho e comentários**, promovendo um ambiente seguro e colaborativo.
+- **Possibilidade de traçar rotas** para as casas de banho, com integração ao Google Maps.
+
+### Conformidade com a Proposta
+O projeto atende à proposta inicial, entregando todas as funcionalidades principais e até superando expectativas em alguns aspectos. As mudanças realizadas, como a troca da Google Maps API pelo OpenStreetMap, foram bem fundamentadas e executadas, embora a funcionalidade de sugestão de casas de banho pelos usuários tenha sido cortada devido a restrições de tempo.
+
+### Opinião e Nota Final
+O ThinkToilet é um projeto completo, tecnicamente sólido e bem pensado. A integração eficiente entre back-end, banco de dados e front-end, somada às preocupações com segurança, usabilidade e escalabilidade, demonstra o compromisso com a entrega de um produto de alta qualidade.
+
+**Nota sugerida:** 19/20
+
+O projeto merece uma nota alta pelo excelente trabalho. A ausência da funcionalidade de sugestão de casas de banho é um pequeno detalhe que impede a perfeição, mas isso é amplamente compensado pela qualidade do projeto desenvolvido e adições que superaram as expectativas iniciais.
 
 ## Documentações e Componentes
 ### Diagrama de Classes
