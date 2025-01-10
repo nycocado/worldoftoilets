@@ -92,15 +92,15 @@
 ## Versões do Relatório
 ### Proposta Inicial
 - [Markdown](README-proposta.md)
-- [PDF](documents/g01-proposta-v1.pdf)
+- [PDF](documents/primeira_entrega/g04-proposta.pdf)
 
 ### Relatório Intermédio
-- [Markdown](README-intermedio.md)
-- [PDF](documents/g02-relatorio-intermedio.pdf)
+- [Markdown](README-relatorio-intermedio.md)
+- [PDF](documents/segunda_entrega/g04-relatorio-intermedio.pdf)
 
 ### Relatório Final
 - [Markdown](README.md)
-- [PDF](documents/g04-relatorio-final.pdf)
+- [PDF](documents/terceira_entrega/g04-relatorio-final.pdf)
 
 ## Palavras-Chave
 Localizador; Avaliação; Sanitários; Casa de banho; Público; Privada; Busca; Próximas; Aplicação; Mobile; Guia; Navegação; Google Maps; Encontrar; Rotas; Busca; Mapa; Interativo; App; Recomendação;
