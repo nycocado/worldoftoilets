@@ -490,24 +490,27 @@ O projeto merece uma nota alta pelo excelente trabalho. A ausência da funcional
 ![Diagrama de Classes](documents/terceira_entrega/diagramas/classes.png)
 
 ### Base de Dados (BD Report)
-- [Dicionário de Dados - PDF](documents/g04-dicionario-de-dados-v2.pdf)
-- [Guia de Dados - PDF](documents/g04-guia-de-dados-v2.pdf)
+- [Dicionário de Dados - PDF](documents/terceira_entrega/g04-dicionario-de-dados-v2.pdf)
+- [Guia de Dados - PDF](documents/terceira_entrega/g04-guia-de-dados-v2.pdf)
 
 ### Documentação REST
 - [Markdown](RESTDOC.md)
-- [PDF](documents/g04-restdoc-v2.pdf)
+- [PDF](documents/terceira_entrega/g04-restdoc-v2.pdf)
 
 ### Manual do Utilizador
-- [PDF](documents/g04-manual-do-utilizador.pdf)
+- [PDF](documents/terceira_entrega/g04-manual-do-utilizador.pdf)
 
 ### Banner
+- [PDF](documents/terceira_entrega/banner/banner-g4.pdf)
+- [PNG](documents/terceira_entrega/banner/banner-g4.png)
 
 ### Video
 
 ### Competências Comunicacionais
-- [PDF](documents/g04-competencias-comunicacionais.pdf)
+- [PDF](documents/terceira_entrega/g04-competencias-comunicacionais.pdf)
 
 ### Matemática Discreta
+- [PDF](documents/terceira_entrega/g04-matematica-discreta.pdf)
 
 ## Conclusão
 O **[Think Toilet](https://github.com/nycocado/think-toilet)** tem como principal objetivo fornecer uma solução eficaz para facilitar a localização de casas de banho públicas e privadas, ao mesmo tempo que melhora a experiência do utilizador através de um sistema de avaliações detalhadas. A aplicação permite que os utilizadores encontrem rapidamente casas de banho próximas, com base em critérios como limpeza e acessibilidade. Além disso, o projeto visa promover a colaboração dos utilizadores através de avaliações, criando assim um banco de dados sempre atualizado e confiável.
@@ -526,7 +529,7 @@ Com a integração ao [Google Maps](https://www.google.pt/maps), a aplicação t
 - [Google Maps - Google](https://www.google.pt/maps)
 - [Google Maps API - Google](https://developers.google.com/maps)
 - [OpenStreetMap - OpenStreetMap](https://www.openstreetmap.org)
-- [OpenStreetMap Api - OpenStreetMap](https://wiki.openstreetmap.org/wiki/API)
+- [OpenStreetMap API - OpenStreetMap](https://wiki.openstreetmap.org/wiki/API)
 - [Java - Oracle](https://www.java.com/)
 - [Spring Boot - VMware Tanzu](https://spring.io)
 - [MySQL - Oracle](https://www.mysql.com/)

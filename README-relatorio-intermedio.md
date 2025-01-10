@@ -426,7 +426,7 @@ Outro objetivo central é o incentivo à participação ativa, implementando um 
 ### Modelo Entidade-Relacionamento
 ![Modelo Entidade-Relacionamento](documents/segunda_entrega/diagramas/er.png)  
 ### Documento de Referência
-[BD Report - Dicionario e Guia de Dados](documents/g04-bdreport-v1.pdf)
+[BD Report - Dicionario e Guia de Dados](documents/segunda_entrega/g04-bdreport-v1.pdf)
 
 # REST API
 ## Introdução
