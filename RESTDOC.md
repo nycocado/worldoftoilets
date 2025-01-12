@@ -14,6 +14,7 @@
     - [Editar ícone do usuário](#editar-ícone-do-usuário)
     - [Editar nome do usuário](#editar-nome-do-usuário)
     - [Editar senha do usuário](#editar-senha-do-usuário)
+    - [Apagar usuário](#apagar-usuário)
   - [Casas de Banho - Endpoints](#casas-de-banho---endpoints)
     - [Mostrar casas de banho](#mostrar-casas-de-banho)
     - [Mostrar casas de banho por bounding box](#mostrar-casas-de-banho-por-bounding-box)
@@ -31,6 +32,7 @@
     - [Mostrar reações de um comentário](#mostrar-reações-de-um-comentário)
     - [Adicionar comentário](#adicionar-comentário)
     - [Adicionar reação em um comentário](#adicionar-reação-em-um-comentário)
+    - [Apagar comentário](#apagar-comentário)
     - [Apagar reação em um comentário](#apagar-reação-em-um-comentário)
   - [Observações](#observações)
     - [State](#state)
@@ -472,6 +474,39 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         @Query("password") password: String,
         @Query("newPassword") newPassword: String
     ): Call<ResponseBody>
+    ```
+    
+### Apagar usuário
+(Essa ação requer uma chave de administrador)
+- **URL:**  
+    `/users`
+- **METHOD:**  
+    `DELETE`
+- **URL PARAMETHERS:**
+    - Required (Query):  
+        `id=[integer]`
+- **SUCCESS RESPONSE:**
+    ```json
+    {
+        "status": 200,
+        "message": "User deleted successfully.",
+        "timestamp": [datetime]
+    }
+    ```
+- **ERROR RESPONSE:**
+    ```json
+    {
+        "status": 200,
+        "message": "An unexpected error occurred.",
+        "timestamp": [datetime]
+    }
+    ```
+    ```json
+    {
+        "status": 404,
+        "message": "User with id [integer] not found.",
+        "timestamp": [datetime]
+    }
     ```
 
 ## Casas de Banho - Endpoints
@@ -933,6 +968,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     ```
 
 ### Adicionar foto na casa de banho
+(Essa ação requer uma chave de administrador)
 - **URL:**  
     `/toilets/{id}/image`
 - **METHOD:**  
@@ -1326,6 +1362,37 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     ): Call<ResponseBody>
     ```
 
+### Apagar comentário
+(Essa ação requer uma chave de administrador)
+- **URL:**  
+    `/comments`
+- **METHOD:**  
+    `DELETE`
+- **URL PARAMETHERS:**
+    - Required (Query):  
+        `id=[integer]`
+- **SUCCESS RESPONSE:**
+    ```json
+    {
+        "status": 200,
+        "message": "Comment deleted successfully.",
+        "timestamp": [datetime]
+    }
+    ```
+- **ERROR RESPONSE:**
+    ```json
+    {
+        "status": 500,
+        "message": "An unexpected error occurred.",
+        "timestamp": [datetime]
+    }
+    ```
+    ```json
+    {
+        "status": 404,
+        "message": "Comment with id [integer] not found.",
+        "timestamp": [datetime]
+    }
 
 ### Apagar reação em um comentário
 - **URL:**  

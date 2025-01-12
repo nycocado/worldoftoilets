@@ -148,23 +148,23 @@ ALTER TABLE toilet ADD CONSTRAINT toil_fk_state FOREIGN KEY (toil_state_id) REFE
 
 ALTER TABLE report ADD CONSTRAINT report_fk_typereport FOREIGN KEY (rep_trp_id) REFERENCES typereport (trp_id) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
-ALTER TABLE report ADD CONSTRAINT report_fk_interaction FOREIGN KEY (rep_int_id) REFERENCES interaction (int_id) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE report ADD CONSTRAINT report_fk_interaction FOREIGN KEY (rep_int_id) REFERENCES interaction (int_id) ON DELETE CASCADE ON UPDATE NO ACTION;
 
-ALTER TABLE interaction ADD CONSTRAINT interaction_fk_user FOREIGN KEY (int_user_id) REFERENCES user (user_id) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE interaction ADD CONSTRAINT interaction_fk_user FOREIGN KEY (int_user_id) REFERENCES user (user_id) ON DELETE CASCADE ON UPDATE NO ACTION;
 
-ALTER TABLE interaction ADD CONSTRAINT interaction_fk_toil FOREIGN KEY (int_toil_id) REFERENCES toilet (toil_id) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE interaction ADD CONSTRAINT interaction_fk_toil FOREIGN KEY (int_toil_id) REFERENCES toilet (toil_id) ON DELETE CASCADE ON UPDATE NO ACTION;
 
-ALTER TABLE extra ADD CONSTRAINT extra_fk_toilet FOREIGN KEY (extra_toil_id) REFERENCES toilet (toil_id) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE extra ADD CONSTRAINT extra_fk_toilet FOREIGN KEY (extra_toil_id) REFERENCES toilet (toil_id) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 ALTER TABLE extra ADD CONSTRAINT extra_fk_typeextra FOREIGN KEY (extra_tex_id) REFERENCES typeextra (tex_id) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE city ADD CONSTRAINT city_fk_country FOREIGN KEY (city_country_id) REFERENCES country (country_id) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
-ALTER TABLE comment ADD CONSTRAINT comment_fk_interaction FOREIGN KEY (cmm_int_id) REFERENCES interaction (int_id) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE comment ADD CONSTRAINT comment_fk_interaction FOREIGN KEY (cmm_int_id) REFERENCES interaction (int_id) ON DELETE CASCADE ON UPDATE NO ACTION;
 
-ALTER TABLE reaction ADD CONSTRAINT reaction_fk_user FOREIGN KEY (react_user_id) REFERENCES user (user_id) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE reaction ADD CONSTRAINT reaction_fk_user FOREIGN KEY (react_user_id) REFERENCES user (user_id) ON DELETE CASCADE ON UPDATE NO ACTION;
 
-ALTER TABLE reaction ADD CONSTRAINT reaction_fk_comment FOREIGN KEY (react_cmm_id) REFERENCES comment (cmm_id) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE reaction ADD CONSTRAINT reaction_fk_comment FOREIGN KEY (react_cmm_id) REFERENCES comment (cmm_id) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 ALTER TABLE reaction ADD CONSTRAINT reaction_fk_typereaction FOREIGN KEY (react_trc_id) REFERENCES typereaction (trc_id) ON DELETE NO ACTION ON UPDATE NO ACTION;
 

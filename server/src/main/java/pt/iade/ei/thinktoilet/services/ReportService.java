@@ -44,6 +44,10 @@ public class ReportService {
                 .orElseThrow(() -> new DatabaseSaveException("Report"));
     }
 
+    public void deleteReport(Report report) {
+        reportRepository.delete(report);
+    }
+
     @Transactional
     public ResponseEntity<ApiResponse> addReport(ReportRequest request) {
         Toilet toilet = toiletService.getToiletById(request.getToiletId());
@@ -68,7 +72,7 @@ public class ReportService {
     }
 
     @Transactional
-    public ResponseEntity<ApiResponse> deleteReport(int toiletId, int userId) {
+    public ResponseEntity<ApiResponse> removeReport(int toiletId, int userId) {
         if (!toiletService.existsToiletById(toiletId)) {
             throw new NotFoundException(String.valueOf(toiletId), "Toilet", "id");
         }
@@ -78,7 +82,7 @@ public class ReportService {
         Interaction interaction = interactionService.getInteractionByToiletIdAndUserId(toiletId, userId);
         Report report = getReportByInteractionId(interaction.getId());
 
-        reportRepository.delete(report);
+        deleteReport(report);
 
         ApiResponse response = new ApiResponse(HttpStatus.OK.value(), "Report removed successfully");
         return new ResponseEntity<>(response, HttpStatus.OK);

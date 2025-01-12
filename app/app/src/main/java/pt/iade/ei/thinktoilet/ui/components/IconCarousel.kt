@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,7 +36,7 @@ fun IconCarousel(
     pagerState: PagerState
 ) {
     val context = LocalContext.current
-    val screenWidth = context.resources.displayMetrics.widthPixels / context.resources.displayMetrics.density
+    val screenWidth = LocalConfiguration.current.screenWidthDp
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -66,11 +67,12 @@ fun IconContent(
 ) {
     val context = LocalContext.current
     val pageOffset = (pagerState.currentPage - index) + pagerState.currentPageOffsetFraction
+    val screenWidth = LocalConfiguration.current.screenWidthDp
 
     Card(
         shape = CircleShape,
         modifier = Modifier
-            .height(150.dp)
+            .height((screenWidth * 0.4f).dp)
             .aspectRatio(1f)
             .graphicsLayer {
                 val scale = lerp(
@@ -90,8 +92,7 @@ fun IconContent(
         Image(
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(1f)
-                .height(150.dp),
+                .aspectRatio(1f),
             painter = painterResource(imageList[index]),
             contentDescription = context.getString(R.string.icon) + index,
             contentScale = ContentScale.Crop

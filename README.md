@@ -245,7 +245,7 @@ A comunicação eficaz foi essencial durante o desenvolvimento do projeto. Aplic
 
 ### Requisitos Não Funcionais
 - A interface deve ser intuitiva e responsiva, proporcionando uma experiência de usuário agradável.
-- O sistema deve permitir a moderação eficiente de comentários e sugestões, incluindo a análise de conteúdo para determinar se ele deve ser mantido, editado ou removido.
+- O sistema deve permitir a moderação eficiente de comentários e usúarios, incluindo a análise de conteúdo para determinar se ele deve ser mantido ou removido.
 - A aplicação deve ser compatível com [Android 9 (API Level 28)]((https://developer.android.com/tools/releases/platforms#9.0)) ou superior.
 - Deve ser utilizado [Kotlin](https://kotlinlang.org) com [Jetpack Compose](https://developer.android.com/compose) para a interface do usúario.
 - Deve ser utilizado [Java](https://www.java.com/) com [Spring Boot](https://spring.io) para manipulação de dados.
@@ -377,7 +377,8 @@ Utilizando **[MySQL](https://www.mysql.com/)**, o banco de dados foi projetado p
 ### Desenvolvimento Móvel
 - **Linguagem:** [Kotlin](https://kotlinlang.org)
 - **Framework:** [Jetpack Compose](https://developer.android.com/compose)
-- **SDK:** [Android SDK 28](https://developer.android.com/tools/releases/platforms#9.0)
+- **SDK Mínimo:** [Android SDK 28](https://developer.android.com/tools/releases/platforms#9.0)
+- **SDK de Desenvolvimento:** [Android SDK 34](https://developer.android.com/tools/releases/platforms#14)
 - **Integração:** [Google Maps API](https://developers.google.com/maps) e [OpenStreetMap API](https://wiki.openstreetmap.org/wiki/API)
 
 ### Desenvolvimento Back-End
@@ -460,7 +461,7 @@ Em especial, destacam-se:
 - **Mapa interativo**, integrado com OpenStreetMap, que substituiu a Google Maps API de forma eficaz e econômica.
 
 ### Base de Dados
-O banco de dados foi projetado de forma eficiente, com uma estrutura bem normalizada e otimizada para consultas rápidas e precisas. O dicionario de dados e o guia de dados fornecem informações detalhadas sobre as tabelas, campos e relacionamentos, facilitando a compreensão e manutenção do banco. As queries foram bem elaboradas, com uso adequado de índices e cláusulas para garantir a performance e integridade dos dados.
+A base de dados foi projetada de forma eficiente, com uma estrutura bem normalizada e otimizada para consultas rápidas e precisas. O dicionario de dados e o guia de dados fornecem informações detalhadas sobre as tabelas, campos e relacionamentos, facilitando a compreensão e manutenção do banco. As queries foram bem elaboradas, com uso adequado de índices e cláusulas para garantir a performance e integridade dos dados.
 - **Dados georreferenciados** para casas de banho, permitindo consultas otimizadas por localização e integração fluida com o mapa interativo no frontend.
 - **Suporte a consultas paginadas**, essencial para a busca de casas de banho e para manter a performance em listas grandes.
 
@@ -535,5 +536,6 @@ Com a integração ao [Google Maps](https://www.google.pt/maps), a aplicação t
 - [Spring Boot - VMware Tanzu](https://spring.io)
 - [MySQL - Oracle](https://www.mysql.com/)
 - [Android SDK 28 - Google](https://developer.android.com/tools/releases/platforms#9.0)
+- [Android SDK 34 - Google](https://developer.android.com/tools/releases/platforms#14)
 - [Figma - Figma, Inc.](https://www.figma.com/)
-- [ClickUp](https://clickup.com/)
+- [ClickUp - ClickUp](https://clickup.com/)

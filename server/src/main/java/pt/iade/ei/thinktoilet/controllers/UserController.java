@@ -4,8 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pt.iade.ei.thinktoilet.models.dtos.UserDTO;
+import pt.iade.ei.thinktoilet.models.response.ApiResponse;
 import pt.iade.ei.thinktoilet.services.UserService;
 
 import java.util.List;
@@ -72,5 +74,13 @@ public class UserController {
     ) {
         logger.info("Editing icon of user with id {}", id);
         return userService.editIcon(id, iconId);
+    }
+
+    @DeleteMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse> deleteUser(
+            @RequestParam int id
+    ) {
+        logger.info("Deleting user with id {}", id);
+        return userService.removeUser(id);
     }
 }

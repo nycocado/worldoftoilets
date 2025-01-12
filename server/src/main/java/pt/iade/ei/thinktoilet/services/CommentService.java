@@ -1,8 +1,11 @@
 package pt.iade.ei.thinktoilet.services;
 
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pt.iade.ei.thinktoilet.exceptions.DatabaseSaveException;
@@ -14,6 +17,7 @@ import pt.iade.ei.thinktoilet.models.entities.Toilet;
 import pt.iade.ei.thinktoilet.models.entities.User;
 import pt.iade.ei.thinktoilet.models.mappers.CommentMapper;
 import pt.iade.ei.thinktoilet.models.requests.CommentRequest;
+import pt.iade.ei.thinktoilet.models.response.ApiResponse;
 import pt.iade.ei.thinktoilet.repositories.CommentRepository;
 
 import java.time.LocalDateTime;
@@ -69,6 +73,10 @@ public class CommentService {
     public Comment saveComment(Comment comment) {
         return Optional.of(commentRepository.save(comment))
                 .orElseThrow(() -> new DatabaseSaveException("Comment"));
+    }
+
+    public void deleteComment(Comment comment) {
+        commentRepository.delete(comment);
     }
 
     @Transactional
@@ -129,5 +137,15 @@ public class CommentService {
         Comment savedComment = saveComment(comment);
 
         return commentMapper.mapCommentDTO(savedComment);
+    }
+
+    @Transactional
+    public ResponseEntity<ApiResponse> removeComment(int id) {
+        Comment comment = getCommentById(id);
+
+        deleteComment(comment);
+
+        ApiResponse response = new ApiResponse(HttpStatus.OK.value(), "Comment removed successfully");
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

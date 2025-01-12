@@ -1,6 +1,9 @@
 package pt.iade.ei.thinktoilet.services;
 
+import jakarta.persistence.Entity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,6 +11,7 @@ import pt.iade.ei.thinktoilet.exceptions.*;
 import pt.iade.ei.thinktoilet.models.dtos.UserDTO;
 import pt.iade.ei.thinktoilet.models.entities.User;
 import pt.iade.ei.thinktoilet.models.mappers.UserMapper;
+import pt.iade.ei.thinktoilet.models.response.ApiResponse;
 import pt.iade.ei.thinktoilet.repositories.UserRepository;
 
 import java.util.Collection;
@@ -52,6 +56,10 @@ public class UserService {
     public User saveUser(User user) {
         return Optional.of(userRepository.save(user))
                 .orElseThrow(() -> new DatabaseSaveException("User"));
+    }
+
+    public void deleteUser(User user) {
+        userRepository.delete(user);
     }
 
     @Transactional
@@ -114,5 +122,15 @@ public class UserService {
         user.setIconId(iconId);
         User savedUser = saveUser(user);
         return userMapper.mapLoginResponse(savedUser, savedUser.getEmail());
+    }
+
+    @Transactional
+    public ResponseEntity<ApiResponse> removeUser(int id) {
+        User user = getUserById(id);
+
+        deleteUser(user);
+
+        ApiResponse response = new ApiResponse(HttpStatus.OK.value(), "User removed successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

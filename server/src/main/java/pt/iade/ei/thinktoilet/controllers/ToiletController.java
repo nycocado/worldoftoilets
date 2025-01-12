@@ -99,7 +99,7 @@ public class ToiletController {
             @RequestParam int userId
     ) {
         logger.info("Deleting report from toilet with id {} and user with id {}", toiletId, userId);
-        return reportService.deleteReport(toiletId, userId);
+        return reportService.removeReport(toiletId, userId);
     }
 
     @GetMapping(path = "/search/{query}", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -37,6 +37,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
                                 .requestMatchers(HttpMethod.POST, "/api/toilets/*/image").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.DELETE, "/api/users").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.DELETE, "/api/comments").hasRole("ADMIN")
                                 .requestMatchers("/api/**").permitAll()
                                 .anyRequest().authenticated()
                 ).csrf(AbstractHttpConfigurer::disable);

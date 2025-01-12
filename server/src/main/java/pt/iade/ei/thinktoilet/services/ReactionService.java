@@ -53,6 +53,10 @@ public class ReactionService {
                 .orElseThrow(() -> new DatabaseSaveException("Reaction"));
     }
 
+    public void deleteReaction(Reaction reaction) {
+        reactionRepository.delete(reaction);
+    }
+
     @Transactional
     public List<ReactionDTO> findReactionsByUserId(int userId, List<Integer> commentIds) {
         if (!userService.existsUserById(userId)) {
@@ -87,7 +91,7 @@ public class ReactionService {
     }
 
     @Transactional
-    public ResponseEntity<ApiResponse> deleteReaction(int commentId, int userId) {
+    public ResponseEntity<ApiResponse> removeReaction(int commentId, int userId) {
         if(!commentService.existsCommentById(commentId)) {
             throw new NotFoundException(String.valueOf(commentId), "Comment", "id");
         }
@@ -96,7 +100,7 @@ public class ReactionService {
         }
         Reaction reaction = getReactionByCommentIdAndUserId(commentId, userId);
 
-        reactionRepository.delete(reaction);
+        deleteReaction(reaction);
 
         ApiResponse response = new ApiResponse(HttpStatus.OK.value(), "Reaction deleted successfully");
         return ResponseEntity.status(HttpStatus.OK).body(response);

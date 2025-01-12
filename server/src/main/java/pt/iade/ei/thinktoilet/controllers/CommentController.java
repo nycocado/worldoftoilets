@@ -76,6 +76,14 @@ public class CommentController {
         return commentService.addComment(request);
     }
 
+    @DeleteMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse> deleteComment(
+            @RequestParam int id
+    ) {
+        logger.info("Deleting comment with id {}", id);
+        return commentService.removeComment(id);
+    }
+
     @PostMapping(path = "/reactions", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse> addReaction(
             @RequestBody ReactionRequest request
@@ -90,6 +98,6 @@ public class CommentController {
             @RequestParam int userId
     ) {
         logger.info("Deleting reaction from comment with id {} and user with id {}", commentId, userId);
-        return reactionService.deleteReaction(commentId, userId);
+        return reactionService.removeReaction(commentId, userId);
     }
 }
