@@ -34,6 +34,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.LocalPlatformContext
@@ -89,14 +90,13 @@ fun ToiletDetailScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .padding(bottom = 16.dp)
-        ) {
+        Row {
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
                     text = toilet.name,
@@ -104,24 +104,24 @@ fun ToiletDetailScreen(
                     fontWeight = FontWeight.Bold
                 )
                 Row(
-                    modifier = Modifier.padding(
-                        top = 4.dp,
-                    ),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Stars(
                         rating = toilet.getAverageRating(), size = 22.dp
                     )
                     Text(
-                        modifier = Modifier.padding(horizontal = 4.dp),
-                        text = "%.1f".format(toilet.getAverageRating()),
-                        fontStyle = MaterialTheme.typography.bodyMedium.fontStyle,
-                        fontWeight = FontWeight.SemiBold
+                        text = "%.1f".format(toilet.getAverageRating()) + " - " + context.getString(toilet.access.value),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
+                        minLines = 1
                     )
                 }
             }
-            Column(
-                modifier = Modifier.padding(end = 8.dp)
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 FilledIconButton(
                     onClick = { navigateToToiletReport(toilet.id) },
@@ -140,33 +140,34 @@ fun ToiletDetailScreen(
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.flag_filled_24px),
-                        contentDescription = "Denunciar"
+                        contentDescription = context.getString(R.string.report)
                     )
                 }
-            }
-            FilledIconButton(
-                onClick = { navigateToBack() },
-                modifier = Modifier.size(38.dp),
-                colors = IconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                    disabledContainerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(
-                        alpha = 0.5f
-                    ),
-                    disabledContentColor = MaterialTheme.colorScheme.onTertiaryContainer.copy(
-                        alpha = 0.5f
+                FilledIconButton(
+                    onClick = { navigateToBack() },
+                    modifier = Modifier.size(38.dp),
+                    colors = IconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                        disabledContainerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(
+                            alpha = 0.5f
+                        ),
+                        disabledContentColor = MaterialTheme.colorScheme.onTertiaryContainer.copy(
+                            alpha = 0.5f
+                        )
                     )
-                )
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.close_24px),
-                    contentDescription = "Voltar"
-                )
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.close_24px),
+                        contentDescription = context.getString(R.string.back)
+                    )
+                }
             }
         }
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item {
                 SubcomposeAsyncImage(
@@ -209,13 +210,14 @@ fun ToiletDetailScreen(
 
             item {
                 Row(
-                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
+                    modifier = Modifier.padding(vertical = 4.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Row (
+                    Row(
                         modifier = Modifier.weight(1f),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.location_on_filled_24px),
@@ -224,66 +226,57 @@ fun ToiletDetailScreen(
                             tint = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            modifier = Modifier.padding(horizontal = 6.dp),
                             text = toilet.address,
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Medium
                         )
                     }
-                    Column {
-                        Button(
-                            onClick = {
-                                val intent = Intent(
-                                    Intent.ACTION_VIEW,
-                                    Uri.parse(toilet.getMapsUrl())
-                                ).apply {
-                                    putExtra(
-                                        Intent.EXTRA_REFERRER,
-                                        Uri.parse(context.getString(R.string.maps_uri))
-                                    )
-                                }
-                                context.startActivity(intent)
-                            },
-                            colors = ButtonColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                                disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(
-                                    alpha = 0.5f
-                                ),
-                                disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(
-                                    alpha = 0.5f
+                    Button(
+                        onClick = {
+                            val intent = Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse(toilet.getMapsUrl())
+                            ).apply {
+                                putExtra(
+                                    Intent.EXTRA_REFERRER,
+                                    Uri.parse(context.getString(R.string.maps_uri))
                                 )
+                            }
+                            context.startActivity(intent)
+                        },
+                        colors = ButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(
+                                alpha = 0.5f
+                            ),
+                            disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(
+                                alpha = 0.5f
                             )
-                        ) {
-                            Text(
-                                text = context.getString(R.string.go_to_maps),
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
+                        )
+                    ) {
+                        Text(
+                            text = context.getString(R.string.go_to_maps),
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.SemiBold
+                        )
                     }
                 }
             }
 
-            item {
-                if (toilet.extras.isNotEmpty()) {
-                    Column(
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    ) {
-                        ChipsToilet(toilet.extras)
-                    }
+            if (toilet.extras.isNotEmpty()) {
+                item {
+                    ChipsToilet(toilet.extras)
                 }
             }
 
             item {
                 Row(
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .padding(bottom = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Column(
-                        modifier = Modifier.padding(end = 14.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
@@ -295,7 +288,9 @@ fun ToiletDetailScreen(
                             rating = toilet.getAverageRating(), size = 20.dp
                         )
                     }
-                    Column {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
                         ProgressBar(
                             progress = toilet.rating.clean,
                             text = String.format(
@@ -333,9 +328,7 @@ fun ToiletDetailScreen(
                 Button(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(
-                            bottom = 8.dp
-                        ),
+                        .padding(vertical = 4.dp),
                     onClick = { scope.launch { navigateToRating(toilet.id) } },
                     colors = ButtonColors(
                         containerColor = MaterialTheme.colorScheme.tertiaryContainer,
@@ -358,15 +351,10 @@ fun ToiletDetailScreen(
 
             item {
                 Row(
-                    modifier = Modifier.padding(
-                        bottom = 8.dp
-                    ),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     Text(
-                        modifier = Modifier.padding(
-                            end = 10.dp,
-                        ),
                         text = context.getString(R.string.comments),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,

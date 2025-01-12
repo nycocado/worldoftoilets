@@ -34,6 +34,8 @@
     - [Apagar reação em um comentário](#apagar-reação-em-um-comentário)
   - [Observações](#observações)
     - [State](#state)
+    - [Extras](#extras)
+    - [Access](#access)
 
 ## Introdução
 A API do Think Toilet oferece acesso eficiente a informações sobre usuários, casas de banho e comentários, permitindo consultas, visualizações e interações organizadas. Desenvolvida para integração com a aplicação móvel, a API fornece dados atualizados e é compatível com outras plataformas.
@@ -500,6 +502,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
                 "ratioPaper": [double],
             },
             "extras": [strings],
+            "access": [string],
             "latitude": [double],
             "longitude": [double],
             "numComments": [integer],
@@ -567,6 +570,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
                 "ratioPaper": [double],
             },
             "extras": [strings],
+            "access": [string],
             "latitude": [double],
             "longitude": [double],
             "numComments": [integer],
@@ -622,6 +626,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
                 "ratioPaper": [double],
             },
             "extras": [strings],
+            "access": [string],
             "latitude": [double],
             "longitude": [double],
             "numComments": [integer],
@@ -686,6 +691,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
             "ratioPaper": [double],
         },
         "extras": [strings],
+        "access": [string],
         "latitude": [double],
         "longitude": [double],
         "numComments": [integer],
@@ -742,6 +748,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
                 "ratioPaper": [double],
             },
             "extras": [strings],
+            "access": [string],
             "latitude": [double],
             "longitude": [double],
             "numComments": [integer],
@@ -1370,8 +1377,28 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
 
 ## Observações
 ### State
-O state, visto em alguns endpoints, é um objeto que representa o estado de uma casa de banho. Ele pode ter os seguintes valores:
+O state, visto em alguns endpoints, é um argumento que representa o estado de uma casa de banho. Ele pode ter os seguintes valores:
 - `active` - Casa de banho ativa
 - `inactive` - Casa de banho inativa
 - `under-review` - Casa de banho em revisão
 - `suggested` - Casa de banho sugerida
+- 
+
+### Extras
+O campo extras, visto em alguns endpoints, é um array de strings que representa as características extras de uma casa de banho. Ele pode ter os seguintes valores:
+
+- `WHEELCHAIR_ACCESSIBLE` - Acesso para cadeira de rodas
+- `BABY_CHANGING_STATION` - Trocador de fraldas
+- `DISABLED_PARKING` - Estacionamento para deficientes
+- `ACCESSIBLE_FOR_VISUALLY_IMPAIRED` - Acessível para deficientes visuais
+
+Esses valores apresentam diferenças com os presentes na base de dados, que basicamente são em lowercase, substituindo o `_` por `-`. Essa mudança serve para representações de classes Enum no JSON, facilitando o desenvolvimento pela parte do cliente.
+
+### Access
+O campo access, visto em alguns endpoints, é uma string que representa o tipo de acesso de uma casa de banho. Ele pode ter os seguintes valores:
+
+- `PUBLIC` - Acesso público
+- `PRIVATE` - Acesso privado
+- `CONSUMERS_ONLY` - Acesso apenas para consumidores
+
+Esses valores diferem dos presentes na base de dados, pelo mesmo motivo dos extras.

@@ -15,12 +15,6 @@ import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.util.Date
 
-/**
- * Exibe um diálogo de seleção de data personalizado.
- *
- * @param onDateSelected Callback que é chamado quando a data é selecionada.
- * @param onDismiss Callback que é chamado quando o diálogo é fechado.
- */
 @ExperimentalMaterial3Api
 @Composable
 fun CustomDatePickerDialog(

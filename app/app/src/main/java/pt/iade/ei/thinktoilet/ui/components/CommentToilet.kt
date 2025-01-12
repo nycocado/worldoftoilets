@@ -2,11 +2,11 @@ package pt.iade.ei.thinktoilet.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -33,14 +33,6 @@ import pt.iade.ei.thinktoilet.tests.generateComment
 import pt.iade.ei.thinktoilet.tests.generateUser
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
-/**
- * Exibe um comentário de um usuário sobre um Toilet.
- *
- * @param comment [Comment] que contém os detalhes do comentário.
- * @param reaction [Reaction] que contém a reação do usuário ao comentário.
- * @param user [User] que contém os detalhes do usuário que fez o comentário.
- * @param onReaction Callback que é chamado quando o usuário reage ao comentário.
- */
 @Composable
 fun CommentToilet(
     comment: Comment,
@@ -58,13 +50,15 @@ fun CommentToilet(
     )
     Column(
         modifier = Modifier.padding(top = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         Row(
             verticalAlignment = Alignment.Top
         ) {
             Row(
                 modifier = Modifier.weight(1f),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Image(
                     modifier = Modifier
@@ -78,9 +72,7 @@ fun CommentToilet(
                     painter = user.getIcon(),
                     contentDescription = context.getString(R.string.content_description_profile_picture)
                 )
-                Column(
-                    modifier = Modifier.padding(10.dp)
-                ) {
+                Column {
                     Text(
                         text = user.name,
                         style = MaterialTheme.typography.labelLarge,
@@ -107,16 +99,10 @@ fun CommentToilet(
             }
         }
         Row(
-            modifier = Modifier.padding(
-                top = 5.dp,
-                bottom = 1.dp
-            ),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
-            Row(
-                modifier = Modifier
-                    .padding(end = 10.dp)
-            ) {
+            Row {
                 Stars(
                     rating = comment.average(),
                     size = 20.dp
@@ -128,21 +114,15 @@ fun CommentToilet(
                 text = comment.getDateTimeString()
             )
         }
-        Row(
-            modifier = Modifier.padding(top = 5.dp)
-        ) {
+        Column {
             Text(
                 text = comment.text,
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Normal,
             )
-        }
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
-                modifier = Modifier
-                    .width(100.dp)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(60.dp)
             ) {
                 ThumbUp(
                     count = comment.like,
@@ -155,11 +135,6 @@ fun CommentToilet(
                         }
                     }
                 )
-            }
-            Column(
-                modifier = Modifier
-                    .width(100.dp)
-            ) {
                 ThumbDown(
                     count = comment.dislike,
                     isPressed = reaction.typeReaction == TypeReaction.DISLIKE,

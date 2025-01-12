@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.compose.runtime.Composable
 import com.google.gson.annotations.SerializedName
 import pt.iade.ei.thinktoilet.BuildConfig
+import pt.iade.ei.thinktoilet.models.enums.TypeAccess
 import pt.iade.ei.thinktoilet.models.enums.TypeExtra
 import java.io.Serializable
 import kotlin.math.atan2
@@ -20,7 +21,8 @@ data class Toilet(
     @SerializedName("longitude") val longitude: Double,
     @SerializedName("numComments") var numComments: Int,
     @SerializedName("placeId") val placeId: String? = null,
-    @SerializedName("extras") val extras: List<TypeExtra>
+    @SerializedName("extras") val extras: List<TypeExtra>,
+    @SerializedName("access") val access: TypeAccess
 ) : Serializable {
     fun getAverageRating(): Float {
         return rating.average()

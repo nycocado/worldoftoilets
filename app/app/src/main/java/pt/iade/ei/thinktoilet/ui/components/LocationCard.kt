@@ -23,13 +23,6 @@ import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.tests.generateRandomToilet
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
-/**
- * Exibe as informações de um Toilet de maneira avançada usando um Card.
- *
- * @param toilet [Toilet] que contém os detalhes da casa de banho.
- * @param location [Location] que contém a localização do usuário.
- * @param onClick Ação a ser executada quando o Card é clicado.
- */
 @Composable
 fun LocationCard(
     toilet: Toilet,

@@ -31,6 +31,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -38,6 +39,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.ui.components.CustomDragHandle
 import pt.iade.ei.thinktoilet.ui.components.OpenStreetMapsView
 import pt.iade.ei.thinktoilet.ui.navegation.AppGraph
@@ -55,6 +57,7 @@ fun HomeScreen(
     selectedToiletId: Int? = null,
     navController: NavHostController = rememberNavController()
 ) {
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val bottomSheetCurrentRoute =
         navController.currentBackStackEntryAsState().value?.destination?.route
@@ -156,7 +159,7 @@ fun HomeScreen(
                     expanded = isSearching,
                     onExpandedChange = { isSearching = it },
                     placeholder = {
-                        Text("Search")
+                        Text(context.getString(R.string.search))
                     },
                     leadingIcon = {
                         Icon(Icons.Default.Search, contentDescription = null)

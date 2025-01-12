@@ -4,11 +4,11 @@ package pt.iade.ei.thinktoilet.ui.screens
 import android.util.Patterns
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -136,8 +136,7 @@ fun LoginScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 68.dp),
+                .padding(innerPadding),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -145,98 +144,110 @@ fun LoginScreen(
                 Image(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 40.dp)
-                        .padding(bottom = 30.dp),
+                        .padding(horizontal = 100.dp)
+                        .padding(bottom = 20.dp),
                     painter = painterResource(R.drawable.logo),
                     contentDescription = context.getString(R.string.logo),
                 )
             }
 
             item {
-                NextTextField(
-                    label = context.getString(R.string.email),
-                    value = email,
-                    supportText = emailSupportText,
-                    onValueChange = { email = it },
-                    keyboardType = KeyboardType.Email
-                )
-                GoTextField(
-                    label = context.getString(R.string.password),
-                    value = password,
-                    supportText = passwordSupportText,
-                    onValueChange = { password = it },
-                    onGo = {
-                        if (isAllowedToLogin)
-                            scope.launch {
-                                onLogin(email, password)
-                                isLoading = true
-                            }
-                    },
-                    keyboardType = KeyboardType.Password,
-                    visualTransformation = PasswordVisualTransformation()
-                )
+                Column(
+                    modifier = Modifier.padding(horizontal = 68.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ){
+                    NextTextField(
+                        label = context.getString(R.string.email),
+                        value = email,
+                        supportText = emailSupportText,
+                        onValueChange = { email = it },
+                        keyboardType = KeyboardType.Email
+                    )
+                    GoTextField(
+                        label = context.getString(R.string.password),
+                        value = password,
+                        supportText = passwordSupportText,
+                        onValueChange = { password = it },
+                        onGo = {
+                            if (isAllowedToLogin)
+                                scope.launch {
+                                    onLogin(email, password)
+                                    isLoading = true
+                                }
+                        },
+                        keyboardType = KeyboardType.Password,
+                        visualTransformation = PasswordVisualTransformation()
+                    )
+                }
             }
 
             item {
-                Button(
-                    onClick = {
-                        if (isAllowedToLogin)
-                            scope.launch {
-                                onLogin(email, password)
-                                isLoading = true
-                            }
-                    },
+                Column(
                     modifier = Modifier
-                        .padding(top = 10.dp)
-                        .width(180.dp),
-                    colors = ButtonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(
-                            alpha = 0.5f
-                        ),
-                        disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(
-                            alpha = 0.5f
+                        .padding(top = 20.dp)
+                        .padding(horizontal = 100.dp),
+                    verticalArrangement = Arrangement.spacedBy(30.dp)
+                ){
+                    Button(
+                        onClick = {
+                            if (isAllowedToLogin)
+                                scope.launch {
+                                    onLogin(email, password)
+                                    isLoading = true
+                                }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        colors = ButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(
+                                alpha = 0.5f
+                            ),
+                            disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(
+                                alpha = 0.5f
+                            )
                         )
-                    )
-                ) {
-                    when (isLoading) {
-                        true -> CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp)
-                        )
+                    ) {
+                        when (isLoading) {
+                            true -> CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp)
+                            )
 
-                        false -> Text(
-                            text = context.getString(R.string.login_action),
+                            false -> Text(
+                                text = context.getString(R.string.login_action),
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.SemiBold,
+                                maxLines = 1,
+                                minLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+                    Button(
+                        onClick = { navigateToRegister() },
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        colors = ButtonColors(
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(
+                                alpha = 0.5f
+                            ),
+                            disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(
+                                alpha = 0.5f
+                            )
+                        )
+                    ) {
+                        Text(
+                            text = context.getString(R.string.register_action),
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.SemiBold,
                             maxLines = 1,
+                            minLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                     }
-                }
-                Button(
-                    onClick = { navigateToRegister() },
-                    modifier = Modifier
-                        .padding(top = 40.dp)
-                        .width(180.dp),
-                    colors = ButtonColors(
-                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                        disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(
-                            alpha = 0.5f
-                        ),
-                        disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(
-                            alpha = 0.5f
-                        )
-                    )
-                ) {
-                    Text(
-                        text = context.getString(R.string.register_action),
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.SemiBold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
                 }
             }
         }

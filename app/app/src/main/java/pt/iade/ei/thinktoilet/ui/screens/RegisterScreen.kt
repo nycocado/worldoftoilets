@@ -5,9 +5,9 @@ import android.util.Patterns
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
@@ -180,15 +180,20 @@ fun RegisterScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
-                IconCarousel(
-                    imageList = imageList,
-                    pagerState = pagerState
-                )
+                Column(
+                    modifier = Modifier.padding(bottom = 10.dp)
+                ) {
+                    IconCarousel(
+                        imageList = imageList,
+                        pagerState = pagerState
+                    )
+                }
             }
 
             item {
                 Column(
-                    modifier = Modifier.padding(horizontal = 68.dp)
+                    modifier = Modifier.padding(horizontal = 68.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     NextTextField(
                         label = context.getString(R.string.name),
@@ -250,8 +255,9 @@ fun RegisterScreen(
                         }
                     },
                     modifier = Modifier
+                        .fillMaxWidth()
                         .padding(top = 20.dp)
-                        .width(180.dp),
+                        .padding(horizontal = 100.dp),
                     colors = ButtonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer,

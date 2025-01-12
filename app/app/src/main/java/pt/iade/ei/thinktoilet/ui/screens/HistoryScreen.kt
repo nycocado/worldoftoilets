@@ -14,10 +14,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.models.UiState
 import pt.iade.ei.thinktoilet.models.responses.PageResponse
@@ -33,6 +35,7 @@ fun HistoryScreen(
     navigateToHomeScreen: (Int?) -> Unit = {},
     onClickLoadMore: (PageResponse<Int>) -> Unit = {}
 ) {
+    val context = LocalContext.current
     val toilets = toiletsStateFlow.collectAsState().value
     val toiletIds = toiletIdsStateFlow.collectAsState().value
     val scope = rememberCoroutineScope()
@@ -77,11 +80,14 @@ fun HistoryScreen(
 
             is UiState.Error -> {
                 Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ){
-                    Text(text = toiletIds.message)
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 16.dp)
+                        .padding(horizontal = 30.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(context.getString(R.string.error_unexpected))
                 }
             }
         }

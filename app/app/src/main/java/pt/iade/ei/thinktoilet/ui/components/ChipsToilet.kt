@@ -1,8 +1,8 @@
 package pt.iade.ei.thinktoilet.ui.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AssistChip
@@ -26,11 +26,11 @@ fun ChipsToilet(
     val context = LocalContext.current
 
     LazyRow(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         items(extras) { extra ->
             AssistChip(
-                modifier = Modifier.padding(horizontal = 4.dp),
                 label = {
                     Text(
                         text = context.getString(extra.value),

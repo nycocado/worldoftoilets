@@ -10,12 +10,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 
-/**
- * Verifica e solicita permissão de localização.
- *
- * @param onPermissionGranted Callback que é chamado quando a permissão é concedida.
- * @param onPermissionDenied Callback que é chamado quando a permissão é negada.
- */
 @Composable
 fun CheckAndRequestLocationPermission(
     onPermissionGranted: () -> Unit,

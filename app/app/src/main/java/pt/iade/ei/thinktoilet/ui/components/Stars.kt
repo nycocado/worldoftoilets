@@ -16,14 +16,6 @@ import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 import pt.iade.ei.thinktoilet.ui.util.NoRippleInteractionSource
 import kotlin.math.round
 
-/**
- * Exibe cinco ícones de estrelas, representando uma avaliação.
- *
- * @param rating [Float] que representa a avaliação.
- * @param size [Dp] que representa o tamanho do ícone.
- * @param horizontalPadding [Dp] que representa o espaçamento horizontal entre os ícones.
- * @param onClick Callback que é chamado quando um ícone é clicado. (Optional)
- */
 @Composable
 fun Stars(
     rating: Float,

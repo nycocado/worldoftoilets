@@ -29,6 +29,7 @@ public class ToiletMapper {
     public ToiletDTO mapToiletDTO(Toilet toilet){
         List<String> extras = extraRepository.findExtrasByToilet_Id(toilet.getId())
                 .stream().map( (Extra extra) -> extra.getTypeExtra().getTechnicalName().toUpperCase().replace("-", "_")).toList();
+        String access = toilet.getAccess().getTechnicalName().toUpperCase().replace("-", "_");
         Rating rating = ratingRepository.findRatingByToiletId(toilet.getId());
         CountCommentToilet countComment = countCommentToiletRepository.findCountCommentToiletByToiletId(toilet.getId());
         return new ToiletDTO(
@@ -37,6 +38,7 @@ public class ToiletMapper {
                 toilet.getAddress(),
                 rating,
                 extras,
+                access,
                 toilet.getLatitude(),
                 toilet.getLongitude(),
                 countComment.getNum(),
@@ -62,12 +64,14 @@ public class ToiletMapper {
             Rating rating = ratingMap.get(toilet.getId());
             int numComments = commentCountMap.get(toilet.getId());
             List<String> extrasToilet = extrasMap.getOrDefault(toilet.getId(), List.of());
+            String access = toilet.getAccess().getTechnicalName().toUpperCase().replace("-", "_");
             return new ToiletDTO(
                     toilet.getId(),
                     toilet.getName(),
                     toilet.getAddress(),
                     rating,
                     extrasToilet,
+                    access,
                     toilet.getLatitude(),
                     toilet.getLongitude(),
                     numComments,

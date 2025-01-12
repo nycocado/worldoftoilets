@@ -37,6 +37,7 @@
     <string name="comments">Comentários</string>
     <string name="content_description_toilet_image">Imagem da casa de banho</string>
     <string name="content_description_profile_picture">Imagem do perfil</string>
+    <string name="icon">Ícone</string>
     <string name="content_description_new_password_button">Botão para alterar senha</string>
     <string name="error_image">Erro ao carregar imagem</string>
     <string name="home">Início</string>
@@ -104,4 +105,13 @@
     <string name="extra_baby_changing_station">Fraudário</string>
     <string name="extra_disabled_parking">Estacionamento para Deficientes</string>
     <string name="extra_accessible_for_visual_impairment">Acessível para Deficientes Visuais</string>
+    <string name="back">Voltar</string>
+    <string name="access_public">Público</string>
+    <string name="access_private">Privado</string>
+    <string name="access_consumers_only">Consumidores</string>
+    <string name="comment_required">O comentário é obrigatório</string>
+    <string name="comment_too_long">O comentário é muito longo</string>
+    <string name="error_comment">Erro ao enviar comentário</string>
+    <string name="search">Procurar</string>
+    <string name="error_unexpected">Ocorreu um erro inesperado, tente novamente mais tarde.</string>
 </resources>

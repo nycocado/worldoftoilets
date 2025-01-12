@@ -7,10 +7,11 @@ import pt.iade.ei.thinktoilet.models.Page
 import pt.iade.ei.thinktoilet.models.Rating
 import pt.iade.ei.thinktoilet.models.Reaction
 import pt.iade.ei.thinktoilet.models.Toilet
-import pt.iade.ei.thinktoilet.models.enums.TypeReaction
 import pt.iade.ei.thinktoilet.models.UiState
 import pt.iade.ei.thinktoilet.models.User
+import pt.iade.ei.thinktoilet.models.enums.TypeAccess
 import pt.iade.ei.thinktoilet.models.enums.TypeExtra
+import pt.iade.ei.thinktoilet.models.enums.TypeReaction
 import pt.iade.ei.thinktoilet.models.responses.PageResponse
 import java.time.LocalDateTime
 
@@ -33,7 +34,8 @@ fun generateRandomToilet(id: Int = (1..100).random()): Toilet {
         longitude = (0..100).random().toDouble(),
         numComments = 0,
         placeId = "0",
-        extras = TypeExtra.entries
+        extras = TypeExtra.entries,
+        access = TypeAccess.PRIVATE
     )
 }
 fun randomDateTime(): LocalDateTime {
@@ -111,14 +113,6 @@ fun generateRandomToilets(
         toilets.add(generateRandomToilet())
     }
     return toilets
-}
-
-fun generateUsers(numUsers: Int): List<User> {
-    val users = mutableListOf<User>()
-    for (i in 1..numUsers) {
-        users.add(generateUser())
-    }
-    return users
 }
 
 fun generateToiletsStateFlow(numToilets: Int = (10..20).random(), preferenceId: Int? = null): MutableStateFlow<Map<Int, Toilet>> {

@@ -1,5 +1,6 @@
 package pt.iade.ei.thinktoilet.ui.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,12 +20,6 @@ import pt.iade.ei.thinktoilet.tests.generateComment
 import pt.iade.ei.thinktoilet.tests.generateRandomToilet
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
-/**
- * Exibe um comentário simplificado de uma casa de banho.
- *
- * @param comment [Comment] que contém os detalhes do comentário.
- * @param toilet [Toilet] que contém os detalhes da casa de banho.
- */
 @Composable
 fun ToiletReview(
     comment: Comment,
@@ -33,9 +28,8 @@ fun ToiletReview(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(
-                vertical = 16.dp
-            )
+            .padding(vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(2.dp)
     ) {
         Text(
             text = toilet.name,
@@ -44,14 +38,13 @@ fun ToiletReview(
         )
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(bottom = 4.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Stars(
                 rating = toilet.getAverageRating(),
                 size = 20.dp
             )
             Text(
-                modifier = Modifier.padding(start = 8.dp),
                 text = comment.getDateTimeString(),
                 fontWeight = FontWeight.SemiBold,
                 style = MaterialTheme.typography.labelLarge

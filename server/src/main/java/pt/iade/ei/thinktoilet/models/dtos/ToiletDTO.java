@@ -17,6 +17,7 @@ public class ToiletDTO {
     private String address;
     private Rating rating;
     private List<String> extras;
+    private String access;
     private Double latitude;
     private Double longitude;
     private int numComments;

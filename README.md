@@ -505,6 +505,7 @@ O projeto merece uma nota alta pelo excelente trabalho. A ausência da funcional
 - [PNG](documents/terceira_entrega/banner/banner-g4.png)
 
 ### Video
+- [MP4](documents/terceira_entrega/video/video-g04.mp4)
 
 ### Competências Comunicacionais
 - [PDF](documents/terceira_entrega/g04-competencias-comunicacionais.pdf)

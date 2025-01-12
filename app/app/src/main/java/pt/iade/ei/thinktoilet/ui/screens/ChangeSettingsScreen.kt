@@ -2,10 +2,11 @@ package pt.iade.ei.thinktoilet.ui.screens
 
 import android.util.Patterns
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -76,7 +77,7 @@ fun ChangeSettingsScreen(
     val isAllowedToChangePassword =
         passwordSupportText.isEmpty() && newPasswordSupportText.isEmpty() && confirmNewPasswordSupportText.isEmpty()
 
-    LaunchedEffect(name, email, password, newPassword, confirmNewPassword){
+    LaunchedEffect(name, email, password, newPassword, confirmNewPassword) {
         nameSupportText = when {
             name.isEmpty() -> context.getString(R.string.error_required_name)
             name.length > 50 -> context.getString(R.string.error_too_long_name)
@@ -183,92 +184,96 @@ fun ChangeSettingsScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 42.dp),
+                .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             item {
-                when (changeSettingType) {
-                    ChangeSettingType.NAME -> {
-                        NextTextField(
-                            label = context.getString(R.string.name),
-                            value = name,
-                            supportText = nameSupportText,
-                            onValueChange = { name = it }
-                        )
-                        GoTextField(
-                            label = context.getString(R.string.password),
-                            value = password,
-                            supportText = passwordSupportText,
-                            onValueChange = { password = it },
-                            onGo = {
-                                if (isAllowedToChangeName) {
-                                    scope.launch {
-                                        onChangeName(name, password)
-                                        isLoading = true
+                Column(
+                    modifier = Modifier.padding(horizontal = 42.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    when (changeSettingType) {
+                        ChangeSettingType.NAME -> {
+                            NextTextField(
+                                label = context.getString(R.string.name),
+                                value = name,
+                                supportText = nameSupportText,
+                                onValueChange = { name = it }
+                            )
+                            GoTextField(
+                                label = context.getString(R.string.password),
+                                value = password,
+                                supportText = passwordSupportText,
+                                onValueChange = { password = it },
+                                onGo = {
+                                    if (isAllowedToChangeName) {
+                                        scope.launch {
+                                            onChangeName(name, password)
+                                            isLoading = true
+                                        }
                                     }
-                                }
-                            },
-                            keyboardType = KeyboardType.Password,
-                            visualTransformation = PasswordVisualTransformation()
-                        )
-                    }
+                                },
+                                keyboardType = KeyboardType.Password,
+                                visualTransformation = PasswordVisualTransformation()
+                            )
+                        }
 
-                    ChangeSettingType.EMAIL -> {
-                        NextTextField(
-                            label = context.getString(R.string.email),
-                            value = email,
-                            supportText = emailSupportText,
-                            onValueChange = { email = it }
-                        )
-                        GoTextField(
-                            label = context.getString(R.string.password),
-                            value = password,
-                            supportText = passwordSupportText,
-                            onValueChange = { password = it },
-                            onGo = {
-                                if (isAllowedToChangeEmail) {
-                                    scope.launch {
-                                        onChangeEmail(email, password)
-                                        isLoading = true
+                        ChangeSettingType.EMAIL -> {
+                            NextTextField(
+                                label = context.getString(R.string.email),
+                                value = email,
+                                supportText = emailSupportText,
+                                onValueChange = { email = it }
+                            )
+                            GoTextField(
+                                label = context.getString(R.string.password),
+                                value = password,
+                                supportText = passwordSupportText,
+                                onValueChange = { password = it },
+                                onGo = {
+                                    if (isAllowedToChangeEmail) {
+                                        scope.launch {
+                                            onChangeEmail(email, password)
+                                            isLoading = true
+                                        }
                                     }
-                                }
-                            },
-                            keyboardType = KeyboardType.Password,
-                            visualTransformation = PasswordVisualTransformation()
-                        )
-                    }
+                                },
+                                keyboardType = KeyboardType.Password,
+                                visualTransformation = PasswordVisualTransformation()
+                            )
+                        }
 
-                    ChangeSettingType.PASSWORD -> {
-                        NextTextField(
-                            label = context.getString(R.string.password),
-                            value = password,
-                            supportText = passwordSupportText,
-                            onValueChange = { password = it }
-                        )
-                        NextTextField(
-                            label = context.getString(R.string.new_password),
-                            value = newPassword,
-                            supportText = newPasswordSupportText,
-                            onValueChange = { newPassword = it }
-                        )
-                        GoTextField(
-                            label = context.getString(R.string.confirm_new_password),
-                            value = confirmNewPassword,
-                            supportText = confirmNewPasswordSupportText,
-                            onValueChange = { confirmNewPassword = it },
-                            onGo = {
-                                if (isAllowedToChangePassword) {
-                                    scope.launch {
-                                        onChangePassword(password, newPassword)
-                                        isLoading = true
+                        ChangeSettingType.PASSWORD -> {
+                            NextTextField(
+                                label = context.getString(R.string.password),
+                                value = password,
+                                supportText = passwordSupportText,
+                                onValueChange = { password = it }
+                            )
+                            NextTextField(
+                                label = context.getString(R.string.new_password),
+                                value = newPassword,
+                                supportText = newPasswordSupportText,
+                                onValueChange = { newPassword = it }
+                            )
+                            GoTextField(
+                                label = context.getString(R.string.confirm_new_password),
+                                value = confirmNewPassword,
+                                supportText = confirmNewPasswordSupportText,
+                                onValueChange = { confirmNewPassword = it },
+                                onGo = {
+                                    if (isAllowedToChangePassword) {
+                                        scope.launch {
+                                            onChangePassword(password, newPassword)
+                                            isLoading = true
+                                        }
                                     }
-                                }
-                            },
-                            keyboardType = KeyboardType.Password,
-                            visualTransformation = PasswordVisualTransformation()
-                        )
+                                },
+                                keyboardType = KeyboardType.Password,
+                                visualTransformation = PasswordVisualTransformation()
+                            )
+                        }
                     }
                 }
             }
@@ -306,8 +311,9 @@ fun ChangeSettingsScreen(
                         }
                     },
                     modifier = Modifier
-                        .padding(top = 10.dp)
-                        .width(180.dp),
+                        .fillMaxWidth()
+                        .padding(top = 20.dp)
+                        .padding(horizontal = 100.dp),
                     colors = ButtonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer,

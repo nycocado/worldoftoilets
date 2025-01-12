@@ -1,5 +1,6 @@
 package pt.iade.ei.thinktoilet.ui.screens
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -91,10 +92,10 @@ fun RatingScreen(
     LaunchedEffect(comment) {
         commentSupportText = if (comment.isEmpty()) {
             commentError = true
-            "O comentário é obrigatório"
+            context.getString(R.string.comment_required)
         } else if (comment.length > 260) {
             commentError = true
-            "O comentário é muito longo"
+            context.getString(R.string.comment_too_long)
         } else {
             commentError = false
             "${comment.length}/260"
@@ -108,7 +109,7 @@ fun RatingScreen(
 
         ratingState?.onFailure {
             commentError = true
-            commentSupportText = "Erro ao enviar comentário"
+            commentSupportText = context.getString(R.string.error_comment)
         }
     }
 
@@ -139,19 +140,18 @@ fun RatingScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             item {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 16.dp)
-                        .padding(vertical = 10.dp)
-                        .padding(bottom = 10.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .padding(vertical = 10.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(5.dp)
                 ) {
                     Text(
-                        modifier = Modifier.padding(bottom = 5.dp),
                         text = toilet.name,
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
@@ -159,11 +159,11 @@ fun RatingScreen(
                         overflow = TextOverflow.Ellipsis
                     )
                     Row(
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         Stars(averageRating, size = 35.dp, horizontalPadding = 5.dp)
                         Text(
-                            modifier = Modifier.padding(start = 6.dp),
                             text = "%.1f".format(averageRating),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
@@ -174,50 +174,54 @@ fun RatingScreen(
             }
 
             item {
-                Text(
-                    modifier = Modifier
-                        .padding(bottom = 10.dp),
-                    text = context.getString(R.string.comment),
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Normal,
-                )
-                TextField(
-                    value = comment,
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(min = 150.dp),
-                    shape = RoundedCornerShape(topEnd = 10.dp, topStart = 10.dp),
-                    onValueChange = { newText ->
-                        comment = newText
-                    },
-                    label = {
-                        Text(
-                            text = context.getString(R.string.insert_comment),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Normal,
-                        )
-                    },
-                    isError = commentError,
-                    supportingText = {
-                        Text(
-                            text = commentSupportText,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = if (commentError) {
-                                MaterialTheme.colorScheme.error
-                            } else {
-                                MaterialTheme.colorScheme.onSurface
-                            }
-                        )
-                    }
-                )
+                        .padding(top = 10.dp),
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Text(
+                        text = context.getString(R.string.comment),
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Normal,
+                    )
+                    TextField(
+                        value = comment,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 150.dp),
+                        shape = RoundedCornerShape(topEnd = 10.dp, topStart = 10.dp),
+                        onValueChange = { newText ->
+                            comment = newText
+                        },
+                        label = {
+                            Text(
+                                text = context.getString(R.string.insert_comment),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Normal,
+                            )
+                        },
+                        isError = commentError,
+                        supportingText = {
+                            Text(
+                                text = commentSupportText,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = if (commentError) {
+                                    MaterialTheme.colorScheme.error
+                                } else {
+                                    MaterialTheme.colorScheme.onSurface
+                                }
+                            )
+                        }
+                    )
+                }
             }
 
             item {
                 HorizontalDivider(
                     modifier = Modifier
-                        .padding(
-                            vertical = 30.dp
-                        )
+                        .padding(vertical = 30.dp)
                         .fillMaxWidth(1f),
                     thickness = 2.dp,
                     color = Color.LightGray
@@ -225,89 +229,92 @@ fun RatingScreen(
             }
 
             item {
-                RatingItem(title = context.getString(R.string.clean), rating = ratingClean) {
-                    ratingClean = it
-                }
-                RatingItem(title = context.getString(R.string.structure), rating = ratingStructure) {
-                    ratingStructure = it
-                }
-                RatingItem(title = context.getString(R.string.accessibility), rating = ratingAccessibility) {
-                    ratingAccessibility = it
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
                 ) {
-                    Text(
-                        modifier = Modifier.weight(0.9f),
-                        text = context.getString(R.string.paper),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Normal,
-                    )
-                    Switch(
-                        checked = ratingPaper,
-                        onCheckedChange = {
-                            ratingPaper = it
-                        },
-                        thumbContent = if (ratingPaper) {
-                            {
-                                Icon(
-                                    imageVector = Icons.Filled.Check,
-                                    contentDescription = context.getString(R.string.checked),
-                                    modifier = Modifier.size(SwitchDefaults.IconSize),
-                                )
+                    RatingItem(title = context.getString(R.string.clean), rating = ratingClean) {
+                        ratingClean = it
+                    }
+                    RatingItem(
+                        title = context.getString(R.string.structure),
+                        rating = ratingStructure
+                    ) {
+                        ratingStructure = it
+                    }
+                    RatingItem(
+                        title = context.getString(R.string.accessibility),
+                        rating = ratingAccessibility
+                    ) {
+                        ratingAccessibility = it
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            modifier = Modifier.weight(1f),
+                            text = context.getString(R.string.paper),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Normal,
+                        )
+                        Switch(
+                            checked = ratingPaper,
+                            onCheckedChange = {
+                                ratingPaper = it
+                            },
+                            thumbContent = if (ratingPaper) {
+                                {
+                                    Icon(
+                                        imageVector = Icons.Filled.Check,
+                                        contentDescription = context.getString(R.string.checked),
+                                        modifier = Modifier.size(SwitchDefaults.IconSize),
+                                    )
+                                }
+                            } else {
+                                null
                             }
-                        } else {
-                            null
-                        }
-                    )
+                        )
+                    }
                 }
+
             }
 
             item {
-                Column(
+                Button(
+                    onClick = {
+                        if (!commentError)
+                            scope.launch {
+                                onRating(
+                                    toilet.id,
+                                    user.id!!,
+                                    comment,
+                                    ratingClean,
+                                    ratingPaper,
+                                    ratingStructure,
+                                    ratingAccessibility
+                                )
+                            }
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(
-                            top = 30.dp
+                        .padding(top = 20.dp),
+                    colors = ButtonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(
+                            alpha = 0.5f
                         ),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(
+                            alpha = 0.5f
+                        )
+                    )
                 ) {
-                    Button(
-                        onClick = {
-                            if (!commentError)
-                                scope.launch {
-                                    onRating(
-                                        toilet.id,
-                                        user.id!!,
-                                        comment,
-                                        ratingClean,
-                                        ratingPaper,
-                                        ratingStructure,
-                                        ratingAccessibility
-                                    )
-                                }
-                        },
-                        modifier = Modifier
-                            .padding(bottom = 10.dp),
-                        colors = ButtonColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(
-                                alpha = 0.5f
-                            ),
-                            disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(
-                                alpha = 0.5f
-                            )
-                        )
-                    ) {
-                        Text(
-                            text = context.getString(R.string.rate),
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
+                    Text(
+                        text = context.getString(R.string.rate),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.SemiBold
+                    )
                 }
             }
         }

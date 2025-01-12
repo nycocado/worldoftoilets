@@ -15,16 +15,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
-/**
- * Exibe um controle deslizante personalizado.
- *
- * @param verticalPadding [Dp] de preenchimento vertical.
- * @param color [Color] do controle deslizante.
- * @param shape [CornerBasedShape] do controle deslizante.
- * @param width [Dp] de largura do controle deslizante.
- * @param height [Dp] de altura do controle deslizante.
- * @param onClick Callback para quando o controle deslizante for clicado.
- */
 @Composable
 fun CustomDragHandle(
     verticalPadding: Dp = 14.dp,

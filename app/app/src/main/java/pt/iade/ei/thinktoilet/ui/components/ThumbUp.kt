@@ -21,14 +21,6 @@ import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 import pt.iade.ei.thinktoilet.ui.util.NoRippleInteractionSource
 
-/**
- * Exibe um ícone de Like com um contador.
- *
- * @param count [Int] que representa a quantidade de likes.
- * @param size [Dp] que representa o tamanho do ícone.
- * @param isPressed [Boolean] que representa se o ícone está pressionado.
- * @param onClick Callback que é chamado quando o ícone é clicado.
- */
 @Composable
 fun ThumbUp(
     count: Int = 0,

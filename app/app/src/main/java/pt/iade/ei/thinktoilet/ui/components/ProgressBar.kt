@@ -1,8 +1,8 @@
 package pt.iade.ei.thinktoilet.ui.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -19,13 +19,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
-/**
- * Exibe uma barra de progresso horizontal com um texto ao lado.
- *
- * @param progress [Float] que representa o progresso do ProgressBar.
- * @param text [String] que será exibido ao lado do ProgressBar.
- * @param maxValue [Float] que representa o valor máximo do ProgressBar.
- */
 @Composable
 fun ProgressBar(
     progress: Float,
@@ -33,8 +26,8 @@ fun ProgressBar(
     maxValue: Float = 5f
 ) {
     Row(
-        modifier = Modifier.padding(vertical = 2.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         LinearProgressIndicator(
             modifier = Modifier
@@ -57,12 +50,12 @@ fun ProgressBar(
         )
         Text(
             modifier = Modifier
-                .padding(start = 8.dp)
                 .width(120.dp),
             text = text,
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Medium,
             maxLines = 1,
+            minLines = 1,
             overflow = TextOverflow.Ellipsis
         )
     }

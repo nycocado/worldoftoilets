@@ -1,12 +1,12 @@
 package pt.iade.ei.thinktoilet.ui.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -23,40 +23,34 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.lerp
+import androidx.compose.ui.util.lerp
 import pt.iade.ei.thinktoilet.R
 import pt.iade.ei.thinktoilet.models.enums.UserIcon
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 import kotlin.math.absoluteValue
 
-/**
- * Exibe um carrossel de imagens.
- *
- * @param imageList Lista de [String] com os links das imagens.
- * @param pagerState [PagerState] que controla o estado do carrossel.
- */
 @Composable
 fun IconCarousel(
     imageList: List<Int>,
     pagerState: PagerState
 ) {
     val context = LocalContext.current
+    val screenWidth = context.resources.displayMetrics.widthPixels / context.resources.displayMetrics.density
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Text(
-            modifier = Modifier.padding(bottom = 10.dp),
             text = context.getString(R.string.roll_to_change),
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.secondary
         )
         HorizontalPager(
-            modifier = Modifier.padding(vertical = 10.dp),
             state = pagerState,
             contentPadding = PaddingValues(
-                start = 150.dp,
-                end = 130.dp
+                start = (screenWidth * 0.3f).dp,
+                end = (screenWidth * 0.3f).dp
             )
         ) { index ->
             IconContent(index, pagerState, imageList)
@@ -64,19 +58,13 @@ fun IconCarousel(
     }
 }
 
-/**
- * Exibe o conteúdo de um Card do carrossel.
- *
- * @param index [Int] que representa a posição do Card.
- * @param pagerState [PagerState] que controla o estado do carrossel.
- * @param imageList Lista de [String] com os links das imagens.
- */
 @Composable
 fun IconContent(
     index: Int,
     pagerState: PagerState,
     imageList: List<Int>
 ) {
+    val context = LocalContext.current
     val pageOffset = (pagerState.currentPage - index) + pagerState.currentPageOffsetFraction
 
     Card(
@@ -85,14 +73,18 @@ fun IconContent(
             .height(150.dp)
             .aspectRatio(1f)
             .graphicsLayer {
-                lerp(
-                    start = 0.8f.dp,
-                    stop = 1f.dp,
+                val scale = lerp(
+                    start = 0.8f,
+                    stop = 1f,
                     fraction = 1f - pageOffset.absoluteValue.coerceIn(0f, 1f)
-                ).also { scale ->
-                    scaleX = scale.value
-                    scaleY = scale.value
-                }
+                )
+                scaleX = scale
+                scaleY = scale
+                alpha = lerp(
+                    start = 0.5f,
+                    stop = 1f,
+                    fraction = 1f - pageOffset.absoluteValue.coerceIn(0f, 1f)
+                )
             },
     ) {
         Image(
@@ -101,7 +93,7 @@ fun IconContent(
                 .aspectRatio(1f)
                 .height(150.dp),
             painter = painterResource(imageList[index]),
-            contentDescription = "Image",
+            contentDescription = context.getString(R.string.icon) + index,
             contentScale = ContentScale.Crop
         )
     }

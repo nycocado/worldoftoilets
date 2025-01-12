@@ -57,11 +57,6 @@ private val cartoDarkTileSource = XYTileSource(
     arrayOf("https://basemaps.cartocdn.com/dark_all/")
 )
 
-/**
- * Exibe um mapa utilizando a biblioteca OpenStreetMaps.
- *
- * @param locationStateFlow [StateFlow] que contém um [Location] com a localização atual do usuário.
- */
 @SuppressLint("UseCompatLoadingForDrawables")
 @Composable
 fun OpenStreetMapsView(

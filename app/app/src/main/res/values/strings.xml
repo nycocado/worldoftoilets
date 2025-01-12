@@ -22,6 +22,7 @@
     <string name="load_more">Load More</string>
     <string name="confirm">Confirm</string>
     <string name="save">Save</string>
+    <string name="back">Back</string>
 
     <!-- Login -->
     <string name="login_action">Log In</string>
@@ -97,6 +98,8 @@
     <string name="error_image">Error loading image</string>
     <string name="error_login">Error logging in</string>
     <string name="error_register">Error registering</string>
+    <string name="error_comment">Error sending comment</string>
+    <string name="error_unexpected">An unexpected error occurred, please try again later.</string>
 
     <!-- Erros de autenticação -->
     <string name="error_required_name">Required</string>
@@ -140,6 +143,21 @@
     <string name="extra_baby_changing_station">Baby Changing Station</string>
     <string name="extra_disabled_parking">Disabled Parking</string>
     <string name="extra_accessible_for_visual_impairment">Accessible for Visual Impairment</string>
+
+    <!-- Access -->
+    <string name="access_public">Public</string>
+    <string name="access_private">Private</string>
+    <string name="access_consumers_only">Consumers</string>
+
+    <!-- Comments -->
+    <string name="comment_required">Comment required</string>
+    <string name="comment_too_long">Comment too long</string>
+
+    <!-- Search -->
+    <string name="search">Search</string>
+
+    <!-- Carrousel -->
+    <string name="icon">Icon</string>
 
     <!-- Links -->
     <string name="maps_uri" translatable="false">android-app://com.google.android.apps.maps</string>

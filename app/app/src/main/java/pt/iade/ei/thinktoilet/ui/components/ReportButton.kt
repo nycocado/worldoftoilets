@@ -3,7 +3,6 @@ package pt.iade.ei.thinktoilet.ui.components
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -16,13 +15,6 @@ import androidx.compose.ui.unit.dp
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 import pt.iade.ei.thinktoilet.ui.util.NoRippleInteractionSource
 
-/**
- * Exibe um botão para selecionar uma denúncia.
- *
- * @param title [String] que representa o título da denúncia.
- * @param id [Int] que representa o id da denúncia.
- * @param onClick Callback que será chamado quando o botão for clicado.
- */
 @Composable
 fun ReportButton(
     title: String,
@@ -32,8 +24,7 @@ fun ReportButton(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .height(70.dp)
-            .padding(vertical = 5.dp),
+            .height(70.dp),
         onClick = { onClick() },
         interactionSource = NoRippleInteractionSource()
     ) {

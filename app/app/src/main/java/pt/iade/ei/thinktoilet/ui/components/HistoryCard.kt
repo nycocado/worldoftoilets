@@ -20,12 +20,6 @@ import pt.iade.ei.thinktoilet.models.Toilet
 import pt.iade.ei.thinktoilet.tests.generateRandomToilet
 import pt.iade.ei.thinktoilet.ui.theme.AppTheme
 
-/**
- * Exibe as informações de um Toilet de forma simplificada utilizando um Card.
- *
- * @param toilet [Toilet] que contém os detalhes da casa de banho.
- * @param onClick Callback a ser executado quando o Card é clicado.
- */
 @Composable
 fun HistoryCard(
     toilet: Toilet,
