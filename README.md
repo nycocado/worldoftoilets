@@ -217,7 +217,7 @@ A escolha do A* justifica-se por se tratar de um problema de procura de caminhos
 
 ### Segurança Informática
 
-Implementaremos autenticação de utilizadores com gestão segura de credenciais (hashing com salt) e autorização por perfis, bem como gestão de sessões baseada em chaves. As chaves de sessão serão geradas de forma aleatória, com expiração e renovação, e armazenadas de modo seguro (por exemplo, cookies com HttpOnly, Secure e SameSite, quando aplicável). Forçaremos HTTPS em todos os endpoints, com redirecionamento de HTTP para HTTPS. Aplicaremos encriptação de dados sensíveis em repouso, validação de entradas e tratamento de erros sem exposição de detalhes técnicos. Registaremos eventos relevantes (logins, alterações de permissões, erros críticos) e manteremos documentação breve dos procedimentos, acrescentando controlos complementares conforme a evolução do projeto.
+Implementaremos autenticação de utilizadores com gestão segura de credenciais (hashing com salt) e autorização por perfis, bem como gestão de sessões baseada em chaves. As chaves de sessão serão geradas de forma aleatória, com expiração e renovação, e armazenadas de modo seguro (por exemplo, cookies com HttpOnly, Secure e SameSite, quando aplicável). Reforçaremos HTTPS em todos os endpoints, com redirecionamento de HTTP para HTTPS. Aplicaremos encriptação de dados sensíveis em repouso, validação de entradas e tratamento de erros sem exposição de detalhes técnicos. Registaremos eventos relevantes (logins, alterações de permissões, erros críticos) e manteremos documentação breve dos procedimentos, acrescentando controlos complementares conforme a evolução do projeto.
 
 ### Sistemas Distribuídos
 
