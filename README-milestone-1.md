@@ -11,8 +11,6 @@
 - [World of Toilets](#world-of-toilets)
   - [Índice](#índice)
   - [Elementos da Equipa](#elementos-da-equipa)
-  - [Versões do Relatório](#versões-do-relatório)
-    - [Proposta Inicial](#proposta-inicial)
   - [Palavras-Chave](#palavras-chave)
   - [Descrição](#descrição)
     - [Motivação](#motivação)
@@ -63,13 +61,6 @@
 - [Luan Ribeiro](https://github.com/Ninjaok) - 20230692
 - [Lohanne Guedes](https://github.com/Lohannecristina) - 20220085
 - [Margarida Sousa](https://github.com/Kira-Sousa) - 20231205
-
-## Versões do Relatório
-
-### Proposta Inicial
-
-- [Markdown](README-milestone-1.md)
-- [PDF](documents/primeira_entrega/g04-proposta.pdf)
 
 ## Palavras-Chave
 
@@ -268,7 +259,7 @@ Projetaremos o sistema com réplicas do serviço para evitar ponto único de fal
 - Os administradores devem ter acesso a um dashboard para gerir a comunidade.
 - Tanto o dashboard, quanto a landing page, devem ser construídas utilizando [TypeScript](https://www.typescriptlang.org/) com [React](https://react.dev/) de forma estática.
 - Os usuários devem utilizar JWT tokens para gerir as sessões dos usuários de forma serverless.
-- Deve ser utilizado [TypeScript](https://www.typescriptlang.org/) com [NestJS](https://nestjs.com/) para manipulação de dados.
+- Deve ser utilizado [PHP](https://www.php.net/) com [Laravel](https://www.laravel.com) para manipulação de dados.
 - Utilização de [MariaDB](https://mariadb.org/) para o armazenamento de dados, incluindo informações sobre usuários, casas de banho, avaliações e sugestões.
 
 ## Arquitetura da Solução
@@ -291,13 +282,13 @@ Desenvolvida em **[Kotlin](https://kotlinlang.org)** com **[Jetpack Compose](htt
 
 #### Back-end (Servidor)
 
-Construído com **[TypeScript](https://www.typescriptlang.org/)** e **[NestJS](https://nestjs.com/)**, o servidor implementará uma arquitetura RESTful para facilitar a comunicação entre o front-end e o back-end. Ele gerenciará dados sobre casas de banho, avaliações e usuários, garantindo a integridade das informações.
+Construído com **[PHP](https://www.php.net/)** e **[Laravel](https://www.laravel.com)**, o servidor implementará uma arquitetura RESTful para facilitar a comunicação entre o front-end e o back-end. Ele gerenciará dados sobre casas de banho, avaliações e usuários, garantindo a integridade das informações.
 
 #### Base de Dados
 
 Utilizando **[MariaDB](https://mariadb.org/)**, a base de dados será projetada para armazenar informações sobre usuários, casas de banho, avaliações e sugestões. A estrutura relacional garantirá eficiência nas consultas e integridade dos dados.
 
-![Diagrama da Arquitetura da Solução](deliveries/milestone_2/diagramas/arquitetura_da_solucao.png)
+![Diagrama da Arquitetura da Solução](deliveries/milestone_1/diagramas/arquitetura_da_solucao.png)
 
 ## Tecnologias
 
@@ -315,8 +306,8 @@ Utilizando **[MariaDB](https://mariadb.org/)**, a base de dados será projetada 
 
 ### Desenvolvimento Back-End
 
-- **Linguagem:** [TypeScript](https://www.typescriptlang.org/)
-- **Framework:** [NestJS](https://nestjs.com/)
+- **Linguagem:** [PHP](https://www.php.net/)
+- **Framework:** [Laravel](https://www.laravel.com)
 
 ### Bases de Dados
 
