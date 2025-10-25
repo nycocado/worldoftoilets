@@ -1,0 +1,27 @@
+services:
+    api:
+        build:
+            context: ./apps/api
+            dockerfile: Dockerfile
+        container_name: wot-api
+        restart: unless-stopped
+        environment:
+            DATABASE_PORT: ${MARIADB_MAXSCALE_RW_PORT}
+            DATABASE_USER: ${MARIADB_USER}
+            DATABASE_PASSWORD: ${MARIADB_PASSWORD}
+            DATABASE_NAME: ${MARIADB_DATABASE}
+            JWT_SECRET: ${JWT_SECRET}
+            JWT_EXPIRATION: ${JWT_EXPIRATION}
+            NODE_ENV: production
+            PORT: ${API_INTERNAL_PORT}
+        volumes:
+            - ./apps/api:/app
+            - ./apps/api/storage:/app/storage
+            - /app/node_modules
+        networks:
+            - wot-network
+
+networks:
+    wot-network:
+        name: wot-network
+        driver: bridge
