@@ -1,0 +1,21 @@
+FROM node:lts-alpine
+
+# Instalar dependências do sistema
+RUN apk add --no-cache curl
+
+# Definir diretório de trabalho
+WORKDIR /app
+
+# Copiar package.json e instalar dependências
+COPY package*.json ./
+RUN npm install
+
+# Expor porta
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:3000/health || exit 1
+
+# Comando para desenvolvimento com hot-reload
+CMD ["npm", "run", "start:dev"]
