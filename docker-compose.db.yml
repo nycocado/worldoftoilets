@@ -11,16 +11,16 @@ services:
         ports:
             - 3306:3306
         depends_on:
-            - db-galera-1
-            - db-galera-2
-            - db-galera-3
+            - db-1
+            - db-2
+            - db-3
         networks:
-            - wot-galera-network
+            - wot-network
 
-    db-galera-1:
+    db-1:
         image: bitnamilegacy/mariadb-galera:latest
-        container_name: wot-galera-1
-        hostname: db-galera-1
+        container_name: wot-db-1
+        hostname: db-1
         restart: on-failure
         environment:
             MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
@@ -34,7 +34,7 @@ services:
             MARIADB_GALERA_CLUSTER_ADDRESS: ${MARIADB_GALERA_CLUSTER_ADDRESS}
         volumes:
             - type: volume
-              source: mariadb_galera_1_data
+              source: mariadb_db_1_data
               target: /bitnami/mariadb
             - type: bind
               source: ./db/scripts/01-create.sql
@@ -50,12 +50,12 @@ services:
             - 14568:4568
             - 14444:4444
         networks:
-            - wot-galera-network
+            - wot-network
 
-    db-galera-2:
+    db-2:
         image: bitnamilegacy/mariadb-galera:latest
-        container_name: wot-galera-2
-        hostname: db-galera-2
+        container_name: wot-db-2
+        hostname: db-2
         restart: on-failure
         environment:
             MARIADB_GALERA_MARIABACKUP_PASSWORD: ${MARIADB_GALERA_MARIABACKUP_PASSWORD}
@@ -63,7 +63,7 @@ services:
             MARIADB_GALERA_CLUSTER_ADDRESS: ${MARIADB_GALERA_CLUSTER_ADDRESS}
         volumes:
             - type: volume
-              source: mariadb_galera_2_data
+              source: mariadb_db_2_data
               target: /bitnami/mariadb
         ports:
             - 23306:3306
@@ -71,12 +71,12 @@ services:
             - 24568:4568
             - 24444:4444
         networks:
-            - wot-galera-network
+            - wot-network
 
-    db-galera-3:
+    db-3:
         image: bitnamilegacy/mariadb-galera:latest
-        container_name: wot-galera-3
-        hostname: db-galera-3
+        container_name: wot-db-3
+        hostname: db-3
         restart: on-failure
         environment:
             MARIADB_GALERA_MARIABACKUP_PASSWORD: ${MARIADB_GALERA_MARIABACKUP_PASSWORD}
@@ -84,7 +84,7 @@ services:
             MARIADB_GALERA_CLUSTER_ADDRESS: ${MARIADB_GALERA_CLUSTER_ADDRESS}
         volumes:
             - type: volume
-              source: mariadb_galera_3_data
+              source: mariadb_db_3_data
               target: /bitnami/mariadb
         ports:
             - 33306:3306
@@ -92,17 +92,17 @@ services:
             - 34568:4568
             - 34444:4444
         networks:
-            - wot-galera-network
+            - wot-network
 
 volumes:
-    mariadb_galera_1_data:
+    mariadb_db_1_data:
         driver: local
-    mariadb_galera_2_data:
+    mariadb_db_2_data:
         driver: local
-    mariadb_galera_3_data:
+    mariadb_db_3_data:
         driver: local
 
 networks:
-    wot-galera-network:
-        name: wot-galera-network
+    wot-network:
+        name: wot-network
         driver: bridge
