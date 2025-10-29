@@ -1,0 +1,79 @@
+services:
+    db-1:
+        image: bitnamilegacy/mariadb-galera:latest
+        container_name: wot-db-1
+        hostname: db-1
+        restart: on-failure
+        environment:
+            MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+            MARIADB_DATABASE: ${MARIADB_DATABASE}
+            MARIADB_USER: ${MARIADB_USER}
+            MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+            MARIADB_GALERA_CLUSTER_BOOTSTRAP: ${MARIADB_GALERA_CLUSTER_BOOTSTRAP}
+            MARIADB_GALERA_FORCE_SAFETOBOOTSTRAP: ${MARIADB_GALERA_FORCE_SAFETOBOOTSTRAP}
+            MARIADB_GALERA_MARIABACKUP_PASSWORD: ${MARIADB_GALERA_MARIABACKUP_PASSWORD}
+            MARIADB_GALERA_CLUSTER_NAME: ${MARIADB_GALERA_CLUSTER_NAME}
+            MARIADB_GALERA_CLUSTER_ADDRESS: ${MARIADB_GALERA_CLUSTER_ADDRESS}
+        volumes:
+            - type: volume
+              source: mariadb_db_1_data
+              target: /bitnami/mariadb
+            - type: bind
+              source: ./db/scripts/01-create.sql
+              target: /docker-entrypoint-initdb.d/01-create.sql
+              read_only: true
+            - type: bind
+              source: ./db/scripts/02-insert.sql
+              target: /docker-entrypoint-initdb.d/02-insert.sql
+              read_only: true
+        ports:
+            - 3306:3306
+        networks:
+            - wot-network
+
+    old-db:
+        image: bitnami/mariadb:latest
+        container_name: tt-db
+        restart: on-failure
+        environment:
+            MARIADB_ROOT_PASSWORD: ${MARIADB_OLD_ROOT_PASSWORD}
+            MARIADB_DATABASE: ${MARIADB_OLD_DATABASE}
+            MARIADB_USER: ${MARIADB_OLD_USER}
+            MARIADB_PASSWORD: ${MARIADB_OLD_PASSWORD}
+            MARIADB_PORT_NUMBER: 3307
+        ports:
+            - "3307:3307"
+        volumes:
+            - type: volume
+              source: mariadb_db_old
+              target: /bitnami/mariadb
+            - type: bind
+              source: ./db/old-scripts/01-create.sql
+              target: /docker-entrypoint-initdb.d/01-create.sql
+              read_only: true
+            - type: bind
+              source: ./db/old-scripts/02-populate.sql
+              target: /docker-entrypoint-initdb.d/02-insert.sql
+              read_only: true
+        healthcheck:
+            test: ['CMD', '/opt/bitnami/scripts/mariadb/healthcheck.sh']
+            interval: 15s
+            timeout: 5s
+            retries: 6
+        networks:
+            - wot-network
+
+volumes:
+    mariadb_db_1_data:
+        driver: local
+    mariadb_db_2_data:
+        driver: local
+    mariadb_db_3_data:
+        driver: local
+    mariadb_db_old:
+        driver: local
+
+networks:
+    wot-network:
+        name: wot-network
+        driver: bridge

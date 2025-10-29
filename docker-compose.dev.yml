@@ -16,6 +16,8 @@ services:
             PORT: 3101
             WATCHPACK_POLLING: "true"
             CHOKIDAR_USEPOLLING: "true"
+        ports:
+            - "3101:3101"
         volumes:
             - type: bind
               source: ./apps/api
@@ -32,38 +34,31 @@ services:
         networks:
             - wot-network
 
-    api-2:
+    old-api:
         build:
-            context: ./apps/api
-            dockerfile: Dockerfile.dev
-        container_name: wot-api-2
-        restart: on-failure
+            context: ./apps/old-api
+            dockerfile: Dockerfile
+        container_name: tt-api
+        restart: always
         environment:
-            DATABASE_PORT: ${HAPROXY_PORT}
-            DATABASE_NAME: ${MARIADB_DATABASE}
-            DATABASE_USER: ${MARIADB_USER}
-            DATABASE_PASSWORD: ${MARIADB_PASSWORD}
-            JWT_SECRET: ${JWT_SECRET}
-            JWT_EXPIRATION: ${JWT_EXPIRATION}
-            NODE_ENV: "development"
-            PORT: 3102
-            WATCHPACK_POLLING: "true"
-            CHOKIDAR_USEPOLLING: "true"
-        volumes:
-            - type: bind
-              source: ./apps/api
-              target: /app
-            - type: volume
-              source: api_2_node_modules
-              target: /app/node_modules
-        healthcheck:
-            test: ["CMD-SHELL", "curl -f http://localhost:3102/health || exit 1"]
-            interval: 10s
-            timeout: 3s
-            retries: 3
-            start_period: 10s
+            MYSQL_URL: mariadb://old-db:3307/${MARIADB_OLD_DATABASE}
+            MYSQL_USER: ${MARIADB_OLD_USER}
+            MYSQL_PASSWORD: ${MARIADB_OLD_PASSWORD}
+            API_KEY_ADMIN: ${API_KEY_ADMIN}
+            API_KEY_USER: ${API_KEY_USER}
+        depends_on:
+            old-db:
+                condition: service_healthy
+        ports:
+            - "8080:8080"
         networks:
             - wot-network
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+            interval: 30s
+            timeout: 10s
+            retries: 3
+            start_period: 40s
     
     web-1:
         build:
@@ -87,35 +82,6 @@ services:
               target: /app/.next
         healthcheck:
             test: ["CMD-SHELL", "curl -f http://localhost:3001/health || exit 1"]
-            interval: 10s
-            timeout: 3s
-            retries: 3
-            start_period: 10s
-        networks:
-            - wot-network
-
-    web-2:
-        build:
-            context: ./apps/web
-            dockerfile: Dockerfile.dev
-        container_name: wot-web-2
-        restart: on-failure
-        environment:
-            PORT: 3002
-        ports:
-            - "3002:3002"
-        volumes:
-            - type: bind
-              source: ./apps/web
-              target: /app
-            - type: volume
-              source: web_2_node_modules
-              target: /app/node_modules
-            - type: volume
-              source: web_2_next
-              target: /app/.next
-        healthcheck:
-            test: ["CMD-SHELL", "curl -f http://localhost:3002/health || exit 1"]
             interval: 10s
             timeout: 3s
             retries: 3
