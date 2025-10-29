@@ -44,11 +44,6 @@ services:
               source: ./db/scripts/02-insert.sql
               target: /docker-entrypoint-initdb.d/02-insert.sql
               read_only: true
-        ports:
-            - 13306:3306
-            - 14567:4567
-            - 14568:4568
-            - 14444:4444
         networks:
             - wot-network
 
@@ -65,11 +60,6 @@ services:
             - type: volume
               source: mariadb_db_2_data
               target: /bitnami/mariadb
-        ports:
-            - 23306:3306
-            - 24567:4567
-            - 24568:4568
-            - 24444:4444
         networks:
             - wot-network
 
@@ -86,11 +76,6 @@ services:
             - type: volume
               source: mariadb_db_3_data
               target: /bitnami/mariadb
-        ports:
-            - 33306:3306
-            - 34567:4567
-            - 34568:4568
-            - 34444:4444
         networks:
             - wot-network
 

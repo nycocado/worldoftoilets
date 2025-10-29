@@ -1,0 +1,3 @@
+sdk.dir=C\:\\Users\\Nycol\\AppData\\Local\\Android\\Sdk
+API_KEY="chave_secreta_123"
+API_URL="http://url:8080/api/"
