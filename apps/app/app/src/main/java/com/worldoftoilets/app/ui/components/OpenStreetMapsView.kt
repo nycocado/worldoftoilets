@@ -138,7 +138,6 @@ fun OpenStreetMapsView(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)
-                .padding(bottom = 140.dp)
                 .size(iconSize),
             colors = IconButtonDefaults.iconButtonColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
