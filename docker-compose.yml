@@ -1,4 +1,60 @@
 services:
+    nginx:
+        image: nginx:alpine
+        container_name: wot-nginx
+        restart: on-failure
+        ports:
+            - "80:80"
+        volumes:
+            - type: bind
+              source: ./nginx/nginx.conf
+              target: /etc/nginx/nginx.conf
+              read_only: true
+        depends_on:
+            api-1:
+                condition: service_healthy
+            api-2:
+                condition: service_healthy
+            web-1:
+                condition: service_healthy
+            web-2:
+                condition: service_healthy
+            minio:
+                condition: service_healthy
+        healthcheck:
+            test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+            interval: 10s
+            timeout: 3s
+            retries: 3
+            start_period: 5s
+        networks:
+            - wot-network
+
+    minio:
+        image: minio/minio:latest
+        container_name: wot-minio
+        restart: on-failure
+        command: server /data --console-address ":9001"
+        environment:
+            MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+            MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+            MINIO_BROWSER_REDIRECT_URL: http://localhost:8080/minio/
+        ports:
+            - "9000:9000" 
+            - "9001:9001"
+        volumes:
+            - type: volume
+              source: minio_data
+              target: /data
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+            interval: 10s
+            timeout: 3s
+            retries: 3
+            start_period: 10s
+        networks:
+            - wot-network
+
     api-1:
         build:
             context: ./apps/api
@@ -6,7 +62,9 @@ services:
         container_name: wot-api-1
         restart: on-failure
         environment:
+            SERVICE_NAME: "api-1"
             DATABASE_PORT: ${HAPROXY_PORT}
+            DATABASE_HOST: "haproxy"
             DATABASE_NAME: ${MARIADB_DATABASE}
             DATABASE_USER: ${MARIADB_USER}
             DATABASE_PASSWORD: ${MARIADB_PASSWORD}
@@ -21,8 +79,13 @@ services:
             - type: volume
               source: api_1_node_modules
               target: /app/node_modules
+        depends_on:
+            haproxy:
+                condition: service_healthy
+            minio:
+                condition: service_healthy
         healthcheck:
-            test: ["CMD-SHELL", "curl -f http://localhost:3101/health || exit 1"]
+            test: ["CMD", "curl", "-f", "http://localhost:3101/health"]
             interval: 10s
             timeout: 3s
             retries: 3
@@ -37,7 +100,9 @@ services:
         container_name: wot-api-2
         restart: on-failure
         environment:
+            SERVICE_NAME: "api-2"
             DATABASE_PORT: ${HAPROXY_PORT}
+            DATABASE_HOST: "haproxy"
             DATABASE_NAME: ${MARIADB_DATABASE}
             DATABASE_USER: ${MARIADB_USER}
             DATABASE_PASSWORD: ${MARIADB_PASSWORD}
@@ -52,8 +117,13 @@ services:
             - type: volume
               source: api_2_node_modules
               target: /app/node_modules
+        depends_on:
+            haproxy:
+                condition: service_healthy
+            minio:
+                condition: service_healthy
         healthcheck:
-            test: ["CMD-SHELL", "curl -f http://localhost:3102/health || exit 1"]
+            test: ["CMD", "curl", "-f", "http://localhost:3102/health"]
             interval: 10s
             timeout: 3s
             retries: 3
@@ -81,8 +151,13 @@ services:
             - type: volume
               source: web_1_next      
               target: /app/.next
+        depends_on:
+            api-1:
+                condition: service_healthy
+            api-2:
+                condition: service_healthy
         healthcheck:
-            test: ["CMD-SHELL", "curl -f http://localhost:3001/health || exit 1"]
+            test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
             interval: 10s
             timeout: 3s
             retries: 3
@@ -110,8 +185,13 @@ services:
             - type: volume
               source: web_2_next
               target: /app/.next
+        depends_on:
+            api-1:
+                condition: service_healthy
+            api-2:
+                condition: service_healthy
         healthcheck:
-            test: ["CMD-SHELL", "curl -f http://localhost:3002/health || exit 1"]
+            test: ["CMD", "curl", "-f", "http://localhost:3002/health"]
             interval: 10s
             timeout: 3s
             retries: 3
@@ -131,6 +211,8 @@ volumes:
     web_1_next:
         driver: local
     web_2_next:
+        driver: local
+    minio_data:
         driver: local
 
 networks:
