@@ -3,17 +3,26 @@ services:
         image: haproxy:latest
         container_name: wot-haproxy
         restart: on-failure
+        ports:
+            - "3306:3306"
         volumes:
             - type: bind
               source: ./db/haproxy/haproxy.cfg
               target: /usr/local/etc/haproxy/haproxy.cfg
               read_only: true
-        ports:
-            - 3306:3306
         depends_on:
-            - db-1
-            - db-2
-            - db-3
+            db-1:
+                condition: service_healthy
+            db-2:
+                condition: service_healthy
+            db-3:
+                condition: service_healthy
+        healthcheck:
+            test: ["CMD", "bash", "-c", "echo '' > /dev/tcp/127.0.0.1/32087 || exit 1"]
+            interval: 15s
+            timeout: 5s
+            retries: 3
+            start_period: 15s
         networks:
             - wot-network
 
@@ -24,14 +33,14 @@ services:
         restart: on-failure
         environment:
             MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
-            MARIADB_DATABASE: ${MARIADB_DATABASE}
-            MARIADB_USER: ${MARIADB_USER}
-            MARIADB_PASSWORD: ${MARIADB_PASSWORD}
-            MARIADB_GALERA_CLUSTER_BOOTSTRAP: ${MARIADB_GALERA_CLUSTER_BOOTSTRAP}
-            MARIADB_GALERA_FORCE_SAFETOBOOTSTRAP: ${MARIADB_GALERA_FORCE_SAFETOBOOTSTRAP}
+            MARIADB_GALERA_CLUSTER_BOOTSTRAP: "yes"
+            MARIADB_GALERA_FORCE_SAFETOBOOTSTRAP: "yes"
             MARIADB_GALERA_MARIABACKUP_PASSWORD: ${MARIADB_GALERA_MARIABACKUP_PASSWORD}
             MARIADB_GALERA_CLUSTER_NAME: ${MARIADB_GALERA_CLUSTER_NAME}
             MARIADB_GALERA_CLUSTER_ADDRESS: ${MARIADB_GALERA_CLUSTER_ADDRESS}
+            MARIADB_USER: ${MARIADB_USER}
+            MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+            MARIADB_DATABASE: ${MARIADB_DATABASE}
         volumes:
             - type: volume
               source: mariadb_db_1_data
@@ -44,6 +53,12 @@ services:
               source: ./db/scripts/02-insert.sql
               target: /docker-entrypoint-initdb.d/02-insert.sql
               read_only: true
+        healthcheck:
+            test: ['CMD', '/opt/bitnami/scripts/mariadb-galera/healthcheck.sh']
+            interval: 15s
+            timeout: 5s
+            retries: 6
+            start_period: 15s
         networks:
             - wot-network
 
@@ -53,13 +68,26 @@ services:
         hostname: db-2
         restart: on-failure
         environment:
+            MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
             MARIADB_GALERA_MARIABACKUP_PASSWORD: ${MARIADB_GALERA_MARIABACKUP_PASSWORD}
             MARIADB_GALERA_CLUSTER_NAME: ${MARIADB_GALERA_CLUSTER_NAME}
             MARIADB_GALERA_CLUSTER_ADDRESS: ${MARIADB_GALERA_CLUSTER_ADDRESS}
+            MARIADB_USER: ${MARIADB_USER}
+            MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+            MARIADB_DATABASE: ${MARIADB_DATABASE}
         volumes:
             - type: volume
               source: mariadb_db_2_data
               target: /bitnami/mariadb
+        depends_on:
+            db-1:
+                condition: service_healthy
+        healthcheck:
+            test: ['CMD', '/opt/bitnami/scripts/mariadb-galera/healthcheck.sh']
+            interval: 15s
+            timeout: 5s
+            retries: 6
+            start_period: 15s
         networks:
             - wot-network
 
@@ -69,13 +97,26 @@ services:
         hostname: db-3
         restart: on-failure
         environment:
+            MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
             MARIADB_GALERA_MARIABACKUP_PASSWORD: ${MARIADB_GALERA_MARIABACKUP_PASSWORD}
             MARIADB_GALERA_CLUSTER_NAME: ${MARIADB_GALERA_CLUSTER_NAME}
             MARIADB_GALERA_CLUSTER_ADDRESS: ${MARIADB_GALERA_CLUSTER_ADDRESS}
+            MARIADB_USER: ${MARIADB_USER}
+            MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+            MARIADB_DATABASE: ${MARIADB_DATABASE}
         volumes:
             - type: volume
               source: mariadb_db_3_data
               target: /bitnami/mariadb
+        depends_on:
+            db-2:
+                condition: service_healthy
+        healthcheck:
+            test: ['CMD', '/opt/bitnami/scripts/mariadb-galera/healthcheck.sh']
+            interval: 15s
+            timeout: 5s
+            retries: 6
+            start_period: 15s
         networks:
             - wot-network
 

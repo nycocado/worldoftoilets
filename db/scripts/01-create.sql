@@ -1,16 +1,16 @@
 CREATE TABLE
     user
 (
-    id             INT                                                                               NOT NULL AUTO_INCREMENT,
-    public_id      CHAR(36)                                                                          NOT NULL DEFAULT uuid_v4(),
-    name           VARCHAR(50)                                                                       NOT NULL,
-    points         INT                                                                               NOT NULL,
-    icon           ENUM ('icon-1', 'icon-2', 'icon-3', 'icon-4', 'icon-5', 'icon-6', 'icon-default') NOT NULL DEFAULT 'icon-default',
-    birth_date     DATE                                                                              NOT NULL,
-    deactivated_by INT                                                                               NULL,
-    deactivated_at TIMESTAMP                                                                         NULL,
-    created_at     TIMESTAMP                                                                         NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at     TIMESTAMP                                                                         NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    id                INT                                                                               NOT NULL AUTO_INCREMENT,
+    public_id         CHAR(36)                                                                          NOT NULL DEFAULT uuid_v4(),
+    name              VARCHAR(50)                                                                       NOT NULL,
+    points            INT                                                                               NOT NULL,
+    icon              ENUM ('icon-1', 'icon-2', 'icon-3', 'icon-4', 'icon-5', 'icon-6', 'icon-default') NOT NULL DEFAULT 'icon-default',
+    birth_date        DATE                                                                              NOT NULL,
+    deactivated_by_id INT                                                                               NULL,
+    deactivated_at    TIMESTAMP                                                                         NULL,
+    created_at        TIMESTAMP                                                                         NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at        TIMESTAMP                                                                         NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );
 
@@ -59,7 +59,7 @@ CREATE TABLE
     user_reported_id    INT                                      NOT NULL,
     user_reporter_id    INT                                      NOT NULL,
     status              ENUM ('pending', 'accepted', 'rejected') NOT NULL DEFAULT 'pending',
-    reviewed_by         INT                                      NULL,
+    reviewed_by_id      INT                                      NULL,
     reviewed_at         TIMESTAMP                                NULL,
     created_at          TIMESTAMP                                NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at          TIMESTAMP                                NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -69,22 +69,22 @@ CREATE TABLE
 CREATE TABLE
     toilet
 (
-    id          INT                                                  NOT NULL AUTO_INCREMENT,
-    public_id   CHAR(36)                                             NOT NULL DEFAULT uuid_v4(),
-    city_id     INT                                                  NOT NULL,
-    access_id   INT                                                  NOT NULL,
-    name        VARCHAR(50)                                          NOT NULL,
-    coordinates POINT                                                NOT NULL,
-    address     VARCHAR(255)                                         NOT NULL,
-    photo_url   VARCHAR(255)                                         NULL,
-    place_id    VARCHAR(255)                                         NULL,
-    status      ENUM ('active', 'inactive', 'suggested', 'rejected') NOT NULL,
-    reviewed_by INT                                                  NULL,
-    reviewed_at TIMESTAMP                                            NULL,
-    deleted_by  INT                                                  NULL,
-    deleted_at  TIMESTAMP                                            NULL,
-    created_at  TIMESTAMP                                            NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at  TIMESTAMP                                            NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    id             INT                                                  NOT NULL AUTO_INCREMENT,
+    public_id      CHAR(36)                                             NOT NULL DEFAULT uuid_v4(),
+    city_id        INT                                                  NOT NULL,
+    access_id      INT                                                  NOT NULL,
+    name           VARCHAR(50)                                          NOT NULL,
+    coordinates    POINT                                                NOT NULL,
+    address        VARCHAR(255)                                         NOT NULL,
+    photo_url      VARCHAR(255)                                         NULL,
+    place_id       VARCHAR(255)                                         NULL,
+    status         ENUM ('active', 'inactive', 'suggested', 'rejected') NOT NULL,
+    reviewed_by_id INT                                                  NULL,
+    reviewed_at    TIMESTAMP                                            NULL,
+    deleted_by_id  INT                                                  NULL,
+    deleted_at     TIMESTAMP                                            NULL,
+    created_at     TIMESTAMP                                            NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at     TIMESTAMP                                            NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     FULLTEXT (name, address),
     SPATIAL INDEX (coordinates)
@@ -93,17 +93,17 @@ CREATE TABLE
 CREATE TABLE
     partner
 (
-    id            INT                                     NOT NULL AUTO_INCREMENT,
-    public_id     CHAR(36)                                NOT NULL DEFAULT uuid_v4(),
-    toilet_id     INT                                     NOT NULL,
-    user_id       INT                                     NULL,
-    certificate   VARCHAR(255)                            NOT NULL,
-    contact_email VARCHAR(100)                            NOT NULL,
-    status        ENUM ('active', 'inactive', 'rejected') NOT NULL,
-    reviewed_by   INT                                     NULL,
-    reviewed_at   TIMESTAMP                               NULL,
-    created_at    TIMESTAMP                               NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at    TIMESTAMP                               NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    id             INT                                     NOT NULL AUTO_INCREMENT,
+    public_id      CHAR(36)                                NOT NULL DEFAULT uuid_v4(),
+    toilet_id      INT                                     NOT NULL,
+    user_id        INT                                     NULL,
+    certificate    VARCHAR(255)                            NOT NULL,
+    contact_email  VARCHAR(100)                            NOT NULL,
+    status         ENUM ('active', 'inactive', 'rejected') NOT NULL,
+    reviewed_by_id INT                                     NULL,
+    reviewed_at    TIMESTAMP                               NULL,
+    created_at     TIMESTAMP                               NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at     TIMESTAMP                               NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );
 
@@ -115,7 +115,7 @@ CREATE TABLE
     type_report_toilet_id INT                                      NOT NULL,
     interaction_id        INT                                      NOT NULL,
     status                ENUM ('pending', 'accepted', 'rejected') NOT NULL DEFAULT 'pending',
-    reviewed_by           INT                                      NULL,
+    reviewed_by_id        INT                                      NULL,
     reviewed_at           TIMESTAMP                                NULL,
     created_at            TIMESTAMP                                NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at            TIMESTAMP                                NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -130,7 +130,7 @@ CREATE TABLE
     user_id       INT                                              NOT NULL,
     toilet_id     INT                                              NOT NULL,
     discriminator ENUM ('comment', 'report', 'suggestion', 'view') NOT NULL,
-    deleted_by    INT                                              NULL,
+    deleted_by_id INT                                              NULL,
     deleted_at    TIMESTAMP                                        NULL,
     created_at    TIMESTAMP                                        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at    TIMESTAMP                                        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -140,15 +140,15 @@ CREATE TABLE
 CREATE TABLE
     suggestion
 (
-    id          INT                                      NOT NULL,
-    public_id   CHAR(36)                                 NOT NULL DEFAULT uuid_v4(),
-    coordinates POINT                                    NOT NULL,
-    photo_url   VARCHAR(255)                             NULL,
-    status      ENUM ('pending', 'accepted', 'rejected') NOT NULL DEFAULT 'pending',
-    reviewed_by INT                                      NULL,
-    reviewed_at TIMESTAMP                                NULL,
-    created_at  TIMESTAMP                                NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at  TIMESTAMP                                NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    id             INT                                      NOT NULL,
+    public_id      CHAR(36)                                 NOT NULL DEFAULT uuid_v4(),
+    coordinates    POINT                                    NOT NULL,
+    photo_url      VARCHAR(255)                             NULL,
+    status         ENUM ('pending', 'accepted', 'rejected') NOT NULL DEFAULT 'pending',
+    reviewed_by_id INT                                      NULL,
+    reviewed_at    TIMESTAMP                                NULL,
+    created_at     TIMESTAMP                                NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at     TIMESTAMP                                NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     SPATIAL INDEX (coordinates)
 );
@@ -262,7 +262,7 @@ CREATE TABLE
     text           VARCHAR(280)               NOT NULL,
     score          INT                        NOT NULL,
     state          ENUM ('visible', 'hidden') NOT NULL DEFAULT 'visible',
-    deleted_by     INT                        NULL,
+    deleted_by_id  INT                        NULL,
     deleted_at     TIMESTAMP                  NULL,
     created_at     TIMESTAMP                  NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at     TIMESTAMP                  NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -283,16 +283,16 @@ CREATE TABLE
 CREATE TABLE
     reply
 (
-    id         INT                        NOT NULL,
-    public_id  CHAR(36)                   NOT NULL DEFAULT uuid_v4(),
-    comment_id INT                        NOT NULL,
-    user_id    INT                        NOT NULL,
-    text       VARCHAR(280)               NOT NULL,
-    state      ENUM ('visible', 'hidden') NOT NULL DEFAULT 'visible',
-    deleted_by INT                        NULL,
-    deleted_at TIMESTAMP                  NULL,
-    created_at TIMESTAMP                  NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP                  NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    id            INT                        NOT NULL AUTO_INCREMENT,
+    public_id     CHAR(36)                   NOT NULL DEFAULT uuid_v4(),
+    comment_id    INT                        NOT NULL,
+    user_id       INT                        NOT NULL,
+    text          VARCHAR(280)               NOT NULL,
+    state         ENUM ('visible', 'hidden') NOT NULL DEFAULT 'visible',
+    deleted_by_id INT                        NULL,
+    deleted_at    TIMESTAMP                  NULL,
+    created_at    TIMESTAMP                  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at    TIMESTAMP                  NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );
 
@@ -316,7 +316,7 @@ CREATE TABLE
     type_report_comment_id INT                                      NOT NULL,
     react_id               INT                                      NOT NULL,
     status                 ENUM ('pending', 'accepted', 'rejected') NOT NULL DEFAULT 'pending',
-    reviewed_by            INT                                      NULL,
+    reviewed_by_id         INT                                      NULL,
     reviewed_at            TIMESTAMP                                NULL,
     created_at             TIMESTAMP                                NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at             TIMESTAMP                                NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -324,7 +324,7 @@ CREATE TABLE
 );
 
 ALTER TABLE user
-    ADD FOREIGN KEY (deactivated_by) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
+    ADD FOREIGN KEY (deactivated_by_id) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
     ADD UNIQUE INDEX idx_user_public_id (public_id),
     ADD INDEX idx_user_name (name),
     ADD INDEX idx_user_icon (icon),
@@ -353,7 +353,7 @@ ALTER TABLE report_user
     ADD FOREIGN KEY (type_report_user_id) REFERENCES type_report_user (id) ON DELETE NO ACTION ON UPDATE NO ACTION,
     ADD FOREIGN KEY (user_reported_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE NO ACTION,
     ADD FOREIGN KEY (user_reporter_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE NO ACTION,
-    ADD FOREIGN KEY (reviewed_by) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
+    ADD FOREIGN KEY (reviewed_by_id) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
     ADD UNIQUE INDEX idx_report_user_public_id (public_id),
     ADD INDEX idx_report_user_type (type_report_user_id),
     ADD INDEX idx_report_user_reported (user_reported_id),
@@ -365,7 +365,8 @@ ALTER TABLE report_user
 ALTER TABLE toilet
     ADD FOREIGN KEY (city_id) REFERENCES city (id) ON DELETE NO ACTION ON UPDATE NO ACTION,
     ADD FOREIGN KEY (access_id) REFERENCES access (id) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    ADD FOREIGN KEY (reviewed_by) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
+    ADD FOREIGN KEY (reviewed_by_id) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
+    ADD FOREIGN KEY (deleted_by_id) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
     ADD UNIQUE INDEX idx_toilet_public_id (public_id),
     ADD UNIQUE INDEX idx_toilet_place_id (place_id),
     ADD INDEX idx_toilet_city_id (city_id),
@@ -377,7 +378,7 @@ ALTER TABLE toilet
 ALTER TABLE partner
     ADD FOREIGN KEY (toilet_id) REFERENCES toilet (id) ON DELETE CASCADE ON UPDATE NO ACTION,
     ADD FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
-    ADD FOREIGN KEY (reviewed_by) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
+    ADD FOREIGN KEY (reviewed_by_id) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
     ADD UNIQUE INDEX idx_partner_public_id (public_id),
     ADD UNIQUE INDEX idx_partner_toilet_id (toilet_id),
     ADD UNIQUE INDEX idx_partner_user_id (user_id),
@@ -389,10 +390,10 @@ ALTER TABLE partner
 ALTER TABLE report_toilet
     ADD FOREIGN KEY (type_report_toilet_id) REFERENCES type_report_toilet (id) ON DELETE NO ACTION ON UPDATE NO ACTION,
     ADD FOREIGN KEY (interaction_id) REFERENCES interaction (id) ON DELETE CASCADE ON UPDATE NO ACTION,
-    ADD FOREIGN KEY (reviewed_by) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
+    ADD FOREIGN KEY (reviewed_by_id) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
     ADD UNIQUE INDEX idx_report_toilet_public_id (public_id),
+    ADD UNIQUE INDEX idx_report_toilet_interaction (interaction_id),
     ADD INDEX idx_report_toilet_type (type_report_toilet_id),
-    ADD INDEX idx_report_toilet_interaction (interaction_id),
     ADD INDEX idx_report_toilet_status (status),
     ADD INDEX idx_report_toilet_reviewed_at (reviewed_at),
     ADD INDEX idx_report_toilet_created_at (created_at);
@@ -400,7 +401,7 @@ ALTER TABLE report_toilet
 ALTER TABLE interaction
     ADD FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE NO ACTION,
     ADD FOREIGN KEY (toilet_id) REFERENCES toilet (id) ON DELETE CASCADE ON UPDATE NO ACTION,
-    ADD FOREIGN KEY (deleted_by) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
+    ADD FOREIGN KEY (deleted_by_id) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
     ADD UNIQUE INDEX idx_interaction_public_id (public_id),
     ADD INDEX idx_interaction_user_id (user_id),
     ADD INDEX idx_interaction_toilet_id (toilet_id),
@@ -411,7 +412,7 @@ ALTER TABLE interaction
 
 ALTER TABLE suggestion
     ADD FOREIGN KEY (id) REFERENCES interaction (id) ON DELETE CASCADE ON UPDATE NO ACTION,
-    ADD FOREIGN KEY (reviewed_by) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
+    ADD FOREIGN KEY (reviewed_by_id) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
     ADD UNIQUE INDEX idx_suggestion_public_id (public_id),
     ADD INDEX idx_suggestion_status (status),
     ADD INDEX idx_suggestion_reviewed_at (reviewed_at),
@@ -458,7 +459,7 @@ ALTER TABLE role_permission
 
 ALTER TABLE comment
     ADD FOREIGN KEY (interaction_id) REFERENCES interaction (id) ON DELETE CASCADE ON UPDATE NO ACTION,
-    ADD FOREIGN KEY (deleted_by) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
+    ADD FOREIGN KEY (deleted_by_id) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
     ADD UNIQUE INDEX idx_comment_public_id (public_id),
     ADD UNIQUE INDEX idx_comment_interaction_id (interaction_id),
     ADD INDEX idx_comment_state (state),
@@ -470,7 +471,7 @@ ALTER TABLE comment_rate
 ALTER TABLE reply
     ADD FOREIGN KEY (comment_id) REFERENCES comment (id) ON DELETE CASCADE ON UPDATE NO ACTION,
     ADD FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE NO ACTION,
-    ADD FOREIGN KEY (deleted_by) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
+    ADD FOREIGN KEY (deleted_by_id) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
     ADD UNIQUE INDEX idx_reply_public_id (public_id),
     ADD INDEX idx_reply_comment_id (comment_id),
     ADD INDEX idx_reply_user_id (user_id),
@@ -487,7 +488,7 @@ ALTER TABLE react
 ALTER TABLE report_comment
     ADD FOREIGN KEY (type_report_comment_id) REFERENCES type_report_comment (id) ON DELETE NO ACTION ON UPDATE NO ACTION,
     ADD FOREIGN KEY (react_id) REFERENCES react (id) ON DELETE CASCADE ON UPDATE NO ACTION,
-    ADD FOREIGN KEY (reviewed_by) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
+    ADD FOREIGN KEY (reviewed_by_id) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
     ADD UNIQUE INDEX idx_report_comment_public_id (public_id),
     ADD INDEX idx_report_comment_type_id (type_report_comment_id),
     ADD INDEX idx_report_comment_react_id (react_id),

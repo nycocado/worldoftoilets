@@ -6,14 +6,16 @@ services:
         restart: on-failure
         environment:
             MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
-            MARIADB_DATABASE: ${MARIADB_DATABASE}
-            MARIADB_USER: ${MARIADB_USER}
-            MARIADB_PASSWORD: ${MARIADB_PASSWORD}
-            MARIADB_GALERA_CLUSTER_BOOTSTRAP: ${MARIADB_GALERA_CLUSTER_BOOTSTRAP}
-            MARIADB_GALERA_FORCE_SAFETOBOOTSTRAP: ${MARIADB_GALERA_FORCE_SAFETOBOOTSTRAP}
+            MARIADB_GALERA_CLUSTER_BOOTSTRAP: "yes"
+            MARIADB_GALERA_FORCE_SAFETOBOOTSTRAP: "yes"
             MARIADB_GALERA_MARIABACKUP_PASSWORD: ${MARIADB_GALERA_MARIABACKUP_PASSWORD}
             MARIADB_GALERA_CLUSTER_NAME: ${MARIADB_GALERA_CLUSTER_NAME}
             MARIADB_GALERA_CLUSTER_ADDRESS: ${MARIADB_GALERA_CLUSTER_ADDRESS}
+            MARIADB_USER: ${MARIADB_USER}
+            MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+            MARIADB_DATABASE: ${MARIADB_DATABASE}
+        ports:
+            - 3306:3306
         volumes:
             - type: volume
               source: mariadb_db_1_data
@@ -26,20 +28,24 @@ services:
               source: ./db/scripts/02-insert.sql
               target: /docker-entrypoint-initdb.d/02-insert.sql
               read_only: true
-        ports:
-            - 3306:3306
+        healthcheck:
+            test: ['CMD', '/opt/bitnami/scripts/mariadb-galera/healthcheck.sh']
+            interval: 15s
+            timeout: 5s
+            retries: 6
+            start_period: 15s
         networks:
             - wot-network
 
     old-db:
         image: bitnami/mariadb:latest
-        container_name: tt-db
+        container_name: wot-old-db
         restart: on-failure
         environment:
             MARIADB_ROOT_PASSWORD: ${MARIADB_OLD_ROOT_PASSWORD}
-            MARIADB_DATABASE: ${MARIADB_OLD_DATABASE}
             MARIADB_USER: ${MARIADB_OLD_USER}
             MARIADB_PASSWORD: ${MARIADB_OLD_PASSWORD}
+            MARIADB_DATABASE: ${MARIADB_OLD_DATABASE}
             MARIADB_PORT_NUMBER: 3307
         ports:
             - "3307:3307"
@@ -60,6 +66,7 @@ services:
             interval: 15s
             timeout: 5s
             retries: 6
+            start_period: 15s
         networks:
             - wot-network
 
