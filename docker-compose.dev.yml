@@ -1,4 +1,55 @@
 services:
+    nginx:
+        image: nginx:alpine
+        container_name: wot-nginx
+        restart: on-failure
+        ports:
+            - "80:80"
+        volumes:
+            - type: bind
+              source: ./nginx/nginx-dev.conf
+              target: /etc/nginx/nginx.conf
+              read_only: true
+        depends_on:
+            api-1:
+                condition: service_healthy
+            web-1:
+                condition: service_healthy
+            minio:
+                condition: service_started
+        healthcheck:
+            test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+            interval: 10s
+            timeout: 3s
+            retries: 3
+            start_period: 5s
+        networks:
+            - wot-network
+
+    minio:
+        image: minio/minio:latest
+        container_name: wot-minio
+        restart: on-failure
+        command: server /data --console-address ":9001"
+        environment:
+            MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+            MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+        ports:
+            - "9000:9000"
+            - "9001:9001"
+        volumes:
+            - type: volume
+              source: minio_data
+              target: /data
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+            interval: 10s
+            timeout: 3s
+            retries: 3
+            start_period: 10s
+        networks:
+            - wot-network
+
     api-1:
         build:
             context: ./apps/api
@@ -6,18 +57,26 @@ services:
         container_name: wot-api-1
         restart: on-failure
         environment:
-            DATABASE_PORT: ${HAPROXY_PORT}
+            SERVICE_NAME: "api-1"
+            DATABASE_PORT: 3306
+            DATABASE_HOST: "db-1"
             DATABASE_NAME: ${MARIADB_DATABASE}
             DATABASE_USER: ${MARIADB_USER}
             DATABASE_PASSWORD: ${MARIADB_PASSWORD}
             JWT_SECRET: ${JWT_SECRET}
             JWT_EXPIRATION: ${JWT_EXPIRATION}
+            JWT_REFRESH_EXPIRATION: ${JWT_REFRESH_EXPIRATION}
             NODE_ENV: "development"
             PORT: 3101
             WATCHPACK_POLLING: "true"
             CHOKIDAR_USEPOLLING: "true"
         ports:
             - "3101:3101"
+        depends_on:
+            db-1:
+                condition: service_healthy
+            minio:
+                condition: service_started
         volumes:
             - type: bind
               source: ./apps/api
@@ -26,7 +85,7 @@ services:
               source: api_1_node_modules
               target: /app/node_modules
         healthcheck:
-            test: ["CMD-SHELL", "curl -f http://localhost:3101/health || exit 1"]
+            test: ["CMD", "curl", "-f", "http://localhost:3101/health"]
             interval: 10s
             timeout: 3s
             retries: 3
@@ -38,7 +97,7 @@ services:
         build:
             context: ./apps/old-api
             dockerfile: Dockerfile
-        container_name: tt-api
+        container_name: wot-old-api
         restart: always
         environment:
             MYSQL_URL: mariadb://old-db:3307/${MARIADB_OLD_DATABASE}
@@ -46,19 +105,14 @@ services:
             MYSQL_PASSWORD: ${MARIADB_OLD_PASSWORD}
             API_KEY_ADMIN: ${API_KEY_ADMIN}
             API_KEY_USER: ${API_KEY_USER}
+            SERVER_PORT: 3200
+        ports:
+            - "3200:3200"
         depends_on:
             old-db:
                 condition: service_healthy
-        ports:
-            - "8080:8080"
         networks:
             - wot-network
-        healthcheck:
-            test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-            interval: 30s
-            timeout: 10s
-            retries: 3
-            start_period: 40s
     
     web-1:
         build:
@@ -70,6 +124,9 @@ services:
             PORT: 3001
         ports:
             - "3001:3001"
+        depends_on:
+            api-1:
+                condition: service_healthy
         volumes:
             - type: bind
               source: ./apps/web
@@ -81,7 +138,7 @@ services:
               source: web_1_next      
               target: /app/.next
         healthcheck:
-            test: ["CMD-SHELL", "curl -f http://localhost:3001/health || exit 1"]
+            test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
             interval: 10s
             timeout: 3s
             retries: 3
@@ -101,6 +158,8 @@ volumes:
     web_1_next:
         driver: local
     web_2_next:
+        driver: local
+    minio_data:
         driver: local
 
 networks:
