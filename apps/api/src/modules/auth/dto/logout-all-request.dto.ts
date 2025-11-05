@@ -1,8 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsOptional, IsUUID, MaxLength, MinLength } from 'class-validator';
 
 export class LogoutAllRequestDto {
   @ApiProperty()
-  @IsString()
-  refreshToken: string;
+  @IsUUID()
+  @MinLength(3)
+  @MaxLength(36)
+  @IsOptional()
+  refreshToken?: string;
 }
