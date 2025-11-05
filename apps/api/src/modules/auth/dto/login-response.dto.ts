@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsString, IsObject } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsObject,
+  IsEmail,
+  IsUUID,
+} from 'class-validator';
 import { UserIcon } from '@database/entities';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -14,7 +20,7 @@ export class UserDataDto {
   name: string;
 
   @ApiProperty()
-  @IsString()
+  @IsEmail()
   @IsNotEmpty()
   email: string;
 
@@ -31,7 +37,7 @@ export class LoginResponseDto {
   accessToken: string;
 
   @ApiProperty()
-  @IsString()
+  @IsUUID()
   @IsNotEmpty()
   refreshToken: string;
 

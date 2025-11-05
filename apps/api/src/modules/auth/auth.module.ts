@@ -11,6 +11,15 @@ import { EmailVerificationModule } from '@modules/email-verification/email-verif
 import { PasswordResetModule } from '@modules/password-reset/password-reset.module';
 import { UserCredentialModule } from '@modules/user-credential/user-credential.module';
 import { EmailModule } from '@modules/email/email.module';
+import { LoginUseCase } from '@modules/auth/use-cases';
+import { RegisterUseCase } from '@modules/auth/use-cases';
+import { RefreshTokenUseCase } from '@modules/auth/use-cases';
+import { VerifyEmailUseCase } from '@modules/auth/use-cases';
+import { ResendVerificationUseCase } from '@modules/auth/use-cases';
+import { ForgotPasswordUseCase } from '@modules/auth/use-cases';
+import { ResetPasswordUseCase } from '@modules/auth/use-cases';
+import { LogoutUseCase } from '@modules/auth/use-cases';
+import { LogoutAllUseCase } from '@modules/auth/use-cases';
 
 @Module({
   imports: [
@@ -33,7 +42,19 @@ import { EmailModule } from '@modules/email/email.module';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtCookieStrategy],
+  providers: [
+    AuthService,
+    JwtCookieStrategy,
+    LoginUseCase,
+    RegisterUseCase,
+    RefreshTokenUseCase,
+    VerifyEmailUseCase,
+    ResendVerificationUseCase,
+    ForgotPasswordUseCase,
+    ResetPasswordUseCase,
+    LogoutUseCase,
+    LogoutAllUseCase,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}

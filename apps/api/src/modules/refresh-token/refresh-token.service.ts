@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@mikro-orm/nestjs';
 import { RefreshTokenEntity, UserEntity } from '@database/entities';
-import { EntityRepository } from '@mikro-orm/core';
+import { RefreshTokenRepository } from '@modules/refresh-token/refresh-token.repository';
 import { jwtTimeToMilliseconds } from '@common/utils/jwt-time.util';
 import { ConfigService } from '@nestjs/config';
 
@@ -9,65 +8,39 @@ import { ConfigService } from '@nestjs/config';
 export class RefreshTokenService {
   constructor(
     private readonly configService: ConfigService,
-    @InjectRepository(RefreshTokenEntity)
-    private readonly refreshTokenRepository: EntityRepository<RefreshTokenEntity>,
+    private readonly refreshTokenRepository: RefreshTokenRepository,
   ) {}
 
   async getByToken(token: string): Promise<RefreshTokenEntity | null> {
-    return this.refreshTokenRepository.findOne(
-      { token: token },
-      { populate: ['user', 'user.credential', 'user.roles'] },
-    );
+    return this.refreshTokenRepository.findByToken(token);
   }
 
   async getByUser(user: UserEntity): Promise<RefreshTokenEntity[]> {
-    return this.refreshTokenRepository.find({ user: user });
+    return this.refreshTokenRepository.findByUser(user);
   }
 
   async getExpiredTokens(): Promise<RefreshTokenEntity[]> {
-    return this.refreshTokenRepository.find({
-      expiresAt: { $lt: new Date() },
-    });
+    return this.refreshTokenRepository.findExpired();
   }
 
   async revokeRefreshToken(refreshToken: RefreshTokenEntity): Promise<void> {
-    const em = this.refreshTokenRepository.getEntityManager();
-    refreshToken.invalidAt = new Date();
-    await em.persistAndFlush(refreshToken);
+    return this.refreshTokenRepository.invalidate(refreshToken);
   }
 
   async revokeAllUserRefreshTokens(user: UserEntity): Promise<void> {
-    const em = this.refreshTokenRepository.getEntityManager();
-    const tokens = await this.getByUser(user);
-
-    tokens.forEach((token) => {
-      token.invalidAt = new Date();
-    });
-
-    await em.persistAndFlush(tokens);
+    return this.refreshTokenRepository.invalidateAllByUser(user);
   }
 
   async createRefreshToken(user: UserEntity): Promise<RefreshTokenEntity> {
-    const em = this.refreshTokenRepository.getEntityManager();
-
     const refreshTokenExpiration = this.configService.getOrThrow<string>(
       'JWT_REFRESH_EXPIRATION',
     );
-
     const expiresInMs = jwtTimeToMilliseconds(refreshTokenExpiration);
     const expiresAt = new Date(Date.now() + expiresInMs);
-
-    const refreshToken = new RefreshTokenEntity();
-    refreshToken.user = user;
-    refreshToken.expiresAt = expiresAt;
-
-    await em.persistAndFlush(refreshToken);
-    return refreshToken;
+    return this.refreshTokenRepository.create(user, expiresAt);
   }
 
   async deleteExpiredTokens(): Promise<void> {
-    const em = this.refreshTokenRepository.getEntityManager();
-    const tokens = await this.getExpiredTokens();
-    await em.removeAndFlush(tokens);
+    return this.refreshTokenRepository.deleteExpired();
   }
 }

@@ -1,14 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@mikro-orm/nestjs';
 import { UserCredentialEntity, UserEntity } from '@database/entities';
-import { EntityRepository } from '@mikro-orm/core';
-import * as bcrypt from 'bcrypt';
+import { UserCredentialRepository } from '@modules/user-credential/user-credential.repository';
 
 @Injectable()
 export class UserCredentialService {
   constructor(
-    @InjectRepository(UserCredentialEntity)
-    private readonly userCredentialRepository: EntityRepository<UserCredentialEntity>,
+    private readonly userCredentialRepository: UserCredentialRepository,
   ) {}
 
   async createUserCredential(
@@ -16,22 +13,16 @@ export class UserCredentialService {
     email: string,
     password: string,
   ): Promise<UserCredentialEntity> {
-    const em = this.userCredentialRepository.getEntityManager();
-    const hashedPassword = await bcrypt.hash(password, 12);
-    const userCredential = new UserCredentialEntity();
-    userCredential.user = user;
-    userCredential.email = email;
-    userCredential.password = hashedPassword;
-    await em.persistAndFlush(userCredential);
-    return userCredential;
+    return this.userCredentialRepository.create(user, email, password);
   }
 
   async updatePassword(
     userCredential: UserCredentialEntity,
     newPassword: string,
   ): Promise<void> {
-    const em = this.userCredentialRepository.getEntityManager();
-    userCredential.password = await bcrypt.hash(newPassword, 12);
-    await em.persistAndFlush(userCredential);
+    return this.userCredentialRepository.updatePassword(
+      userCredential,
+      newPassword,
+    );
   }
 }
