@@ -16,6 +16,8 @@ services:
             web-1:
                 condition: service_healthy
             minio:
+                condition: service_healthy
+            mailhog:
                 condition: service_started
         healthcheck:
             test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
@@ -23,6 +25,16 @@ services:
             timeout: 3s
             retries: 3
             start_period: 5s
+        networks:
+            - wot-network
+
+    mailhog:
+        image: mailhog/mailhog:latest
+        container_name: wot-mailhog
+        restart: on-failure
+        ports:
+            - "8025:8025"
+            - "1025:1025"
         networks:
             - wot-network
 
@@ -66,6 +78,12 @@ services:
             JWT_SECRET: ${JWT_SECRET}
             JWT_EXPIRATION: ${JWT_EXPIRATION}
             JWT_REFRESH_EXPIRATION: ${JWT_REFRESH_EXPIRATION}
+            EMAIL_VERIFICATION_TOKEN_EXPIRATION: ${EMAIL_VERIFICATION_TOKEN_EXPIRATION}
+            PASSWORD_RESET_TOKEN_EXPIRATION: ${PASSWORD_RESET_TOKEN_EXPIRATION}
+            FRONTEND_URL: ${FRONTEND_URL}
+            MAIL_HOST: "mailhog"
+            MAIL_PORT: 1025
+            MAIL_FROM: ${MAIL_FROM}
             NODE_ENV: "development"
             PORT: 3101
             WATCHPACK_POLLING: "true"
@@ -76,6 +94,8 @@ services:
             db-1:
                 condition: service_healthy
             minio:
+                condition: service_healthy
+            mailhog:
                 condition: service_started
         volumes:
             - type: bind

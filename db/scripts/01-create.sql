@@ -17,11 +17,38 @@ CREATE TABLE
 CREATE TABLE
     user_credential
 (
-    id         INT          NOT NULL,
-    email      VARCHAR(100) NOT NULL,
-    password   VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    id             INT          NOT NULL,
+    email          VARCHAR(100) NOT NULL,
+    password       VARCHAR(255) NOT NULL,
+    email_verified BOOLEAN      NOT NULL DEFAULT FALSE,
+    created_at     TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at     TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE
+    email_verification
+(
+    id                 INT         NOT NULL AUTO_INCREMENT,
+    user_credential_id INT         NOT NULL,
+    token              VARCHAR(36) NOT NULL DEFAULT uuid_v4(),
+    invalid_at         TIMESTAMP   NULL,
+    expires_at         TIMESTAMP   NOT NULL,
+    created_at         TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at         TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE
+    password_reset
+(
+    id                 INT         NOT NULL AUTO_INCREMENT,
+    user_credential_id INT         NOT NULL,
+    token              VARCHAR(36) NOT NULL DEFAULT uuid_v4(),
+    invalid_at         TIMESTAMP   NULL,
+    expires_at         TIMESTAMP   NOT NULL,
+    created_at         TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at         TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );
 
@@ -42,8 +69,8 @@ CREATE TABLE
     id               INT         NOT NULL AUTO_INCREMENT,
     user_id          INT         NOT NULL,
     token            VARCHAR(36) NOT NULL DEFAULT uuid_v4(),
-    invalid_at       TIMESTAMP   NULL,
     roles_updated_at TIMESTAMP   NULL,
+    invalid_at       TIMESTAMP   NULL,
     expires_at       TIMESTAMP   NOT NULL,
     created_at       TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at       TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -335,6 +362,20 @@ ALTER TABLE user
 ALTER TABLE user_credential
     ADD FOREIGN KEY (id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE NO ACTION,
     ADD UNIQUE INDEX idx_user_credential_email (email);
+
+ALTER TABLE email_verification
+    ADD FOREIGN KEY (user_credential_id) REFERENCES user_credential (id) ON DELETE CASCADE ON UPDATE NO ACTION,
+    ADD UNIQUE INDEX idx_email_verification_user_token (user_credential_id, token),
+    ADD UNIQUE INDEX idx_email_verification_token (token),
+    ADD INDEX idx_email_verification_expires_at (expires_at),
+    ADD INDEX idx_email_verification_invalid_at (invalid_at);
+
+ALTER TABLE password_reset
+    ADD FOREIGN KEY (user_credential_id) REFERENCES user_credential (id) ON DELETE CASCADE ON UPDATE NO ACTION,
+    ADD UNIQUE INDEX idx_password_reset_user_token (user_credential_id, token),
+    ADD UNIQUE INDEX idx_password_reset_token (token),
+    ADD INDEX idx_password_reset_expires_at (expires_at),
+    ADD INDEX idx_password_reset_invalid_at (invalid_at);
 
 ALTER TABLE user_role
     ADD FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE NO ACTION,

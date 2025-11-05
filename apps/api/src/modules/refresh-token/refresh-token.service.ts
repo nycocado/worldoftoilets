@@ -13,11 +13,21 @@ export class RefreshTokenService {
     private readonly refreshTokenRepository: EntityRepository<RefreshTokenEntity>,
   ) {}
 
-  async getByToken(token: string): Promise<RefreshTokenEntity> {
-    return this.refreshTokenRepository.findOneOrFail(
+  async getByToken(token: string): Promise<RefreshTokenEntity | null> {
+    return this.refreshTokenRepository.findOne(
       { token: token },
       { populate: ['user', 'user.credential', 'user.roles'] },
     );
+  }
+
+  async getByUser(user: UserEntity): Promise<RefreshTokenEntity[]> {
+    return this.refreshTokenRepository.find({ user: user });
+  }
+
+  async getExpiredTokens(): Promise<RefreshTokenEntity[]> {
+    return this.refreshTokenRepository.find({
+      expiresAt: { $lt: new Date() },
+    });
   }
 
   async revokeRefreshToken(refreshToken: RefreshTokenEntity): Promise<void> {
@@ -26,13 +36,9 @@ export class RefreshTokenService {
     await em.persistAndFlush(refreshToken);
   }
 
-  async revokeAllUserRefreshTokens(userId: number): Promise<void> {
+  async revokeAllUserRefreshTokens(user: UserEntity): Promise<void> {
     const em = this.refreshTokenRepository.getEntityManager();
-
-    const tokens = await this.refreshTokenRepository.find({
-      user: { id: userId },
-      invalidAt: null,
-    });
+    const tokens = await this.getByUser(user);
 
     tokens.forEach((token) => {
       token.invalidAt = new Date();
@@ -56,17 +62,12 @@ export class RefreshTokenService {
     refreshToken.expiresAt = expiresAt;
 
     await em.persistAndFlush(refreshToken);
-
     return refreshToken;
   }
 
   async deleteExpiredTokens(): Promise<void> {
     const em = this.refreshTokenRepository.getEntityManager();
-
-    const tokens = await this.refreshTokenRepository.find({
-      expiresAt: { $lt: new Date() },
-    });
-
+    const tokens = await this.getExpiredTokens();
     await em.removeAndFlush(tokens);
   }
 }

@@ -7,12 +7,20 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtCookieStrategy } from './jwt-strategy.service';
 import { UserModule } from '@modules/user';
 import { RefreshTokenModule } from '@modules/refresh-token/refresh-token.module';
+import { EmailVerificationModule } from '@modules/email-verification/email-verification.module';
+import { PasswordResetModule } from '@modules/password-reset/password-reset.module';
+import { UserCredentialModule } from '@modules/user-credential/user-credential.module';
+import { EmailModule } from '@modules/email/email.module';
 
 @Module({
   imports: [
     UserModule,
     RefreshTokenModule,
     PassportModule,
+    EmailVerificationModule,
+    PasswordResetModule,
+    UserCredentialModule,
+    EmailModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

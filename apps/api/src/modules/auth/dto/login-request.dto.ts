@@ -6,6 +6,7 @@ export class LoginRequestDto {
   @IsString()
   @IsNotEmpty()
   email: string;
+
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
