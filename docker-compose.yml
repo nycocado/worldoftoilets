@@ -21,6 +21,8 @@ services:
                 condition: service_healthy
             minio:
                 condition: service_healthy
+            mailhog:
+                condition: service_started
         healthcheck:
             test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
             interval: 10s
@@ -55,6 +57,16 @@ services:
         networks:
             - wot-network
 
+    mailhog:
+        image: mailhog/mailhog:latest
+        container_name: wot-mailhog
+        restart: on-failure
+        ports:
+            - "8025:8025"
+            - "1025:1025"
+        networks:
+            - wot-network
+
     api-1:
         build:
             context: ./apps/api
@@ -63,13 +75,20 @@ services:
         restart: on-failure
         environment:
             SERVICE_NAME: "api-1"
-            DATABASE_PORT: ${HAPROXY_PORT}
+            DATABASE_PORT: 3306
             DATABASE_HOST: "haproxy"
             DATABASE_NAME: ${MARIADB_DATABASE}
             DATABASE_USER: ${MARIADB_USER}
             DATABASE_PASSWORD: ${MARIADB_PASSWORD}
             JWT_SECRET: ${JWT_SECRET}
             JWT_EXPIRATION: ${JWT_EXPIRATION}
+            JWT_REFRESH_EXPIRATION: ${JWT_REFRESH_EXPIRATION}
+            EMAIL_VERIFICATION_TOKEN_EXPIRATION: ${EMAIL_VERIFICATION_TOKEN_EXPIRATION}
+            PASSWORD_RESET_TOKEN_EXPIRATION: ${PASSWORD_RESET_TOKEN_EXPIRATION}
+            FRONTEND_URL: ${FRONTEND_URL}
+            MAIL_HOST: "mailhog"
+            MAIL_PORT: 1025
+            MAIL_FROM: ${MAIL_FROM}
             NODE_ENV: "production"
             PORT: 3101
         volumes:
@@ -84,6 +103,8 @@ services:
                 condition: service_healthy
             minio:
                 condition: service_healthy
+            mailhog:
+                condition: service_started
         healthcheck:
             test: ["CMD", "curl", "-f", "http://localhost:3101/health"]
             interval: 10s
@@ -101,13 +122,20 @@ services:
         restart: on-failure
         environment:
             SERVICE_NAME: "api-2"
-            DATABASE_PORT: ${HAPROXY_PORT}
+            DATABASE_PORT: 3306
             DATABASE_HOST: "haproxy"
             DATABASE_NAME: ${MARIADB_DATABASE}
             DATABASE_USER: ${MARIADB_USER}
             DATABASE_PASSWORD: ${MARIADB_PASSWORD}
             JWT_SECRET: ${JWT_SECRET}
             JWT_EXPIRATION: ${JWT_EXPIRATION}
+            JWT_REFRESH_EXPIRATION: ${JWT_REFRESH_EXPIRATION}
+            EMAIL_VERIFICATION_TOKEN_EXPIRATION: ${EMAIL_VERIFICATION_TOKEN_EXPIRATION}
+            PASSWORD_RESET_TOKEN_EXPIRATION: ${PASSWORD_RESET_TOKEN_EXPIRATION}
+            FRONTEND_URL: ${FRONTEND_URL}
+            MAIL_HOST: "mailhog"
+            MAIL_PORT: 1025
+            MAIL_FROM: ${MAIL_FROM}
             NODE_ENV: "production"
             PORT: 3102
         volumes:
@@ -122,6 +150,8 @@ services:
                 condition: service_healthy
             minio:
                 condition: service_healthy
+            mailhog:
+                condition: service_started
         healthcheck:
             test: ["CMD", "curl", "-f", "http://localhost:3102/health"]
             interval: 10s
