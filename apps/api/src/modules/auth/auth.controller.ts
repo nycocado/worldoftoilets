@@ -13,50 +13,39 @@ import {
   LoginRequestDto,
   LoginResponseDto,
   RegisterRequestDto,
-  RegisterResponseDto,
-  VerifyEmailDto,
+  VerifyEmailRequestDto,
   ForgotPasswordRequestDto,
-  ResetPasswordDto,
+  ResetPasswordRequestDto,
+  RefreshTokenRequestDto,
+  RefreshTokenResponseDto,
+  ResendVerificationRequestDto,
 } from '@modules/auth/dto';
 import { ConfigService } from '@nestjs/config';
 import { jwtTimeToMilliseconds } from '@common/utils/jwt-time.util';
-import { UserService } from '@modules/user';
-import {
-  RefreshTokenRequestDto,
-  RefreshTokenResponseDto,
-} from '@modules/refresh-token/dto';
 import { ApiResponseDto } from '@common/dto/api-response.dto';
 import { LogoutRequestDto } from '@modules/auth/dto/logout-request.dto';
 import { LogoutAllRequestDto } from '@modules/auth/dto/logout-all-request.dto';
-
-const AUTH_API_MESSAGES = {
-  LOGIN_SUCCESS: 'Login realizado com sucesso.',
-  REFRESH_SUCCESS: 'Token de acesso renovado com sucesso.',
-  LOGOUT_SUCCESS: 'Logout realizado com sucesso.',
-  LOGOUT_ALL_SUCCESS: 'Logout de todas as sessões realizado com sucesso.',
-  REGISTER_SUCCESS:
-    'Registo realizado com sucesso. Verifique o seu email para ativar a conta.',
-  VERIFY_EMAIL_SUCCESS: 'Email verificado com sucesso. Pode fazer login agora.',
-  RESEND_VERIFICATION_SUCCESS: 'Email de verificação reenviado com sucesso.',
-  FORGOT_PASSWORD_SUCCESS:
-    'Se o email existir, receberá instruções para redefinir a senha.',
-  RESET_PASSWORD_SUCCESS:
-    'Senha redefinida com sucesso. Pode fazer login agora.',
-};
-
-const AUTH_API_EXCEPTIONS = {
-  REFRESH_TOKEN_REQUIRED: 'Refresh token é obrigatório para logout.',
-  REFRESH_TOKEN_INVALID: 'Refresh token inválido',
-};
+import { AUTH_EXCEPTIONS, AUTH_MESSAGES } from '@modules/auth/constants';
+import {
+  ApiSwaggerForgotPassword,
+  ApiSwaggerLogin,
+  ApiSwaggerLogout,
+  ApiSwaggerLogoutAll,
+  ApiSwaggerRefresh,
+  ApiSwaggerRegister,
+  ApiSwaggerResendVerification,
+  ApiSwaggerResetPassword,
+  ApiSwaggerVerifyEmail,
+} from '@modules/auth/swagger';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly userService: UserService,
     private readonly configService: ConfigService,
   ) {}
 
+  @ApiSwaggerLogin()
   @Post('login')
   async login(
     @Body() loginDto: LoginRequestDto,
@@ -89,22 +78,22 @@ export class AuthController {
     });
 
     return new ApiResponseDto<LoginResponseDto>(
-      AUTH_API_MESSAGES.LOGIN_SUCCESS,
+      AUTH_MESSAGES.LOGIN_SUCCESS,
       loginResponse,
     );
   }
 
+  @ApiSwaggerRegister()
   @Post('register')
   async register(
     @Body() registerDto: RegisterRequestDto,
-  ): Promise<ApiResponseDto<RegisterResponseDto>> {
+  ): Promise<ApiResponseDto> {
     const { name, email, password, icon, birthDate } = registerDto;
-    return new ApiResponseDto<RegisterResponseDto>(
-      AUTH_API_MESSAGES.REGISTER_SUCCESS,
-      await this.authService.register(name, email, password, icon, birthDate),
-    );
+    await this.authService.register(name, email, password, icon, birthDate);
+    return new ApiResponseDto(AUTH_MESSAGES.REGISTER_SUCCESS);
   }
 
+  @ApiSwaggerRefresh()
   @Post('refresh')
   async refresh(
     @Req() req: Request,
@@ -140,11 +129,12 @@ export class AuthController {
     });
 
     return new ApiResponseDto<RefreshTokenResponseDto>(
-      AUTH_API_MESSAGES.REFRESH_SUCCESS,
+      AUTH_MESSAGES.REFRESH_SUCCESS,
       refreshResponse,
     );
   }
 
+  @ApiSwaggerLogout()
   @Post('logout')
   async logout(
     @Req() req: Request,
@@ -155,9 +145,7 @@ export class AuthController {
       logoutDto?.refreshToken || req.cookies?.['refreshToken'];
 
     if (!refreshToken) {
-      throw new UnauthorizedException(
-        AUTH_API_EXCEPTIONS.REFRESH_TOKEN_REQUIRED,
-      );
+      throw new UnauthorizedException(AUTH_EXCEPTIONS.REFRESH_TOKEN_REQUIRED);
     }
 
     await this.authService.revokeRefreshToken(refreshToken);
@@ -165,9 +153,10 @@ export class AuthController {
     res.clearCookie('token');
     res.clearCookie('refreshToken');
 
-    return new ApiResponseDto(AUTH_API_MESSAGES.LOGOUT_SUCCESS);
+    return new ApiResponseDto(AUTH_MESSAGES.LOGOUT_SUCCESS);
   }
 
+  @ApiSwaggerLogoutAll()
   @Post('logout-all')
   async logoutAll(
     @Req() req: Request,
@@ -178,17 +167,7 @@ export class AuthController {
       logoutAllDto?.refreshToken || req.cookies?.['refreshToken'];
 
     if (!refreshToken) {
-      throw new UnauthorizedException(
-        AUTH_API_EXCEPTIONS.REFRESH_TOKEN_REQUIRED,
-      );
-    }
-
-    const user = await this.userService.getByRefreshToken(refreshToken);
-
-    if (!user) {
-      throw new UnauthorizedException(
-        AUTH_API_EXCEPTIONS.REFRESH_TOKEN_INVALID,
-      );
+      throw new UnauthorizedException(AUTH_EXCEPTIONS.REFRESH_TOKEN_REQUIRED);
     }
 
     await this.authService.revokeAllRefreshTokens(refreshToken);
@@ -196,41 +175,45 @@ export class AuthController {
     res.clearCookie('token');
     res.clearCookie('refreshToken');
 
-    return new ApiResponseDto(AUTH_API_MESSAGES.LOGOUT_ALL_SUCCESS);
+    return new ApiResponseDto(AUTH_MESSAGES.LOGOUT_ALL_SUCCESS);
   }
 
+  @ApiSwaggerVerifyEmail()
   @Post('verify-email')
   async verifyEmail(
-    @Query() verifyDto: VerifyEmailDto,
+    @Query() verifyEmailDto: VerifyEmailRequestDto,
   ): Promise<ApiResponseDto> {
-    await this.authService.verifyEmail(verifyDto.token);
-    return new ApiResponseDto(AUTH_API_MESSAGES.VERIFY_EMAIL_SUCCESS);
+    await this.authService.verifyEmail(verifyEmailDto.token);
+    return new ApiResponseDto(AUTH_MESSAGES.VERIFY_EMAIL_SUCCESS);
   }
 
+  @ApiSwaggerResendVerification()
   @Post('resend-verification')
   async resendVerification(
-    @Query('email') email: string,
+    @Query() resendVerificationDto: ResendVerificationRequestDto,
   ): Promise<ApiResponseDto> {
-    await this.authService.resendVerificationEmail(email);
-    return new ApiResponseDto(AUTH_API_MESSAGES.RESEND_VERIFICATION_SUCCESS);
+    await this.authService.resendVerificationEmail(resendVerificationDto.email);
+    return new ApiResponseDto(AUTH_MESSAGES.RESEND_VERIFICATION_SUCCESS);
   }
 
+  @ApiSwaggerForgotPassword()
   @Post('forgot-password')
   async forgotPassword(
     @Query() forgotPasswordDto: ForgotPasswordRequestDto,
   ): Promise<ApiResponseDto> {
     await this.authService.forgotPassword(forgotPasswordDto.email);
-    return new ApiResponseDto(AUTH_API_MESSAGES.FORGOT_PASSWORD_SUCCESS);
+    return new ApiResponseDto(AUTH_MESSAGES.FORGOT_PASSWORD_SUCCESS);
   }
 
+  @ApiSwaggerResetPassword()
   @Post('reset-password')
   async resetPassword(
-    @Body() resetPasswordDto: ResetPasswordDto,
+    @Body() resetPasswordDto: ResetPasswordRequestDto,
   ): Promise<ApiResponseDto> {
     await this.authService.resetPassword(
       resetPasswordDto.token,
       resetPasswordDto.newPassword,
     );
-    return new ApiResponseDto(AUTH_API_MESSAGES.RESET_PASSWORD_SUCCESS);
+    return new ApiResponseDto(AUTH_MESSAGES.RESET_PASSWORD_SUCCESS);
   }
 }
