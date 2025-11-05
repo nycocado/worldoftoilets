@@ -9,6 +9,6 @@ export const FullUser = createParamDecorator(
 
     const userService = ctx.switchToHttp().getRequest().app.get(UserService);
 
-    return await userService.getById(jwtUser.id);
+    return await userService.getByIdOrFail(jwtUser.id);
   },
 );

@@ -45,7 +45,7 @@ export class UserEntity {
   name!: string;
 
   @Property()
-  points!: number;
+  points: number = 0;
 
   @Index({ name: 'idx_user_icon' })
   @Enum(() => UserIcon)
