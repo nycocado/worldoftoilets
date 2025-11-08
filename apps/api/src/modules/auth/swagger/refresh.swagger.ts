@@ -6,7 +6,15 @@ import {
 } from '@nestjs/swagger';
 import { RefreshTokenResponseDto } from '@modules/auth/dto';
 
-export const ApiSwaggerRefresh = () =>
+/**
+ * Decorador Swagger para Renovação de Token
+ *
+ * @function ApiSwaggerRefresh
+ * @description Decorator que documenta o endpoint POST /auth/refresh no Swagger.
+ * Inclui documentação da operação, respostas sucesso e erro.
+ * Refresh token é obtido de cookie ou query parameter.
+ */
+export const ApiSwaggerRefresh = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({
       summary: 'Refresh Token',

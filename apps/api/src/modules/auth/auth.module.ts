@@ -21,6 +21,22 @@ import { ResetPasswordUseCase } from '@modules/auth/use-cases';
 import { LogoutUseCase } from '@modules/auth/use-cases';
 import { LogoutAllUseCase } from '@modules/auth/use-cases';
 
+/**
+ * Módulo de Autenticação
+ *
+ * @module AuthModule
+ * @description Organiza todos os componentes de autenticação e autorização do sistema.
+ * Gerir o ciclo de vida completo da autenticação de utilizadores, incluindo:
+ * - Login e registo de contas
+ * - Verificação de email
+ * - Gestão de tokens JWT (access e refresh)
+ * - Recuperação e reset de passwords
+ * - Estratégia de validação JWT via cookies/Bearer tokens
+ *
+ * @exports AuthService - Serviço principal de autenticação
+ * @see AuthController - Controlador com endpoints de autenticação
+ * @see JwtCookieStrategy - Estratégia Passport para validação JWT
+ */
 @Module({
   imports: [
     UserModule,
