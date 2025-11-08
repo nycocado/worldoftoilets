@@ -286,7 +286,7 @@ CREATE TABLE
     id             INT                        NOT NULL AUTO_INCREMENT,
     public_id      CHAR(36)                   NOT NULL DEFAULT uuid_v4(),
     interaction_id INT                        NOT NULL,
-    text           VARCHAR(280)               NOT NULL,
+    text           VARCHAR(280)               NULL,
     score          INT                        NOT NULL,
     state          ENUM ('visible', 'hidden') NOT NULL DEFAULT 'visible',
     deleted_by_id  INT                        NULL,

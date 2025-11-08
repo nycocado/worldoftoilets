@@ -7,7 +7,14 @@ import {
 } from '@nestjs/swagger';
 import { RegisterRequestDto } from '@modules/auth/dto';
 
-export const ApiSwaggerRegister = () =>
+/**
+ * Decorador Swagger para Registo
+ *
+ * @function ApiSwaggerRegister
+ * @description Decorator que documenta o endpoint POST /auth/register no Swagger.
+ * Inclui documentação da operação, request body, respostas sucesso e erro.
+ */
+export const ApiSwaggerRegister = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({
       summary: 'Register',

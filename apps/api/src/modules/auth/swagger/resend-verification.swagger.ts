@@ -6,7 +6,15 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 
-export const ApiSwaggerResendVerification = () =>
+/**
+ * Decorador Swagger para Reenvio de Email de Verificação
+ *
+ * @function ApiSwaggerResendVerification
+ * @description Decorator que documenta o endpoint POST /auth/resend-verification no Swagger.
+ * Inclui documentação da operação, query parameters e respostas de sucesso/erro.
+ * Útil quando utilizador não recebeu o email original de verificação.
+ */
+export const ApiSwaggerResendVerification = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({
       summary: 'Resend Verification',

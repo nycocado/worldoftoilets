@@ -6,7 +6,15 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
-export const ApiSwaggerLogoutAll = () =>
+/**
+ * Decorador Swagger para Logout Global
+ *
+ * @function ApiSwaggerLogoutAll
+ * @description Decorator que documenta o endpoint POST /auth/logout-all no Swagger.
+ * Inclui documentação da operação, query parameters e respostas.
+ * Efetua logout de todas as sessões do utilizador, invalidando todos os refresh tokens.
+ */
+export const ApiSwaggerLogoutAll = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({
       summary: 'Logout All',
