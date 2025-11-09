@@ -7,24 +7,21 @@ import {
   Req,
   Query,
   UnauthorizedException,
+  Headers,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   LoginRequestDto,
   LoginResponseDto,
   RegisterRequestDto,
-  VerifyEmailRequestDto,
   ForgotPasswordRequestDto,
   ResetPasswordRequestDto,
-  RefreshTokenRequestDto,
   RefreshTokenResponseDto,
   ResendVerificationRequestDto,
 } from '@modules/auth/dto';
 import { ConfigService } from '@nestjs/config';
-import { jwtTimeToMilliseconds } from '@common/utils/jwt-time.util';
+import { textTimeToMilliseconds } from '@common/utils/jwt-time.util';
 import { ApiResponseDto } from '@common/dto/api-response.dto';
-import { LogoutRequestDto } from '@modules/auth/dto/logout-request.dto';
-import { LogoutAllRequestDto } from '@modules/auth/dto/logout-all-request.dto';
 import { AUTH_EXCEPTIONS, AUTH_MESSAGES } from '@modules/auth/constants';
 import {
   ApiSwaggerForgotPassword,
@@ -91,7 +88,7 @@ export class AuthController {
 
     const jwtExpiration =
       this.configService.getOrThrow<string>('JWT_EXPIRATION');
-    const maxAge = jwtTimeToMilliseconds(jwtExpiration);
+    const maxAge = textTimeToMilliseconds(jwtExpiration);
 
     res.cookie('token', loginResponse.accessToken, {
       httpOnly: true,
@@ -103,7 +100,7 @@ export class AuthController {
     const refreshExpiration = this.configService.getOrThrow<string>(
       'JWT_REFRESH_EXPIRATION',
     );
-    const refreshMaxAge = jwtTimeToMilliseconds(refreshExpiration);
+    const refreshMaxAge = textTimeToMilliseconds(refreshExpiration);
 
     res.cookie('refreshToken', loginResponse.refreshToken, {
       httpOnly: true,
@@ -150,7 +147,7 @@ export class AuthController {
    * @route POST /auth/refresh
    * @param {Request} req - Request Express (para extrair refreshToken do cookie)
    * @param {Response} res - Response Express para configurar novo cookie de access token
-   * @param {RefreshTokenRequestDto} refreshDto - DTO com refresh token (query param ou cookie)
+   * @param {string} authorization - Bearer token do header Authorization
    * @returns {Promise<ApiResponseDto<RefreshTokenResponseDto>>} Novo access token
    * @throws {UnauthorizedException} Se refresh token for inválido, expirado ou revogado
    *
@@ -164,15 +161,16 @@ export class AuthController {
   async refresh(
     @Req() req: Request,
     @Res({ passthrough: true }) res: any,
-    @Query() refreshDto?: RefreshTokenRequestDto,
+    @Headers('authorization') authorization?: string,
   ): Promise<ApiResponseDto<RefreshTokenResponseDto>> {
+    const token = authorization?.replace('Bearer ', '');
     const refreshResponse = await this.authService.refreshAccessToken(
-      refreshDto?.refreshToken || req.cookies?.['refreshToken'],
+      token || req.cookies?.['refreshToken'],
     );
 
     const jwtExpiration =
       this.configService.getOrThrow<string>('JWT_EXPIRATION');
-    const maxAge = jwtTimeToMilliseconds(jwtExpiration);
+    const maxAge = textTimeToMilliseconds(jwtExpiration);
 
     res.cookie('token', refreshResponse.accessToken, {
       httpOnly: true,
@@ -185,7 +183,7 @@ export class AuthController {
       'JWT_REFRESH_EXPIRATION',
       '30d',
     );
-    const refreshMaxAge = jwtTimeToMilliseconds(refreshExpiration);
+    const refreshMaxAge = textTimeToMilliseconds(refreshExpiration);
 
     res.cookie('refreshToken', refreshResponse.refreshToken, {
       httpOnly: true,
@@ -207,7 +205,7 @@ export class AuthController {
    * @route POST /auth/logout
    * @param {Request} req - Request Express (para extrair refreshToken do cookie)
    * @param {Response} res - Response Express para limpar cookies
-   * @param {LogoutRequestDto} logoutDto - DTO com refresh token (query param ou cookie)
+   * @param {string} authorization - Bearer token do header Authorization
    * @returns {Promise<ApiResponseDto>} Confirmação de sucesso
    * @throws {UnauthorizedException} Se refresh token não for fornecido
    *
@@ -221,10 +219,10 @@ export class AuthController {
   async logout(
     @Req() req: Request,
     @Res({ passthrough: true }) res: any,
-    @Query() logoutDto?: LogoutRequestDto,
+    @Headers('authorization') authorization?: string,
   ): Promise<ApiResponseDto> {
-    const refreshToken =
-      logoutDto?.refreshToken || req.cookies?.['refreshToken'];
+    const token = authorization?.replace('Bearer ', '');
+    const refreshToken = token || req.cookies?.['refreshToken'];
 
     if (!refreshToken) {
       throw new UnauthorizedException(AUTH_EXCEPTIONS.REFRESH_TOKEN_REQUIRED);
@@ -245,7 +243,7 @@ export class AuthController {
    * @route POST /auth/logout-all
    * @param {Request} req - Request Express (para extrair refreshToken do cookie)
    * @param {Response} res - Response Express para limpar cookies
-   * @param {LogoutAllRequestDto} logoutAllDto - DTO com refresh token
+   * @param {string} authorization - Bearer token do header Authorization
    * @returns {Promise<ApiResponseDto>} Confirmação de sucesso
    * @throws {UnauthorizedException} Se refresh token não for fornecido
    *
@@ -259,10 +257,10 @@ export class AuthController {
   async logoutAll(
     @Req() req: Request,
     @Res({ passthrough: true }) res: any,
-    @Query() logoutAllDto?: LogoutAllRequestDto,
+    @Headers('authorization') authorization?: string,
   ): Promise<ApiResponseDto> {
-    const refreshToken =
-      logoutAllDto?.refreshToken || req.cookies?.['refreshToken'];
+    const token = authorization?.replace('Bearer ', '');
+    const refreshToken = token || req.cookies?.['refreshToken'];
 
     if (!refreshToken) {
       throw new UnauthorizedException(AUTH_EXCEPTIONS.REFRESH_TOKEN_REQUIRED);
@@ -281,9 +279,10 @@ export class AuthController {
    *
    * @async
    * @route POST /auth/verify-email
-   * @param {VerifyEmailRequestDto} verifyEmailDto - Token de verificação (query param)
+   * @param {string} authorization - Bearer token do header Authorization
    * @returns {Promise<ApiResponseDto>} Confirmação de sucesso
    * @throws {BadRequestException} Se token for inválido ou expirado
+   * @throws {UnauthorizedException} Se token não for fornecido
    *
    * @description
    * Marca email como verificado quando utilizador clica link do email de verificação.
@@ -293,9 +292,13 @@ export class AuthController {
   @ApiSwaggerVerifyEmail()
   @Post('verify-email')
   async verifyEmail(
-    @Query() verifyEmailDto: VerifyEmailRequestDto,
+    @Headers('authorization') authorization?: string,
   ): Promise<ApiResponseDto> {
-    await this.authService.verifyEmail(verifyEmailDto.token);
+    if (!authorization) {
+      throw new UnauthorizedException(AUTH_EXCEPTIONS.TOKEN_REQUIRED);
+    }
+    const token = authorization.replace('Bearer ', '');
+    await this.authService.verifyEmail(token);
     return new ApiResponseDto(AUTH_MESSAGES.VERIFY_EMAIL_SUCCESS);
   }
 

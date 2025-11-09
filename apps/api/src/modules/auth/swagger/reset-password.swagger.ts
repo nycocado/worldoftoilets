@@ -19,7 +19,8 @@ export const ApiSwaggerResetPassword = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({
       summary: 'Reset Password',
-      description: 'Redefine a password do usuário usando o token de redefinição.',
+      description:
+        'Redefine a password do usuário usando o token de redefinição.',
     }),
     ApiBody({
       type: ResetPasswordRequestDto,

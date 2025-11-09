@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
-import { EntityManager, EntityRepository } from '@mikro-orm/core';
+import { EntityRepository, Transactional } from '@mikro-orm/mariadb';
 import { UserCredentialEntity, UserEntity } from '@database/entities';
 import * as bcrypt from 'bcrypt';
 
@@ -11,12 +11,13 @@ export class UserCredentialRepository {
     private readonly repository: EntityRepository<UserCredentialEntity>,
   ) {}
 
+  @Transactional()
   async create(
     user: UserEntity,
     email: string,
     password: string,
   ): Promise<UserCredentialEntity> {
-    const em = this.getEntityManager();
+    const em = this.repository.getEntityManager();
     const hashedPassword = await bcrypt.hash(password, 12);
     const userCredential = new UserCredentialEntity();
     userCredential.user = user;
@@ -26,16 +27,14 @@ export class UserCredentialRepository {
     return userCredential;
   }
 
+  @Transactional()
   async updatePassword(
     userCredential: UserCredentialEntity,
     newPassword: string,
-  ): Promise<void> {
-    const em = this.getEntityManager();
+  ): Promise<UserCredentialEntity> {
+    const em = this.repository.getEntityManager();
     userCredential.password = await bcrypt.hash(newPassword, 12);
     await em.persistAndFlush(userCredential);
-  }
-
-  private getEntityManager(): EntityManager {
-    return this.repository.getEntityManager();
+    return userCredential;
   }
 }

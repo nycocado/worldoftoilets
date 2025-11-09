@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import {
   EmailVerificationEntity,
   UserCredentialEntity,
 } from '@database/entities';
 import { VerifyEmailUseCase } from './use-cases/verify-email.use-case';
 import { EmailVerificationRepository } from '@modules/email-verification/email-verification.repository';
-import { jwtTimeToMilliseconds } from '@common/utils/jwt-time.util';
+import { textTimeToMilliseconds } from '@common/utils/jwt-time.util';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -16,25 +17,9 @@ export class EmailVerificationService {
     private readonly emailVerificationRepository: EmailVerificationRepository,
   ) {}
 
-  async getByToken(token: string): Promise<EmailVerificationEntity | null> {
-    return this.emailVerificationRepository.findByToken(token);
-  }
-
-  async getByUserCredential(
-    userCredential: UserCredentialEntity,
-  ): Promise<EmailVerificationEntity[]> {
-    return this.emailVerificationRepository.findByUserCredential(
-      userCredential,
-    );
-  }
-
-  async getExpiredTokens(): Promise<EmailVerificationEntity[]> {
-    return this.emailVerificationRepository.findExpired();
-  }
-
   async revokeAllVerificationTokens(
     userCredential: UserCredentialEntity,
-  ): Promise<void> {
+  ): Promise<EmailVerificationEntity[]> {
     return this.emailVerificationRepository.invalidateAllByUserCredential(
       userCredential,
     );
@@ -47,7 +32,9 @@ export class EmailVerificationService {
     const emailVerificationTokenExpiration = this.configService.getOrThrow(
       'EMAIL_VERIFICATION_TOKEN_EXPIRATION',
     );
-    const expiresInMs = jwtTimeToMilliseconds(emailVerificationTokenExpiration);
+    const expiresInMs = textTimeToMilliseconds(
+      emailVerificationTokenExpiration,
+    );
     const expiresAt = new Date(Date.now() + expiresInMs);
     return this.emailVerificationRepository.create(userCredential, expiresAt);
   }
@@ -56,6 +43,7 @@ export class EmailVerificationService {
     return this.verifyTokenUseCase.execute(token);
   }
 
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async deleteExpiredTokens(): Promise<void> {
     return this.emailVerificationRepository.deleteExpired();
   }

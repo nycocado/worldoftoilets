@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 
 /**
  * DTO de Response para Refresh Token
@@ -27,6 +28,7 @@ export class RefreshTokenResponseDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  @Type(() => String)
   accessToken: string;
 
   /**
@@ -40,5 +42,6 @@ export class RefreshTokenResponseDto {
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
+  @Type(() => String)
   refreshToken: string;
 }

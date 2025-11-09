@@ -1,8 +1,8 @@
 import { applyDecorators } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiOkResponse,
   ApiOperation,
-  ApiQuery,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
@@ -20,15 +20,9 @@ export const ApiSwaggerLogout = (): MethodDecorator =>
       summary: 'Logout',
       description: 'Realiza o logout do usuário, invalidando o refresh token.',
     }),
+    ApiBearerAuth(),
     ApiOkResponse({
       description: 'Logout realizado com sucesso.',
-    }),
-    ApiQuery({
-      name: 'refreshToken',
-      required: false,
-      type: String,
-      description:
-        'Refresh token para renovar o token de acesso. Se não for fornecido, será usado o cookie.',
     }),
     ApiUnauthorizedResponse({
       description: 'Refresh token inválido.',

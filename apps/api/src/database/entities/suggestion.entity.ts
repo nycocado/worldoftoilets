@@ -54,6 +54,7 @@ export class SuggestionEntity {
     deleteRule: 'cascade',
     updateRule: 'no action',
     primary: true,
+    orphanRemoval: true,
   })
   interaction!: InteractionEntity;
 

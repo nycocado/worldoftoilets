@@ -1,6 +1,7 @@
 import { Module, ValidationPipe } from '@nestjs/common';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { createMikroOrmConfig } from '@config/mikroorm.config';
 import { CommentModule } from '@modules/comment/comment.module';
 import { HealthModule } from '@modules/health/health.module';
@@ -15,12 +16,18 @@ import { EmailVerificationModule } from '@modules/email-verification/email-verif
 import { UserCredentialModule } from '@modules/user-credential/user-credential.module';
 import { PasswordResetModule } from '@modules/password-reset/password-reset.module';
 import { ResponseInterceptor } from '@common/interceptors/response.interceptor';
+import { CommentRateModule } from './modules/comment-rate/comment-rate.module';
+import { ToiletModule } from './modules/toilet/toilet.module';
+import { ReplyModule } from './modules/reply/reply.module';
+import { ReactModule } from './modules/react/react.module';
+import { InteractionModule } from './modules/interaction/interaction.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
     MikroOrmModule.forRootAsync({
       useFactory: (config: ConfigService) => createMikroOrmConfig(config),
       imports: [ConfigModule],
@@ -36,11 +43,23 @@ import { ResponseInterceptor } from '@common/interceptors/response.interceptor';
     EmailVerificationModule,
     UserCredentialModule,
     PasswordResetModule,
+    CommentRateModule,
+    ToiletModule,
+    ReplyModule,
+    ReactModule,
+    InteractionModule,
   ],
   providers: [
     {
       provide: APP_PIPE,
-      useFactory: () => new ValidationPipe({ transform: true }),
+      useFactory: () =>
+        new ValidationPipe({
+          transform: true,
+          transformOptions: {
+            enableImplicitConversion: false,
+          },
+          whitelist: true,
+        }),
     },
     {
       provide: APP_INTERCEPTOR,

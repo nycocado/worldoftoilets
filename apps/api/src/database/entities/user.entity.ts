@@ -242,4 +242,8 @@ export class UserEntity {
     nullable: true,
   })
   partner?: PartnerEntity;
+
+  get isPartner(): boolean {
+    return !!this.partner;
+  }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
-import { EntityManager, EntityRepository } from '@mikro-orm/core';
-import { UserEntity, UserIcon } from '@database/entities';
+import { EntityRepository, Transactional } from '@mikro-orm/mariadb';
+import { PermissionApiName, UserEntity, UserIcon } from '@database/entities';
 
 @Injectable()
 export class UserRepository {
@@ -10,12 +10,35 @@ export class UserRepository {
     private readonly repository: EntityRepository<UserEntity>,
   ) {}
 
-  async findById(id: number): Promise<UserEntity | null> {
-    return await this.repository.findOne({ id }, { populate: ['roles'] });
+  async hasPermissions(
+    userId: number,
+    apiNames: PermissionApiName[],
+  ): Promise<boolean> {
+    const user = await this.repository.findOne(
+      {
+        id: userId,
+        roles: {
+          $some: {
+            permissions: {
+              $some: {
+                apiName: { $in: apiNames },
+              },
+            },
+          },
+        },
+      },
+      {
+        populate: ['roles', 'roles.permissions'],
+      },
+    );
+    return !!user;
   }
 
-  async findByIdOrFail(id: number): Promise<UserEntity> {
-    return await this.repository.findOneOrFail({ id }, { populate: ['roles'] });
+  async findById(userId: number): Promise<UserEntity | null> {
+    return await this.repository.findOne(
+      { id: userId },
+      { populate: ['credential', 'roles'] },
+    );
   }
 
   async findByEmail(email: string): Promise<UserEntity | null> {
@@ -32,21 +55,18 @@ export class UserRepository {
     );
   }
 
-  async findByPublicId(publicId: string): Promise<UserEntity | null> {
-    return await this.repository.findOne({ publicId }, { populate: ['roles'] });
-  }
-
   async existsByEmail(email: string): Promise<boolean> {
     const user = await this.repository.findOne({ credential: { email } });
     return !!user;
   }
 
+  @Transactional()
   async create(
     name: string,
     icon: UserIcon | undefined,
     birthDate: string,
   ): Promise<UserEntity> {
-    const em = this.getEntityManager();
+    const em = this.repository.getEntityManager();
     const user = new UserEntity();
     user.name = name;
     user.icon = icon || UserIcon.ICON_DEFAULT;
@@ -55,9 +75,5 @@ export class UserRepository {
 
     await em.persistAndFlush(user);
     return user;
-  }
-
-  private getEntityManager(): EntityManager {
-    return this.repository.getEntityManager();
   }
 }

@@ -6,6 +6,7 @@ import { LoginResponseDto } from '@modules/auth/dto';
 import { AUTH_EXCEPTIONS } from '@modules/auth/constants';
 import { createAccessToken } from '@modules/auth/utils/token.utils';
 import * as bcrypt from 'bcrypt';
+import { Transactional } from '@mikro-orm/mariadb';
 
 /**
  * Caso de Uso para Login
@@ -60,8 +61,9 @@ export class LoginUseCase {
    * 5. Cria refresh token no banco de dados
    * 6. Retorna resposta com tokens e dados públicos do utilizador
    */
+  @Transactional()
   async execute(email: string, password: string): Promise<LoginResponseDto> {
-    const user = await this.userService.getByEmail(email);
+    const user = await this.userService.getUserByEmail(email);
 
     if (!user || !user.credential) {
       throw new UnauthorizedException(AUTH_EXCEPTIONS.INVALID_CREDENTIALS);
