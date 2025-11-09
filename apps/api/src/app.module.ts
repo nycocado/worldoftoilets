@@ -2,7 +2,7 @@ import { Module, ValidationPipe } from '@nestjs/common';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
-import { createMikroOrmConfig } from '@config/mikroorm.config';
+import { createMikroOrmConfig } from '@config/mikro-orm.config';
 import { CommentModule } from '@modules/comment/comment.module';
 import { HealthModule } from '@modules/health/health.module';
 import { AuthModule } from '@modules/auth/auth.module';
@@ -16,11 +16,11 @@ import { EmailVerificationModule } from '@modules/email-verification/email-verif
 import { UserCredentialModule } from '@modules/user-credential/user-credential.module';
 import { PasswordResetModule } from '@modules/password-reset/password-reset.module';
 import { ResponseInterceptor } from '@common/interceptors/response.interceptor';
-import { CommentRateModule } from './modules/comment-rate/comment-rate.module';
-import { ToiletModule } from './modules/toilet/toilet.module';
-import { ReplyModule } from './modules/reply/reply.module';
-import { ReactModule } from './modules/react/react.module';
-import { InteractionModule } from './modules/interaction/interaction.module';
+import { CommentRateModule } from '@modules/comment-rate';
+import { ToiletModule } from '@modules/toilet';
+import { ReplyModule } from '@modules/reply';
+import { ReactModule } from '@modules/react';
+import { InteractionModule } from '@modules/interaction';
 
 @Module({
   imports: [
