@@ -1,4 +1,5 @@
 import { Injectable, ConflictException } from '@nestjs/common';
+import { Transactional } from '@mikro-orm/mariadb';
 import { UserService } from '@modules/user';
 import { UserCredentialService } from '@modules/user-credential/user-credential.service';
 import { EmailVerificationService } from '@modules/email-verification/email-verification.service';
@@ -71,6 +72,7 @@ export class RegisterUseCase {
    * 4. Gera token de verificação de email
    * 5. Envia email de verificação com link
    */
+  @Transactional()
   async execute(
     name: string,
     email: string,

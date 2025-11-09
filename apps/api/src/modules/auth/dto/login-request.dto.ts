@@ -6,6 +6,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 /**
  * DTO de Request para Login
@@ -36,6 +37,7 @@ export class LoginRequestDto {
   @MinLength(3)
   @MaxLength(100)
   @IsNotEmpty()
+  @Type(() => String)
   email!: string;
 
   /**
@@ -51,5 +53,6 @@ export class LoginRequestDto {
   @MinLength(8)
   @MaxLength(64)
   @IsNotEmpty()
+  @Type(() => String)
   password!: string;
 }

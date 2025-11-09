@@ -42,7 +42,7 @@ export class CommentEntity {
    * @hidden true
    * @description Identificador único interno (não exposto na API)
    */
-  @PrimaryKey({ hidden: true })
+  @PrimaryKey()
   id!: number;
 
   /**
@@ -73,6 +73,7 @@ export class CommentEntity {
   @OneToOne(() => InteractionEntity, {
     deleteRule: 'cascade',
     updateRule: 'no action',
+    orphanRemoval: true,
   })
   interaction!: InteractionEntity;
 
@@ -95,7 +96,7 @@ export class CommentEntity {
    * @description Score agregado baseado em reações e algoritmo de relevância
    */
   @Property()
-  score!: number;
+  score: number = 0;
 
   /**
    * Estado do comentário
@@ -191,4 +192,8 @@ export class CommentEntity {
    */
   @OneToMany(() => ReplyEntity, (reply) => reply.comment)
   replies: Collection<ReplyEntity> = new Collection<ReplyEntity>(this);
+
+  get user(): UserEntity {
+    return this.interaction?.user;
+  }
 }

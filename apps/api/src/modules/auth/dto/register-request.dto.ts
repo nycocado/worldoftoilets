@@ -10,6 +10,7 @@ import {
 } from 'class-validator';
 import { UserIcon } from '@database/entities';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 
 /**
  * DTO de Request para Registo
@@ -45,6 +46,7 @@ export class RegisterRequestDto {
   @MinLength(2)
   @MaxLength(50)
   @IsNotEmpty()
+  @Type(() => String)
   name!: string;
 
   /**
@@ -61,6 +63,7 @@ export class RegisterRequestDto {
   @MinLength(3)
   @MaxLength(100)
   @IsNotEmpty()
+  @Type(() => String)
   email!: string;
 
   /**
@@ -76,6 +79,7 @@ export class RegisterRequestDto {
   @MinLength(8)
   @MaxLength(64)
   @IsNotEmpty()
+  @Type(() => String)
   password!: string;
 
   /**
@@ -102,5 +106,6 @@ export class RegisterRequestDto {
   @ApiProperty()
   @IsDateString()
   @IsNotEmpty()
+  @Type(() => String)
   birthDate!: string;
 }

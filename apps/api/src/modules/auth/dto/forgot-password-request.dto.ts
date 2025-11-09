@@ -1,5 +1,6 @@
 import { IsEmail, IsNotEmpty, MaxLength, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 
 /**
  * DTO de Request para Recuperação de Password
@@ -30,5 +31,6 @@ export class ForgotPasswordRequestDto {
   @MinLength(3)
   @MaxLength(100)
   @IsNotEmpty()
+  @Type(() => String)
   email!: string;
 }

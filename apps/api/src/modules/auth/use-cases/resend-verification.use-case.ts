@@ -4,6 +4,7 @@ import { EmailVerificationService } from '@modules/email-verification/email-veri
 import { EmailService } from '@modules/email/email.service';
 import { ConfigService } from '@nestjs/config';
 import { AUTH_EXCEPTIONS } from '@modules/auth/constants';
+import { Transactional } from '@mikro-orm/mariadb';
 
 /**
  * Caso de Uso para Reenvio de Email de Verificação
@@ -56,12 +57,9 @@ export class ResendVerificationUseCase {
    * 4. Constrói URL com token
    * 5. Reenvia email de verificação
    */
+  @Transactional()
   async execute(email: string): Promise<void> {
-    const user = await this.userService.getByEmail(email);
-
-    if (!user) {
-      throw new BadRequestException(AUTH_EXCEPTIONS.USER_NOT_FOUND);
-    }
+    const user = await this.userService.getUserByEmail(email);
 
     if (!user.credential) {
       return;

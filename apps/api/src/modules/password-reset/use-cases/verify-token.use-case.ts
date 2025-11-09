@@ -18,10 +18,7 @@ export class VerifyTokenUseCase {
       );
     }
 
-    if (
-      reset.expiresAt < new Date() ||
-      (reset.invalidAt && reset.invalidAt < new Date())
-    ) {
+    if (reset.isExpired) {
       throw new BadRequestException(
         PASSWORD_RESET_EXCEPTIONS.RECOVERY_TOKEN_EXPIRED,
       );

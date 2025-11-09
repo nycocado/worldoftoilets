@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EmailVerificationService } from '@modules/email-verification/email-verification.service';
 import { EmailService } from '@modules/email/email.service';
+import { Transactional } from '@mikro-orm/mariadb';
 
 /**
  * Caso de Uso para Verificação de Email
@@ -46,6 +47,7 @@ export class VerifyEmailUseCase {
    * 2. Marca email como verificado na base de dados
    * 3. Envia email de boas-vindas ao utilizador
    */
+  @Transactional()
   async execute(token: string): Promise<void> {
     const userCredential =
       await this.emailVerificationService.verifyToken(token);

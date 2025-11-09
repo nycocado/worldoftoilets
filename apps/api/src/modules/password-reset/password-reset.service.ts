@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PasswordResetEntity, UserCredentialEntity } from '@database/entities';
 import { ConfigService } from '@nestjs/config';
-import { jwtTimeToMilliseconds } from '@common/utils/jwt-time.util';
+import { textTimeToMilliseconds } from '@common/utils/jwt-time.util';
 import { PasswordResetRepository } from '@modules/password-reset/password-reset.repository';
 import { VerifyTokenUseCase } from '@modules/password-reset/use-cases/verify-token.use-case';
 
@@ -13,23 +13,9 @@ export class PasswordResetService {
     private readonly passwordResetRepository: PasswordResetRepository,
   ) {}
 
-  async getByToken(token: string): Promise<PasswordResetEntity | null> {
-    return this.passwordResetRepository.findByToken(token);
-  }
-
-  async getByUserCredential(
-    userCredential: UserCredentialEntity,
-  ): Promise<PasswordResetEntity[]> {
-    return this.passwordResetRepository.findByUserCredential(userCredential);
-  }
-
-  async getExpiredTokens(): Promise<PasswordResetEntity[]> {
-    return this.passwordResetRepository.findExpired();
-  }
-
   async revokeAllResetTokens(
     userCredential: UserCredentialEntity,
-  ): Promise<void> {
+  ): Promise<PasswordResetEntity[]> {
     return this.passwordResetRepository.invalidateAllByUserCredential(
       userCredential,
     );
@@ -41,7 +27,7 @@ export class PasswordResetService {
     const passwordResetTokenExpiration = this.configService.getOrThrow(
       'PASSWORD_RESET_TOKEN_EXPIRATION',
     );
-    const expiresInMs = jwtTimeToMilliseconds(passwordResetTokenExpiration);
+    const expiresInMs = textTimeToMilliseconds(passwordResetTokenExpiration);
     const expiresAt = new Date(Date.now() + expiresInMs);
     return this.passwordResetRepository.create(userCredential, expiresAt);
   }

@@ -40,9 +40,9 @@ export enum PermissionApiName {
   REPORT_COMMENTS = 'report-comments',
   REACT_COMMENTS = 'react-comments',
   HIDE_COMMENTS = 'hide-comments',
+  SHOW_COMMENTS = 'show-comments',
   VIEW_REPORT_COMMENTS = 'view-report-comments',
   REVIEW_REPORT_COMMENTS = 'review-report-comments',
-  SHOW_COMMENTS = 'show-comments',
   // Permissões de respostas
   VIEW_REPLIES = 'view-replies',
   SEARCH_REPLIES = 'search-replies',

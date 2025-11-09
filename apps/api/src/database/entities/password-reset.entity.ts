@@ -101,4 +101,16 @@ export class PasswordResetEntity {
    */
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
+
+  /**
+   * Verifica se o token está expirado ou inválido
+   * @returns {boolean} true se expirado ou inválido, false caso contrário
+   * @description Um token é considerado expirado se a data de expiração for passada ou se tiver sido invalidado
+   */
+  get isExpired(): boolean {
+    return (
+      this.expiresAt < new Date() ||
+      (this.invalidAt !== undefined && this.invalidAt < new Date())
+    );
+  }
 }

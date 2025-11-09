@@ -1,8 +1,8 @@
 import { applyDecorators } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiOkResponse,
   ApiOperation,
-  ApiQuery,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
@@ -11,7 +11,7 @@ import {
  *
  * @function ApiSwaggerLogoutAll
  * @description Decorator que documenta o endpoint POST /auth/logout-all no Swagger.
- * Inclui documentação da operação, query parameters e respostas.
+ * Inclui documentação da operação, autenticação via Bearer token e respostas.
  * Efetua logout de todas as sessões do utilizador, invalidando todos os refresh tokens.
  */
 export const ApiSwaggerLogoutAll = (): MethodDecorator =>
@@ -19,17 +19,11 @@ export const ApiSwaggerLogoutAll = (): MethodDecorator =>
     ApiOperation({
       summary: 'Logout All',
       description:
-        'Realiza o logout do usuário em todos os dispositivos, invalidando todos os refresh tokens.',
+        'Realiza o logout do usuário em todos os dispositivos, invalidando todos os refresh tokens. Token fornecido via header Authorization (Bearer token) ou cookie.',
     }),
+    ApiBearerAuth(),
     ApiOkResponse({
       description: 'Logout realizado com sucesso em todos os dispositivos.',
-    }),
-    ApiQuery({
-      name: 'refreshToken',
-      required: false,
-      type: String,
-      description:
-        'Refresh token para renovar o token de acesso. Se não for fornecido, será usado o cookie.',
     }),
     ApiUnauthorizedResponse({
       description: 'Refresh token inválido ou requirido para logout.',

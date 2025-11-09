@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Transactional } from '@mikro-orm/mariadb';
 import { UserCredentialService } from '@modules/user-credential/user-credential.service';
 import { PasswordResetService } from '@modules/password-reset/password-reset.service';
 import { RefreshTokenService } from '@modules/refresh-token/refresh-token.service';
@@ -58,6 +59,7 @@ export class ResetPasswordUseCase {
    * Revogar todas as sessões garantem se conta foi comprometida,
    * o atacante será automaticamente desconectado.
    */
+  @Transactional()
   async execute(token: string, newPassword: string): Promise<void> {
     const reset = await this.passwordResetService.verifyToken(token);
 

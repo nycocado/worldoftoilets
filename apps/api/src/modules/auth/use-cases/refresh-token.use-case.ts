@@ -3,6 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import { RefreshTokenService } from '@modules/refresh-token/refresh-token.service';
 import { RefreshTokenResponseDto } from '@modules/auth/dto';
 import { createAccessToken } from '@modules/auth/utils/token.utils';
+import { AUTH_EXCEPTIONS } from '@modules/auth/constants';
+import { Transactional } from '@mikro-orm/mariadb';
 
 /**
  * Caso de Uso para Renovação de Token
@@ -53,16 +55,9 @@ export class RefreshTokenUseCase {
    * 5. Revoga refresh token antigo
    * 6. Retorna novos tokens
    */
+  @Transactional()
   async execute(token: string): Promise<RefreshTokenResponseDto> {
     const refreshToken = await this.refreshTokenService.getByToken(token);
-
-    if (!refreshToken) {
-      throw new UnauthorizedException('Refresh token inválido.');
-    }
-
-    if (refreshToken.expiresAt < new Date() || refreshToken.invalidAt) {
-      throw new UnauthorizedException('Refresh token expirado.');
-    }
 
     const accessToken = await createAccessToken(
       this.jwtService,

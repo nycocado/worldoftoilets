@@ -3,6 +3,7 @@ import { UserService } from '@modules/user';
 import { PasswordResetService } from '@modules/password-reset/password-reset.service';
 import { EmailService } from '@modules/email/email.service';
 import { ConfigService } from '@nestjs/config';
+import { Transactional } from '@mikro-orm/mariadb';
 
 /**
  * Caso de Uso para Recuperação de Password
@@ -57,8 +58,9 @@ export class ForgotPasswordUseCase {
    * Por segurança, esta função sempre retorna sucesso mesmo que email não exista.
    * Isto previne que atacantes descubram quais emails estão registados.
    */
+  @Transactional()
   async execute(email: string): Promise<void> {
-    const user = await this.userService.getByEmail(email);
+    const user = await this.userService.getUserByEmail(email);
 
     if (!user) {
       return;
