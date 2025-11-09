@@ -107,4 +107,13 @@ export class RefreshTokenEntity {
    */
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
+
+  /**
+   * Verifica se o token está expirado
+   * @returns {boolean} true se expirado, false caso contrário
+   * @description Compara expiresAt com a data atual
+   */
+  get isExpired(): boolean {
+    return this.expiresAt < new Date();
+  }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
-import { EntityManager, EntityRepository } from '@mikro-orm/core';
+import { EntityRepository, Transactional } from '@mikro-orm/mariadb';
 import { PasswordResetEntity, UserCredentialEntity } from '@database/entities';
 
 @Injectable()
@@ -17,23 +17,18 @@ export class PasswordResetRepository {
     );
   }
 
-  async findByUserCredential(
-    userCredential: UserCredentialEntity,
-  ): Promise<PasswordResetEntity[]> {
-    return this.repository.find({ userCredential: userCredential });
-  }
-
   async findExpired(): Promise<PasswordResetEntity[]> {
     return this.repository.find({
       expiresAt: { $lt: new Date() },
     });
   }
 
+  @Transactional()
   async create(
     userCredential: UserCredentialEntity,
     expiresAt: Date,
   ): Promise<PasswordResetEntity> {
-    const em = this.getEntityManager();
+    const em = this.repository.getEntityManager();
     const passwordReset = new PasswordResetEntity();
     passwordReset.userCredential = userCredential;
     passwordReset.expiresAt = expiresAt;
@@ -42,16 +37,21 @@ export class PasswordResetRepository {
     return passwordReset;
   }
 
-  async invalidate(passwordReset: PasswordResetEntity): Promise<void> {
-    const em = this.getEntityManager();
+  @Transactional()
+  async invalidate(
+    passwordReset: PasswordResetEntity,
+  ): Promise<PasswordResetEntity> {
+    const em = this.repository.getEntityManager();
     passwordReset.invalidAt = new Date();
     await em.persistAndFlush(passwordReset);
+    return passwordReset;
   }
 
+  @Transactional()
   async invalidateAllByUserCredential(
     userCredential: UserCredentialEntity,
-  ): Promise<void> {
-    const em = this.getEntityManager();
+  ): Promise<PasswordResetEntity[]> {
+    const em = this.repository.getEntityManager();
     const tokens = await this.repository.find({
       userCredential: userCredential,
     });
@@ -61,17 +61,13 @@ export class PasswordResetRepository {
     });
 
     await em.persistAndFlush(tokens);
+    return tokens;
   }
 
+  @Transactional()
   async deleteExpired(): Promise<void> {
-    const em = this.getEntityManager();
-    const tokens = await this.repository.find({
-      expiresAt: { $lt: new Date() },
-    });
+    const em = this.repository.getEntityManager();
+    const tokens = await this.findExpired();
     await em.removeAndFlush(tokens);
-  }
-
-  private getEntityManager(): EntityManager {
-    return this.repository.getEntityManager();
   }
 }

@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { RefreshTokenEntity, UserEntity } from '@database/entities';
 import { RefreshTokenRepository } from '@modules/refresh-token/refresh-token.repository';
-import { jwtTimeToMilliseconds } from '@common/utils/jwt-time.util';
+import { textTimeToMilliseconds } from '@common/utils/jwt-time.util';
 import { ConfigService } from '@nestjs/config';
+import { REFRESH_EXCEPTIONS } from '@modules/refresh-token/constants/exceptions.constant';
 
 @Injectable()
 export class RefreshTokenService {
@@ -11,23 +13,28 @@ export class RefreshTokenService {
     private readonly refreshTokenRepository: RefreshTokenRepository,
   ) {}
 
-  async getByToken(token: string): Promise<RefreshTokenEntity | null> {
-    return this.refreshTokenRepository.findByToken(token);
-  }
+  async getByToken(token: string): Promise<RefreshTokenEntity> {
+    const refreshToken = await this.refreshTokenRepository.findByToken(token);
 
-  async getByUser(user: UserEntity): Promise<RefreshTokenEntity[]> {
-    return this.refreshTokenRepository.findByUser(user);
-  }
+    if (!refreshToken) {
+      throw new UnauthorizedException(REFRESH_EXCEPTIONS.REFRESH_TOKEN_INVALID);
+    }
 
-  async getExpiredTokens(): Promise<RefreshTokenEntity[]> {
-    return this.refreshTokenRepository.findExpired();
-  }
+    if (refreshToken.isExpired) {
+      throw new UnauthorizedException(REFRESH_EXCEPTIONS.REFRESH_TOKEN_EXPIRED);
+    }
 
-  async revokeRefreshToken(refreshToken: RefreshTokenEntity): Promise<void> {
+    return refreshToken;
+  }
+  async revokeRefreshToken(
+    refreshToken: RefreshTokenEntity,
+  ): Promise<RefreshTokenEntity> {
     return this.refreshTokenRepository.invalidate(refreshToken);
   }
 
-  async revokeAllUserRefreshTokens(user: UserEntity): Promise<void> {
+  async revokeAllUserRefreshTokens(
+    user: UserEntity,
+  ): Promise<RefreshTokenEntity[]> {
     return this.refreshTokenRepository.invalidateAllByUser(user);
   }
 
@@ -35,11 +42,12 @@ export class RefreshTokenService {
     const refreshTokenExpiration = this.configService.getOrThrow<string>(
       'JWT_REFRESH_EXPIRATION',
     );
-    const expiresInMs = jwtTimeToMilliseconds(refreshTokenExpiration);
+    const expiresInMs = textTimeToMilliseconds(refreshTokenExpiration);
     const expiresAt = new Date(Date.now() + expiresInMs);
     return this.refreshTokenRepository.create(user, expiresAt);
   }
 
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async deleteExpiredTokens(): Promise<void> {
     return this.refreshTokenRepository.deleteExpired();
   }

@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from '@modules/user';
 import { RefreshTokenService } from '@modules/refresh-token/refresh-token.service';
 import { AUTH_EXCEPTIONS } from '@modules/auth/constants';
+import { Transactional } from '@mikro-orm/mariadb';
 
 /**
  * Caso de Uso para Logout Global
@@ -48,13 +49,9 @@ export class LogoutAllUseCase {
    * 4. Todas as sessões abertas são terminadas
    * 5. Utilizador precisa de fazer novo login
    */
+  @Transactional()
   async execute(token: string): Promise<void> {
-    const user = await this.userService.getByRefreshToken(token);
-
-    if (!user) {
-      throw new UnauthorizedException(AUTH_EXCEPTIONS.REFRESH_TOKEN_INVALID);
-    }
-
+    const user = await this.userService.getUserByRefreshToken(token);
     await this.refreshTokenService.revokeAllUserRefreshTokens(user);
   }
 }

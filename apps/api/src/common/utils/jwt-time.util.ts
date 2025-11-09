@@ -1,4 +1,4 @@
-export function jwtTimeToMilliseconds(timeString: string): number {
+export function textTimeToMilliseconds(timeString: string): number {
   const regex = /^(\d+)([smhd])$/;
   const match = timeString.match(regex);
 

@@ -19,7 +19,7 @@ export class UserCredentialService {
   async updatePassword(
     userCredential: UserCredentialEntity,
     newPassword: string,
-  ): Promise<void> {
+  ): Promise<UserCredentialEntity> {
     return this.userCredentialRepository.updatePassword(
       userCredential,
       newPassword,

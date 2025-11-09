@@ -86,6 +86,7 @@ export class ReportToiletEntity {
     owner: true,
     deleteRule: 'cascade',
     updateRule: 'no action',
+    orphanRemoval: true,
   })
   interaction!: InteractionEntity;
 

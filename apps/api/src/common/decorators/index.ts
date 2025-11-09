@@ -1,2 +1,2 @@
 export * from './user.decorator';
-export * from './full-user.decorator';
+export * from './requires-permissions.decorator';

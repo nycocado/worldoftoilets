@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
-import { EntityManager, EntityRepository } from '@mikro-orm/core';
+import {
+  EntityManager,
+  EntityRepository,
+  Transactional,
+} from '@mikro-orm/mariadb';
 import {
   EmailVerificationEntity,
   UserCredentialEntity,
@@ -32,11 +36,12 @@ export class EmailVerificationRepository {
     });
   }
 
+  @Transactional()
   async create(
     userCredential: UserCredentialEntity,
     expiresAt: Date,
   ): Promise<EmailVerificationEntity> {
-    const em = this.getEntityManager();
+    const em = this.repository.getEntityManager();
     const emailVerification = new EmailVerificationEntity();
     emailVerification.userCredential = userCredential;
     emailVerification.expiresAt = expiresAt;
@@ -45,16 +50,21 @@ export class EmailVerificationRepository {
     return emailVerification;
   }
 
-  async invalidate(emailVerification: EmailVerificationEntity): Promise<void> {
-    const em = this.getEntityManager();
+  @Transactional()
+  async invalidate(
+    emailVerification: EmailVerificationEntity,
+  ): Promise<EmailVerificationEntity> {
+    const em = this.repository.getEntityManager();
     emailVerification.invalidAt = new Date();
     await em.persistAndFlush(emailVerification);
+    return emailVerification;
   }
 
+  @Transactional()
   async invalidateAllByUserCredential(
     userCredential: UserCredentialEntity,
-  ): Promise<void> {
-    const em = this.getEntityManager();
+  ): Promise<EmailVerificationEntity[]> {
+    const em = this.repository.getEntityManager();
     const tokens = await this.repository.find({
       userCredential: userCredential,
     });
@@ -64,26 +74,28 @@ export class EmailVerificationRepository {
     });
 
     await em.persistAndFlush(tokens);
+    return tokens;
   }
 
+  @Transactional()
   async deleteExpired(): Promise<void> {
-    const em = this.getEntityManager();
+    const em = this.repository.getEntityManager();
     const tokens = await this.repository.find({
       expiresAt: { $lt: new Date() },
     });
     await em.removeAndFlush(tokens);
   }
 
-  async verifyEmail(emailVerification: EmailVerificationEntity): Promise<void> {
-    const em = this.getEntityManager();
+  @Transactional()
+  async verifyEmail(
+    emailVerification: EmailVerificationEntity,
+  ): Promise<EmailVerificationEntity> {
+    const em = this.repository.getEntityManager();
     emailVerification.userCredential.emailVerified = true;
     emailVerification.invalidAt = new Date();
 
     await em.persistAndFlush(emailVerification.userCredential);
     await em.persistAndFlush(emailVerification);
-  }
-
-  private getEntityManager(): EntityManager {
-    return this.repository.getEntityManager();
+    return emailVerification;
   }
 }

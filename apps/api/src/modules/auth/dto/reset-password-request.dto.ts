@@ -6,6 +6,7 @@ import {
   IsNotEmpty,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 
 /**
  * DTO de Request para Reset de Password
@@ -36,6 +37,7 @@ export class ResetPasswordRequestDto {
   @IsString()
   @IsUUID()
   @IsNotEmpty()
+  @Type(() => String)
   token!: string;
 
   /**
@@ -52,5 +54,6 @@ export class ResetPasswordRequestDto {
   @MinLength(8)
   @MaxLength(64)
   @IsNotEmpty()
+  @Type(() => String)
   newPassword!: string;
 }

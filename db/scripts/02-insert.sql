@@ -21,21 +21,21 @@ VALUES
 INSERT INTO
     user_credential (id, email, password, email_verified)
 VALUES
-    (1,  'luan.ribeiro@gmail.com',     '$2a$12$uCyVwiAqq17qoYpP/7RMeOz7v9H9ztt1edtIUgzTvpIrBzvX6muKC', TRUE),
-    (2,  'natalia.santos@hotmail.com', '$2a$12$W2SLlNXVAZl9Ou1OGkSf0eg7INT2G32KQFDOYUZymlLjz0cL9ODQO', TRUE),
-    (3,  'otavio.cunha@yahoo.com',     '$2a$12$Jl6pmG6vIMTLgj9.lW5w0uRgBIXpd2u8yZHA.f2a0grAzXDo.kV1y', TRUE),
-    (4,  'paula.ribeiro@gmail.com',    '$2a$12$2R0m5Grcms5jM3U50fvZhepU0OigsXh3UuQMh8tYwLPooF8/3Jipm', TRUE),
-    (5,  'rafael.carvalho@gmail.com',  '$2a$12$XE6kbZ56zohtxSRb7dwfUO8CNqR0.NMPch4Qe7zJK.n4Ol6LRVA0G', TRUE),
-    (6,  'sabrina.torres@hotmail.com', '$2a$12$qMcy93VRMRhXBYaSzL.e9eNbV4vDlHrBJ6JtKRfHGWIRBn5yTv03m', TRUE),
-    (7,  'thiago.melo@gmail.com',      '$2a$12$umo7cre1IJmw5RaCmMr2HuR.bT06l0TIbu4ghmJnCK6pOxi0LAJ.W', TRUE),
-    (8,  'valeria.costa@gmail.com',    '$2a$12$skg74ZAUfnKH5syt24kApeX3uw8riinfttx12PI5xj2LoDKrnHzv.', TRUE),
-    (9,  'william.rocha@yahoo.com',    '$2a$12$a5MiSFdbR364SihFZ6F5kOMjQH1hMvKjSp3L.q4d9v9lgdB3zZyNe', TRUE),
-    (10, 'yasmin.almeida@gmail.com',   '$2a$12$ini29ndanqQUFNmbyY1chesKKgRnQReRxbpC0WfvO3LEq.jZ5dW3i', TRUE),
-    (11, 'zeca.barbosa@gmail.com',     '$2a$12$nElInTBzShr8/SD55aYkhOhLU5x9eCiJX8A7Gv28K5bIR8m5AMxVK', TRUE),
-    (12, 'ana.beatriz@gmail.com',      '$2a$12$7ug.Y9xvGKBFouVwg5E1t.QwN2QikYqbUEjHdFruczKNNpEMjB0Gi', TRUE),
-    (13, 'bruno.monteiro@hotmail.com', '$2a$12$.pURGNEEll5cPjcxLhGc6O5zB0eYbFlDtu12jl1.DauGckJKrePKO', TRUE),
-    (14, 'camila.souza@gmail.com',     '$2a$12$aM9PObbVz6O8MN5KhcqnseJD05Xo7e7q56BXC3udG3j.IxRZOTHd6', TRUE),
-    (15, 'daniela.gomes@gmail.com',    '$2a$12$h0iZxBr/jSVWSKtnjakchOtCt4RHJM.PGYhk4IR595RHzkIgqYuX2', TRUE);
+    (1,  'luan.ribeiro@gmail.com',     '$2a$12$6IO2Y0/vk4d0ePLReP.JcOWxkIrMzi9uucBr3j4FSlBJkWMgK3yQ2', TRUE),
+    (2,  'natalia.santos@hotmail.com', '$2a$12$6IO2Y0/vk4d0ePLReP.JcOWxkIrMzi9uucBr3j4FSlBJkWMgK3yQ2', TRUE),
+    (3,  'otavio.cunha@yahoo.com',     '$2a$12$6IO2Y0/vk4d0ePLReP.JcOWxkIrMzi9uucBr3j4FSlBJkWMgK3yQ2', TRUE),
+    (4,  'paula.ribeiro@gmail.com',    '$2a$12$6IO2Y0/vk4d0ePLReP.JcOWxkIrMzi9uucBr3j4FSlBJkWMgK3yQ2', TRUE),
+    (5,  'rafael.carvalho@gmail.com',  '$2a$12$6IO2Y0/vk4d0ePLReP.JcOWxkIrMzi9uucBr3j4FSlBJkWMgK3yQ2', TRUE),
+    (6,  'sabrina.torres@hotmail.com', '$2a$12$6IO2Y0/vk4d0ePLReP.JcOWxkIrMzi9uucBr3j4FSlBJkWMgK3yQ2', TRUE),
+    (7,  'thiago.melo@gmail.com',      '$2a$12$6IO2Y0/vk4d0ePLReP.JcOWxkIrMzi9uucBr3j4FSlBJkWMgK3yQ2', TRUE),
+    (8,  'valeria.costa@gmail.com',    '$2a$12$6IO2Y0/vk4d0ePLReP.JcOWxkIrMzi9uucBr3j4FSlBJkWMgK3yQ2', TRUE),
+    (9,  'william.rocha@yahoo.com',    '$2a$12$6IO2Y0/vk4d0ePLReP.JcOWxkIrMzi9uucBr3j4FSlBJkWMgK3yQ2', TRUE),
+    (10, 'yasmin.almeida@gmail.com',   '$2a$12$6IO2Y0/vk4d0ePLReP.JcOWxkIrMzi9uucBr3j4FSlBJkWMgK3yQ2', TRUE),
+    (11, 'zeca.barbosa@gmail.com',     '$2a$12$6IO2Y0/vk4d0ePLReP.JcOWxkIrMzi9uucBr3j4FSlBJkWMgK3yQ2', TRUE),
+    (12, 'ana.beatriz@gmail.com',      '$2a$12$6IO2Y0/vk4d0ePLReP.JcOWxkIrMzi9uucBr3j4FSlBJkWMgK3yQ2', TRUE),
+    (13, 'bruno.monteiro@hotmail.com', '$2a$12$6IO2Y0/vk4d0ePLReP.JcOWxkIrMzi9uucBr3j4FSlBJkWMgK3yQ2', TRUE),
+    (14, 'camila.souza@gmail.com',     '$2a$12$6IO2Y0/vk4d0ePLReP.JcOWxkIrMzi9uucBr3j4FSlBJkWMgK3yQ2', TRUE),
+    (15, 'daniela.gomes@gmail.com',    '$2a$12$6IO2Y0/vk4d0ePLReP.JcOWxkIrMzi9uucBr3j4FSlBJkWMgK3yQ2', TRUE);
 
 INSERT INTO
     permission (id, name, api_name)
