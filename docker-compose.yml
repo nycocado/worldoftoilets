@@ -19,6 +19,8 @@ services:
                 condition: service_healthy
             web-2:
                 condition: service_healthy
+            ai:
+                condition: service_healthy
             minio:
                 condition: service_healthy
             mailhog:
@@ -185,6 +187,43 @@ services:
         networks:
             - wot-network
     
+    ai:
+        build:
+            context: ./apps/ai
+            dockerfile: Dockerfile
+        container_name: wot-ai
+        restart: on-failure
+        environment:
+            HOST: 0.0.0.0
+            PORT: 5000
+            DEBUG: "False"
+            WORKERS: ${AI_WORKERS}
+            SERVICE_AREA: ${AI_SERVICE_AREA}
+            NETWORK_TYPE: ${AI_NETWORK_TYPE}
+            WALKING_SPEED_MPS: ${AI_WALKING_SPEED_MPS}
+            GRAPH_CACHE_DIR: /app/cache
+            SIMPLIFY_GRAPH: ${AI_SIMPLIFY_GRAPH}
+            LOG_LEVEL: ${AI_LOG_LEVEL}
+            REQUEST_TIMEOUT: ${AI_REQUEST_TIMEOUT}
+            GRAPH_LOAD_TIMEOUT: ${AI_GRAPH_LOAD_TIMEOUT}
+        ports:
+            - "5000:5000"
+        volumes:
+            - type: volume
+              source: ai_cache
+              target: /app/cache
+            - type: volume
+              source: ai_data
+              target: /app/data
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+            interval: 30s
+            timeout: 10s
+            retries: 3
+            start_period: 60s
+        networks:
+            - wot-network
+    
     web-1:
         build:
             context: ./apps/web
@@ -267,6 +306,10 @@ volumes:
     web_2_next:
         driver: local
     minio_data:
+        driver: local
+    ai_cache:
+        driver: local
+    ai_data:
         driver: local
 
 networks:
