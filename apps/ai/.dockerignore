@@ -1,0 +1,87 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+.poetry/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Docker
+Dockerfile*
+.dockerignore
+
+# Documentation
+README*.md
+docs/
+
+# Env files
+.env
+.env.local
+
+# Logs
+*.log
+
+# Cache (keep structure, not content)
+cache/*
+!cache/.gitkeep
+
+# Data
+data/*
+!data/.gitkeep
+
+# Tests
+tests/
+test_*.py
+*_test.py
+pytest.ini
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build files
+Makefile
+
+# Legacy
+requirements.txt
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
