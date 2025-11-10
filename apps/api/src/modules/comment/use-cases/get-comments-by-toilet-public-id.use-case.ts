@@ -21,7 +21,7 @@ export class GetCommentsByToiletPublicIdUseCase {
     commentState?: CommentState,
     timestamp?: Date,
   ): Promise<CommentResponseDto[]> {
-    const toilet = await this.toiletService.getToiletByPublicId(publicId);
+    const toilet = await this.toiletService.findToiletByPublicId(publicId);
     const result = await this.repository.findByToilet(
       toilet,
       pageable,
