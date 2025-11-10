@@ -12,6 +12,8 @@ import { DeleteCommentUseCase } from '@modules/comment/use-cases/delete-comment.
 import { textTimeToMilliseconds } from '@common/utils/jwt-time.util';
 import { ConfigService } from '@nestjs/config';
 import { DeleteExpiredCommentsUseCase } from '@modules/comment/use-cases/delete-expired-comments.use-case';
+import { ReactDiscriminator } from '@database/entities';
+import { PutReactUseCase } from '@modules/comment/use-cases/put-react.use-case';
 
 @Injectable()
 export class CommentService {
@@ -23,6 +25,7 @@ export class CommentService {
     private readonly updateCommentUseCase: UpdateCommentUseCase,
     private readonly deleteCommentUseCase: DeleteCommentUseCase,
     private readonly deleteExpiredCommentsUseCase: DeleteExpiredCommentsUseCase,
+    private readonly putReactUseCase: PutReactUseCase,
   ) {}
 
   async getCommentsByToiletPublicId(
@@ -113,5 +116,13 @@ export class CommentService {
       structure,
       accessibility,
     );
+  }
+
+  async reactToComment(
+    userId: number,
+    commentPublicId: string,
+    discriminator: ReactDiscriminator,
+  ): Promise<CommentResponseDto> {
+    return this.putReactUseCase.execute(userId, commentPublicId, discriminator);
   }
 }

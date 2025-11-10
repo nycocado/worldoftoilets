@@ -1,4 +1,4 @@
-import { IsBoolean, IsInt, Max, Min } from 'class-validator';
+import { IsBoolean, IsInt, IsNotEmpty, Max, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -7,25 +7,29 @@ export class CreateCommentRateRequestDto {
   @IsInt()
   @Min(1)
   @Max(5)
+  @IsNotEmpty()
   @Type(() => Number)
-  clean: number;
+  clean!: number;
 
   @ApiProperty()
   @IsBoolean()
+  @IsNotEmpty()
   @Type(() => Boolean)
-  paper: boolean;
+  paper!: boolean;
 
   @ApiProperty()
   @IsInt()
   @Min(1)
   @Max(5)
+  @IsNotEmpty()
   @Type(() => Number)
-  structure: number;
+  structure!: number;
 
   @ApiProperty()
   @IsInt()
   @Min(1)
   @Max(5)
+  @IsNotEmpty()
   @Type(() => Number)
-  accessibility: number;
+  accessibility!: number;
 }
