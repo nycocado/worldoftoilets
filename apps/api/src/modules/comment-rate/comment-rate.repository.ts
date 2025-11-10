@@ -4,7 +4,6 @@ import { EntityRepository, Transactional } from '@mikro-orm/mariadb';
 import { Injectable } from '@nestjs/common';
 
 export interface ToiletAverageRating {
-  toiletId: number;
   avgClean: number;
   avgStructure: number;
   avgAccessibility: number;
@@ -46,7 +45,6 @@ export class CommentRateRepository {
     }
 
     return {
-      toiletId: result.toiletId,
       avgClean: parseFloat(result.avgClean),
       avgStructure: parseFloat(result.avgStructure),
       avgAccessibility: parseFloat(result.avgAccessibility),
@@ -85,7 +83,6 @@ export class CommentRateRepository {
     const map = new Map<string, ToiletAverageRating>();
     for (const result of results) {
       map.set(result.publicId, {
-        toiletId: result.toiletId,
         avgClean: parseFloat(result.avgClean),
         avgStructure: parseFloat(result.avgStructure),
         avgAccessibility: parseFloat(result.avgAccessibility),

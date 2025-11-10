@@ -16,7 +16,7 @@ export class CreateCommentRequestDto {
   @IsUUID()
   @IsNotEmpty()
   @Type(() => String)
-  toiletPublicId: string;
+  toiletPublicId!: string;
 
   @ApiProperty({ required: false })
   @IsString()
@@ -28,6 +28,7 @@ export class CreateCommentRequestDto {
 
   @ApiProperty()
   @ValidateNested()
+  @IsNotEmpty()
   @Type(() => CreateCommentRateRequestDto)
-  rate: CreateCommentRateRequestDto;
+  rate!: CreateCommentRateRequestDto;
 }

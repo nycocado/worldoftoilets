@@ -6,8 +6,8 @@ import { InteractionService } from '@modules/interaction';
 import { Transactional } from '@mikro-orm/mariadb';
 import { InteractionDiscriminator } from '@database/entities';
 import { CommentRepository } from '@modules/comment/comment.repository';
-import { plainToInstance } from 'class-transformer';
 import { CommentResponseDto } from '@modules/comment/dto';
+import { EnrichCommentsWithReactsUseCase } from '@modules/comment/use-cases/enrich-comments-with-reacts.use-case';
 
 @Injectable()
 export class CreateCommentUseCase {
@@ -17,6 +17,7 @@ export class CreateCommentUseCase {
     private readonly toiletService: ToiletService,
     private readonly interactionService: InteractionService,
     private readonly commentRateService: CommentRateService,
+    private readonly enrichCommentsWithReactsUseCase: EnrichCommentsWithReactsUseCase,
   ) {}
 
   @Transactional()
@@ -30,7 +31,7 @@ export class CreateCommentUseCase {
     text?: string,
   ): Promise<CommentResponseDto> {
     const user = await this.userService.getUserById(userId);
-    const toilet = await this.toiletService.getToiletByPublicId(toiletPublicId);
+    const toilet = await this.toiletService.findToiletByPublicId(toiletPublicId);
     const interaction = await this.interactionService.createInteraction(
       user,
       toilet,
@@ -45,12 +46,8 @@ export class CreateCommentUseCase {
       accessibility,
     );
 
-    const dto = plainToInstance(CommentResponseDto, comment, {
-      excludeExtraneousValues: true,
-    });
-    dto.reacts.dislikes = 0;
-    dto.reacts.likes = 0;
+    const dto = await this.enrichCommentsWithReactsUseCase.execute([comment]);
 
-    return dto;
+    return dto[0];
   }
 }

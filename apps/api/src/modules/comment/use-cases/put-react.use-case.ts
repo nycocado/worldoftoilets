@@ -1,56 +1,50 @@
-import { CommentRepository } from '@modules/comment/comment.repository';
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { CommentRateService } from '@modules/comment-rate';
-import { Transactional } from '@mikro-orm/mariadb';
-import { COMMENT_EXCEPTIONS } from '@modules/comment/constants/exceptions.constant';
+import { ReactService } from '@modules/react';
 import { UserService } from '@modules/user';
-import { plainToInstance } from 'class-transformer';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { ReactDiscriminator } from '@database/entities';
 import { CommentResponseDto } from '@modules/comment/dto';
+import { CommentRepository } from '@modules/comment/comment.repository';
+import { COMMENT_EXCEPTIONS } from '@modules/comment/constants/exceptions.constant';
+import { plainToInstance } from 'class-transformer';
 import { EnrichCommentsWithReactsUseCase } from '@modules/comment/use-cases/enrich-comments-with-reacts.use-case';
 
 @Injectable()
-export class UpdateCommentUseCase {
+export class PutReactUseCase {
   constructor(
     private readonly repository: CommentRepository,
-    private readonly commentRateService: CommentRateService,
     private readonly userService: UserService,
+    private readonly reactService: ReactService,
     private readonly enrichCommentsWithReactsUseCase: EnrichCommentsWithReactsUseCase,
   ) {}
 
-  @Transactional()
   async execute(
-    commentPublicId: string,
     userId: number,
-    text?: string,
-    clean?: number,
-    paper?: boolean,
-    structure?: number,
-    accessibility?: number,
+    commentPublicId: string,
+    discriminator: ReactDiscriminator,
   ): Promise<CommentResponseDto> {
     const user = await this.userService.getUserById(userId);
     const comment = await this.repository.findByPublicId(commentPublicId);
 
-    if (!comment || !comment.rate) {
+    if (!comment) {
       throw new NotFoundException(COMMENT_EXCEPTIONS.COMMENT_NOT_FOUND);
     }
 
-    if (comment.user.id !== user.id) {
-      throw new UnauthorizedException(COMMENT_EXCEPTIONS.COMMENT_NOT_OWNED);
+    const react = await this.reactService.getReactByUserAndComment(
+      user,
+      comment,
+    );
+
+    if (!react) {
+      await this.reactService.createReact(user, comment, discriminator);
     }
 
-    await this.repository.update(comment, text);
+    if (react && react.discriminator === discriminator) {
+      await this.reactService.deleteReact(react);
+    }
 
-    await this.commentRateService.updateCommentRate(
-      comment.rate,
-      clean,
-      paper,
-      structure,
-      accessibility,
-    );
+    if (react && react.discriminator !== discriminator) {
+      await this.reactService.updateReact(react, discriminator);
+    }
 
     const dto = await this.enrichCommentsWithReactsUseCase.execute([comment]);
 

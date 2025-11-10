@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -16,11 +17,12 @@ import { ApiResponseDto } from '@common/dto/api-response.dto';
 import { CommentResponseDto } from '@modules/comment/dto/comment-response.dto';
 import { JwtAuthGuard, PermissionsGuard } from '@common/guards';
 import { RequiresPermissions, User } from '@common/decorators';
-import { PermissionApiName } from '@database/entities';
+import { PermissionApiName, ReactDiscriminator } from '@database/entities';
 import * as jwtTypes from '@common/types/jwt.types';
 import { CreateCommentRequestDto } from '@modules/comment/dto/create-comment-request.dto';
 import { COMMENT_MESSAGES } from '@modules/comment/constants/messages.constant';
 import { UpdateCommentRequestDto } from '@modules/comment/dto/update-comment-request.dto';
+import { PutReactRequestDto } from '@modules/comment/dto/put-react-request.dto';
 
 @Controller('comment')
 export class CommentController {
@@ -131,5 +133,25 @@ export class CommentController {
   ): Promise<ApiResponseDto> {
     await this.commentService.softDeleteComment(publicId, user.id);
     return new ApiResponseDto(COMMENT_MESSAGES.DELETE_COMMENT_SUCCESS);
+  }
+
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Put(':publicId/react')
+  @RequiresPermissions(PermissionApiName.REACT_COMMENTS)
+  async putReactToComment(
+    @Param('publicId', ParseUUIDPipe) publicId: string,
+    @User() user: jwtTypes.RequestUser,
+    @Query() putReactRequestDto: PutReactRequestDto,
+  ): Promise<ApiResponseDto<CommentResponseDto>> {
+    const { react } = putReactRequestDto;
+    const comment = await this.commentService.reactToComment(
+      user.id,
+      publicId,
+      react as unknown as ReactDiscriminator,
+    );
+    return new ApiResponseDto<CommentResponseDto>(
+      COMMENT_MESSAGES.REACT_TO_COMMENT_SUCCESS,
+      comment,
+    );
   }
 }

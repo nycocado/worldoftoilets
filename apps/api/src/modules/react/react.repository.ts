@@ -1,7 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
-import { ReactEntity } from '@database/entities';
-import { EntityManager, EntityRepository } from '@mikro-orm/mariadb';
+import {
+  CommentEntity,
+  ReactDiscriminator,
+  ReactEntity,
+  UserEntity,
+} from '@database/entities';
+import {
+  EntityManager,
+  EntityRepository,
+  Transactional,
+} from '@mikro-orm/mariadb';
 
 export interface CommentReactionCount {
   commentId: number;
@@ -17,6 +26,16 @@ export class ReactRepository {
     private readonly repository: EntityRepository<ReactEntity>,
     private readonly em: EntityManager,
   ) {}
+
+  async findByUserAndComment(
+    userId: number,
+    commentId: number,
+  ): Promise<ReactEntity | null> {
+    return this.repository.findOne({
+      user: { id: userId },
+      comment: { id: commentId },
+    });
+  }
 
   async findReactCountsByComment(
     commentId: number,
@@ -121,5 +140,37 @@ export class ReactRepository {
       });
     }
     return map;
+  }
+
+  @Transactional()
+  async create(
+    user: UserEntity,
+    comment: CommentEntity,
+    discriminator: ReactDiscriminator,
+  ): Promise<ReactEntity> {
+    const em = this.repository.getEntityManager();
+    const react = new ReactEntity();
+    react.user = user;
+    react.comment = comment;
+    react.discriminator = discriminator;
+    await em.persistAndFlush(react);
+    return react;
+  }
+
+  @Transactional()
+  async update(
+    react: ReactEntity,
+    discriminator: ReactDiscriminator,
+  ): Promise<ReactEntity> {
+    const em = this.repository.getEntityManager();
+    react.discriminator = discriminator;
+    await em.persistAndFlush(react);
+    return react;
+  }
+
+  @Transactional()
+  async delete(react: ReactEntity): Promise<void> {
+    const em = this.repository.getEntityManager();
+    await em.removeAndFlush(react);
   }
 }
