@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizador de Rotas - Lisboa</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .container {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        #map {
+            flex: 1;
+            height: 100%;
+        }
+        
+        .sidebar {
+            width: 320px;
+            background: #f8f9fa;
+            padding: 1.5rem;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .info-box {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .info-box h3 {
+            font-size: 0.9rem;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .info-box p {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .coords {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: #333;
+            background: #f0f0f0;
+            padding: 0.3rem;
+            border-radius: 4px;
+            margin-top: 0.3rem;
+        }
+        
+        button {
+            width: 100%;
+            padding: 0.8rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .stat-item {
+            background: #f8f9fa;
+            padding: 0.5rem;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 0.7rem;
+            color: #888;
+            text-transform: uppercase;
+        }
+        
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-top: 0.2rem;
+        }
+        
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 0.8rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            border-left: 4px solid #c33;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 1rem;
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .instructions {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.6;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🗺️ Visualizador de Rotas - Lisboa</h1>
+    </header>
+    
+    <div class="container">
+        <div class="sidebar">
+            <div class="info-box">
+                <h3>📍 Instruções</h3>
+                <p class="instructions">
+                    1. Clique no mapa para definir a <strong>origem</strong> (marcador verde)<br>
+                    2. Clique novamente para definir o <strong>destino</strong> (marcador vermelho)<br>
+                    3. Clique em "Calcular Rota" para ver o caminho
+                </p>
+            </div>
+            
+            <div class="info-box">
+                <h3>📍 Origem</h3>
+                <p id="origin-info">Clique no mapa para definir</p>
+            </div>
+            
+            <div class="info-box">
+                <h3>🎯 Destino</h3>
+                <p id="dest-info">Clique no mapa para definir</p>
+            </div>
+            
+            <button id="calculate-btn" disabled>Calcular Rota</button>
+            <button id="clear-btn" style="margin-top: 0.5rem; background: #6c757d;">Limpar</button>
+            
+            <div id="route-info"></div>
+            <div id="error-info"></div>
+        </div>
+        
+        <div id="map"></div>
+    </div>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Configuração
+        const API_BASE_URL = 'http://localhost/ai';
+        const LISBON_CENTER = [38.7223, -9.1393];
+        const LISBON_ZOOM = 13;
+        
+        // Estado da aplicação
+        let map;
+        let originMarker = null;
+        let destMarker = null;
+        let routePolyline = null;
+        let originCoords = null;
+        let destCoords = null;
+        
+        // Inicializar mapa
+        function initMap() {
+            map = L.map('map').setView(LISBON_CENTER, LISBON_ZOOM);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            
+            map.on('click', onMapClick);
+        }
+        
+        // Handler de clique no mapa
+        function onMapClick(e) {
+            const { lat, lng } = e.latlng;
+            
+            if (!originCoords) {
+                // Define origem
+                originCoords = [lat, lng];
+                
+                if (originMarker) {
+                    map.removeLayer(originMarker);
+                }
+                
+                originMarker = L.marker([lat, lng], {
+                    icon: L.icon({
+                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowSize: [41, 41]
+                    })
+                }).addTo(map);
+                
+                originMarker.bindPopup('🟢 Origem').openPopup();
+                
+                document.getElementById('origin-info').innerHTML = 
+                    `<div class="coords">${lat.toFixed(6)}, ${lng.toFixed(6)}</div>`;
+                
+            } else if (!destCoords) {
+                // Define destino
+                destCoords = [lat, lng];
+                
+                if (destMarker) {
+                    map.removeLayer(destMarker);
+                }
+                
+                destMarker = L.marker([lat, lng], {
+                    icon: L.icon({
+                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowSize: [41, 41]
+                    })
+                }).addTo(map);
+                
+                destMarker.bindPopup('🔴 Destino').openPopup();
+                
+                document.getElementById('dest-info').innerHTML = 
+                    `<div class="coords">${lat.toFixed(6)}, ${lng.toFixed(6)}</div>`;
+                
+                document.getElementById('calculate-btn').disabled = false;
+            }
+        }
+        
+        // Calcular rota
+        async function calculateRoute() {
+            if (!originCoords || !destCoords) return;
+            
+            const button = document.getElementById('calculate-btn');
+            button.disabled = true;
+            button.textContent = 'Calculando...';
+            
+            document.getElementById('error-info').innerHTML = '';
+            document.getElementById('route-info').innerHTML = '<div class="loading">⏳ Calculando rota...</div>';
+            
+            try {
+                const [latOrig, lonOrig] = originCoords;
+                const [latDest, lonDest] = destCoords;
+                
+                const url = `${API_BASE_URL}/${latOrig},${lonOrig}/${latDest},${lonDest}/`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (response.ok && data.status === 'success') {
+                    displayRoute(data);
+                } else {
+                    showError(data.error || 'Erro ao calcular rota');
+                }
+            } catch (error) {
+                showError('Erro de conexão com a API: ' + error.message);
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Calcular Rota';
+            }
+        }
+        
+        // Exibir rota no mapa
+        function displayRoute(data) {
+            // Remove rota anterior
+            if (routePolyline) {
+                map.removeLayer(routePolyline);
+            }
+            
+            // Converte coordenadas [lon, lat] para [lat, lon] para Leaflet
+            const latLngs = data.path.map(coord => [coord[1], coord[0]]);
+            
+            // Desenha rota
+            routePolyline = L.polyline(latLngs, {
+                color: '#667eea',
+                weight: 4,
+                opacity: 0.8
+            }).addTo(map);
+            
+            // Ajusta zoom para mostrar toda a rota
+            map.fitBounds(routePolyline.getBounds(), { padding: [50, 50] });
+            
+            // Exibe estatísticas
+            const stats = data.stats;
+            const distanceKm = (stats.distance_meters / 1000).toFixed(2);
+            const timeMin = (stats.time_seconds / 60).toFixed(0);
+            
+            document.getElementById('route-info').innerHTML = `
+                <div class="info-box" style="margin-top: 1rem;">
+                    <h3>✅ Rota Calculada</h3>
+                    <div class="stats">
+                        <div class="stat-item">
+                            <div class="stat-label">Distância</div>
+                            <div class="stat-value">${distanceKm} km</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Tempo</div>
+                            <div class="stat-value">${timeMin} min</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Pontos</div>
+                            <div class="stat-value">${stats.nodes_in_path}</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Algoritmo</div>
+                            <div class="stat-value">A*</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Mostrar erro
+        function showError(message) {
+            document.getElementById('route-info').innerHTML = '';
+            document.getElementById('error-info').innerHTML = `
+                <div class="error">
+                    <strong>❌ Erro:</strong><br>
+                    ${message}
+                </div>
+            `;
+        }
+        
+        // Limpar tudo
+        function clearAll() {
+            if (originMarker) map.removeLayer(originMarker);
+            if (destMarker) map.removeLayer(destMarker);
+            if (routePolyline) map.removeLayer(routePolyline);
+            
+            originMarker = null;
+            destMarker = null;
+            routePolyline = null;
+            originCoords = null;
+            destCoords = null;
+            
+            document.getElementById('origin-info').textContent = 'Clique no mapa para definir';
+            document.getElementById('dest-info').textContent = 'Clique no mapa para definir';
+            document.getElementById('route-info').innerHTML = '';
+            document.getElementById('error-info').innerHTML = '';
+            document.getElementById('calculate-btn').disabled = true;
+            
+            map.setView(LISBON_CENTER, LISBON_ZOOM);
+        }
+        
+        // Event listeners
+        document.getElementById('calculate-btn').addEventListener('click', calculateRoute);
+        document.getElementById('clear-btn').addEventListener('click', clearAll);
+        
+        // Inicializar
+        initMap();
+    </script>
+</body>
+</html>

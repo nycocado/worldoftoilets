@@ -18,12 +18,14 @@ logger = get_logger(__name__)
 def create_app() -> Flask:
     """
     Factory function para criar a aplicação Flask.
-    
+
     Returns:
         Flask: Aplicação Flask configurada
     """
     app = Flask(__name__)
-    
+
+    # CORS é gerenciado pelo Nginx em produção
+
     # Registra blueprints
     app.register_blueprint(api_bp)
     
