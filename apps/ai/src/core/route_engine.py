@@ -7,6 +7,7 @@ e calcular rotas ótimas entre dois pontos usando o algoritmo A* (A-star).
 import osmnx as ox
 import heapq
 import math
+import pickle
 from shapely.geometry import Point
 from typing import Optional, Tuple, List, Dict, Any
 from src.core.config import Config
@@ -23,19 +24,19 @@ boundary_polygon = None  #: Polígono que define a área de serviço
 def initialize() -> bool:
     """
     Carrega o mapa de ruas e prepara o sistema de rotas.
-    
+
     Esta função deve ser chamada uma única vez durante a inicialização do servidor.
     Ela carrega o grafo de ruas de Lisboa usando OSMnx, adiciona pesos de tempo
     de viagem às arestas, cria uma versão projetada para cálculos euclidianos
     e define a área de serviço.
-    
+
     Returns:
         bool: True se o mapa foi carregado com sucesso, False caso contrário
-        
+
     Side Effects:
         - Define as variáveis globais G, G_proj e boundary_polygon
         - Imprime mensagens de status no console
-        
+
     Example:
         >>> if initialize():
         ...     print("Sistema pronto")
@@ -43,45 +44,70 @@ def initialize() -> bool:
         ...     print("Erro ao inicializar")
     """
     global G, G_proj, boundary_polygon
-    
+
     logger.info(f"Carregando mapa de {Config.SERVICE_AREA}...")
-    
+
     try:
+        import os
+
         # Carrega o grafo de ruas
         if Config.GRAPH_FILE_PATH:
+            # Prioridade 1: arquivo específico configurado
             logger.info(f"Tentando carregar grafo do arquivo: {Config.GRAPH_FILE_PATH}")
-            G = ox.load_graphml(Config.GRAPH_FILE_PATH)
+            with open(Config.GRAPH_FILE_PATH, 'rb') as f:
+                G = pickle.load(f)
+        elif Config.GRAPH_CACHE_DIR:
+            # Prioridade 2: verificar se existe cache
+            os.makedirs(Config.GRAPH_CACHE_DIR, exist_ok=True)
+            cache_file = os.path.join(Config.GRAPH_CACHE_DIR, "graph.pkl")
+
+            if os.path.exists(cache_file):
+                logger.info(f"Carregando grafo do cache (pickle): {cache_file}")
+                with open(cache_file, 'rb') as f:
+                    G = pickle.load(f)
+            else:
+                logger.info(f"Cache não encontrado. Baixando grafo do OSM para: {Config.SERVICE_AREA}")
+                G = ox.graph_from_place(
+                    Config.SERVICE_AREA,
+                    network_type=Config.NETWORK_TYPE,
+                    simplify=Config.SIMPLIFY_GRAPH
+                )
+                # Adiciona tempo de viagem estimado em cada rua antes de salvar
+                for _, _, _, data in G.edges(keys=True, data=True):
+                    data["tempo_viagem"] = data.get("length", 0) / Config.WALKING_SPEED_MPS
+
+                # Salva em formato pickle (mais rápido e eficiente)
+                with open(cache_file, 'wb') as f:
+                    pickle.dump(G, f, protocol=pickle.HIGHEST_PROTOCOL)
+                logger.info(f"Grafo salvo em cache (pickle): {cache_file}")
         else:
+            # Prioridade 3: baixar sem cache
             logger.info(f"Baixando grafo do OSM para: {Config.SERVICE_AREA}")
             G = ox.graph_from_place(
-                Config.SERVICE_AREA, 
-                network_type=Config.NETWORK_TYPE, 
+                Config.SERVICE_AREA,
+                network_type=Config.NETWORK_TYPE,
                 simplify=Config.SIMPLIFY_GRAPH
             )
-            
-            # Salva o grafo se houver diretório de cache
-            if Config.GRAPH_CACHE_DIR:
-                import os
-                os.makedirs(Config.GRAPH_CACHE_DIR, exist_ok=True)
-                cache_file = os.path.join(Config.GRAPH_CACHE_DIR, "graph.graphml")
-                ox.save_graphml(G, cache_file)
-                logger.info(f"Grafo salvo em cache: {cache_file}")
-        
-        # Adiciona tempo de viagem estimado em cada rua
-        for _, _, _, data in G.edges(keys=True, data=True):
-            data["tempo_viagem"] = data.get("length", 0) / Config.WALKING_SPEED_MPS
-        
+            # Adiciona tempo de viagem
+            for _, _, _, data in G.edges(keys=True, data=True):
+                data["tempo_viagem"] = data.get("length", 0) / Config.WALKING_SPEED_MPS
+
+        # Adiciona tempo de viagem se não foi adicionado ainda (carregado de cache antigo)
+        if G and not any('tempo_viagem' in data for _, _, _, data in G.edges(keys=True, data=True)):
+            for _, _, _, data in G.edges(keys=True, data=True):
+                data["tempo_viagem"] = data.get("length", 0) / Config.WALKING_SPEED_MPS
+
         # Cria versão projetada (necessária para cálculos de distância euclidiana)
         G_proj = ox.project_graph(G)
-        
+
         # Carrega a fronteira geográfica da área
         gdf = ox.geocode_to_gdf(Config.SERVICE_AREA)
         boundary_polygon = gdf.unary_union
-        
+
         logger.info("✅ Mapa carregado com sucesso.")
         print(Config.display())
         return True
-        
+
     except Exception as e:
         logger.error(f"❌ Erro ao carregar o mapa: {e}", exc_info=True)
         return False
@@ -209,11 +235,11 @@ def _a_star_search(start_node: int, end_node: int) -> Tuple[Optional[List[int]],
     def heuristic(node1: int, node2: int) -> float:
         """
         Calcula a distância euclidiana entre dois nós.
-        
+
         Args:
             node1: ID do primeiro nó
             node2: ID do segundo nó
-            
+
         Returns:
             float: Distância euclidiana em metros (no grafo projetado)
         """
@@ -292,7 +318,7 @@ def _calculate_path_stats(path: List[int]) -> Tuple[float, float]:
 def get_health_status() -> Dict[str, Any]:
     """
     Retorna o status de saúde do serviço.
-    
+
     Returns:
         dict: Status de saúde com informações do grafo
     """

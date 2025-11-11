@@ -193,6 +193,9 @@ services:
             dockerfile: Dockerfile
         container_name: wot-ai
         restart: on-failure
+        mem_limit: 8g
+        memswap_limit: 8g
+        cpus: 2.0
         environment:
             HOST: 0.0.0.0
             PORT: 5000
@@ -289,6 +292,27 @@ services:
             timeout: 3s
             retries: 3
             start_period: 10s
+        networks:
+            - wot-network
+
+    old-api:
+        build:
+            context: ./apps/old-api
+            dockerfile: Dockerfile
+        container_name: wot-old-api
+        restart: always
+        environment:
+            MYSQL_URL: mariadb://old-db:3307/${MARIADB_OLD_DATABASE}
+            MYSQL_USER: ${MARIADB_OLD_USER}
+            MYSQL_PASSWORD: ${MARIADB_OLD_PASSWORD}
+            API_KEY_ADMIN: ${API_KEY_ADMIN}
+            API_KEY_USER: ${API_KEY_USER}
+            SERVER_PORT: 3200
+        ports:
+            - "3200:3200"
+        depends_on:
+            old-db:
+                condition: service_healthy
         networks:
             - wot-network
 
