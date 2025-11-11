@@ -119,6 +119,39 @@ services:
             start_period: 15s
         networks:
             - wot-network
+        
+    old-db:
+        image: bitnami/mariadb:latest
+        container_name: wot-old-db
+        restart: on-failure
+        environment:
+            MARIADB_ROOT_PASSWORD: ${MARIADB_OLD_ROOT_PASSWORD}
+            MARIADB_USER: ${MARIADB_OLD_USER}
+            MARIADB_PASSWORD: ${MARIADB_OLD_PASSWORD}
+            MARIADB_DATABASE: ${MARIADB_OLD_DATABASE}
+            MARIADB_PORT_NUMBER: 3307
+        ports:
+            - "3307:3307"
+        volumes:
+            - type: volume
+              source: mariadb_db_old
+              target: /bitnami/mariadb
+            - type: bind
+              source: ./db/old-scripts/01-create.sql
+              target: /docker-entrypoint-initdb.d/01-create.sql
+              read_only: true
+            - type: bind
+              source: ./db/old-scripts/02-populate.sql
+              target: /docker-entrypoint-initdb.d/02-insert.sql
+              read_only: true
+        healthcheck:
+            test: ['CMD', '/opt/bitnami/scripts/mariadb/healthcheck.sh']
+            interval: 15s
+            timeout: 5s
+            retries: 6
+            start_period: 15s
+        networks:
+            - wot-network
 
 volumes:
     mariadb_db_1_data:
@@ -126,6 +159,8 @@ volumes:
     mariadb_db_2_data:
         driver: local
     mariadb_db_3_data:
+        driver: local
+    mariadb_db_old:
         driver: local
 
 networks:
