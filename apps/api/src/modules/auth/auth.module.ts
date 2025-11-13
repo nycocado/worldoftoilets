@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
@@ -33,7 +32,6 @@ import { LogoutAllUseCase } from '@modules/auth/use-cases';
  * - Recuperação e reset de passwords
  * - Estratégia de validação JWT via cookies/Bearer tokens
  *
- * @exports AuthService - Serviço principal de autenticação
  * @see AuthController - Controlador com endpoints de autenticação
  * @see JwtCookieStrategy - Estratégia Passport para validação JWT
  */
@@ -59,7 +57,6 @@ import { LogoutAllUseCase } from '@modules/auth/use-cases';
   ],
   controllers: [AuthController],
   providers: [
-    AuthService,
     JwtCookieStrategy,
     LoginUseCase,
     RegisterUseCase,
@@ -71,6 +68,5 @@ import { LogoutAllUseCase } from '@modules/auth/use-cases';
     LogoutUseCase,
     LogoutAllUseCase,
   ],
-  exports: [AuthService],
 })
 export class AuthModule {}

@@ -101,7 +101,8 @@ CREATE TABLE
     city_id        INT                                                  NOT NULL,
     access_id      INT                                                  NOT NULL,
     name           VARCHAR(50)                                          NOT NULL,
-    coordinates    POINT                                                NOT NULL,
+    latitude       DECIMAL(10, 8)                                       NOT NULL,
+    longitude      DECIMAL(11, 8)                                       NOT NULL,
     address        VARCHAR(255)                                         NOT NULL,
     photo_url      VARCHAR(255)                                         NULL,
     place_id       VARCHAR(255)                                         NULL,
@@ -113,8 +114,7 @@ CREATE TABLE
     created_at     TIMESTAMP                                            NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at     TIMESTAMP                                            NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
-    FULLTEXT (name, address),
-    SPATIAL INDEX (coordinates)
+    FULLTEXT (name, address)
 );
 
 CREATE TABLE
@@ -169,15 +169,15 @@ CREATE TABLE
 (
     id             INT                                      NOT NULL,
     public_id      CHAR(36)                                 NOT NULL DEFAULT uuid_v4(),
-    coordinates    POINT                                    NOT NULL,
+    latitude       DECIMAL(10, 8)                           NOT NULL,
+    longitude      DECIMAL(11, 8)                           NOT NULL,
     photo_url      VARCHAR(255)                             NULL,
     status         ENUM ('pending', 'accepted', 'rejected') NOT NULL DEFAULT 'pending',
     reviewed_by_id INT                                      NULL,
     reviewed_at    TIMESTAMP                                NULL,
     created_at     TIMESTAMP                                NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at     TIMESTAMP                                NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    SPATIAL INDEX (coordinates)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE
@@ -412,6 +412,7 @@ ALTER TABLE toilet
     ADD UNIQUE INDEX idx_toilet_place_id (place_id),
     ADD INDEX idx_toilet_city_id (city_id),
     ADD INDEX idx_toilet_access_id (access_id),
+    ADD INDEX idx_toilet_coordinates (latitude, longitude),
     ADD INDEX idx_toilet_status (status),
     ADD INDEX idx_toilet_reviewed_at (reviewed_at),
     ADD INDEX idx_toilet_created_at (created_at);
@@ -455,6 +456,7 @@ ALTER TABLE suggestion
     ADD FOREIGN KEY (id) REFERENCES interaction (id) ON DELETE CASCADE ON UPDATE NO ACTION,
     ADD FOREIGN KEY (reviewed_by_id) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
     ADD UNIQUE INDEX idx_suggestion_public_id (public_id),
+    ADD INDEX idx_suggestion_coordinates (latitude, longitude),
     ADD INDEX idx_suggestion_status (status),
     ADD INDEX idx_suggestion_reviewed_at (reviewed_at),
     ADD INDEX idx_suggestion_created_at (created_at);

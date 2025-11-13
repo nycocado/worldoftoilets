@@ -5,6 +5,7 @@ Este módulo expõe endpoints HTTP para calcular rotas a pé em Lisboa, Portugal
 utilizando o algoritmo A* sobre dados do OpenStreetMap.
 """
 from flask import Flask
+from flask_cors import CORS
 from src.api.routes import api_bp
 from src.core import route_engine
 from src.core.config import Config
@@ -24,7 +25,8 @@ def create_app() -> Flask:
     """
     app = Flask(__name__)
 
-    # CORS é gerenciado pelo Nginx em produção
+    # Configura CORS para permitir requisições de qualquer origem
+    CORS(app, resources={r"/*": {"origins": "*"}})
 
     # Registra blueprints
     app.register_blueprint(api_bp)

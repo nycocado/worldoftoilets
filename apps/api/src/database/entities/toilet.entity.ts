@@ -16,8 +16,6 @@ import { UserEntity } from './user.entity';
 import { ExtraEntity } from './extra.entity';
 import { InteractionEntity } from './interaction.entity';
 import { PartnerEntity } from './partner.entity';
-import { Point } from '@common/types/point.types';
-import { PointType } from '@common/types/point-type.types';
 
 /**
  * Estados possíveis de uma casa de banho no sistema
@@ -109,15 +107,24 @@ export class ToiletEntity {
   name!: string;
 
   /**
-   * Coordenadas geográficas da casa de banho
-   * @field coordinates
-   * @type string
+   * Latitude da casa de banho
+   * @field latitude
+   * @type decimal(10,8)
    * @nullable false
-   * @type point (PostGIS)
-   * @description Coordenadas latitude/longitude em formato PostGIS point
+   * @description Latitude em formato decimal (-90 a 90)
    */
-  @Property({ columnType: 'point', type: PointType })
-  coordinates!: Point;
+  @Property({ columnType: 'decimal(10,8)' })
+  latitude!: number;
+
+  /**
+   * Longitude da casa de banho
+   * @field longitude
+   * @type decimal(10,8)
+   * @nullable false
+   * @description Longitude em formato decimal (-180 a 180)
+   */
+  @Property({ columnType: 'decimal(10,8)' })
+  longitude!: number;
 
   /**
    * Morada completa da casa de banho
@@ -273,22 +280,4 @@ export class ToiletEntity {
     nullable: true,
   })
   partner?: PartnerEntity;
-
-  /**
-   * Extrai a longitude das coordenadas
-   * @returns Longitude extraída do campo POINT
-   * @description Parse do formato POINT(longitude latitude) do MariaDB
-   */
-  get longitude(): number {
-    return this.coordinates.longitude;
-  }
-
-  /**
-   * Extrai a latitude das coordenadas
-   * @returns Latitude extraída do campo POINT
-   * @description Parse do formato POINT(longitude latitude) do MariaDB
-   */
-  get latitude(): number {
-    return this.coordinates.latitude;
-  }
 }

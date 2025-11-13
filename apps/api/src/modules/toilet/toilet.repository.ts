@@ -7,7 +7,7 @@ import {
   ToiletEntity,
   ToiletStatus,
 } from '@database/entities';
-import { EntityRepository } from '@mikro-orm/mariadb';
+import { EntityRepository, QueryBuilder } from '@mikro-orm/mariadb';
 
 @Injectable()
 export class ToiletRepository {
@@ -16,8 +16,8 @@ export class ToiletRepository {
     private readonly repository: EntityRepository<ToiletEntity>,
   ) {}
 
-  private applyFilters(
-    qb: any,
+  private applyFiltersQueryBuilder(
+    qb: QueryBuilder<ToiletEntity, 't'>,
     city?: CityApiName,
     country?: CountryApiName,
     access?: AccessApiName,
@@ -54,7 +54,7 @@ export class ToiletRepository {
   }
 
   private applyPagination(
-    qb: any,
+    qb: QueryBuilder<ToiletEntity, 't'>,
     pageable?: boolean,
     page?: number,
     size?: number,
@@ -83,36 +83,13 @@ export class ToiletRepository {
     page?: number,
     size?: number,
   ): Promise<ToiletEntity[]> {
-    const where: any = {};
+    const qb = this.repository.createQueryBuilder('t');
 
-    if (city) {
-      where.city = { apiName: city };
-    }
+    this.applyFiltersQueryBuilder(qb, city, country, access, status, timestamp);
+    this.applyJoins(qb);
+    this.applyPagination(qb, pageable, page, size);
 
-    if (country) {
-      if (!where.city) {
-        where.city = {};
-      }
-      where.city.country = { apiName: country };
-    }
-
-    if (access) {
-      where.access = { apiName: access };
-    }
-
-    if (status) {
-      where.status = status;
-    }
-
-    if (timestamp) {
-      where.updatedAt = { $lte: timestamp };
-    }
-
-    return this.repository.find(where, {
-      populate: ['city.country', 'access', 'extras.typeExtra'],
-      limit: pageable && size ? size : undefined,
-      offset: pageable && page && size ? page * size : undefined,
-    });
+    return qb.getResultList();
   }
 
   async findByBoundingBox(
@@ -128,20 +105,12 @@ export class ToiletRepository {
   ): Promise<ToiletEntity[]> {
     const qb = this.repository.createQueryBuilder('t');
 
-    qb.where(
-      `MBRContains(
-        ST_GeomFromText('POLYGON((
-          ${minLng} ${minLat},
-          ${maxLng} ${minLat},
-          ${maxLng} ${maxLat},
-          ${minLng} ${maxLat},
-          ${minLng} ${minLat}
-        ))'),
-        coordinates
-      ) = 1`,
-    );
+    qb.where({
+      latitude: { $gte: minLat, $lte: maxLat },
+      longitude: { $gte: minLng, $lte: maxLng },
+    });
 
-    this.applyFilters(qb, city, country, access, status, timestamp);
+    this.applyFiltersQueryBuilder(qb, city, country, access, status, timestamp);
     this.applyJoins(qb);
 
     return qb.getResultList();
@@ -162,9 +131,8 @@ export class ToiletRepository {
     const em = this.repository.getEntityManager();
     const qb = this.repository.createQueryBuilder('t');
 
-    this.applyFilters(qb, city, country, access, status, timestamp);
+    this.applyFiltersQueryBuilder(qb, city, country, access, status, timestamp);
     this.applyJoins(qb);
-    this.applyPagination(qb, pageable, page, size);
 
     const knex = qb.getKnexQuery();
     knex.select(
@@ -172,10 +140,16 @@ export class ToiletRepository {
         .getConnection()
         .getKnex()
         .raw(
-          `ST_Distance_Sphere(t.coordinates, ST_GeomFromText('POINT(${lng} ${lat})')) as distance`,
+          `(6371 * acos(cos(radians(?)) * cos(radians(t.latitude)) * cos(radians(t.longitude) - radians(?)) + sin(radians(?)) * sin(radians(t.latitude)))) as distance`,
+          [lat, lng, lat],
         ),
     );
     knex.orderBy('distance', 'asc');
+
+    // Apply pagination at the Knex level since QueryBuilder is finalized
+    if (pageable && page !== undefined && size !== undefined) {
+      knex.limit(size).offset(page * size);
+    }
 
     return qb.getResultList();
   }
