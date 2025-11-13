@@ -197,9 +197,13 @@ services:
             dockerfile: Dockerfile.dev
         container_name: wot-ai
         restart: on-failure
-        mem_limit: 8g
-        memswap_limit: 8g
-        cpus: 2.0
+        deploy:
+            resources:
+                limits:
+                    memory: 16G
+                    cpus: 2.0
+                reservations:
+                    memory: 8G
         environment:
             HOST: 0.0.0.0
             PORT: 5000

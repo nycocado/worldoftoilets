@@ -21,6 +21,7 @@ import { ToiletModule } from '@modules/toilet';
 import { ReplyModule } from '@modules/reply';
 import { ReactModule } from '@modules/react';
 import { InteractionModule } from '@modules/interaction';
+import { SearchToiletModule } from '@modules/search-toilet';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { InteractionModule } from '@modules/interaction';
     ReplyModule,
     ReactModule,
     InteractionModule,
+    SearchToiletModule,
   ],
   providers: [
     {

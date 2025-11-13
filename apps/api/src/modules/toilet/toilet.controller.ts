@@ -6,24 +6,30 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ToiletService } from './toilet.service';
 import { ApiResponseDto } from '@common/dto/api-response.dto';
 import {
   GetToiletsBoundingBoxRequestDto,
   GetToiletsProximityRequestDto,
   GetToiletsRequestDto,
-  SearchToiletsRequestDto,
-  SearchToiletResponseDto,
   ToiletResponseDto,
 } from '@modules/toilet/dto';
 import { JwtAuthGuard, PermissionsGuard } from '@common/guards';
 import { RequiresPermissions } from '@common/decorators';
 import { PermissionApiName } from '@database/entities';
 import { TOILET_MESSAGES } from '@modules/toilet/constants/messages.constant';
+import { GetToiletByPublicIdUseCase } from '@modules/toilet/use-cases/get-toilet-by-public-id.use.case';
+import { GetToiletsUseCase } from '@modules/toilet/use-cases/get-toilets.use.case';
+import { GetToiletsByBoundingBoxUseCase } from '@modules/toilet/use-cases/get-toilets-by-bounding-box.use-case';
+import { GetToiletsByProximityUseCase } from '@modules/toilet/use-cases/get-toilets-by-proximity.use-case';
 
 @Controller('toilet')
 export class ToiletController {
-  constructor(private readonly toiletService: ToiletService) {}
+  constructor(
+    private readonly getToiletsByPublicIdUseCase: GetToiletByPublicIdUseCase,
+    private readonly getToiletsUseCase: GetToiletsUseCase,
+    private readonly getToiletsByBoundingBoxUseCase: GetToiletsByBoundingBoxUseCase,
+    private readonly getToiletsByProximityUseCase: GetToiletsByProximityUseCase,
+  ) {}
 
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.VIEW_TOILETS)
@@ -34,7 +40,7 @@ export class ToiletController {
     const { city, country, access, status, timestamp, pageable, page, size } =
       getToiletsRequestDto || {};
 
-    const result = await this.toiletService.getToilets(
+    const result = await this.getToiletsUseCase.execute(
       city,
       country,
       access,
@@ -69,7 +75,7 @@ export class ToiletController {
       timestamp,
     } = boundingBoxDto;
 
-    const result = await this.toiletService.getByBoundingBox(
+    const result = await this.getToiletsByBoundingBoxUseCase.execute(
       minLat,
       minLng,
       maxLat,
@@ -106,7 +112,7 @@ export class ToiletController {
       size,
     } = proximityDto;
 
-    const result = await this.toiletService.getByProximity(
+    const result = await this.getToiletsByProximityUseCase.execute(
       lat,
       lng,
       city,
@@ -126,33 +132,12 @@ export class ToiletController {
   }
 
   @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @RequiresPermissions(PermissionApiName.SEARCH_TOILETS)
-  @Get('search')
-  async searchToilets(
-    @Query() searchDto: SearchToiletsRequestDto,
-  ): Promise<ApiResponseDto<SearchToiletResponseDto[]>> {
-    const { query, pageable, page, size } = searchDto;
-
-    const result = await this.toiletService.getByFullTextSearch(
-      query,
-      pageable,
-      page,
-      size,
-    );
-
-    return new ApiResponseDto<SearchToiletResponseDto[]>(
-      TOILET_MESSAGES.SEARCH_TOILETS_SUCCESS,
-      result,
-    );
-  }
-
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.VIEW_TOILETS)
   @Get(':publicId')
   async getToiletByPublicId(
     @Param('publicId', ParseUUIDPipe) publicId: string,
   ): Promise<ApiResponseDto<ToiletResponseDto>> {
-    const result = await this.toiletService.getToiletByPublicId(publicId);
+    const result = await this.getToiletsByPublicIdUseCase.execute(publicId);
     return new ApiResponseDto<ToiletResponseDto>(
       TOILET_MESSAGES.GET_TOILET_SUCCESS,
       result,

@@ -31,7 +31,7 @@ export class CreateCommentUseCase {
     text?: string,
   ): Promise<CommentResponseDto> {
     const user = await this.userService.getUserById(userId);
-    const toilet = await this.toiletService.findToiletByPublicId(toiletPublicId);
+    const toilet = await this.toiletService.getToiletByPublicId(toiletPublicId);
     const interaction = await this.interactionService.createInteraction(
       user,
       toilet,

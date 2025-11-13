@@ -9,6 +9,7 @@ packages = [{include = "src"}]
 [tool.poetry.dependencies]
 python = "^3.11"
 Flask = "^3.0.0"
+flask-cors = "^4.0.0"
 osmnx = "^1.9.2"
 networkx = "^3.2.1"
 shapely = "^2.0.2"

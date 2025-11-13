@@ -9,7 +9,6 @@ import {
   UnauthorizedException,
   Headers,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
 import {
   LoginRequestDto,
   LoginResponseDto,
@@ -34,17 +33,28 @@ import {
   ApiSwaggerResetPassword,
   ApiSwaggerVerifyEmail,
 } from '@modules/auth/swagger';
+import {
+  ForgotPasswordUseCase,
+  LoginUseCase,
+  LogoutAllUseCase,
+  LogoutUseCase,
+  RefreshTokenUseCase,
+  RegisterUseCase,
+  ResendVerificationUseCase,
+  ResetPasswordUseCase,
+  VerifyEmailUseCase,
+} from '@modules/auth/use-cases';
 
 /**
  * Controlador de Autenticação
  *
  * @class AuthController
  * @description Controlador que expõe endpoints HTTP para todas as operações de autenticação.
- * Processa requests, valida DTOs, configura cookies seguras, e delega lógica para AuthService.
+ * Processa requests, valida DTOs, configura cookies seguras, e delega lógica para os use cases.
  *
  * @route /auth - Rota base para todos os endpoints de autenticação
  *
- * @see AuthService - Serviço que executa a lógica
+ * @see LoginUseCase, RegisterUseCase, RefreshTokenUseCase - Use cases que executam a lógica de negócio
  * @see ApiSwagger - Decoradores de documentação Swagger
  */
 @Controller('auth')
@@ -52,12 +62,28 @@ export class AuthController {
   /**
    * Construtor do AuthController
    *
-   * @param {AuthService} authService - Serviço de autenticação
    * @param {ConfigService} configService - Serviço de configuração para ler variáveis de ambiente
+   * @param {LoginUseCase} loginUseCase - Use case para autenticação de utilizador
+   * @param {RegisterUseCase} registerUseCase - Use case para registo de utilizador
+   * @param {RefreshTokenUseCase} refreshTokenUseCase - Use case para renovação de tokens
+   * @param {VerifyEmailUseCase} verifyEmailUseCase - Use case para verificação de email
+   * @param {ResendVerificationUseCase} resendVerificationUseCase - Use case para reenvio de verificação
+   * @param {ForgotPasswordUseCase} forgotPasswordUseCase - Use case para recuperação de password
+   * @param {ResetPasswordUseCase} resetPasswordUseCase - Use case para reset de password
+   * @param {LogoutUseCase} logoutUseCase - Use case para logout de sessão específica
+   * @param {LogoutAllUseCase} logoutAllUseCase - Use case para logout de todas as sessões
    */
   constructor(
-    private readonly authService: AuthService,
     private readonly configService: ConfigService,
+    private readonly loginUseCase: LoginUseCase,
+    private readonly registerUseCase: RegisterUseCase,
+    private readonly refreshTokenUseCase: RefreshTokenUseCase,
+    private readonly verifyEmailUseCase: VerifyEmailUseCase,
+    private readonly resendVerificationUseCase: ResendVerificationUseCase,
+    private readonly forgotPasswordUseCase: ForgotPasswordUseCase,
+    private readonly resetPasswordUseCase: ResetPasswordUseCase,
+    private readonly logoutUseCase: LogoutUseCase,
+    private readonly logoutAllUseCase: LogoutAllUseCase,
   ) {}
 
   /**
@@ -84,7 +110,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: any,
   ): Promise<ApiResponseDto<LoginResponseDto>> {
     const { email, password } = loginDto;
-    const loginResponse = await this.authService.login(email, password);
+    const loginResponse = await this.loginUseCase.execute(email, password);
 
     const jwtExpiration =
       this.configService.getOrThrow<string>('JWT_EXPIRATION');
@@ -136,7 +162,7 @@ export class AuthController {
     @Body() registerDto: RegisterRequestDto,
   ): Promise<ApiResponseDto> {
     const { name, email, password, icon, birthDate } = registerDto;
-    await this.authService.register(name, email, password, icon, birthDate);
+    await this.registerUseCase.execute(name, email, password, icon, birthDate);
     return new ApiResponseDto(AUTH_MESSAGES.REGISTER_SUCCESS);
   }
 
@@ -164,7 +190,7 @@ export class AuthController {
     @Headers('authorization') authorization?: string,
   ): Promise<ApiResponseDto<RefreshTokenResponseDto>> {
     const token = authorization?.replace('Bearer ', '');
-    const refreshResponse = await this.authService.refreshAccessToken(
+    const refreshResponse = await this.refreshTokenUseCase.execute(
       token || req.cookies?.['refreshToken'],
     );
 
@@ -228,7 +254,7 @@ export class AuthController {
       throw new UnauthorizedException(AUTH_EXCEPTIONS.REFRESH_TOKEN_REQUIRED);
     }
 
-    await this.authService.revokeRefreshToken(refreshToken);
+    await this.logoutUseCase.execute(refreshToken);
 
     res.clearCookie('token');
     res.clearCookie('refreshToken');
@@ -266,7 +292,7 @@ export class AuthController {
       throw new UnauthorizedException(AUTH_EXCEPTIONS.REFRESH_TOKEN_REQUIRED);
     }
 
-    await this.authService.revokeAllRefreshTokens(refreshToken);
+    await this.logoutAllUseCase.execute(refreshToken);
 
     res.clearCookie('token');
     res.clearCookie('refreshToken');
@@ -298,7 +324,7 @@ export class AuthController {
       throw new UnauthorizedException(AUTH_EXCEPTIONS.TOKEN_REQUIRED);
     }
     const token = authorization.replace('Bearer ', '');
-    await this.authService.verifyEmail(token);
+    await this.verifyEmailUseCase.execute(token);
     return new ApiResponseDto(AUTH_MESSAGES.VERIFY_EMAIL_SUCCESS);
   }
 
@@ -321,7 +347,7 @@ export class AuthController {
   async resendVerification(
     @Query() resendVerificationDto: ResendVerificationRequestDto,
   ): Promise<ApiResponseDto> {
-    await this.authService.resendVerificationEmail(resendVerificationDto.email);
+    await this.resendVerificationUseCase.execute(resendVerificationDto.email);
     return new ApiResponseDto(AUTH_MESSAGES.RESEND_VERIFICATION_SUCCESS);
   }
 
@@ -343,7 +369,7 @@ export class AuthController {
   async forgotPassword(
     @Query() forgotPasswordDto: ForgotPasswordRequestDto,
   ): Promise<ApiResponseDto> {
-    await this.authService.forgotPassword(forgotPasswordDto.email);
+    await this.forgotPasswordUseCase.execute(forgotPasswordDto.email);
     return new ApiResponseDto(AUTH_MESSAGES.FORGOT_PASSWORD_SUCCESS);
   }
 
@@ -366,7 +392,7 @@ export class AuthController {
   async resetPassword(
     @Body() resetPasswordDto: ResetPasswordRequestDto,
   ): Promise<ApiResponseDto> {
-    await this.authService.resetPassword(
+    await this.resetPasswordUseCase.execute(
       resetPasswordDto.token,
       resetPasswordDto.newPassword,
     );

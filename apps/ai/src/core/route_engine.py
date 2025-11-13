@@ -19,6 +19,8 @@ logger = get_logger(__name__)
 G = None  #: Grafo de ruas não projetado (lat/lon)
 G_proj = None  #: Grafo de ruas projetado (coordenadas cartesianas)
 boundary_polygon = None  #: Polígono que define a área de serviço
+edge_cache = {}  #: Cache de comprimentos de arestas pré-computados
+proj_coords_cache = {}  #: Cache de coordenadas projetadas para heurística
 
 
 def initialize() -> bool:
@@ -34,7 +36,7 @@ def initialize() -> bool:
         bool: True se o mapa foi carregado com sucesso, False caso contrário
 
     Side Effects:
-        - Define as variáveis globais G, G_proj e boundary_polygon
+        - Define as variáveis globais G, G_proj, boundary_polygon, edge_cache e proj_coords_cache
         - Imprime mensagens de status no console
 
     Example:
@@ -43,7 +45,7 @@ def initialize() -> bool:
         ... else:
         ...     print("Erro ao inicializar")
     """
-    global G, G_proj, boundary_polygon
+    global G, G_proj, boundary_polygon, edge_cache, proj_coords_cache
 
     logger.info(f"Carregando mapa de {Config.SERVICE_AREA}...")
 
@@ -103,6 +105,20 @@ def initialize() -> bool:
         # Carrega a fronteira geográfica da área
         gdf = ox.geocode_to_gdf(Config.SERVICE_AREA)
         boundary_polygon = gdf.unary_union
+
+        # Pré-computa cache de arestas para acesso O(1)
+        logger.info("Pré-computando cache de arestas...")
+        for u in G.nodes():
+            for v in G.neighbors(u):
+                edge_cache[(u, v)] = min(
+                    data.get("length", float('inf'))
+                    for data in G[u][v].values()
+                )
+
+        # Pré-computa cache de coordenadas projetadas para heurística
+        logger.info("Pré-computando cache de coordenadas projetadas...")
+        for node, data in G_proj.nodes(data=True):
+            proj_coords_cache[node] = (data['x'], data['y'])
 
         logger.info("✅ Mapa carregado com sucesso.")
         print(Config.display())
@@ -219,16 +235,16 @@ def calculate_route(
 def _a_star_search(start_node: int, end_node: int) -> Tuple[Optional[List[int]], int]:
     """
     Implementação do algoritmo A* para busca de caminho mais curto.
-    
+
     Args:
         start_node: ID do nó inicial no grafo
         end_node: ID do nó final no grafo
-        
+
     Returns:
         tuple: (path, nodes_expanded)
             - path: Lista de IDs dos nós no caminho, ou None se não encontrado
             - nodes_expanded: Número de nós explorados durante a busca
-            
+
     Note:
         Utiliza a distância euclidiana no grafo projetado como heurística.
     """
@@ -243,19 +259,27 @@ def _a_star_search(start_node: int, end_node: int) -> Tuple[Optional[List[int]],
         Returns:
             float: Distância euclidiana em metros (no grafo projetado)
         """
-        x1, y1 = G_proj.nodes[node1]['x'], G_proj.nodes[node1]['y']
-        x2, y2 = G_proj.nodes[node2]['x'], G_proj.nodes[node2]['y']
-        return math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
-    
+        x1, y1 = proj_coords_cache[node1]
+        x2, y2 = proj_coords_cache[node2]
+        dx, dy = x1 - x2, y1 - y2
+        return math.sqrt(dx * dx + dy * dy)
+
     g_costs = {start_node: 0.0}
     came_from = {start_node: None}
     open_set = [(0.0, start_node)]
+    closed_set = set()
     nodes_expanded = 0
-    
+
     while open_set:
         _, current = heapq.heappop(open_set)
+
+        # Pula se o nó já foi processado
+        if current in closed_set:
+            continue
+
+        closed_set.add(current)
         nodes_expanded += 1
-        
+
         if current == end_node:
             # Reconstrói o caminho
             path = []
@@ -263,21 +287,19 @@ def _a_star_search(start_node: int, end_node: int) -> Tuple[Optional[List[int]],
                 path.append(current)
                 current = came_from.get(current)
             return path[::-1], nodes_expanded
-        
+
         for neighbor in G.neighbors(current):
-            edge_length = min(
-                data.get("length", float('inf')) 
-                for data in G[current][neighbor].values()
-            )
-            
+            # Usa o cache de arestas pré-computadas
+            edge_length = edge_cache.get((current, neighbor), float('inf'))
+
             tentative_g = g_costs[current] + edge_length
-            
+
             if tentative_g < g_costs.get(neighbor, float('inf')):
                 g_costs[neighbor] = tentative_g
                 came_from[neighbor] = current
                 f_cost = tentative_g + heuristic(neighbor, end_node)
                 heapq.heappush(open_set, (f_cost, neighbor))
-    
+
     return None, nodes_expanded
 
 

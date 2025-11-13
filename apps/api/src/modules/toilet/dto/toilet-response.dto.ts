@@ -1,43 +1,8 @@
-import { Expose, Transform, Type } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { ToiletAverageRating } from '@modules/comment-rate';
-
-export class CountryResponseDto {
-  @Expose()
-  name!: string;
-
-  @Expose()
-  apiName!: string;
-}
-
-export class CityResponseDto {
-  @Expose()
-  name!: string;
-
-  @Expose()
-  apiName!: string;
-
-  @Expose()
-  @Type(() => CountryResponseDto)
-  country!: CountryResponseDto;
-}
-
-export class AccessResponseDto {
-  @Expose()
-  name!: string;
-
-  @Expose()
-  apiName!: string;
-}
-
-export class ExtraResponseDto {
-  @Expose()
-  @Transform(({ obj }) => obj.typeExtra.name)
-  name!: string;
-
-  @Expose()
-  @Transform(({ obj }) => obj.typeExtra.apiName)
-  apiName!: string;
-}
+import { CityResponseDto } from '@modules/toilet/dto/city-response.dto';
+import { AccessResponseDto } from '@modules/toilet/dto/access-response.dto';
+import { ExtraResponseDto } from '@modules/toilet/dto/extra-response.dto';
 
 export class ToiletResponseDto {
   @Expose()
@@ -59,11 +24,9 @@ export class ToiletResponseDto {
   name!: string;
 
   @Expose()
-  @Transform(({ obj }) => obj.coordinates.latitude)
   latitude!: number;
 
   @Expose()
-  @Transform(({ obj }) => obj.coordinates.longitude)
   longitude!: number;
 
   @Expose()
