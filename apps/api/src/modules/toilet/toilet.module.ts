@@ -7,6 +7,12 @@ import { ToiletRepository } from '@modules/toilet/toilet.repository';
 import { EnrichToiletsWithCommentRateUseCase } from '@modules/toilet/use-cases/enrich-toilets-with-comment-rate.use-case';
 import { CommentRateModule } from '@modules/comment-rate';
 import { UserModule } from '@modules/user';
+import {
+  GetToiletByPublicIdUseCase,
+  GetToiletsByBoundingBoxUseCase,
+  GetToiletsByProximityUseCase,
+  GetToiletsUseCase,
+} from '@modules/toilet/use-cases';
 
 @Module({
   imports: [
@@ -19,6 +25,10 @@ import { UserModule } from '@modules/user';
     ToiletService,
     ToiletRepository,
     EnrichToiletsWithCommentRateUseCase,
+    GetToiletByPublicIdUseCase,
+    GetToiletsUseCase,
+    GetToiletsByBoundingBoxUseCase,
+    GetToiletsByProximityUseCase,
   ],
   exports: [ToiletService],
 })

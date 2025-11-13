@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { textTimeToMilliseconds } from '@common/utils/jwt-time.util';
 import { PasswordResetRepository } from '@modules/password-reset/password-reset.repository';
 import { VerifyTokenUseCase } from '@modules/password-reset/use-cases/verify-token.use-case';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class PasswordResetService {
@@ -36,6 +37,7 @@ export class PasswordResetService {
     return this.verifyTokenUseCase.execute(token);
   }
 
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async deleteExpiredTokens(): Promise<void> {
     await this.passwordResetRepository.deleteExpired();
   }

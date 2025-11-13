@@ -17,7 +17,6 @@ import {
 } from '@modules/comment/use-cases';
 import { InteractionModule } from '@modules/interaction/interaction.module';
 import { CommentRateModule } from '@modules/comment-rate/comment-rate.module';
-import { DeleteExpiredCommentsUseCase } from '@modules/comment/use-cases/delete-expired-comments.use-case';
 import { PutReactUseCase } from '@modules/comment/use-cases/put-react.use-case';
 
 @Module({
@@ -38,7 +37,6 @@ import { PutReactUseCase } from '@modules/comment/use-cases/put-react.use-case';
     CreateCommentUseCase,
     UpdateCommentUseCase,
     DeleteCommentUseCase,
-    DeleteExpiredCommentsUseCase,
     PutReactUseCase,
     EnrichCommentsWithReactsUseCase,
   ],

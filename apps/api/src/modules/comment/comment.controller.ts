@@ -23,10 +23,25 @@ import { CreateCommentRequestDto } from '@modules/comment/dto/create-comment-req
 import { COMMENT_MESSAGES } from '@modules/comment/constants/messages.constant';
 import { UpdateCommentRequestDto } from '@modules/comment/dto/update-comment-request.dto';
 import { PutReactRequestDto } from '@modules/comment/dto/put-react-request.dto';
+import {
+  CreateCommentUseCase,
+  DeleteCommentUseCase,
+  GetCommentsByToiletPublicIdUseCase,
+  GetCommentsByUserIdUseCase,
+  UpdateCommentUseCase,
+} from '@modules/comment/use-cases';
+import { PutReactUseCase } from '@modules/comment/use-cases/put-react.use-case';
 
 @Controller('comment')
 export class CommentController {
-  constructor(private readonly commentService: CommentService) {}
+  constructor(
+    private readonly createCommentUseCase: CreateCommentUseCase,
+    private readonly deleteCommentUseCase: DeleteCommentUseCase,
+    private readonly getCommentsByToiletPublicIdUseCase: GetCommentsByToiletPublicIdUseCase,
+    private readonly getCommentsByUserIdUseCase: GetCommentsByUserIdUseCase,
+    private readonly putReactUseCase: PutReactUseCase,
+    private readonly updateCommentUseCase: UpdateCommentUseCase,
+  ) {}
 
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.VIEW_COMMENTS)
@@ -38,7 +53,7 @@ export class CommentController {
     const { pageable, page, size, commentState, timestamp } =
       getByToiletsRequestDto || {};
 
-    const result = await this.commentService.getCommentsByToiletPublicId(
+    const result = await this.getCommentsByToiletPublicIdUseCase.execute(
       publicId,
       pageable,
       page,
@@ -62,7 +77,7 @@ export class CommentController {
     const { pageable, page, size, commentState, timestamp } =
       getByToiletsRequestDto || {};
 
-    const result = await this.commentService.getCommentByUser(
+    const result = await this.getCommentsByUserIdUseCase.execute(
       user.id,
       pageable,
       page,
@@ -87,7 +102,7 @@ export class CommentController {
     const { toiletPublicId, text, rate } = createCommentDto;
     const { clean, paper, structure, accessibility } = rate;
 
-    const comment = await this.commentService.createComment(
+    const comment = await this.createCommentUseCase.execute(
       user.id,
       toiletPublicId,
       clean,
@@ -111,7 +126,7 @@ export class CommentController {
     const { text, rate } = updateCommentDto;
     const { clean, paper, structure, accessibility } = rate || {};
 
-    const comment = await this.commentService.updateComment(
+    const comment = await this.updateCommentUseCase.execute(
       publicId,
       user.id,
       text,
@@ -131,7 +146,7 @@ export class CommentController {
     @Param('publicId', ParseUUIDPipe) publicId: string,
     @User() user: jwtTypes.RequestUser,
   ): Promise<ApiResponseDto> {
-    await this.commentService.softDeleteComment(publicId, user.id);
+    await this.deleteCommentUseCase.execute(publicId, user.id);
     return new ApiResponseDto(COMMENT_MESSAGES.DELETE_COMMENT_SUCCESS);
   }
 
@@ -144,7 +159,7 @@ export class CommentController {
     @Query() putReactRequestDto: PutReactRequestDto,
   ): Promise<ApiResponseDto<CommentResponseDto>> {
     const { react } = putReactRequestDto;
-    const comment = await this.commentService.reactToComment(
+    const comment = await this.putReactUseCase.execute(
       user.id,
       publicId,
       react as unknown as ReactDiscriminator,
