@@ -41,9 +41,70 @@ import { PutReactUseCase } from '@modules/comment/use-cases/put-react.use-case';
 import { GetCommentsManageRequestDto } from '@modules/comment/dto/get-comments-manage-request.dto';
 import { DeleteCommentManageUseCase } from '@modules/comment/use-cases/delete-comment-manage.use-case';
 import { UndeleteCommentUseCase } from '@modules/comment/use-cases/undelete-comment.use-case';
+import {
+  ApiSwaggerGetCommentsByToilet,
+  ApiSwaggerGetCommentsByToiletManage,
+  ApiSwaggerGetCommentsByUserSelf,
+  ApiSwaggerGetCommentsByUserManage,
+  ApiSwaggerCreateComment,
+  ApiSwaggerUpdateComment,
+  ApiSwaggerUpdateCommentManage,
+  ApiSwaggerDeleteComment,
+  ApiSwaggerDeleteCommentManage,
+  ApiSwaggerPutReact,
+  ApiSwaggerShowComment,
+  ApiSwaggerHideComment,
+  ApiSwaggerUndeleteComment,
+} from '@modules/comment/swagger';
 
+/**
+ * Controlador de Comentários
+ *
+ * @class CommentController
+ * @description Controlador que expõe endpoints HTTP para operações de comentários em toilets.
+ * Processa requests, valida DTOs, aplica guards de autenticação e permissões,
+ * e delega lógica de negócio para os use cases apropriados.
+ *
+ * @route /comment - Rota base para todos os endpoints de comentários
+ *
+ * @endpoints
+ * - GET /comment/toilet/:publicId - Listar comentários de toilet (público)
+ * - GET /comment/toilet/:publicId/manage - Listar todos comentários de toilet (moderação)
+ * - GET /comment/user/self - Listar comentários do próprio utilizador
+ * - GET /comment/user/:publicId/manage - Listar comentários de utilizador (moderação)
+ * - POST /comment - Criar novo comentário
+ * - PATCH /comment/:publicId - Atualizar próprio comentário
+ * - PATCH /comment/:publicId/manage - Atualizar qualquer comentário (moderação)
+ * - DELETE /comment/:publicId - Deletar próprio comentário
+ * - DELETE /comment/:publicId/manage - Deletar qualquer comentário (moderação)
+ * - PUT /comment/:publicId/react - Adicionar/remover reação (like/dislike)
+ * - PUT /comment/:publicId/show - Tornar comentário visível (moderação)
+ * - PUT /comment/:publicId/hide - Ocultar comentário (moderação)
+ * - PUT /comment/:publicId/undelete - Recuperar comentário deletado (moderação)
+ *
+ * @see CreateCommentUseCase, UpdateCommentUseCase, DeleteCommentUseCase - Use cases principais
+ * @see GetCommentsByToiletPublicIdUseCase, GetCommentsByUserIdUseCase - Use cases de listagem
+ * @see PutReactUseCase - Use case de reações
+ * @see ShowCommentUseCase, HideCommentUseCase, UndeleteCommentUseCase - Use cases de moderação
+ */
 @Controller('comment')
 export class CommentController {
+  /**
+   * Construtor do CommentController
+   *
+   * @param {CreateCommentUseCase} createCommentUseCase - Use case para criar comentário
+   * @param {DeleteCommentUseCase} deleteCommentUseCase - Use case para deletar próprio comentário
+   * @param {DeleteCommentManageUseCase} deleteCommentManageUseCase - Use case para deletar qualquer comentário
+   * @param {GetCommentsByToiletPublicIdUseCase} getCommentsByToiletPublicIdUseCase - Use case para listar por toilet
+   * @param {GetCommentsByUserIdUseCase} getCommentsByUserIdUseCase - Use case para listar por ID de utilizador
+   * @param {GetCommentsByUserPublicIdUseCase} getCommentsByUserPublicIdUseCase - Use case para listar por publicId de utilizador
+   * @param {PutReactUseCase} putReactUseCase - Use case para reagir a comentário
+   * @param {UpdateCommentUseCase} updateCommentUseCase - Use case para atualizar próprio comentário
+   * @param {UpdateCommentManageUseCase} updateCommentManageUseCase - Use case para atualizar qualquer comentário
+   * @param {ShowCommentUseCase} showCommentUseCase - Use case para tornar comentário visível
+   * @param {HideCommentUseCase} hideCommentUseCase - Use case para ocultar comentário
+   * @param {UndeleteCommentUseCase} undeleteCommentUseCase - Use case para recuperar comentário deletado
+   */
   constructor(
     private readonly createCommentUseCase: CreateCommentUseCase,
     private readonly deleteCommentUseCase: DeleteCommentUseCase,
@@ -59,6 +120,25 @@ export class CommentController {
     private readonly undeleteCommentUseCase: UndeleteCommentUseCase,
   ) {}
 
+  /**
+   * Listar comentários de toilet (público)
+   *
+   * @async
+   * @route GET /comment/toilet/:publicId
+   * @protected Requer autenticação JWT e permissão VIEW_COMMENTS
+   * @param {string} publicId - Identificador público do toilet
+   * @param {GetCommentsRequestDto} getByToiletsRequestDto - Parâmetros de paginação e filtros
+   * @returns {Promise<ApiResponseDto<CommentResponseDto[]>>} Lista de comentários visíveis
+   * @throws {NotFoundException} Se toilet não existir
+   * @throws {UnauthorizedException} Se token de autenticação for inválido ou ausente
+   * @throws {ForbiddenException} Se utilizador não possuir permissão VIEW_COMMENTS
+   *
+   * @description
+   * Lista comentários VISÍVEIS de um toilet específico.
+   * Suporta paginação e filtragem por timestamp.
+   * Comentários ocultos ou deletados não são retornados.
+   */
+  @ApiSwaggerGetCommentsByToilet()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.VIEW_COMMENTS)
   @Get('toilet/:publicId')
@@ -83,6 +163,24 @@ export class CommentController {
     );
   }
 
+  /**
+   * Listar todos comentários de toilet (moderação)
+   *
+   * @async
+   * @route GET /comment/toilet/:publicId/manage
+   * @protected Requer autenticação JWT e permissão VIEW_ALL_COMMENTS
+   * @param {string} publicId - Identificador público do toilet
+   * @param {GetCommentsManageRequestDto} getByToiletsRequestDto - Parâmetros de paginação, filtros e estado
+   * @returns {Promise<ApiResponseDto<CommentResponseDto[]>>} Lista de todos os comentários
+   * @throws {NotFoundException} Se toilet não existir
+   * @throws {UnauthorizedException} Se token de autenticação for inválido ou ausente
+   * @throws {ForbiddenException} Se utilizador não possuir permissão VIEW_ALL_COMMENTS
+   *
+   * @description
+   * Lista TODOS os comentários de um toilet (visíveis, ocultos, deletados).
+   * Suporta filtro por estado de comentário. Usado por moderadores.
+   */
+  @ApiSwaggerGetCommentsByToiletManage()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.VIEW_ALL_COMMENTS)
   @Get('toilet/:publicId/manage')
@@ -107,6 +205,22 @@ export class CommentController {
     );
   }
 
+  /**
+   * Listar próprios comentários
+   *
+   * @async
+   * @route GET /comment/user/self
+   * @protected Requer autenticação JWT
+   * @param {jwtTypes.RequestUser} user - Utilizador autenticado (extraído do JWT)
+   * @param {GetCommentsRequestDto} getByToiletsRequestDto - Parâmetros de paginação e filtros
+   * @returns {Promise<ApiResponseDto<CommentResponseDto[]>>} Lista de próprios comentários visíveis
+   * @throws {UnauthorizedException} Se token de autenticação for inválido ou ausente
+   *
+   * @description
+   * Lista comentários VISÍVEIS do próprio utilizador autenticado.
+   * Suporta paginação e filtragem por timestamp.
+   */
+  @ApiSwaggerGetCommentsByUserSelf()
   @UseGuards(JwtAuthGuard)
   @Get('user/self')
   async getCommentsByMyUser(
@@ -130,6 +244,24 @@ export class CommentController {
     );
   }
 
+  /**
+   * Listar comentários de utilizador (moderação)
+   *
+   * @async
+   * @route GET /comment/user/:publicId/manage
+   * @protected Requer autenticação JWT e permissão VIEW_ALL_COMMENTS
+   * @param {string} publicId - Identificador público do utilizador
+   * @param {GetCommentsManageRequestDto} getByToiletsRequestDto - Parâmetros de paginação, filtros e estado
+   * @returns {Promise<ApiResponseDto<CommentResponseDto[]>>} Lista de comentários do utilizador
+   * @throws {NotFoundException} Se utilizador não existir
+   * @throws {UnauthorizedException} Se token de autenticação for inválido ou ausente
+   * @throws {ForbiddenException} Se utilizador não possuir permissão VIEW_ALL_COMMENTS
+   *
+   * @description
+   * Lista TODOS os comentários de um utilizador específico.
+   * Suporta filtro por estado de comentário. Usado por moderadores.
+   */
+  @ApiSwaggerGetCommentsByUserManage()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.VIEW_ALL_COMMENTS)
   @Get('user/:publicId/manage')
@@ -154,6 +286,24 @@ export class CommentController {
     );
   }
 
+  /**
+   * Criar comentário
+   *
+   * @async
+   * @route POST /comment
+   * @protected Requer autenticação JWT e permissão CREATE_COMMENTS
+   * @param {jwtTypes.RequestUser} user - Utilizador autenticado (extraído do JWT)
+   * @param {CreateCommentRequestDto} createCommentDto - Dados do comentário (toilet, texto, avaliação)
+   * @returns {Promise<ApiResponseDto<CommentResponseDto>>} Comentário criado
+   * @throws {NotFoundException} Se toilet não existir
+   * @throws {UnauthorizedException} Se token de autenticação for inválido ou ausente
+   * @throws {ForbiddenException} Se utilizador não possuir permissão CREATE_COMMENTS
+   *
+   * @description
+   * Cria novo comentário em toilet com texto opcional e avaliação obrigatória.
+   * Avaliação inclui: clean, paper, structure, accessibility.
+   */
+  @ApiSwaggerCreateComment()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.CREATE_COMMENTS)
   @Post('')
@@ -177,6 +327,25 @@ export class CommentController {
     return new ApiResponseDto(COMMENT_MESSAGES.CREATE_COMMENT_SUCCESS, comment);
   }
 
+  /**
+   * Atualizar próprio comentário
+   *
+   * @async
+   * @route PATCH /comment/:publicId
+   * @protected Requer autenticação JWT e permissão EDIT_SELF_COMMENTS
+   * @param {string} publicId - Identificador público do comentário
+   * @param {jwtTypes.RequestUser} user - Utilizador autenticado (extraído do JWT)
+   * @param {UpdateCommentRequestDto} updateCommentDto - Novos dados do comentário
+   * @returns {Promise<ApiResponseDto<CommentResponseDto>>} Comentário atualizado
+   * @throws {NotFoundException} Se comentário não existir
+   * @throws {UnauthorizedException} Se token inválido, ausente ou utilizador não é o autor
+   * @throws {ForbiddenException} Se utilizador não possuir permissão EDIT_SELF_COMMENTS
+   *
+   * @description
+   * Atualiza texto e/ou avaliação do próprio comentário.
+   * Apenas o autor pode editar seu comentário.
+   */
+  @ApiSwaggerUpdateComment()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.EDIT_SELF_COMMENTS)
   @Patch(':publicId')
@@ -201,6 +370,24 @@ export class CommentController {
     return new ApiResponseDto(COMMENT_MESSAGES.UPDATE_COMMENT_SUCCESS, comment);
   }
 
+  /**
+   * Atualizar qualquer comentário (moderação)
+   *
+   * @async
+   * @route PATCH /comment/:publicId/manage
+   * @protected Requer autenticação JWT e permissão EDIT_COMMENTS
+   * @param {string} publicId - Identificador público do comentário
+   * @param {UpdateCommentRequestDto} updateCommentDto - Novos dados do comentário
+   * @returns {Promise<ApiResponseDto<CommentResponseDto>>} Comentário atualizado
+   * @throws {NotFoundException} Se comentário não existir
+   * @throws {UnauthorizedException} Se token de autenticação for inválido ou ausente
+   * @throws {ForbiddenException} Se utilizador não possuir permissão EDIT_COMMENTS
+   *
+   * @description
+   * Atualiza texto e/ou avaliação de qualquer comentário.
+   * Não verifica propriedade - usado por moderadores.
+   */
+  @ApiSwaggerUpdateCommentManage()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.EDIT_COMMENTS)
   @Patch(':publicId/manage')
@@ -226,6 +413,24 @@ export class CommentController {
     );
   }
 
+  /**
+   * Deletar próprio comentário
+   *
+   * @async
+   * @route DELETE /comment/:publicId
+   * @protected Requer autenticação JWT e permissão DELETE_SELF_COMMENTS
+   * @param {string} publicId - Identificador público do comentário
+   * @param {jwtTypes.RequestUser} user - Utilizador autenticado (extraído do JWT)
+   * @returns {Promise<ApiResponseDto>} Confirmação de sucesso
+   * @throws {NotFoundException} Se comentário não existir
+   * @throws {UnauthorizedException} Se token inválido, ausente ou utilizador não é o autor
+   * @throws {ForbiddenException} Se utilizador não possuir permissão DELETE_SELF_COMMENTS
+   *
+   * @description
+   * Soft delete do próprio comentário. Apenas o autor pode deletar.
+   * Pode ser recuperado antes do período de retenção expirar.
+   */
+  @ApiSwaggerDeleteComment()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.DELETE_SELF_COMMENTS)
   @Delete(':publicId')
@@ -237,6 +442,24 @@ export class CommentController {
     return new ApiResponseDto(COMMENT_MESSAGES.DELETE_COMMENT_SUCCESS);
   }
 
+  /**
+   * Deletar qualquer comentário (moderação)
+   *
+   * @async
+   * @route DELETE /comment/:publicId/manage
+   * @protected Requer autenticação JWT e permissão DELETE_COMMENTS
+   * @param {string} publicId - Identificador público do comentário
+   * @param {jwtTypes.RequestUser} user - Moderador autenticado (extraído do JWT)
+   * @returns {Promise<ApiResponseDto>} Confirmação de sucesso
+   * @throws {NotFoundException} Se comentário não existir
+   * @throws {UnauthorizedException} Se token de autenticação for inválido ou ausente
+   * @throws {ForbiddenException} Se utilizador não possuir permissão DELETE_COMMENTS
+   *
+   * @description
+   * Soft delete de qualquer comentário. Não verifica propriedade.
+   * Usado por moderadores. Pode ser recuperado antes de expirar.
+   */
+  @ApiSwaggerDeleteCommentManage()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.DELETE_COMMENTS)
   @Delete(':publicId/manage')
@@ -248,9 +471,28 @@ export class CommentController {
     return new ApiResponseDto(COMMENT_MESSAGES.DELETE_COMMENT_MANAGE_SUCCESS);
   }
 
+  /**
+   * Reagir a comentário
+   *
+   * @async
+   * @route PUT /comment/:publicId/react
+   * @protected Requer autenticação JWT e permissão REACT_COMMENTS
+   * @param {string} publicId - Identificador público do comentário
+   * @param {jwtTypes.RequestUser} user - Utilizador autenticado (extraído do JWT)
+   * @param {PutReactRequestDto} putReactRequestDto - Tipo de reação (LIKE/DISLIKE)
+   * @returns {Promise<ApiResponseDto<CommentResponseDto>>} Comentário com reações atualizadas
+   * @throws {NotFoundException} Se comentário não existir
+   * @throws {UnauthorizedException} Se token de autenticação for inválido ou ausente
+   * @throws {ForbiddenException} Se utilizador não possuir permissão REACT_COMMENTS
+   *
+   * @description
+   * Adiciona, remove ou altera reação (like/dislike) em comentário.
+   * Comportamento idempotente: mesma reação remove, reação diferente substitui.
+   */
+  @ApiSwaggerPutReact()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @Put(':publicId/react')
   @RequiresPermissions(PermissionApiName.REACT_COMMENTS)
+  @Put(':publicId/react')
   async putReactToComment(
     @Param('publicId', ParseUUIDPipe) publicId: string,
     @User() user: jwtTypes.RequestUser,
@@ -268,6 +510,24 @@ export class CommentController {
     );
   }
 
+  /**
+   * Mostrar comentário (moderação)
+   *
+   * @async
+   * @route PUT /comment/:publicId/show
+   * @protected Requer autenticação JWT e permissão SHOW_COMMENTS
+   * @param {string} publicId - Identificador público do comentário
+   * @returns {Promise<ApiResponseDto<CommentResponseDto>>} Comentário tornado visível
+   * @throws {NotFoundException} Se comentário não existir
+   * @throws {UnauthorizedException} Se token de autenticação for inválido ou ausente
+   * @throws {ForbiddenException} Se utilizador não possuir permissão SHOW_COMMENTS
+   * @throws {ConflictException} Se comentário foi deletado
+   *
+   * @description
+   * Torna comentário visível publicamente alterando estado de HIDDEN para VISIBLE.
+   * Usado por moderadores.
+   */
+  @ApiSwaggerShowComment()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.SHOW_COMMENTS)
   @Put(':publicId/show')
@@ -281,6 +541,24 @@ export class CommentController {
     );
   }
 
+  /**
+   * Ocultar comentário (moderação)
+   *
+   * @async
+   * @route PUT /comment/:publicId/hide
+   * @protected Requer autenticação JWT e permissão HIDE_COMMENTS
+   * @param {string} publicId - Identificador público do comentário
+   * @returns {Promise<ApiResponseDto<CommentResponseDto>>} Comentário ocultado
+   * @throws {NotFoundException} Se comentário não existir
+   * @throws {UnauthorizedException} Se token de autenticação for inválido ou ausente
+   * @throws {ForbiddenException} Se utilizador não possuir permissão HIDE_COMMENTS
+   * @throws {ConflictException} Se comentário foi deletado
+   *
+   * @description
+   * Oculta comentário do público alterando estado de VISIBLE para HIDDEN sem deletar.
+   * Usado por moderadores.
+   */
+  @ApiSwaggerHideComment()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.HIDE_COMMENTS)
   @Put(':publicId/hide')
@@ -294,6 +572,23 @@ export class CommentController {
     );
   }
 
+  /**
+   * Recuperar comentário deletado (moderação)
+   *
+   * @async
+   * @route PUT /comment/:publicId/undelete
+   * @protected Requer autenticação JWT e permissão UNDELETE_COMMENTS
+   * @param {string} publicId - Identificador público do comentário
+   * @returns {Promise<ApiResponseDto<CommentResponseDto>>} Comentário recuperado
+   * @throws {NotFoundException} Se comentário não existir
+   * @throws {UnauthorizedException} Se token de autenticação for inválido ou ausente
+   * @throws {ForbiddenException} Se utilizador não possuir permissão UNDELETE_COMMENTS
+   *
+   * @description
+   * Recupera comentário soft-deleted revertendo soft delete e restaurando estado VISIBLE.
+   * Usado por moderadores. Apenas funciona para comentários que ainda não expiraram.
+   */
+  @ApiSwaggerUndeleteComment()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.UNDELETE_COMMENTS)
   @Put(':publicId/undelete')

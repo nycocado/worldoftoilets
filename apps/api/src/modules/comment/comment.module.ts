@@ -25,6 +25,23 @@ import { UpdateCommentManageUseCase } from '@modules/comment/use-cases/update-co
 import { DeleteCommentManageUseCase } from '@modules/comment/use-cases/delete-comment-manage.use-case';
 import { UndeleteCommentUseCase } from '@modules/comment/use-cases/undelete-comment.use-case';
 
+/**
+ * Módulo de Comentários
+ *
+ * @module CommentModule
+ * @description Organiza todos os componentes de gestão de comentários do sistema.
+ * Gerir o ciclo de vida completo dos comentários em toilets, incluindo:
+ * - Criação, edição e exclusão de comentários
+ * - Listagem de comentários por toilet ou utilizador
+ * - Sistema de reações (likes/dislikes) em comentários
+ * - Gestão de estado de comentários (visível/oculto)
+ * - Avaliações (clean, paper, structure, accessibility)
+ * - Moderação de comentários (hide/show/delete/undelete)
+ *
+ * @see CommentController - Controlador com endpoints de comentários
+ * @see CommentService - Serviço para operações de comentários
+ * @see CommentRepository - Repositório para acesso aos dados
+ */
 @Module({
   imports: [
     MikroOrmModule.forFeature([CommentEntity]),
