@@ -8,7 +8,11 @@ import {
   ToiletEntity,
   UserEntity,
 } from '@database/entities';
-import { EntityRepository, Transactional } from '@mikro-orm/mariadb';
+import {
+  EntityRepository,
+  QueryOrder,
+  Transactional,
+} from '@mikro-orm/mariadb';
 
 @Injectable()
 export class CommentRepository {
@@ -45,6 +49,7 @@ export class CommentRepository {
         populate: ['interaction.user.partner', 'rate'],
         limit: pageable ? size : undefined,
         offset: pageable && page && size ? page * size : undefined,
+        orderBy: { createdAt: QueryOrder.DESC },
       },
     );
   }
@@ -70,6 +75,7 @@ export class CommentRepository {
         populate: ['interaction.toilet', 'rate'],
         limit: pageable ? size : undefined,
         offset: pageable && page && size ? page * size : undefined,
+        orderBy: { createdAt: QueryOrder.DESC },
       },
     );
   }
@@ -80,6 +86,61 @@ export class CommentRepository {
         $lte: retention,
       },
     });
+  }
+
+  async findCommentsCountByUserPublicId(userPublicId: string): Promise<number> {
+    const em = this.commentRepository.getEntityManager();
+    const knex = em.getKnex();
+
+    const result = await knex('user as u')
+      .select(knex.raw('COUNT(c.id) as count'))
+      .leftJoin('interaction as i', function () {
+        this.on('i.user_id', '=', 'u.id')
+          .andOn(knex.raw("i.discriminator = 'comment'"))
+          .andOnNull('i.deleted_at');
+      })
+      .leftJoin('comment as c', function () {
+        this.on('c.interaction_id', '=', 'i.id')
+          .andOnNull('c.deleted_at')
+          .andOn(knex.raw("c.state = 'visible'"));
+      })
+      .where('u.public_id', userPublicId)
+      .first();
+
+    return parseInt(result?.count, 10) || 0;
+  }
+
+  async findCommentsCountsByUserPublicIds(
+    userPublicIds: string[],
+  ): Promise<Map<string, number>> {
+    if (userPublicIds.length === 0) {
+      return new Map();
+    }
+
+    const em = this.commentRepository.getEntityManager();
+    const knex = em.getKnex();
+
+    const results = await knex('user as u')
+      .select('u.public_id as publicId', knex.raw('COUNT(c.id) as count'))
+      .leftJoin('interaction as i', function () {
+        this.on('i.user_id', '=', 'u.id')
+          .andOn(knex.raw("i.discriminator = 'comment'"))
+          .andOnNull('i.deleted_at');
+      })
+      .leftJoin('comment as c', function () {
+        this.on('c.interaction_id', '=', 'i.id')
+          .andOnNull('c.deleted_at')
+          .andOn(knex.raw("c.state = 'visible'"));
+      })
+      .whereIn('u.public_id', userPublicIds)
+      .groupBy('u.public_id');
+
+    const countsMap = new Map<string, number>();
+    for (const result of results) {
+      countsMap.set(result.publicId, parseInt(result.count, 10) || 0);
+    }
+
+    return countsMap;
   }
 
   @Transactional()
@@ -127,6 +188,27 @@ export class CommentRepository {
     if (text !== undefined) {
       comment.text = text;
     }
+    await em.persistAndFlush(comment);
+    return comment;
+  }
+
+  @Transactional()
+  async changeState(
+    comment: CommentEntity,
+    state: CommentState,
+  ): Promise<CommentEntity> {
+    const em = this.commentRepository.getEntityManager();
+    comment.state = state;
+    await em.persistAndFlush(comment);
+    return comment;
+  }
+
+  @Transactional()
+  async undelete(comment: CommentEntity): Promise<CommentEntity> {
+    const em = this.commentRepository.getEntityManager();
+    comment.state = CommentState.VISIBLE;
+    comment.deletedBy = undefined;
+    comment.deletedAt = undefined;
     await em.persistAndFlush(comment);
     return comment;
   }

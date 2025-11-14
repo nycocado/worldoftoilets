@@ -34,6 +34,13 @@ export class UserRepository {
     return !!user;
   }
 
+  async findByPublicId(publicId: string): Promise<UserEntity | null> {
+    return await this.repository.findOne(
+      { publicId },
+      { populate: ['credential', 'roles'] },
+    );
+  }
+
   async findById(userId: number): Promise<UserEntity | null> {
     return await this.repository.findOne(
       { id: userId },

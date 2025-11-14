@@ -7,6 +7,7 @@ import { AUTH_EXCEPTIONS } from '@modules/auth/constants';
 import { createAccessToken } from '@modules/auth/utils/token.utils';
 import * as bcrypt from 'bcrypt';
 import { Transactional } from '@mikro-orm/mariadb';
+import { CommentService } from '@modules/comment';
 
 /**
  * Caso de Uso para Login
@@ -35,11 +36,13 @@ export class LoginUseCase {
    * Construtor do LoginUseCase
    *
    * @param {UserService} userService - Serviço para operações de utilizador
+   * @param {CommentService} commentService - Serviço para operações de comentário
    * @param {JwtService} jwtService - Serviço NestJS para geração de JWT
    * @param {RefreshTokenService} refreshTokenService - Serviço para refresh tokens
    */
   constructor(
     private readonly userService: UserService,
+    private readonly commentService: CommentService,
     private readonly jwtService: JwtService,
     private readonly refreshTokenService: RefreshTokenService,
   ) {}
@@ -100,6 +103,7 @@ export class LoginUseCase {
         name: user.name,
         email: user.credential.email,
         icon: user.icon,
+        commentsCount: await this.commentService.getCommentsCountsForUser(user),
       },
     };
   }

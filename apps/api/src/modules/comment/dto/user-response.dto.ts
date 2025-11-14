@@ -15,4 +15,7 @@ export class UserResponseDto {
 
   @Expose()
   isPartner!: boolean;
+
+  @Expose()
+  commentsCount!: number;
 }

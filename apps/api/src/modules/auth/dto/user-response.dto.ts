@@ -64,4 +64,16 @@ export class UserResponseDto {
   @IsEnum(UserIcon)
   @IsNotEmpty()
   icon: UserIcon;
+
+  /**
+   * Número de comentários feitos pelo utilizador
+   *
+   * @type {number}
+   * @description Total de comentários associados ao utilizador
+   * @example 42
+   */
+  @ApiProperty()
+  @IsNotEmpty()
+  @Type(() => Number)
+  commentsCount!: number;
 }

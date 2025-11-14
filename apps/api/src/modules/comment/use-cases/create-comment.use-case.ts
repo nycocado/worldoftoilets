@@ -7,7 +7,7 @@ import { Transactional } from '@mikro-orm/mariadb';
 import { InteractionDiscriminator } from '@database/entities';
 import { CommentRepository } from '@modules/comment/comment.repository';
 import { CommentResponseDto } from '@modules/comment/dto';
-import { EnrichCommentsWithReactsUseCase } from '@modules/comment/use-cases/enrich-comments-with-reacts.use-case';
+import { EnrichCommentsUseCase } from '@modules/comment/use-cases/enrich-comments.use-case';
 
 @Injectable()
 export class CreateCommentUseCase {
@@ -17,7 +17,7 @@ export class CreateCommentUseCase {
     private readonly toiletService: ToiletService,
     private readonly interactionService: InteractionService,
     private readonly commentRateService: CommentRateService,
-    private readonly enrichCommentsWithReactsUseCase: EnrichCommentsWithReactsUseCase,
+    private readonly enrichCommentsWithReactsUseCase: EnrichCommentsUseCase,
   ) {}
 
   @Transactional()
