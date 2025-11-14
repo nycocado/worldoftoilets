@@ -10,7 +10,6 @@ import { ReactModule } from '@modules/react/react.module';
 import {
   CreateCommentUseCase,
   DeleteCommentUseCase,
-  EnrichCommentsUseCase,
   GetCommentsByToiletPublicIdUseCase,
   GetCommentsByUserIdUseCase,
   GetCommentsByUserPublicIdUseCase,
@@ -67,7 +66,6 @@ import { UndeleteCommentUseCase } from '@modules/comment/use-cases/undelete-comm
     ShowCommentUseCase,
     HideCommentUseCase,
     UndeleteCommentUseCase,
-    EnrichCommentsUseCase,
   ],
   exports: [CommentService],
 })

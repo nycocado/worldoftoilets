@@ -15,17 +15,6 @@ export class ReactService {
     return this.reactRepository.findByUserAndComment(user.id, comment.id);
   }
 
-  async getReactCountsByComment(comment: CommentEntity) {
-    return this.reactRepository.findReactCountsByComment(comment.id);
-  }
-
-  async getReactCountsForComments(comments: CommentEntity[]) {
-    const commentsPublicIds = comments.map((comment) => comment.publicId);
-    return this.reactRepository.findReactionCountsForCommentsByPublicIds(
-      commentsPublicIds,
-    );
-  }
-
   async createReact(
     user: UserEntity,
     comment: CommentEntity,

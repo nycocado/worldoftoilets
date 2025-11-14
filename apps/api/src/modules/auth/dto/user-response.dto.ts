@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { UserIcon } from '@database/entities';
-import { Type } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 
 /**
  * DTO com Dados de Utilizador (Login Response)
@@ -23,8 +22,7 @@ export class UserResponseDto {
    * @example "550e8400-e29b-41d4-a716-446655440000"
    */
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
+  @Expose()
   @Type(() => String)
   publicId: string;
 
@@ -35,8 +33,7 @@ export class UserResponseDto {
    * @example "João Silva"
    */
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
+  @Expose()
   @Type(() => String)
   name: string;
 
@@ -48,8 +45,7 @@ export class UserResponseDto {
    * @example "joao@example.com"
    */
   @ApiProperty()
-  @IsEmail()
-  @IsNotEmpty()
+  @Expose()
   @Type(() => String)
   email: string;
 
@@ -61,8 +57,8 @@ export class UserResponseDto {
    * @example "icon-1"
    */
   @ApiProperty()
-  @IsEnum(UserIcon)
-  @IsNotEmpty()
+  @Expose()
+  @Type(() => String)
   icon: UserIcon;
 
   /**
@@ -73,7 +69,7 @@ export class UserResponseDto {
    * @example 42
    */
   @ApiProperty()
-  @IsNotEmpty()
+  @Expose()
   @Type(() => Number)
   commentsCount!: number;
 }
