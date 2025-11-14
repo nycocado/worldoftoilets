@@ -22,6 +22,7 @@ import { ReplyModule } from '@modules/reply';
 import { ReactModule } from '@modules/react';
 import { InteractionModule } from '@modules/interaction';
 import { SearchToiletModule } from '@modules/search-toilet';
+import { RoleModule } from './modules/role/role.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { SearchToiletModule } from '@modules/search-toilet';
     ReactModule,
     InteractionModule,
     SearchToiletModule,
+    RoleModule,
   ],
   providers: [
     {

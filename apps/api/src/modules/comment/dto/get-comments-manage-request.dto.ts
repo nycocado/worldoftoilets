@@ -9,7 +9,7 @@ import {
 import { Type } from 'class-transformer';
 import { CommentState } from '@database/entities';
 
-export class GetToiletsRequestDto {
+export class GetCommentsManageRequestDto {
   @ApiProperty({ required: false, default: true })
   @IsOptional()
   @IsBoolean()

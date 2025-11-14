@@ -11,6 +11,16 @@ import { USER_EXCEPTIONS } from '@modules/user/constants/exceptions.constant';
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
+  async getUserByPublicId(publicId: string): Promise<UserEntity> {
+    const user = await this.userRepository.findByPublicId(publicId);
+
+    if (!user) {
+      throw new NotFoundException(USER_EXCEPTIONS.USER_NOT_FOUND);
+    }
+
+    return user;
+  }
+
   async getUserById(id: number): Promise<UserEntity> {
     const user = await this.userRepository.findById(id);
 

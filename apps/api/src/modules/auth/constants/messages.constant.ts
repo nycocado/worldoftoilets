@@ -10,6 +10,7 @@
  * @property {string} LOGOUT_SUCCESS - Logout de sessão específica bem-sucedido
  * @property {string} LOGOUT_ALL_SUCCESS - Logout de todas as sessões bem-sucedido
  * @property {string} REGISTER_SUCCESS - Registo realizado, verificação de email pendente
+ * @property {string} REGISTER_ADMIN_SUCCESS - Registo de administrador realizado, verificação de email pendente
  * @property {string} VERIFY_EMAIL_SUCCESS - Email verificado com sucesso, pode fazer login
  * @property {string} RESEND_VERIFICATION_SUCCESS - Email de verificação reenviado com sucesso
  * @property {string} FORGOT_PASSWORD_SUCCESS - Email de reinício de password enviado (se existir)
@@ -22,6 +23,8 @@ export const AUTH_MESSAGES = {
   LOGOUT_ALL_SUCCESS: 'All sessions logged out successfully.',
   REGISTER_SUCCESS:
     'Registration successful. Check your email to activate your account.',
+  REGISTER_ADMIN_SUCCESS:
+    'Administrator registration successful. Check your email to activate your account.',
   VERIFY_EMAIL_SUCCESS: 'Email verified successfully. You can now login.',
   RESEND_VERIFICATION_SUCCESS: 'Verification email resent successfully.',
   FORGOT_PASSWORD_SUCCESS:
