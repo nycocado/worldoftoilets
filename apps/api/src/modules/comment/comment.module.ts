@@ -10,14 +10,20 @@ import { ReactModule } from '@modules/react/react.module';
 import {
   CreateCommentUseCase,
   DeleteCommentUseCase,
-  EnrichCommentsWithReactsUseCase,
+  EnrichCommentsUseCase,
   GetCommentsByToiletPublicIdUseCase,
   GetCommentsByUserIdUseCase,
+  GetCommentsByUserPublicIdUseCase,
+  HideCommentUseCase,
+  ShowCommentUseCase,
   UpdateCommentUseCase,
 } from '@modules/comment/use-cases';
 import { InteractionModule } from '@modules/interaction/interaction.module';
 import { CommentRateModule } from '@modules/comment-rate/comment-rate.module';
 import { PutReactUseCase } from '@modules/comment/use-cases/put-react.use-case';
+import { UpdateCommentManageUseCase } from '@modules/comment/use-cases/update-comment-manage.use-case';
+import { DeleteCommentManageUseCase } from '@modules/comment/use-cases/delete-comment-manage.use-case';
+import { UndeleteCommentUseCase } from '@modules/comment/use-cases/undelete-comment.use-case';
 
 @Module({
   imports: [
@@ -34,11 +40,17 @@ import { PutReactUseCase } from '@modules/comment/use-cases/put-react.use-case';
     CommentRepository,
     GetCommentsByToiletPublicIdUseCase,
     GetCommentsByUserIdUseCase,
+    GetCommentsByUserPublicIdUseCase,
     CreateCommentUseCase,
     UpdateCommentUseCase,
+    UpdateCommentManageUseCase,
     DeleteCommentUseCase,
+    DeleteCommentManageUseCase,
     PutReactUseCase,
-    EnrichCommentsWithReactsUseCase,
+    ShowCommentUseCase,
+    HideCommentUseCase,
+    UndeleteCommentUseCase,
+    EnrichCommentsUseCase,
   ],
   exports: [CommentService],
 })

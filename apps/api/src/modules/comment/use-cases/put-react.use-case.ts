@@ -6,7 +6,7 @@ import { CommentResponseDto } from '@modules/comment/dto';
 import { CommentRepository } from '@modules/comment/comment.repository';
 import { COMMENT_EXCEPTIONS } from '@modules/comment/constants/exceptions.constant';
 import { plainToInstance } from 'class-transformer';
-import { EnrichCommentsWithReactsUseCase } from '@modules/comment/use-cases/enrich-comments-with-reacts.use-case';
+import { EnrichCommentsUseCase } from '@modules/comment/use-cases/enrich-comments.use-case';
 
 @Injectable()
 export class PutReactUseCase {
@@ -14,7 +14,7 @@ export class PutReactUseCase {
     private readonly repository: CommentRepository,
     private readonly userService: UserService,
     private readonly reactService: ReactService,
-    private readonly enrichCommentsWithReactsUseCase: EnrichCommentsWithReactsUseCase,
+    private readonly enrichCommentsWithReactsUseCase: EnrichCommentsUseCase,
   ) {}
 
   async execute(

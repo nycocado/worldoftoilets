@@ -1,12 +1,12 @@
-import { CommentRepository } from '@modules/comment/comment.repository';
-import { EnrichCommentsUseCase } from '@modules/comment/use-cases/enrich-comments.use-case';
 import { Injectable } from '@nestjs/common';
-import { CommentState } from '@database/entities';
+import { CommentRepository } from '@modules/comment';
 import { UserService } from '@modules/user';
+import { EnrichCommentsUseCase } from '@modules/comment/use-cases/enrich-comments.use-case';
+import { CommentState } from '@database/entities';
 import { CommentResponseDto } from '@modules/comment/dto';
 
 @Injectable()
-export class GetCommentsByUserIdUseCase {
+export class GetCommentsByUserPublicIdUseCase {
   constructor(
     private readonly repository: CommentRepository,
     private readonly userService: UserService,
@@ -14,14 +14,14 @@ export class GetCommentsByUserIdUseCase {
   ) {}
 
   async execute(
-    userId: number,
+    userPublicId: string,
     pageable?: boolean,
     page?: number,
     size?: number,
     commentState?: CommentState,
     timestamp?: Date,
   ): Promise<CommentResponseDto[]> {
-    const user = await this.userService.getUserById(userId);
+    const user = await this.userService.getUserByPublicId(userPublicId);
     const result = await this.repository.findByUser(
       user,
       pageable,

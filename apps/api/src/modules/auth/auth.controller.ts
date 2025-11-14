@@ -2,21 +2,22 @@ import type { Request } from 'express';
 import {
   Body,
   Controller,
-  Post,
-  Res,
-  Req,
-  Query,
-  UnauthorizedException,
   Headers,
+  Post,
+  Query,
+  Req,
+  Res,
+  UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ForgotPasswordRequestDto,
   LoginRequestDto,
   LoginResponseDto,
-  RegisterRequestDto,
-  ForgotPasswordRequestDto,
-  ResetPasswordRequestDto,
   RefreshTokenResponseDto,
+  RegisterRequestDto,
   ResendVerificationRequestDto,
+  ResetPasswordRequestDto,
 } from '@modules/auth/dto';
 import { ConfigService } from '@nestjs/config';
 import { textTimeToMilliseconds } from '@common/utils/jwt-time.util';
@@ -29,6 +30,7 @@ import {
   ApiSwaggerLogoutAll,
   ApiSwaggerRefresh,
   ApiSwaggerRegister,
+  ApiSwaggerRegisterAdmin,
   ApiSwaggerResendVerification,
   ApiSwaggerResetPassword,
   ApiSwaggerVerifyEmail,
@@ -39,11 +41,16 @@ import {
   LogoutAllUseCase,
   LogoutUseCase,
   RefreshTokenUseCase,
+  RegisterAdminUseCase,
   RegisterUseCase,
   ResendVerificationUseCase,
   ResetPasswordUseCase,
   VerifyEmailUseCase,
 } from '@modules/auth/use-cases';
+import { JwtAuthGuard, PermissionsGuard } from '@common/guards';
+import { RequiresPermissions } from '@common/decorators';
+import { PermissionApiName, RoleApiName } from '@database/entities';
+import { RegisterAdminRequestDto } from '@modules/auth/dto/register-admin-request.dto';
 
 /**
  * Controlador de Autenticação
@@ -65,6 +72,7 @@ export class AuthController {
    * @param {ConfigService} configService - Serviço de configuração para ler variáveis de ambiente
    * @param {LoginUseCase} loginUseCase - Use case para autenticação de utilizador
    * @param {RegisterUseCase} registerUseCase - Use case para registo de utilizador
+   * @param {RegisterAdminUseCase} registerAdminUseCase - Use case para registo de administrador
    * @param {RefreshTokenUseCase} refreshTokenUseCase - Use case para renovação de tokens
    * @param {VerifyEmailUseCase} verifyEmailUseCase - Use case para verificação de email
    * @param {ResendVerificationUseCase} resendVerificationUseCase - Use case para reenvio de verificação
@@ -77,6 +85,7 @@ export class AuthController {
     private readonly configService: ConfigService,
     private readonly loginUseCase: LoginUseCase,
     private readonly registerUseCase: RegisterUseCase,
+    private readonly registerAdminUseCase: RegisterAdminUseCase,
     private readonly refreshTokenUseCase: RefreshTokenUseCase,
     private readonly verifyEmailUseCase: VerifyEmailUseCase,
     private readonly resendVerificationUseCase: ResendVerificationUseCase,
@@ -164,6 +173,45 @@ export class AuthController {
     const { name, email, password, icon, birthDate } = registerDto;
     await this.registerUseCase.execute(name, email, password, icon, birthDate);
     return new ApiResponseDto(AUTH_MESSAGES.REGISTER_SUCCESS);
+  }
+
+  /**
+   * Registar novo administrador
+   *
+   * @async
+   * @route POST /auth/register/admin
+   * @protected Requer autenticação JWT e permissão CREATE_USERS
+   * @param {RegisterAdminRequestDto} registerDto - Dados de registo (user + roles administrativas)
+   * @returns {Promise<ApiResponseDto>} Confirmação de sucesso
+   * @throws {BadRequestException} Se email já existir ou dados forem inválidos
+   * @throws {ConflictException} Se email já estiver registado
+   * @throws {UnauthorizedException} Se token de autenticação for inválido ou ausente
+   * @throws {ForbiddenException} Se utilizador não possuir permissão CREATE_USERS
+   *
+   * @description
+   * Cria conta administrativa com roles específicas, password hasheada e envia email de verificação.
+   * Diferente do registo normal, este endpoint permite atribuir roles administrativas personalizadas.
+   * Apenas utilizadores com permissão CREATE_USERS podem criar administradores.
+   * Utilizador não pode fazer login até verificar o email.
+   */
+  @ApiSwaggerRegisterAdmin()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @RequiresPermissions(PermissionApiName.CREATE_USERS)
+  @Post('register/admin')
+  async registerAdmin(
+    @Body() registerDto: RegisterAdminRequestDto,
+  ): Promise<ApiResponseDto> {
+    const { name, email, password, icon, birthDate } = registerDto.user;
+    const roles = registerDto.roles;
+    await this.registerAdminUseCase.execute(
+      name,
+      email,
+      password,
+      icon,
+      birthDate,
+      roles as unknown as RoleApiName[],
+    );
+    return new ApiResponseDto(AUTH_MESSAGES.REGISTER_ADMIN_SUCCESS);
   }
 
   /**

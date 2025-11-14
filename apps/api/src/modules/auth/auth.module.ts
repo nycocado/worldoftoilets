@@ -10,7 +10,7 @@ import { EmailVerificationModule } from '@modules/email-verification/email-verif
 import { PasswordResetModule } from '@modules/password-reset/password-reset.module';
 import { UserCredentialModule } from '@modules/user-credential/user-credential.module';
 import { EmailModule } from '@modules/email/email.module';
-import { LoginUseCase } from '@modules/auth/use-cases';
+import { LoginUseCase, RegisterAdminUseCase } from '@modules/auth/use-cases';
 import { RegisterUseCase } from '@modules/auth/use-cases';
 import { RefreshTokenUseCase } from '@modules/auth/use-cases';
 import { VerifyEmailUseCase } from '@modules/auth/use-cases';
@@ -19,6 +19,8 @@ import { ForgotPasswordUseCase } from '@modules/auth/use-cases';
 import { ResetPasswordUseCase } from '@modules/auth/use-cases';
 import { LogoutUseCase } from '@modules/auth/use-cases';
 import { LogoutAllUseCase } from '@modules/auth/use-cases';
+import { RoleModule } from '@modules/role';
+import { CommentModule } from '@modules/comment';
 
 /**
  * Módulo de Autenticação
@@ -43,6 +45,8 @@ import { LogoutAllUseCase } from '@modules/auth/use-cases';
     EmailVerificationModule,
     PasswordResetModule,
     UserCredentialModule,
+    RoleModule,
+    CommentModule,
     EmailModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -60,6 +64,7 @@ import { LogoutAllUseCase } from '@modules/auth/use-cases';
     JwtCookieStrategy,
     LoginUseCase,
     RegisterUseCase,
+    RegisterAdminUseCase,
     RefreshTokenUseCase,
     VerifyEmailUseCase,
     ResendVerificationUseCase,

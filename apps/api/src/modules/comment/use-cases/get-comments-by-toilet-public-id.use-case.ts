@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CommentRepository } from '@modules/comment/comment.repository';
 import { ToiletService } from '@modules/toilet/toilet.service';
 import { CommentState } from '@database/entities';
-import { EnrichCommentsWithReactsUseCase } from '@modules/comment/use-cases/enrich-comments-with-reacts.use-case';
+import { EnrichCommentsUseCase } from '@modules/comment/use-cases/enrich-comments.use-case';
 import { CommentResponseDto } from '@modules/comment/dto';
 
 @Injectable()
@@ -10,7 +10,7 @@ export class GetCommentsByToiletPublicIdUseCase {
   constructor(
     private readonly repository: CommentRepository,
     private readonly toiletService: ToiletService,
-    private readonly enrichCommentsWithReactsUseCase: EnrichCommentsWithReactsUseCase,
+    private readonly enrichCommentsUseCase: EnrichCommentsUseCase,
   ) {}
 
   async execute(
@@ -30,6 +30,6 @@ export class GetCommentsByToiletPublicIdUseCase {
       commentState,
       timestamp,
     );
-    return await this.enrichCommentsWithReactsUseCase.execute(result);
+    return await this.enrichCommentsUseCase.execute(result);
   }
 }

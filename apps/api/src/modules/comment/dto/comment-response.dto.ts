@@ -24,7 +24,7 @@ export class CommentResponseDto {
 
   @Expose()
   @Type(() => UserResponseDto)
-  user?: UserResponseDto;
+  user!: UserResponseDto;
 
   @Expose()
   createdAt!: Date;

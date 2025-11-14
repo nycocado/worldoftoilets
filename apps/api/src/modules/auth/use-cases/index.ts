@@ -4,6 +4,7 @@ export * from './logout.use-case';
 export * from './logout-all.use-case';
 export * from './refresh-token.use-case';
 export * from './register.use-case';
+export * from './register-admin.use.case';
 export * from './resend-verification.use-case';
 export * from './reset-password.use-case';
 export * from './verify-email.use-case';
