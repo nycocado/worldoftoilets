@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CommentRepository } from '@modules/comment';
 import { COMMENT_EXCEPTIONS } from '@modules/comment/constants';
 import { CommentResponseDto } from '@modules/comment/dto';
-import { EnrichCommentsUseCase } from '@modules/comment/use-cases/enrich-comments.use-case';
+import { plainToInstance } from 'class-transformer';
 
 /**
  * Caso de Uso para Recuperar Comentário Deletado (Moderação)
@@ -25,7 +25,6 @@ import { EnrichCommentsUseCase } from '@modules/comment/use-cases/enrich-comment
  * @throws {NotFoundException} Se comentário não existir
  *
  * @see CommentRepository - Repositório para operações de comentário
- * @see EnrichCommentsUseCase - Enriquece comentário com reações
  */
 @Injectable()
 export class UndeleteCommentUseCase {
@@ -33,12 +32,8 @@ export class UndeleteCommentUseCase {
    * Construtor do UndeleteCommentUseCase
    *
    * @param {CommentRepository} repository - Repositório de comentários
-   * @param {EnrichCommentsUseCase} enrichCommentsUseCase - Use case para enriquecer com reações
    */
-  constructor(
-    private readonly repository: CommentRepository,
-    private readonly enrichCommentsUseCase: EnrichCommentsUseCase,
-  ) {}
+  constructor(private readonly repository: CommentRepository) {}
 
   /**
    * Executar caso de uso de recuperar comentário deletado
@@ -66,13 +61,15 @@ export class UndeleteCommentUseCase {
     }
 
     if (!comment.deletedBy) {
-      const dto = await this.enrichCommentsUseCase.execute([comment]);
-      return dto[0];
+      return plainToInstance(CommentResponseDto, comment, {
+        excludeExtraneousValues: true,
+      });
     }
 
     await this.repository.undelete(comment);
 
-    const dto = await this.enrichCommentsUseCase.execute([comment]);
-    return dto[0];
+    return plainToInstance(CommentResponseDto, comment, {
+      excludeExtraneousValues: true,
+    });
   }
 }

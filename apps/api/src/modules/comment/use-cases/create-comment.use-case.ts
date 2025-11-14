@@ -7,7 +7,7 @@ import { Transactional } from '@mikro-orm/mariadb';
 import { InteractionDiscriminator } from '@database/entities';
 import { CommentRepository } from '@modules/comment/comment.repository';
 import { CommentResponseDto } from '@modules/comment/dto';
-import { EnrichCommentsUseCase } from '@modules/comment/use-cases/enrich-comments.use-case';
+import { plainToInstance } from 'class-transformer';
 
 /**
  * Caso de Uso para Criar Comentário
@@ -35,7 +35,6 @@ import { EnrichCommentsUseCase } from '@modules/comment/use-cases/enrich-comment
  * );
  *
  * @see CommentRepository - Repositório para persistência
- * @see EnrichCommentsUseCase - Enriquece comentários com reações
  */
 @Injectable()
 export class CreateCommentUseCase {
@@ -47,7 +46,6 @@ export class CreateCommentUseCase {
    * @param {ToiletService} toiletService - Serviço para operações de toilet
    * @param {InteractionService} interactionService - Serviço para criar interações
    * @param {CommentRateService} commentRateService - Serviço para criar avaliações
-   * @param {EnrichCommentsUseCase} enrichCommentsWithReactsUseCase - Use case para enriquecer com reações
    */
   constructor(
     private readonly repository: CommentRepository,
@@ -55,7 +53,6 @@ export class CreateCommentUseCase {
     private readonly toiletService: ToiletService,
     private readonly interactionService: InteractionService,
     private readonly commentRateService: CommentRateService,
-    private readonly enrichCommentsWithReactsUseCase: EnrichCommentsUseCase,
   ) {}
 
   /**
@@ -108,8 +105,8 @@ export class CreateCommentUseCase {
       accessibility,
     );
 
-    const dto = await this.enrichCommentsWithReactsUseCase.execute([comment]);
-
-    return dto[0];
+    return plainToInstance(CommentResponseDto, comment, {
+      excludeExtraneousValues: true,
+    });
   }
 }
