@@ -1,0 +1,13 @@
+export { ApiSwaggerGetCommentsByToilet } from './get-comments-by-toilet.swagger';
+export { ApiSwaggerGetCommentsByToiletManage } from './get-comments-by-toilet-manage.swagger';
+export { ApiSwaggerGetCommentsByUserSelf } from './get-comments-by-user-self.swagger';
+export { ApiSwaggerGetCommentsByUserManage } from './get-comments-by-user-manage.swagger';
+export { ApiSwaggerCreateComment } from './create-comment.swagger';
+export { ApiSwaggerUpdateComment } from './update-comment.swagger';
+export { ApiSwaggerUpdateCommentManage } from './update-comment-manage.swagger';
+export { ApiSwaggerDeleteComment } from './delete-comment.swagger';
+export { ApiSwaggerDeleteCommentManage } from './delete-comment-manage.swagger';
+export { ApiSwaggerPutReact } from './put-react.swagger';
+export { ApiSwaggerShowComment } from './show-comment.swagger';
+export { ApiSwaggerHideComment } from './hide-comment.swagger';
+export { ApiSwaggerUndeleteComment } from './undelete-comment.swagger';

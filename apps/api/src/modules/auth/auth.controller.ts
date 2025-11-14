@@ -61,6 +61,18 @@ import { RegisterAdminRequestDto } from '@modules/auth/dto/register-admin-reques
  *
  * @route /auth - Rota base para todos os endpoints de autenticação
  *
+ * @endpoints
+ * - POST /auth/login - Autenticar utilizador
+ * - POST /auth/register - Registar novo utilizador
+ * - POST /auth/register/admin - Registar novo administrador (requer permissão CREATE_USERS)
+ * - POST /auth/refresh - Renovar token de acesso
+ * - POST /auth/logout - Logout de sessão específica
+ * - POST /auth/logout-all - Logout de todas as sessões do utilizador
+ * - POST /auth/verify-email - Verificar email
+ * - POST /auth/resend-verification - Reenviar email de verificação
+ * - POST /auth/forgot-password - Solicitar recuperação de password
+ * - POST /auth/reset-password - Efetuar reset de password
+ *
  * @see LoginUseCase, RegisterUseCase, RefreshTokenUseCase - Use cases que executam a lógica de negócio
  * @see ApiSwagger - Decoradores de documentação Swagger
  */
