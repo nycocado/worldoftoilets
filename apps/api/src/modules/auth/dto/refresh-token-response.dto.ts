@@ -1,6 +1,5 @@
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 
 /**
  * DTO de Response para Refresh Token
@@ -26,8 +25,7 @@ export class RefreshTokenResponseDto {
    * Substitui o access token anterior. Configurável via JWT_EXPIRATION.
    */
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
+  @Expose()
   @Type(() => String)
   accessToken: string;
 
@@ -40,8 +38,7 @@ export class RefreshTokenResponseDto {
    * Usado para futuras renovações de access token.
    */
   @ApiProperty()
-  @IsUUID()
-  @IsNotEmpty()
+  @Expose()
   @Type(() => String)
   refreshToken: string;
 }

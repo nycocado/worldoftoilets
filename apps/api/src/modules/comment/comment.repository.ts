@@ -21,7 +21,6 @@ import {
  * @description Repositório de acesso a dados para entidade CommentEntity.
  * Oferece operações CRUD e queries complexas para comentários, incluindo:
  * - Busca por publicId, toilet ou utilizador
- * - Contagem de comentários com queries SQL otimizadas
  * - Operações transacionais de criação, atualização e remoção
  * - Gestão de soft delete e estados de comentários
  * - Queries com paginação e ordenação
@@ -169,87 +168,6 @@ export class CommentRepository {
         $lte: retention,
       },
     });
-  }
-
-  /**
-   * Contar comentários de um utilizador por publicId
-   *
-   * @async
-   * @param {string} userPublicId - Identificador público do utilizador
-   * @returns {Promise<number>} Contagem de comentários visíveis
-   *
-   * @description
-   * Conta comentários visíveis de um utilizador usando query SQL nativa otimizada.
-   * Considera apenas comentários não deletados e com estado VISIBLE.
-   * Usado para estatísticas de perfil de utilizador.
-   */
-  async findCommentsCountByUserPublicId(userPublicId: string): Promise<number> {
-    const em = this.commentRepository.getEntityManager();
-    const knex = em.getKnex();
-
-    const result = await knex('user as u')
-      .select(knex.raw('COUNT(c.id) as count'))
-      .leftJoin('interaction as i', function () {
-        this.on('i.user_id', '=', 'u.id')
-          .andOn(knex.raw("i.discriminator = 'comment'"))
-          .andOnNull('i.deleted_at');
-      })
-      .leftJoin('comment as c', function () {
-        this.on('c.interaction_id', '=', 'i.id')
-          .andOnNull('c.deleted_at')
-          .andOn(knex.raw("c.state = 'visible'"));
-      })
-      .where('u.public_id', userPublicId)
-      .first();
-
-    return parseInt(result?.count, 10) || 0;
-  }
-
-  /**
-   * Contar comentários de múltiplos utilizadores por publicIds
-   *
-   * @async
-   * @param {string[]} userPublicIds - Array de identificadores públicos de utilizadores
-   * @returns {Promise<Map<string, number>>} Mapa de publicId -> contagem
-   *
-   * @description
-   * Operação em batch para contar comentários de múltiplos utilizadores.
-   * Usa query SQL nativa otimizada com GROUP BY para reduzir queries ao banco.
-   * Retorna Map onde chave é publicId do utilizador e valor é a contagem.
-   * Considera apenas comentários visíveis e não deletados.
-   * Retorna Map vazio se array de entrada estiver vazio.
-   */
-  async findCommentsCountsByUserPublicIds(
-    userPublicIds: string[],
-  ): Promise<Map<string, number>> {
-    if (userPublicIds.length === 0) {
-      return new Map();
-    }
-
-    const em = this.commentRepository.getEntityManager();
-    const knex = em.getKnex();
-
-    const results = await knex('user as u')
-      .select('u.public_id as publicId', knex.raw('COUNT(c.id) as count'))
-      .leftJoin('interaction as i', function () {
-        this.on('i.user_id', '=', 'u.id')
-          .andOn(knex.raw("i.discriminator = 'comment'"))
-          .andOnNull('i.deleted_at');
-      })
-      .leftJoin('comment as c', function () {
-        this.on('c.interaction_id', '=', 'i.id')
-          .andOnNull('c.deleted_at')
-          .andOn(knex.raw("c.state = 'visible'"));
-      })
-      .whereIn('u.public_id', userPublicIds)
-      .groupBy('u.public_id');
-
-    const countsMap = new Map<string, number>();
-    for (const result of results) {
-      countsMap.set(result.publicId, parseInt(result.count, 10) || 0);
-    }
-
-    return countsMap;
   }
 
   /**

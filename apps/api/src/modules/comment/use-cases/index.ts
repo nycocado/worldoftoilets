@@ -1,6 +1,5 @@
 export * from './create-comment.use-case';
 export * from './delete-comment.use-case';
-export * from './enrich-comments.use-case';
 export * from './get-comments-by-toilet-public-id.use-case';
 export * from './get-comments-by-user-id.use-case';
 export * from './get-comments-by-user-public-id.use-case';

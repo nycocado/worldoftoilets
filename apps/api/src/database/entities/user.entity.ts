@@ -10,15 +10,20 @@ import {
   Property,
   Unique,
   ManyToMany,
+  Formula,
 } from '@mikro-orm/core';
 import { UserCredentialEntity } from './user-credential.entity';
 import { UserRoleEntity } from './user-role.entity';
 import { RefreshTokenEntity } from './refresh-token.entity';
 import { RoleEntity } from './role.entity';
-import { InteractionEntity } from './interaction.entity';
+import {
+  InteractionDiscriminator,
+  InteractionEntity,
+} from './interaction.entity';
 import { ReactEntity } from './react.entity';
 import { ReplyEntity } from './reply.entity';
 import { PartnerEntity } from './partner.entity';
+import { CommentState } from '@database/entities/comment.entity';
 
 /**
  * Ícones de perfil disponíveis para utilizadores
@@ -243,6 +248,44 @@ export class UserEntity {
   })
   partner?: PartnerEntity;
 
+  /**
+   * Total de comentários feitos pelo utilizador
+   * @field commentsCount
+   * @type number
+   * @nullable true
+   * @transient true
+   * @description Contagem total de comentários visíveis (não persistido)
+   */
+  @Formula(
+    (alias) =>
+      `(SELECT COUNT(*) FROM interaction i 
+    INNER JOIN comment c ON c.interaction_id = i.id 
+    WHERE i.user_id = ${alias}.id 
+    AND i.discriminator = '${InteractionDiscriminator.COMMENT}'
+    AND c.state = '${CommentState.VISIBLE}')`,
+  )
+  commentsCount: number = 0;
+
+  /**
+   * Email do utilizador
+   * @field email
+   * @type string
+   * @nullable true
+   * @transient true
+   * @description Email extraído das credenciais (se existirem)
+   */
+  get email(): string | null {
+    return this.credential?.email || null;
+  }
+
+  /**
+   * Indica se o utilizador é parceiro
+   * @field isPartner
+   * @type boolean
+   * @nullable false
+   * @transient true
+   * @description True se o utilizador tiver uma parceria ativa
+   */
   get isPartner(): boolean {
     return !!this.partner;
   }

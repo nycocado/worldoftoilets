@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { CommentRepository } from '@modules/comment/comment.repository';
 import { ToiletService } from '@modules/toilet/toilet.service';
 import { CommentState } from '@database/entities';
-import { EnrichCommentsUseCase } from '@modules/comment/use-cases/enrich-comments.use-case';
 import { CommentResponseDto } from '@modules/comment/dto';
+import { plainToInstance } from 'class-transformer';
 
 /**
  * Caso de Uso para Obter Comentários por Toilet
@@ -32,7 +32,6 @@ import { CommentResponseDto } from '@modules/comment/dto';
  * @throws {NotFoundException} Se toilet não existir
  *
  * @see CommentRepository - Repositório para busca de comentários
- * @see EnrichCommentsUseCase - Enriquece comentários com reações
  */
 @Injectable()
 export class GetCommentsByToiletPublicIdUseCase {
@@ -41,12 +40,10 @@ export class GetCommentsByToiletPublicIdUseCase {
    *
    * @param {CommentRepository} repository - Repositório de comentários
    * @param {ToiletService} toiletService - Serviço para operações de toilet
-   * @param {EnrichCommentsUseCase} enrichCommentsUseCase - Use case para enriquecer com reações
    */
   constructor(
     private readonly repository: CommentRepository,
     private readonly toiletService: ToiletService,
-    private readonly enrichCommentsUseCase: EnrichCommentsUseCase,
   ) {}
 
   /**
@@ -86,6 +83,8 @@ export class GetCommentsByToiletPublicIdUseCase {
       commentState,
       timestamp,
     );
-    return await this.enrichCommentsUseCase.execute(result);
+    return plainToInstance(CommentResponseDto, result, {
+      excludeExtraneousValues: true,
+    });
   }
 }

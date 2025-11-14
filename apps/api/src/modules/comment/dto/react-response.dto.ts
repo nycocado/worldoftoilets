@@ -25,7 +25,7 @@ export class ReactResponseDto {
    * @example 10
    */
   @ApiProperty()
-  likes: number = 0;
+  likes: number;
 
   /**
    * Total de reações negativas (dislikes)
@@ -36,5 +36,5 @@ export class ReactResponseDto {
    * @example 1
    */
   @ApiProperty()
-  dislikes: number = 0;
+  dislikes: number;
 }

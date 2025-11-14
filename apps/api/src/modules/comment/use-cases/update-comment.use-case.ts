@@ -8,9 +8,8 @@ import { CommentRateService } from '@modules/comment-rate';
 import { Transactional } from '@mikro-orm/mariadb';
 import { COMMENT_EXCEPTIONS } from '@modules/comment/constants/exceptions.constant';
 import { UserService } from '@modules/user';
-import { plainToInstance } from 'class-transformer';
 import { CommentResponseDto } from '@modules/comment/dto';
-import { EnrichCommentsUseCase } from '@modules/comment/use-cases/enrich-comments.use-case';
+import { plainToInstance } from 'class-transformer';
 
 /**
  * Caso de Uso para Atualizar Comentário Próprio
@@ -51,13 +50,11 @@ export class UpdateCommentUseCase {
    * @param {CommentRepository} repository - Repositório de comentários
    * @param {CommentRateService} commentRateService - Serviço para operações de avaliação
    * @param {UserService} userService - Serviço para operações de utilizador
-   * @param {EnrichCommentsUseCase} enrichCommentsWithReactsUseCase - Use case para enriquecer com reações
    */
   constructor(
     private readonly repository: CommentRepository,
     private readonly commentRateService: CommentRateService,
     private readonly userService: UserService,
-    private readonly enrichCommentsWithReactsUseCase: EnrichCommentsUseCase,
   ) {}
 
   /**
@@ -117,8 +114,8 @@ export class UpdateCommentUseCase {
       accessibility,
     );
 
-    const dto = await this.enrichCommentsWithReactsUseCase.execute([comment]);
-
-    return dto[0];
+    return plainToInstance(CommentResponseDto, comment, {
+      excludeExtraneousValues: true,
+    });
   }
 }

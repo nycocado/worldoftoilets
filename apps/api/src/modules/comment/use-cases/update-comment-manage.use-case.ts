@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CommentRepository } from '@modules/comment';
 import { CommentRateService } from '@modules/comment-rate';
-import { EnrichCommentsUseCase } from '@modules/comment/use-cases/enrich-comments.use-case';
 import { COMMENT_EXCEPTIONS } from '@modules/comment/constants';
 import { CommentResponseDto } from '@modules/comment/dto';
+import { plainToInstance } from 'class-transformer';
 
 /**
  * Caso de Uso para Atualizar Comentário (Gestão/Moderação)
@@ -40,12 +40,10 @@ export class UpdateCommentManageUseCase {
    *
    * @param {CommentRepository} repository - Repositório de comentários
    * @param {CommentRateService} commentRateService - Serviço para operações de avaliação
-   * @param {EnrichCommentsUseCase} enrichCommentsWithReactsUseCase - Use case para enriquecer com reações
    */
   constructor(
     private readonly repository: CommentRepository,
     private readonly commentRateService: CommentRateService,
-    private readonly enrichCommentsWithReactsUseCase: EnrichCommentsUseCase,
   ) {}
 
   /**
@@ -95,8 +93,8 @@ export class UpdateCommentManageUseCase {
       accessibility,
     );
 
-    const dto = await this.enrichCommentsWithReactsUseCase.execute([comment]);
-
-    return dto[0];
+    return plainToInstance(CommentResponseDto, comment, {
+      excludeExtraneousValues: true,
+    });
   }
 }

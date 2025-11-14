@@ -1,9 +1,9 @@
 import { CommentRepository } from '@modules/comment/comment.repository';
-import { EnrichCommentsUseCase } from '@modules/comment/use-cases/enrich-comments.use-case';
 import { Injectable } from '@nestjs/common';
 import { CommentState } from '@database/entities';
 import { UserService } from '@modules/user';
 import { CommentResponseDto } from '@modules/comment/dto';
+import { plainToInstance } from 'class-transformer';
 
 /**
  * Caso de Uso para Obter Comentários por ID de Utilizador
@@ -32,7 +32,6 @@ import { CommentResponseDto } from '@modules/comment/dto';
  * @throws {NotFoundException} Se utilizador não existir
  *
  * @see CommentRepository - Repositório para busca de comentários
- * @see EnrichCommentsUseCase - Enriquece comentários com reações
  */
 @Injectable()
 export class GetCommentsByUserIdUseCase {
@@ -41,12 +40,10 @@ export class GetCommentsByUserIdUseCase {
    *
    * @param {CommentRepository} repository - Repositório de comentários
    * @param {UserService} userService - Serviço para operações de utilizador
-   * @param {EnrichCommentsUseCase} enrichCommentsUseCase - Use case para enriquecer com reações
    */
   constructor(
     private readonly repository: CommentRepository,
     private readonly userService: UserService,
-    private readonly enrichCommentsUseCase: EnrichCommentsUseCase,
   ) {}
 
   /**
@@ -86,6 +83,8 @@ export class GetCommentsByUserIdUseCase {
       commentState,
       timestamp,
     );
-    return await this.enrichCommentsUseCase.execute(result);
+    return plainToInstance(CommentResponseDto, result, {
+      excludeExtraneousValues: true,
+    });
   }
 }

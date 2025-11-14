@@ -1,7 +1,6 @@
-import { IsNotEmpty, IsString, IsObject, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { UserResponseDto } from '@modules/auth/dto/user-response.dto';
-import { Type } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 
 /**
  * DTO de Response para Login
@@ -34,8 +33,7 @@ export class LoginResponseDto {
    * Vida útil curta (ex: 15 minutos) configurável em JWT_EXPIRATION
    */
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
+  @Expose()
   @Type(() => String)
   accessToken: string;
 
@@ -48,8 +46,7 @@ export class LoginResponseDto {
    * Vida útil longa (ex: 30 dias) configurável em JWT_REFRESH_EXPIRATION
    */
   @ApiProperty()
-  @IsUUID()
-  @IsNotEmpty()
+  @Expose()
   @Type(() => String)
   refreshToken: string;
 
@@ -60,8 +57,7 @@ export class LoginResponseDto {
    * @description Informações do utilizador para utilização no cliente
    */
   @ApiProperty()
-  @IsObject()
-  @IsNotEmpty()
+  @Expose()
   @Type(() => UserResponseDto)
   user: UserResponseDto;
 }

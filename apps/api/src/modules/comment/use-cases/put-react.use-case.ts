@@ -6,7 +6,6 @@ import { CommentResponseDto } from '@modules/comment/dto';
 import { CommentRepository } from '@modules/comment/comment.repository';
 import { COMMENT_EXCEPTIONS } from '@modules/comment/constants/exceptions.constant';
 import { plainToInstance } from 'class-transformer';
-import { EnrichCommentsUseCase } from '@modules/comment/use-cases/enrich-comments.use-case';
 
 /**
  * Caso de Uso para Reagir a Comentário
@@ -35,7 +34,6 @@ import { EnrichCommentsUseCase } from '@modules/comment/use-cases/enrich-comment
  * @throws {NotFoundException} Se comentário não existir
  *
  * @see ReactService - Serviço para gestão de reações
- * @see EnrichCommentsUseCase - Enriquece comentário com reações atualizadas
  */
 @Injectable()
 export class PutReactUseCase {
@@ -45,13 +43,11 @@ export class PutReactUseCase {
    * @param {CommentRepository} repository - Repositório de comentários
    * @param {UserService} userService - Serviço para operações de utilizador
    * @param {ReactService} reactService - Serviço para operações de reações
-   * @param {EnrichCommentsUseCase} enrichCommentsWithReactsUseCase - Use case para enriquecer com reações
    */
   constructor(
     private readonly repository: CommentRepository,
     private readonly userService: UserService,
     private readonly reactService: ReactService,
-    private readonly enrichCommentsWithReactsUseCase: EnrichCommentsUseCase,
   ) {}
 
   /**
@@ -105,8 +101,8 @@ export class PutReactUseCase {
       await this.reactService.updateReact(react, discriminator);
     }
 
-    const dto = await this.enrichCommentsWithReactsUseCase.execute([comment]);
-
-    return dto[0];
+    return plainToInstance(CommentResponseDto, comment, {
+      excludeExtraneousValues: true,
+    });
   }
 }

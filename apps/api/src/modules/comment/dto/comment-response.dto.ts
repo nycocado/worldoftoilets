@@ -85,8 +85,11 @@ export class CommentResponseDto {
    */
   @ApiProperty()
   @Expose()
-  @Type(() => ReactResponseDto)
-  reacts!: ReactResponseDto;
+  @Transform(({ obj }) => ({
+    likes: obj.likes ?? 0,
+    dislikes: obj.dislikes ?? 0,
+  }))
+  reactCounts!: ReactResponseDto;
 
   /**
    * Dados do utilizador autor do comentário
@@ -94,7 +97,7 @@ export class CommentResponseDto {
    * @type {UserResponseDto}
    * @description Informações públicas do utilizador que criou o comentário
    */
-  @ApiProperty()
+  @ApiProperty({ type: () => UserResponseDto })
   @Expose()
   @Type(() => UserResponseDto)
   user!: UserResponseDto;

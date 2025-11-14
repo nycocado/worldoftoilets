@@ -34,44 +34,6 @@ export class CommentService {
   ) {}
 
   /**
-   * Obter contagem de comentários de um utilizador
-   *
-   * @async
-   * @param {UserEntity} user - Entidade de utilizador
-   * @returns {Promise<number>} Número total de comentários visíveis do utilizador
-   *
-   * @description
-   * Retorna a contagem de comentários visíveis (não deletados) de um utilizador específico.
-   * Útil para exibir estatísticas de utilizador.
-   */
-  async getCommentsCountsForUser(user: UserEntity): Promise<number> {
-    return this.commentRepository.findCommentsCountByUserPublicId(
-      user.publicId,
-    );
-  }
-
-  /**
-   * Obter contagem de comentários para múltiplos utilizadores
-   *
-   * @async
-   * @param {UserEntity[]} users - Array de entidades de utilizadores
-   * @returns {Promise<Map<string, number>>} Mapa de publicId -> contagem de comentários
-   *
-   * @description
-   * Operação em batch para obter contagens de comentários de múltiplos utilizadores.
-   * Retorna um Map onde a chave é o publicId do utilizador e o valor é a contagem.
-   * Otimizado para reduzir queries ao banco de dados quando múltiplas contagens são necessárias.
-   */
-  async getCommentsCountsForUsers(
-    users: UserEntity[],
-  ): Promise<Map<string, number>> {
-    const userPublicIds = users.map((user) => user.publicId);
-    return this.commentRepository.findCommentsCountsByUserPublicIds(
-      userPublicIds,
-    );
-  }
-
-  /**
    * Deletar comentários expirados (Cron Job)
    *
    * @async

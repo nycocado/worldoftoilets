@@ -2,6 +2,7 @@ import {
   Collection,
   Entity,
   Enum,
+  Formula,
   Index,
   ManyToOne,
   OneToMany,
@@ -13,7 +14,7 @@ import {
 import { InteractionEntity } from './interaction.entity';
 import { UserEntity } from './user.entity';
 import { CommentRateEntity } from './comment-rate.entity';
-import { ReactEntity } from './react.entity';
+import { ReactEntity, ReactDiscriminator } from './react.entity';
 import { ReplyEntity } from './reply.entity';
 
 /**
@@ -193,6 +194,39 @@ export class CommentEntity {
   @OneToMany(() => ReplyEntity, (reply) => reply.comment)
   replies: Collection<ReplyEntity> = new Collection<ReplyEntity>(this);
 
+  /**
+   * Contagem de likes do comentário
+   * @field likes
+   * @type number
+   * @formula Subquery SQL que conta reações do tipo LIKE
+   * @description Número total de reações positivas
+   */
+  @Formula(
+    (alias) =>
+      `(SELECT COUNT(*) FROM react r WHERE r.comment_id = ${alias}.id AND r.discriminator = '${ReactDiscriminator.LIKE}')`,
+  )
+  likes: number = 0;
+
+  /**
+   * Contagem de dislikes do comentário
+   * @field dislikes
+   * @type number
+   * @formula Subquery SQL que conta reações do tipo DISLIKE
+   * @description Número total de reações negativas
+   */
+  @Formula(
+    (alias) =>
+      `(SELECT COUNT(*) FROM react r WHERE r.comment_id = ${alias}.id AND r.discriminator = '${ReactDiscriminator.DISLIKE}')`,
+  )
+  dislikes: number = 0;
+
+  /**
+   * Utilizador que fez o comentário
+   * @field user
+   * @type UserEntity
+   * @nullable false
+   * @description Acesso direto ao utilizador através da interação associada
+   */
   get user(): UserEntity {
     return this.interaction?.user;
   }
