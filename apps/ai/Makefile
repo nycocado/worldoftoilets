@@ -18,11 +18,12 @@ help:
 	@echo "  make logs       - Visualiza logs"
 	@echo ""
 	@echo "🧪 Testes e Qualidade:"
-	@echo "  make test       - Executa testes"
+	@echo "  make test       - Executa testes unitários (pytest)"
+	@echo "  make test-api   - Executa testes via endpoint /test"
 	@echo "  make format     - Formata código com Black"
 	@echo "  make lint       - Verifica código com Flake8"
 	@echo "  make health     - Verifica saúde do serviço"
-	@echo "  make test-route - Testa cálculo de rota"
+	@echo "  make test-route - Testa cálculo de rota específica"
 	@echo ""
 	@echo "🧹 Limpeza:"
 	@echo "  make clean      - Remove volumes e cache"
@@ -76,6 +77,10 @@ health:
 test-route:
 	@echo "Testando rota em Lisboa..."
 	@curl -s "http://localhost:5000/38.7072,-9.1365/38.7139,-9.1334/" | python3 -m json.tool
+
+test-api:
+	@echo "Executando testes via API..."
+	@curl -s http://localhost:5000/test | python3 -m json.tool
 
 # Local development
 run-local:
