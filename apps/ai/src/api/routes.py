@@ -4,6 +4,7 @@ Definição das rotas da API.
 from flask import Blueprint, jsonify
 from src.core import route_engine
 from src.core.config import Config
+from src.api.test_runner import run_all_tests
 from src.utils.exceptions import (
     InvalidFormatException,
     OutOfRangeLatitudeException,
@@ -53,13 +54,72 @@ def index():
 def health():
     """
     Endpoint de health check.
-    
+
     Returns:
         tuple: Tupla contendo (response_json, status_code)
     """
     health_status = route_engine.get_health_status()
     status_code = 200 if health_status["healthy"] else 503
     return jsonify(health_status), status_code
+
+
+@api_bp.route('/test')
+def test():
+    """
+    Endpoint para executar testes do serviço e retornar resultados em JSON.
+
+    ⚠️ ATENÇÃO: Este endpoint só está disponível quando DEBUG=True
+
+    Executa:
+    - Testes de validação de entrada
+    - Testes de cálculo de rotas
+    - Testes de performance
+
+    Returns:
+        tuple: Tupla contendo (response_json, status_code)
+
+    Example:
+        GET http://localhost:5000/test
+
+        Response (200 OK):
+        {
+            "status": "success",
+            "timestamp": "2025-11-15 16:45:00",
+            "execution_time_seconds": 2.345,
+            "summary": {
+                "total_tests": 7,
+                "passed": 7,
+                "failed": 0,
+                "success_rate": 100.0
+            },
+            "health": { ... },
+            "results": {
+                "validation": [ ... ],
+                "routes": [ ... ]
+            },
+            "performance": { ... }
+        }
+
+        Response (403 Forbidden) quando DEBUG=False:
+        {
+            "status": "error",
+            "code": "DEBUG_MODE_REQUIRED",
+            "message": "Este endpoint só está disponível em modo DEBUG"
+        }
+    """
+    # Verifica se está em modo DEBUG
+    if not Config.DEBUG:
+        logger.warning("Tentativa de acesso ao /test com DEBUG=False")
+        return jsonify({
+            "status": "error",
+            "code": "DEBUG_MODE_REQUIRED",
+            "message": "Este endpoint só está disponível em modo DEBUG"
+        }), 403
+
+    logger.info("Requisição para /test recebida (DEBUG=True)")
+    results = run_all_tests()
+    status_code = 200 if results.get("status") == "success" else 503
+    return jsonify(results), status_code
 
 
 @api_bp.route('/<string:origin_str>/<string:dest_str>/')

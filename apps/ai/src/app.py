@@ -25,6 +25,9 @@ def create_app() -> Flask:
     """
     app = Flask(__name__)
 
+    # Remove o comportamento estrito de barras finais nas URLs
+    app.url_map.strict_slashes = False
+
     # Configura CORS para permitir requisições de qualquer origem
     CORS(app, resources={r"/*": {"origins": "*"}})
 
