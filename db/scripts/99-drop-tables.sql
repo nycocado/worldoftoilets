@@ -1,4 +1,30 @@
-SELECT COUNT(*)
-FROM interaction i
-WHERE i.user_id = 1
-  AND i.discriminator = 'comment'
+DROP TABLE IF EXISTS report_reply;
+DROP TABLE IF EXISTS report_comment;
+DROP TABLE IF EXISTS report_toilet;
+DROP TABLE IF EXISTS report_user;
+DROP TABLE IF EXISTS react;
+DROP TABLE IF EXISTS reply;
+DROP TABLE IF EXISTS comment_rate;
+DROP TABLE IF EXISTS comment;
+DROP TABLE IF EXISTS role_permission;
+DROP TABLE IF EXISTS extra;
+DROP TABLE IF EXISTS suggestion;
+DROP TABLE IF EXISTS partner;
+DROP TABLE IF EXISTS interaction;
+DROP TABLE IF EXISTS toilet;
+DROP TABLE IF EXISTS refresh_token;
+DROP TABLE IF EXISTS user_role;
+DROP TABLE IF EXISTS password_reset;
+DROP TABLE IF EXISTS email_verification;
+DROP TABLE IF EXISTS user_credential;
+DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS city;
+DROP TABLE IF EXISTS country;
+DROP TABLE IF EXISTS type_report_reply;
+DROP TABLE IF EXISTS type_report_comment;
+DROP TABLE IF EXISTS type_report_toilet;
+DROP TABLE IF EXISTS type_report_user;
+DROP TABLE IF EXISTS type_extra;
+DROP TABLE IF EXISTS access;
+DROP TABLE IF EXISTS permission;
+DROP TABLE IF EXISTS role;

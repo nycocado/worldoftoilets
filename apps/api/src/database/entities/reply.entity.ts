@@ -6,9 +6,12 @@ import {
   PrimaryKey,
   Property,
   Unique,
+  Collection,
+  OneToMany,
 } from '@mikro-orm/core';
 import { CommentEntity } from './comment.entity';
 import { UserEntity } from './user.entity';
+import { ReportReplyEntity } from './report-reply.entity';
 
 /**
  * Estados possíveis de uma resposta no sistema
@@ -154,4 +157,16 @@ export class ReplyEntity {
    */
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
+
+  /**
+   * Coleção de relatórios desta resposta
+   * @field reports
+   * @type Collection<ReportReplyEntity>
+   * @relationship one-to-many
+   * @description Todos os relatórios feitos sobre esta resposta
+   */
+  @OneToMany(() => ReportReplyEntity, (report) => report.reply)
+  reports: Collection<ReportReplyEntity> = new Collection<ReportReplyEntity>(
+    this
+  );
 }
