@@ -245,6 +245,15 @@ CREATE TABLE
 );
 
 CREATE TABLE
+    type_report_reply
+(
+    id       INT         NOT NULL AUTO_INCREMENT,
+    name     VARCHAR(50) NOT NULL,
+    api_name VARCHAR(50) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE
     type_extra
 (
     id       INT         NOT NULL AUTO_INCREMENT,
@@ -347,6 +356,22 @@ CREATE TABLE
     reviewed_at            TIMESTAMP                                NULL,
     created_at             TIMESTAMP                                NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at             TIMESTAMP                                NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE
+    report_reply
+(
+    id                    INT                                      NOT NULL AUTO_INCREMENT,
+    public_id             CHAR(36)                                 NOT NULL DEFAULT uuid_v4(),
+    type_report_reply_id  INT                                      NOT NULL,
+    reply_id              INT                                      NOT NULL,
+    user_id               INT                                      NOT NULL,
+    status                ENUM ('pending', 'accepted', 'rejected') NOT NULL DEFAULT 'pending',
+    reviewed_by_id        INT                                      NULL,
+    reviewed_at           TIMESTAMP                                NULL,
+    created_at            TIMESTAMP                                NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at            TIMESTAMP                                NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );
 
@@ -485,6 +510,9 @@ ALTER TABLE type_report_comment
 ALTER TABLE type_report_user
     ADD UNIQUE INDEX idx_type_report_user_api_name (api_name);
 
+ALTER TABLE type_report_reply
+    ADD UNIQUE INDEX idx_type_report_reply_api_name (api_name);
+
 ALTER TABLE type_extra
     ADD UNIQUE INDEX idx_type_extra_api_name (api_name);
 
@@ -538,3 +566,16 @@ ALTER TABLE report_comment
     ADD INDEX idx_report_comment_status (status),
     ADD INDEX idx_report_comment_reviewed_at (reviewed_at),
     ADD INDEX idx_report_comment_created_at (created_at);
+
+ALTER TABLE report_reply
+    ADD FOREIGN KEY (type_report_reply_id) REFERENCES type_report_reply (id) ON DELETE NO ACTION ON UPDATE NO ACTION,
+    ADD FOREIGN KEY (reply_id) REFERENCES reply (id) ON DELETE CASCADE ON UPDATE NO ACTION,
+    ADD FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE NO ACTION,
+    ADD FOREIGN KEY (reviewed_by_id) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
+    ADD UNIQUE INDEX idx_report_reply_public_id (public_id),
+    ADD INDEX idx_report_reply_type_id (type_report_reply_id),
+    ADD INDEX idx_report_reply_reply_id (reply_id),
+    ADD INDEX idx_report_reply_user_id (user_id),
+    ADD INDEX idx_report_reply_status (status),
+    ADD INDEX idx_report_reply_reviewed_at (reviewed_at),
+    ADD INDEX idx_report_reply_created_at (created_at);

@@ -369,6 +369,16 @@ VALUES
     (7, 'Outros',                  'others'           );
 
 INSERT INTO
+    type_report_reply (id, name, api_name)
+VALUES
+    (1, 'Não é Útil',            'not-useful'           ),
+    (2, 'Informação Falsa',      'fake-information'     ),
+    (3, 'Conteúdo Inapropriado', 'inappropriate-content'),
+    (4, 'Conteúdo Ofensivo',     'offensive-content'    ),
+    (5, 'Spam',                  'spam'                 ),
+    (6, 'Outros',                'others'               );
+
+INSERT INTO
     type_extra (id, name, api_name)
 VALUES
     (1, 'Acessível para Cadeiras de Rodas',        'wheelchair-accessible'           ),
