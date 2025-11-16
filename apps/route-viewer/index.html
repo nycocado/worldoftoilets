@@ -314,31 +314,154 @@
             }
         }
         
-        // Exibir rota no mapa
+        // Exibir rota no mapa com animação
         function displayRoute(data) {
             // Remove rota anterior
             if (routePolyline) {
                 map.removeLayer(routePolyline);
             }
-            
+
             // Converte coordenadas [lon, lat] para [lat, lon] para Leaflet
             const latLngs = data.path.map(coord => [coord[1], coord[0]]);
-            
-            // Desenha rota
+
+            // Cria polyline invisível primeiro
             routePolyline = L.polyline(latLngs, {
                 color: '#667eea',
                 weight: 4,
                 opacity: 0.8
             }).addTo(map);
-            
+
             // Ajusta zoom para mostrar toda a rota
             map.fitBounds(routePolyline.getBounds(), { padding: [50, 50] });
-            
-            // Exibe estatísticas
-            const stats = data.stats;
+
+            // Remove e prepara para animação
+            map.removeLayer(routePolyline);
+
+            // Anima o desenho da rota
+            animateRoute(latLngs, data.stats);
+        }
+
+        // Função de animação da rota
+        let animationMarker = null;
+
+        function animateRoute(latLngs, stats) {
+            const totalPoints = latLngs.length;
+            const animationDuration = 2000; // 2 segundos
+            const pointsPerFrame = Math.max(1, Math.floor(totalPoints / 60)); // ~60 frames
+            let currentIndex = 0;
+            let animatedPolyline = null;
+
+            // Remove marcador de animação anterior
+            if (animationMarker) {
+                map.removeLayer(animationMarker);
+            }
+
+            // Cria marcador animado (carinho/ponto em movimento)
+            const pulsingIcon = L.divIcon({
+                className: 'pulsing-marker',
+                html: '<div class="pulse-dot"></div>',
+                iconSize: [20, 20],
+                iconAnchor: [10, 10]
+            });
+
+            animationMarker = L.marker(latLngs[0], { icon: pulsingIcon }).addTo(map);
+
+            // Adiciona estilos CSS para o marcador pulsante
+            if (!document.getElementById('animation-styles')) {
+                const style = document.createElement('style');
+                style.id = 'animation-styles';
+                style.textContent = `
+                    .pulsing-marker {
+                        background: transparent;
+                        border: none;
+                    }
+                    .pulse-dot {
+                        width: 20px;
+                        height: 20px;
+                        background: #667eea;
+                        border-radius: 50%;
+                        position: relative;
+                        box-shadow: 0 0 0 0 rgba(102, 126, 234, 1);
+                        animation: pulse-animation 1.5s infinite;
+                    }
+                    .pulse-dot::after {
+                        content: '';
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        width: 10px;
+                        height: 10px;
+                        background: white;
+                        border-radius: 50%;
+                        transform: translate(-50%, -50%);
+                    }
+                    @keyframes pulse-animation {
+                        0% {
+                            box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
+                        }
+                        70% {
+                            box-shadow: 0 0 0 15px rgba(102, 126, 234, 0);
+                        }
+                        100% {
+                            box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+
+            function animate() {
+                if (currentIndex >= totalPoints) {
+                    // Animação completa
+                    if (animationMarker) {
+                        map.removeLayer(animationMarker);
+                        animationMarker = null;
+                    }
+
+                    // Substitui com a polyline final
+                    if (animatedPolyline) {
+                        map.removeLayer(animatedPolyline);
+                    }
+                    routePolyline = L.polyline(latLngs, {
+                        color: '#667eea',
+                        weight: 4,
+                        opacity: 0.8
+                    }).addTo(map);
+
+                    // Exibe estatísticas
+                    displayStats(stats);
+                    return;
+                }
+
+                currentIndex = Math.min(currentIndex + pointsPerFrame, totalPoints);
+                const currentPath = latLngs.slice(0, currentIndex);
+
+                // Atualiza polyline
+                if (animatedPolyline) {
+                    map.removeLayer(animatedPolyline);
+                }
+                animatedPolyline = L.polyline(currentPath, {
+                    color: '#667eea',
+                    weight: 4,
+                    opacity: 0.8
+                }).addTo(map);
+
+                // Atualiza posição do marcador
+                if (animationMarker && currentIndex > 0) {
+                    animationMarker.setLatLng(latLngs[currentIndex - 1]);
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        }
+
+        // Exibe estatísticas da rota
+        function displayStats(stats) {
             const distanceKm = (stats.distance_meters / 1000).toFixed(2);
             const timeMin = (stats.time_seconds / 60).toFixed(0);
-            
+
             document.getElementById('route-info').innerHTML = `
                 <div class="info-box" style="margin-top: 1rem;">
                     <h3>✅ Rota Calculada</h3>
@@ -380,19 +503,21 @@
             if (originMarker) map.removeLayer(originMarker);
             if (destMarker) map.removeLayer(destMarker);
             if (routePolyline) map.removeLayer(routePolyline);
-            
+            if (animationMarker) map.removeLayer(animationMarker);
+
             originMarker = null;
             destMarker = null;
             routePolyline = null;
+            animationMarker = null;
             originCoords = null;
             destCoords = null;
-            
+
             document.getElementById('origin-info').textContent = 'Clique no mapa para definir';
             document.getElementById('dest-info').textContent = 'Clique no mapa para definir';
             document.getElementById('route-info').innerHTML = '';
             document.getElementById('error-info').innerHTML = '';
             document.getElementById('calculate-btn').disabled = true;
-            
+
             map.setView(LISBON_CENTER, LISBON_ZOOM);
         }
         
