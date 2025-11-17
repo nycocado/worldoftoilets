@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { ToiletRepository } from '@modules/toilet';
-import { EnrichToiletsWithCommentRateUseCase } from '@modules/toilet/use-cases/enrich-toilets-with-comment-rate.use-case';
 import {
   AccessApiName,
   CityApiName,
@@ -8,13 +7,11 @@ import {
   ToiletStatus,
 } from '@database/entities';
 import { ToiletResponseDto } from '@modules/toilet/dto';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class GetToiletsByProximityUseCase {
-  constructor(
-    private readonly repository: ToiletRepository,
-    private readonly enrichToiletWithCommentRate: EnrichToiletsWithCommentRateUseCase,
-  ) {}
+  constructor(private readonly repository: ToiletRepository) {}
 
   async execute(
     lat: number,
@@ -41,6 +38,8 @@ export class GetToiletsByProximityUseCase {
       size,
     );
 
-    return await this.enrichToiletWithCommentRate.execute(toilets);
+    return plainToInstance(ToiletResponseDto, toilets, {
+      excludeExtraneousValues: true,
+    });
   }
 }

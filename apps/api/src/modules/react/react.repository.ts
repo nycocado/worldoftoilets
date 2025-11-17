@@ -28,12 +28,12 @@ export class ReactRepository {
   ) {}
 
   async findByUserAndComment(
-    userId: number,
-    commentId: number,
+    user: UserEntity,
+    comment: CommentEntity,
   ): Promise<ReactEntity | null> {
     return this.repository.findOne({
-      user: { id: userId },
-      comment: { id: commentId },
+      user: user,
+      comment: comment,
     });
   }
 

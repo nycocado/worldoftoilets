@@ -1,8 +1,8 @@
 import { Expose, Transform, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { CommentRateResponseDto } from '@modules/comment/dto/comment-rate-response.dto';
-import { UserResponseDto } from '@modules/comment/dto';
-import { ReactResponseDto } from '@modules/comment/dto/react-response.dto';
+import { CommentRateCommentResponseDto } from '@modules/comment-rate/dto/comment-rate-comment-response.dto';
+import { ReactCommentResponseDto } from '@modules/react/dto/react-comment-response.dto';
+import { UserCommentResponseDto } from '@modules/user/dto/user-comment-response.dto';
 
 /**
  * DTO de Response para Comentário
@@ -13,9 +13,9 @@ import { ReactResponseDto } from '@modules/comment/dto/react-response.dto';
  * @property {string} publicId - ID público UUID do comentário
  * @property {string} text - Texto do comentário (opcional, máx 280 caracteres)
  * @property {number} score - Score calculado do comentário baseado nas avaliações
- * @property {CommentRateResponseDto} rate - Avaliações atribuídas ao toilet
- * @property {ReactResponseDto} reacts - Contadores de reações (likes/dislikes)
- * @property {UserResponseDto} user - Dados do utilizador que criou o comentário
+ * @property {CommentRateCommentResponseDto} rate - Avaliações atribuídas ao toilet
+ * @property {ReactCommentResponseDto} reacts - Contadores de reações (likes/dislikes)
+ * @property {UserCommentResponseDto} user - Dados do utilizador que criou o comentário
  * @property {Date} createdAt - Data de criação do comentário
  *
  * @example
@@ -39,6 +39,7 @@ export class CommentResponseDto {
    */
   @ApiProperty()
   @Expose()
+  @Type(() => String)
   publicId!: string;
 
   /**
@@ -52,6 +53,7 @@ export class CommentResponseDto {
   @ApiProperty({ required: false })
   @Expose()
   @Transform(({ value }) => value ?? null)
+  @Type(() => String)
   text?: string;
 
   /**
@@ -64,23 +66,24 @@ export class CommentResponseDto {
    */
   @ApiProperty()
   @Expose()
+  @Type(() => Number)
   score!: number;
 
   /**
    * Avaliações atribuídas ao toilet
    *
-   * @type {CommentRateResponseDto}
+   * @type {CommentRateCommentResponseDto}
    * @description Avaliações de limpeza, papel, estrutura e acessibilidade
    */
   @ApiProperty({ required: false })
   @Expose()
-  @Type(() => CommentRateResponseDto)
-  rate?: CommentRateResponseDto;
+  @Type(() => CommentRateCommentResponseDto)
+  rate?: CommentRateCommentResponseDto;
 
   /**
    * Contadores de reações ao comentário
    *
-   * @type {ReactResponseDto}
+   * @type {ReactCommentResponseDto}
    * @description Total de likes e dislikes recebidos
    */
   @ApiProperty()
@@ -89,18 +92,19 @@ export class CommentResponseDto {
     likes: obj.likes ?? 0,
     dislikes: obj.dislikes ?? 0,
   }))
-  reactCounts!: ReactResponseDto;
+  @Type(() => ReactCommentResponseDto)
+  reactCounts!: ReactCommentResponseDto;
 
   /**
    * Dados do utilizador autor do comentário
    *
-   * @type {UserResponseDto}
+   * @type {UserCommentResponseDto}
    * @description Informações públicas do utilizador que criou o comentário
    */
-  @ApiProperty({ type: () => UserResponseDto })
+  @ApiProperty({ type: () => UserCommentResponseDto })
   @Expose()
-  @Type(() => UserResponseDto)
-  user!: UserResponseDto;
+  @Type(() => UserCommentResponseDto)
+  user!: UserCommentResponseDto;
 
   /**
    * Data de criação do comentário
@@ -111,5 +115,6 @@ export class CommentResponseDto {
    */
   @ApiProperty()
   @Expose()
+  @Type(() => Date)
   createdAt!: Date;
 }

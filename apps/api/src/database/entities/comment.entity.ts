@@ -203,7 +203,10 @@ export class CommentEntity {
    */
   @Formula(
     (alias) =>
-      `(SELECT COUNT(*) FROM react r WHERE r.comment_id = ${alias}.id AND r.discriminator = '${ReactDiscriminator.LIKE}')`,
+      `(SELECT COUNT(*) FROM react r 
+      WHERE r.comment_id = ${alias}.id 
+      AND r.discriminator = '${ReactDiscriminator.LIKE}')`,
+    { lazy: true },
   )
   likes: number = 0;
 
@@ -216,7 +219,10 @@ export class CommentEntity {
    */
   @Formula(
     (alias) =>
-      `(SELECT COUNT(*) FROM react r WHERE r.comment_id = ${alias}.id AND r.discriminator = '${ReactDiscriminator.DISLIKE}')`,
+      `(SELECT COUNT(*) FROM react r 
+      WHERE r.comment_id = ${alias}.id 
+      AND r.discriminator = '${ReactDiscriminator.DISLIKE}')`,
+    { lazy: true },
   )
   dislikes: number = 0;
 

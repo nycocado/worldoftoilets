@@ -60,7 +60,7 @@ export class CreateCommentUseCase {
    *
    * @async
    * @transactional Executa dentro de transação
-   * @param {number} userId - ID interno do utilizador
+   * @param {string} publicId - ID público do utilizador
    * @param {string} toiletPublicId - Identificador público do toilet
    * @param {number} clean - Avaliação de limpeza (1-5)
    * @param {boolean} paper - Disponibilidade de papel higiénico
@@ -71,7 +71,7 @@ export class CreateCommentUseCase {
    * @throws {NotFoundException} Se utilizador ou toilet não forem encontrados
    *
    * @description
-   * 1. Busca utilizador por ID interno
+   * 1. Busca utilizador por publicId
    * 2. Busca toilet por publicId
    * 3. Cria interação do tipo COMMENT associando utilizador e toilet
    * 4. Cria comentário com texto opcional
@@ -81,7 +81,7 @@ export class CreateCommentUseCase {
    */
   @Transactional()
   async execute(
-    userId: number,
+    publicId: string,
     toiletPublicId: string,
     clean: number,
     paper: boolean,
@@ -89,7 +89,7 @@ export class CreateCommentUseCase {
     accessibility: number,
     text?: string,
   ): Promise<CommentResponseDto> {
-    const user = await this.userService.getUserById(userId);
+    const user = await this.userService.getUserByPublicId(publicId);
     const toilet = await this.toiletService.getToiletByPublicId(toiletPublicId);
     const interaction = await this.interactionService.createInteraction(
       user,

@@ -63,7 +63,7 @@ export class UpdateCommentUseCase {
    * @async
    * @transactional Executa dentro de transação
    * @param {string} commentPublicId - Identificador público do comentário
-   * @param {number} userId - ID interno do utilizador (autor)
+   * @param {string} publicId - ID público do utilizador (autor)
    * @param {string} text - Novo texto do comentário (opcional)
    * @param {number} clean - Nova avaliação de limpeza (opcional)
    * @param {boolean} paper - Nova disponibilidade de papel (opcional)
@@ -74,7 +74,7 @@ export class UpdateCommentUseCase {
    * @throws {UnauthorizedException} Se utilizador não for o autor
    *
    * @description
-   * 1. Busca utilizador por ID interno
+   * 1. Busca utilizador por publicId
    * 2. Busca comentário e avaliação por publicId
    * 3. Valida existência do comentário e avaliação
    * 4. Verifica se utilizador é o autor do comentário
@@ -86,21 +86,21 @@ export class UpdateCommentUseCase {
   @Transactional()
   async execute(
     commentPublicId: string,
-    userId: number,
+    publicId: string,
     text?: string,
     clean?: number,
     paper?: boolean,
     structure?: number,
     accessibility?: number,
   ): Promise<CommentResponseDto> {
-    const user = await this.userService.getUserById(userId);
+    const user = await this.userService.getUserByPublicId(publicId);
     const comment = await this.repository.findByPublicId(commentPublicId);
 
     if (!comment || !comment.rate) {
       throw new NotFoundException(COMMENT_EXCEPTIONS.COMMENT_NOT_FOUND);
     }
 
-    if (comment.user.id !== user.id) {
+    if (comment.user.publicId !== user.publicId) {
       throw new UnauthorizedException(COMMENT_EXCEPTIONS.COMMENT_NOT_OWNED);
     }
 

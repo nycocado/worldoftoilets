@@ -1,10 +1,10 @@
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 /**
  * DTO de Response para Avaliação de Comentário
  *
- * @class CommentRateResponseDto
+ * @class CommentRateCommentResponseDto
  * @description Transfer Object para resposta com avaliações atribuídas a um toilet
  *
  * @property {number} clean - Avaliação de limpeza (1-5)
@@ -20,7 +20,7 @@ import { ApiProperty } from '@nestjs/swagger';
  *   "accessibility": 5
  * }
  */
-export class CommentRateResponseDto {
+export class CommentRateCommentResponseDto {
   /**
    * Avaliação de limpeza do toilet
    *
@@ -31,6 +31,7 @@ export class CommentRateResponseDto {
    */
   @ApiProperty()
   @Expose()
+  @Type(() => Number)
   clean!: number;
 
   /**
@@ -42,6 +43,7 @@ export class CommentRateResponseDto {
    */
   @ApiProperty()
   @Expose()
+  @Type(() => Boolean)
   paper!: boolean;
 
   /**
@@ -54,6 +56,7 @@ export class CommentRateResponseDto {
    */
   @ApiProperty()
   @Expose()
+  @Type(() => Number)
   structure!: number;
 
   /**
@@ -66,5 +69,6 @@ export class CommentRateResponseDto {
    */
   @ApiProperty()
   @Expose()
+  @Type(() => Number)
   accessibility!: number;
 }

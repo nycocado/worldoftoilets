@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
-import {
-  EntityManager,
-  EntityRepository,
-  Transactional,
-} from '@mikro-orm/mariadb';
+import { EntityRepository, Transactional } from '@mikro-orm/mariadb';
 import {
   EmailVerificationEntity,
   UserCredentialEntity,

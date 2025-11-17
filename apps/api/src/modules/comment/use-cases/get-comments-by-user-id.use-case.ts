@@ -21,7 +21,7 @@ import { plainToInstance } from 'class-transformer';
  *
  * @example
  * const comments = await getCommentsByUserIdUseCase.execute(
- *   123, // userId
+ *   '550e8400-e29b-41d4-a716-446655440000', // publicId
  *   true, // pageable
  *   0, // page
  *   10, // size
@@ -50,7 +50,7 @@ export class GetCommentsByUserIdUseCase {
    * Executar caso de uso de obter comentários por ID de utilizador
    *
    * @async
-   * @param {number} userId - ID interno do utilizador
+   * @param {string} publicId - ID público do utilizador
    * @param {boolean} pageable - Se deve aplicar paginação
    * @param {number} page - Número da página (zero-indexed)
    * @param {number} size - Tamanho da página
@@ -60,21 +60,21 @@ export class GetCommentsByUserIdUseCase {
    * @throws {NotFoundException} Se utilizador não existir
    *
    * @description
-   * 1. Busca utilizador por ID interno
+   * 1. Busca utilizador por publicId
    * 2. Busca comentários do utilizador com filtros
    * 3. Enriquece comentários com dados de reações
    * 4. Retorna lista de DTOs completos
    * Comentários são ordenados por data de criação descendente.
    */
   async execute(
-    userId: number,
+    publicId: string,
     pageable?: boolean,
     page?: number,
     size?: number,
     commentState?: CommentState,
     timestamp?: Date,
   ): Promise<CommentResponseDto[]> {
-    const user = await this.userService.getUserById(userId);
+    const user = await this.userService.getUserByPublicId(publicId);
     const result = await this.repository.findByUser(
       user,
       pageable,

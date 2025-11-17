@@ -1,19 +1,26 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { UserIcon } from '@database/entities';
 import { Expose, Type } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 
 /**
- * DTO com Dados de Utilizador (Login Response)
+ * DTO Base para Utilizador
  *
- * @class UserResponseDto
- * @description Transfer Object com informações públicas do utilizador autenticado
+ * @class UserBaseDto
+ * @description Transfer Object base com informações públicas do utilizador
  *
  * @property {string} publicId - ID público UUID do utilizador
  * @property {string} name - Nome de utilizador (display name)
- * @property {string} email - Email do utilizador
- * @property {UserIcon} icon - Ícone/avatar do utilizador
+ * @property {string} icon - Ícone/avatar do utilizador
+ * @property {number} commentCount - Total de comentários feitos pelo utilizador
+ *
+ * @example
+ * {
+ *  "publicId": "550e8400-e29b-41d4-a716-446655440000",
+ *  "name": "João Silva",
+ *  "icon": "icon-1",
+ *  "commentCount": 42
+ *  }
  */
-export class UserResponseDto {
+export class UserBaseDto {
   /**
    * ID público do utilizador em formato UUID
    *
@@ -24,7 +31,7 @@ export class UserResponseDto {
   @ApiProperty()
   @Expose()
   @Type(() => String)
-  publicId: string;
+  publicId!: string;
 
   /**
    * Nome de utilizador (display name/alcunha)
@@ -35,31 +42,19 @@ export class UserResponseDto {
   @ApiProperty()
   @Expose()
   @Type(() => String)
-  name: string;
-
-  /**
-   * Email do utilizador
-   *
-   * @type {string}
-   * @format email
-   * @example "joao@example.com"
-   */
-  @ApiProperty()
-  @Expose()
-  @Type(() => String)
-  email: string;
+  name!: string;
 
   /**
    * Ícone/avatar do utilizador
    *
-   * @type {UserIcon}
-   * @description Avatar escolhido pelo utilizador durante o registo
+   * @type {string}
+   * @description Identificador do avatar escolhido pelo utilizador
    * @example "icon-1"
    */
   @ApiProperty()
   @Expose()
   @Type(() => String)
-  icon: UserIcon;
+  icon!: string;
 
   /**
    * Número de comentários feitos pelo utilizador

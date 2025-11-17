@@ -68,7 +68,17 @@ export class ToiletRepository {
     return this.repository.findOne(
       { publicId },
       {
-        populate: ['city.country', 'access', 'extras.typeExtra'],
+        populate: [
+          'city.country',
+          'access',
+          'extras.typeExtra',
+          'partner',
+          'totalRatings',
+          'avgClean',
+          'avgStructure',
+          'avgAccessibility',
+          'paperAvailability',
+        ],
       },
     );
   }
@@ -89,7 +99,17 @@ export class ToiletRepository {
     this.applyJoins(qb);
     this.applyPagination(qb, pageable, page, size);
 
-    return qb.getResultList();
+    const results = await qb.getResultList();
+
+    await this.repository.populate(results, [
+      'totalRatings',
+      'avgClean',
+      'avgStructure',
+      'avgAccessibility',
+      'paperAvailability',
+    ]);
+
+    return results;
   }
 
   async findByBoundingBox(
@@ -113,7 +133,17 @@ export class ToiletRepository {
     this.applyFiltersQueryBuilder(qb, city, country, access, status, timestamp);
     this.applyJoins(qb);
 
-    return qb.getResultList();
+    const results = await qb.getResultList();
+
+    await this.repository.populate(results, [
+      'totalRatings',
+      'avgClean',
+      'avgStructure',
+      'avgAccessibility',
+      'paperAvailability',
+    ]);
+
+    return results;
   }
 
   async findByProximity(
@@ -151,7 +181,17 @@ export class ToiletRepository {
       knex.limit(size).offset(page * size);
     }
 
-    return qb.getResultList();
+    const results = await qb.getResultList();
+
+    await this.repository.populate(results, [
+      'totalRatings',
+      'avgClean',
+      'avgStructure',
+      'avgAccessibility',
+      'paperAvailability',
+    ]);
+
+    return results;
   }
 
   async findByFullTextSearch(
@@ -167,7 +207,6 @@ export class ToiletRepository {
       query,
     ]);
 
-    this.applyJoins(qb);
     this.applyPagination(qb, pageable, page, size);
 
     const knex = qb.getKnexQuery();

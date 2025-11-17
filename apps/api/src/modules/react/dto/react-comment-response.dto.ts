@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 /**
  * DTO de Response para Reações de Comentário
  *
- * @class ReactResponseDto
+ * @class ReactCommentResponseDto
  * @description Transfer Object para resposta com contadores de reações (likes/dislikes)
  *
  * @property {number} likes - Total de reações positivas (likes)
@@ -15,7 +15,7 @@ import { ApiProperty } from '@nestjs/swagger';
  *   "dislikes": 1
  * }
  */
-export class ReactResponseDto {
+export class ReactCommentResponseDto {
   /**
    * Total de reações positivas (likes)
    *
