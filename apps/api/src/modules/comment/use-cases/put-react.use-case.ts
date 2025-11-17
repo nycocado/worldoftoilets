@@ -54,14 +54,14 @@ export class PutReactUseCase {
    * Executar caso de uso de reagir a comentário
    *
    * @async
-   * @param {number} userId - ID interno do utilizador
+   * @param {string} publicId - ID público do utilizador
    * @param {string} commentPublicId - Identificador público do comentário
    * @param {ReactDiscriminator} discriminator - Tipo de reação (LIKE ou DISLIKE)
    * @returns {Promise<CommentResponseDto>} DTO do comentário com reações atualizadas
    * @throws {NotFoundException} Se comentário não existir
    *
    * @description
-   * 1. Busca utilizador por ID interno
+   * 1. Busca utilizador por publicId
    * 2. Busca comentário por publicId
    * 3. Valida existência do comentário
    * 4. Busca reação existente do utilizador no comentário
@@ -73,11 +73,11 @@ export class PutReactUseCase {
    * Comportamento idempotente para facilitar uso em interfaces.
    */
   async execute(
-    userId: number,
+    publicId: string,
     commentPublicId: string,
     discriminator: ReactDiscriminator,
   ): Promise<CommentResponseDto> {
-    const user = await this.userService.getUserById(userId);
+    const user = await this.userService.getUserByPublicId(publicId);
     const comment = await this.repository.findByPublicId(commentPublicId);
 
     if (!comment) {

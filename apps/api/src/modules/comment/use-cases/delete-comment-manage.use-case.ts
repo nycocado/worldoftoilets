@@ -47,12 +47,12 @@ export class DeleteCommentManageUseCase {
    * @async
    * @transactional Executa dentro de transação
    * @param {string} commentPublicId - Identificador público do comentário
-   * @param {number} userId - ID interno do moderador
+   * @param {string} publicId - ID público do moderador
    * @returns {Promise<void>}
    * @throws {NotFoundException} Se comentário não existir
    *
    * @description
-   * 1. Busca utilizador moderador por ID interno
+   * 1. Busca utilizador moderador por publicId
    * 2. Busca comentário por publicId
    * 3. Valida existência do comentário
    * 4. Marca comentário como soft deleted (registra moderador que deletou)
@@ -61,8 +61,8 @@ export class DeleteCommentManageUseCase {
    * Usado por moderadores com permissão DELETE_COMMENTS.
    */
   @Transactional()
-  async execute(commentPublicId: string, userId: number): Promise<void> {
-    const user = await this.userService.getUserById(userId);
+  async execute(commentPublicId: string, publicId: string): Promise<void> {
+    const user = await this.userService.getUserByPublicId(publicId);
     const comment = await this.repository.findByPublicId(commentPublicId);
 
     if (!comment) {

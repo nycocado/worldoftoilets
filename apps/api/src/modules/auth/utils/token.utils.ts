@@ -10,7 +10,6 @@ import { RoleApiName } from '@database/entities';
  *
  * @async
  * @param {JwtService} jwtService - Serviço NestJS para geração de JWT
- * @param {number} userId - ID interno do utilizador
  * @param {string} publicId - ID público UUID do utilizador
  * @param {RoleApiName[]} roles - Array com nomes de papéis/roles
  * @returns {Promise<string>} Token JWT assinado
@@ -18,19 +17,16 @@ import { RoleApiName } from '@database/entities';
  * @example
  * const token = await createAccessToken(
  *   jwtService,
- *   123,
  *   '550e8400-e29b-41d4-a716-446655440000',
  *   ['user', 'moderator']
  * );
  */
 export async function createAccessToken(
   jwtService: JwtService,
-  userId: number,
   publicId: string,
   roles: RoleApiName[],
 ): Promise<string> {
   const payload = {
-    sub: userId,
     publicId: publicId,
     roles: roles,
   };

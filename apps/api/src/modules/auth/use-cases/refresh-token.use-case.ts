@@ -61,7 +61,6 @@ export class RefreshTokenUseCase {
 
     const accessToken = await createAccessToken(
       this.jwtService,
-      refreshToken.user.id,
       refreshToken.user.publicId,
       refreshToken.user.roles.map((role) => role.apiName),
     );

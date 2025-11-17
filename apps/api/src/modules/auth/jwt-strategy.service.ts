@@ -51,7 +51,6 @@ export class JwtCookieStrategy extends PassportStrategy(Strategy, 'jwt') {
    *
    * @async
    * @param {JwtPayload} payload - Payload decodificado do token JWT
-   * @param {number} payload.sub - ID interno do utilizador (subject)
    * @param {string} payload.publicId - ID público UUID do utilizador
    * @param {string[]} payload.roles - Array de papéis/roles do utilizador
    * @returns {Promise<RequestUser>} Objeto com informações do utilizador autenticado
@@ -63,7 +62,6 @@ export class JwtCookieStrategy extends PassportStrategy(Strategy, 'jwt') {
    *
    * @example
    * {
-   *   sub: 123,
    *   publicId: "550e8400-e29b-41d4-a716-446655440000",
    *   roles: ["user", "moderator"],
    *   iat: 1699000000,
@@ -72,7 +70,6 @@ export class JwtCookieStrategy extends PassportStrategy(Strategy, 'jwt') {
    */
   async validate(payload: JwtPayload): Promise<RequestUser> {
     return {
-      id: payload.sub,
       publicId: payload.publicId,
       roles: payload.roles,
     };

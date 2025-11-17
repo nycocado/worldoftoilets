@@ -2,6 +2,7 @@ import {
   Collection,
   Entity,
   Enum,
+  Formula,
   Index,
   ManyToOne,
   OneToMany,
@@ -14,8 +15,12 @@ import { CityEntity } from './city.entity';
 import { AccessEntity } from './access.entity';
 import { UserEntity } from './user.entity';
 import { ExtraEntity } from './extra.entity';
-import { InteractionEntity } from './interaction.entity';
+import {
+  InteractionDiscriminator,
+  InteractionEntity,
+} from './interaction.entity';
 import { PartnerEntity } from './partner.entity';
+import { CommentState } from '@database/entities/comment.entity';
 
 /**
  * Estados possíveis de uma casa de banho no sistema
@@ -280,4 +285,104 @@ export class ToiletEntity {
     nullable: true,
   })
   partner?: PartnerEntity;
+
+  /**
+   * Total de avaliações (ratings) de comentários visíveis
+   * @field totalRatings
+   * @type number
+   * @nullable false
+   * @transient true
+   * @description Contagem de comment_rate onde o comentário está visível
+   */
+  @Formula(
+    (alias) =>
+      `(SELECT COUNT(cr.id) FROM comment_rate cr 
+      INNER JOIN comment c ON cr.id = c.id 
+      INNER JOIN interaction i ON c.interaction_id = i.id 
+      WHERE i.toilet_id = ${alias}.id 
+      AND i.discriminator = '${InteractionDiscriminator.COMMENT}'
+      AND c.state = '${CommentState.VISIBLE}')`,
+    { lazy: true },
+  )
+  totalRatings: number = 0;
+
+  /**
+   * Média da avaliação de limpeza (clean) dos comentários visíveis
+   * @field avgClean
+   * @type number
+   * @nullable false
+   * @transient true
+   * @description Média de comment_rate.clean onde o comentário está visível
+   */
+  @Formula(
+    (alias) =>
+      `(SELECT COALESCE(AVG(cr.clean), 0) FROM comment_rate cr 
+      INNER JOIN comment c ON cr.id = c.id
+      INNER JOIN interaction i ON c.interaction_id = i.id
+      WHERE i.toilet_id = ${alias}.id 
+      AND i.discriminator = '${InteractionDiscriminator.COMMENT}'
+      AND c.state = '${CommentState.VISIBLE}')`,
+    { lazy: true },
+  )
+  avgClean: number = 0;
+
+  /**
+   * Média da avaliação de estrutura (structure) dos comentários visíveis
+   * @field avgStructure
+   * @type number
+   * @nullable false
+   * @transient true
+   * @description Média de comment_rate.structure onde o comentário está visível
+   */
+  @Formula(
+    (alias) =>
+      `(SELECT COALESCE(AVG(cr.structure), 0) FROM comment_rate cr 
+      INNER JOIN comment c ON cr.id = c.id
+      INNER JOIN interaction i ON c.interaction_id = i.id
+      WHERE i.toilet_id = ${alias}.id 
+      AND i.discriminator = '${InteractionDiscriminator.COMMENT}'
+      AND c.state = '${CommentState.VISIBLE}')`,
+    { lazy: true },
+  )
+  avgStructure: number = 0;
+
+  /**
+   * Média da avaliação de acessibilidade (accessibility) dos comentários visíveis
+   * @field avgAccessibility
+   * @type number
+   * @nullable false
+   * @transient true
+   * @description Média de comment_rate.accessibility onde o comentário está visível
+   */
+  @Formula(
+    (alias) =>
+      `(SELECT COALESCE(AVG(cr.accessibility), 0) FROM comment_rate cr 
+      INNER JOIN comment c ON cr.id = c.id
+      INNER JOIN interaction i ON c.interaction_id = i.id
+      WHERE i.toilet_id = ${alias}.id 
+      AND i.discriminator = '${InteractionDiscriminator.COMMENT}'
+      AND c.state = '${CommentState.VISIBLE}')`,
+    { lazy: true },
+  )
+  avgAccessibility: number = 0;
+
+  /**
+   * Média da disponibilidade de papel (paper) dos comentários visíveis
+   * @field paperAvailability
+   * @type number
+   * @nullable false
+   * @transient true
+   * @description Média de comment_rate.paper (true=1, false=0) onde o comentário está visível
+   */
+  @Formula(
+    (alias) =>
+      `(SELECT COALESCE(AVG(CASE WHEN cr.paper = true THEN 1 ELSE 0 END), 0) FROM comment_rate cr
+      INNER JOIN comment c ON cr.id = c.id
+      INNER JOIN interaction i ON c.interaction_id = i.id
+      WHERE i.toilet_id = ${alias}.id 
+      AND i.discriminator = '${InteractionDiscriminator.COMMENT}'
+      AND c.state = '${CommentState.VISIBLE}')`,
+    { lazy: true },
+  )
+  paperAvailability: number = 0;
 }

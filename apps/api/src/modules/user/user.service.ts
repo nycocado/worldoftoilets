@@ -21,16 +21,6 @@ export class UserService {
     return user;
   }
 
-  async getUserById(id: number): Promise<UserEntity> {
-    const user = await this.userRepository.findById(id);
-
-    if (!user) {
-      throw new NotFoundException(USER_EXCEPTIONS.USER_NOT_FOUND);
-    }
-
-    return user;
-  }
-
   async getUserByEmail(email: string): Promise<UserEntity> {
     const user = await this.userRepository.findByEmail(email);
 
@@ -56,10 +46,10 @@ export class UserService {
   }
 
   async verifyUserHasPermissions(
-    userId: number,
+    publicId: string,
     apiNames: PermissionApiName[],
   ): Promise<boolean> {
-    return this.userRepository.hasPermissions(userId, apiNames);
+    return this.userRepository.hasPermissions(publicId, apiNames);
   }
 
   async createUser(

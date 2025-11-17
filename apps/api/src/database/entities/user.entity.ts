@@ -263,6 +263,7 @@ export class UserEntity {
     WHERE i.user_id = ${alias}.id 
     AND i.discriminator = '${InteractionDiscriminator.COMMENT}'
     AND c.state = '${CommentState.VISIBLE}')`,
+    { lazy: true },
   )
   commentsCount: number = 0;
 

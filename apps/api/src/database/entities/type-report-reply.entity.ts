@@ -78,6 +78,7 @@ export class TypeReportReplyEntity {
    * @description Todos os relatórios de respostas desta categoria
    */
   @OneToMany(() => ReportReplyEntity, (report) => report.typeReportReply)
-  reports: Collection<ReportReplyEntity> =
-    new Collection<ReportReplyEntity>(this);
+  reports: Collection<ReportReplyEntity> = new Collection<ReportReplyEntity>(
+    this,
+  );
 }

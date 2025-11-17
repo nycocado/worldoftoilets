@@ -3,7 +3,6 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { textTimeToMilliseconds } from '@common/utils/jwt-time.util';
 import { ConfigService } from '@nestjs/config';
 import { CommentRepository } from '@modules/comment/comment.repository';
-import { UserEntity } from '@database/entities';
 
 /**
  * Serviço de Comentários

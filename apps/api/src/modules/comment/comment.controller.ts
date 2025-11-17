@@ -230,7 +230,7 @@ export class CommentController {
     const { pageable, page, size, timestamp } = getByToiletsRequestDto || {};
 
     const result = await this.getCommentsByUserIdUseCase.execute(
-      user.id,
+      user.publicId,
       pageable,
       page,
       size,
@@ -315,7 +315,7 @@ export class CommentController {
     const { clean, paper, structure, accessibility } = rate;
 
     const comment = await this.createCommentUseCase.execute(
-      user.id,
+      user.publicId,
       toiletPublicId,
       clean,
       paper,
@@ -359,7 +359,7 @@ export class CommentController {
 
     const comment = await this.updateCommentUseCase.execute(
       publicId,
-      user.id,
+      user.publicId,
       text,
       clean,
       paper,
@@ -438,7 +438,7 @@ export class CommentController {
     @Param('publicId', ParseUUIDPipe) publicId: string,
     @User() user: jwtTypes.RequestUser,
   ): Promise<ApiResponseDto> {
-    await this.deleteCommentUseCase.execute(publicId, user.id);
+    await this.deleteCommentUseCase.execute(publicId, user.publicId);
     return new ApiResponseDto(COMMENT_MESSAGES.DELETE_COMMENT_SUCCESS);
   }
 
@@ -467,7 +467,7 @@ export class CommentController {
     @Param('publicId', ParseUUIDPipe) publicId: string,
     @User() user: jwtTypes.RequestUser,
   ): Promise<ApiResponseDto> {
-    await this.deleteCommentManageUseCase.execute(publicId, user.id);
+    await this.deleteCommentManageUseCase.execute(publicId, user.publicId);
     return new ApiResponseDto(COMMENT_MESSAGES.DELETE_COMMENT_MANAGE_SUCCESS);
   }
 
@@ -500,7 +500,7 @@ export class CommentController {
   ): Promise<ApiResponseDto<CommentResponseDto>> {
     const { react } = putReactRequestDto;
     const comment = await this.putReactUseCase.execute(
-      user.id,
+      user.publicId,
       publicId,
       react as unknown as ReactDiscriminator,
     );

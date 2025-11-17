@@ -1,10 +1,11 @@
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
+import { UserBaseDto } from '@modules/user/dto/user-base.dto';
 
 /**
  * DTO de Response para Utilizador (em Comentário)
  *
- * @class UserResponseDto
+ * @class UserCommentResponseDto
  * @description Transfer Object para resposta com dados públicos do utilizador autor do comentário
  *
  * @property {string} publicId - ID público UUID do utilizador
@@ -24,28 +25,7 @@ import { ApiProperty } from '@nestjs/swagger';
  *   "commentsCount": 42
  * }
  */
-export class UserResponseDto {
-  /**
-   * ID público do utilizador em formato UUID
-   *
-   * @type {string}
-   * @format uuid
-   * @example "550e8400-e29b-41d4-a716-446655440000"
-   */
-  @ApiProperty()
-  @Expose()
-  publicId!: string;
-
-  /**
-   * Nome de utilizador (display name/alcunha)
-   *
-   * @type {string}
-   * @example "João Silva"
-   */
-  @ApiProperty()
-  @Expose()
-  name!: string;
-
+export class UserCommentResponseDto extends UserBaseDto {
   /**
    * Total de pontos acumulados
    *
@@ -55,18 +35,8 @@ export class UserResponseDto {
    */
   @ApiProperty()
   @Expose()
+  @Type(() => Number)
   points!: number;
-
-  /**
-   * Ícone/avatar do utilizador
-   *
-   * @type {string}
-   * @description Identificador do avatar escolhido pelo utilizador
-   * @example "icon-1"
-   */
-  @ApiProperty()
-  @Expose()
-  icon!: string;
 
   /**
    * Indica se o utilizador é parceiro
@@ -77,16 +47,6 @@ export class UserResponseDto {
    */
   @ApiProperty()
   @Expose()
+  @Type(() => Boolean)
   isPartner!: boolean;
-
-  /**
-   * Número de comentários feitos pelo utilizador
-   *
-   * @type {number}
-   * @description Total de comentários associados ao utilizador
-   * @example 42
-   */
-  @ApiProperty()
-  @Expose()
-  commentsCount!: number;
 }

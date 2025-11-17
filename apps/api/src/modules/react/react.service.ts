@@ -12,7 +12,7 @@ export class ReactService {
   constructor(private readonly reactRepository: ReactRepository) {}
 
   async getReactByUserAndComment(user: UserEntity, comment: CommentEntity) {
-    return this.reactRepository.findByUserAndComment(user.id, comment.id);
+    return this.reactRepository.findByUserAndComment(user, comment);
   }
 
   async createReact(

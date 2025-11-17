@@ -11,12 +11,12 @@ export class UserRepository {
   ) {}
 
   async hasPermissions(
-    userId: number,
+    publicId: string,
     apiNames: PermissionApiName[],
   ): Promise<boolean> {
     const user = await this.repository.findOne(
       {
-        id: userId,
+        publicId: publicId,
         roles: {
           $some: {
             permissions: {
@@ -37,21 +37,14 @@ export class UserRepository {
   async findByPublicId(publicId: string): Promise<UserEntity | null> {
     return await this.repository.findOne(
       { publicId },
-      { populate: ['credential', 'roles'] },
-    );
-  }
-
-  async findById(userId: number): Promise<UserEntity | null> {
-    return await this.repository.findOne(
-      { id: userId },
-      { populate: ['credential', 'roles'] },
+      { populate: ['credential', 'roles', 'commentsCount'] },
     );
   }
 
   async findByEmail(email: string): Promise<UserEntity | null> {
     return await this.repository.findOne(
       { credential: { email } },
-      { populate: ['credential', 'roles'] },
+      { populate: ['credential', 'roles', 'commentsCount'] },
     );
   }
 

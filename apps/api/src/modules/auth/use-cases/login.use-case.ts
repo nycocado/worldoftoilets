@@ -2,13 +2,14 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from '@modules/user';
 import { JwtService } from '@nestjs/jwt';
 import { RefreshTokenService } from '@modules/refresh-token/refresh-token.service';
-import { LoginResponseDto, UserResponseDto } from '@modules/auth/dto';
 import { AUTH_EXCEPTIONS } from '@modules/auth/constants';
 import { createAccessToken } from '@modules/auth/utils/token.utils';
 import * as bcrypt from 'bcrypt';
 import { Transactional } from '@mikro-orm/mariadb';
 import { CommentService } from '@modules/comment';
 import { plainToInstance } from 'class-transformer';
+import { UserLoginResponseDto } from '@modules/user/dto';
+import { LoginResponseDto } from '@modules/auth/dto';
 
 /**
  * Caso de Uso para Login
@@ -88,7 +89,6 @@ export class LoginUseCase {
 
     const accessToken = await createAccessToken(
       this.jwtService,
-      user.id,
       user.publicId,
       user.roles.map((role) => role.apiName),
     );
@@ -99,7 +99,7 @@ export class LoginUseCase {
     return {
       accessToken: accessToken,
       refreshToken: refreshToken.token,
-      user: plainToInstance(UserResponseDto, user, {
+      user: plainToInstance(UserLoginResponseDto, user, {
         excludeExtraneousValues: true,
       }),
     };

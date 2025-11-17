@@ -41,7 +41,7 @@ export class PermissionsGuard implements CanActivate {
     }
 
     const hasPermission = await this.userService.verifyUserHasPermissions(
-      user.id,
+      user.publicId,
       requiredPermissions,
     );
 

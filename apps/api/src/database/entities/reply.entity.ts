@@ -167,6 +167,6 @@ export class ReplyEntity {
    */
   @OneToMany(() => ReportReplyEntity, (report) => report.reply)
   reports: Collection<ReportReplyEntity> = new Collection<ReportReplyEntity>(
-    this
+    this,
   );
 }

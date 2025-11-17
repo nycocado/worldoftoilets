@@ -52,13 +52,13 @@ export class DeleteCommentUseCase {
    * @async
    * @transactional Executa dentro de transação
    * @param {string} commentPublicId - Identificador público do comentário
-   * @param {number} userId - ID interno do utilizador (autor)
+   * @param {string} publicId - ID público do utilizador (autor)
    * @returns {Promise<void>}
    * @throws {NotFoundException} Se comentário não existir
    * @throws {UnauthorizedException} Se utilizador não for o autor
    *
    * @description
-   * 1. Busca utilizador por ID interno
+   * 1. Busca utilizador por publicId
    * 2. Busca comentário por publicId
    * 3. Valida existência do comentário
    * 4. Verifica se utilizador é o autor do comentário
@@ -67,15 +67,15 @@ export class DeleteCommentUseCase {
    * Comentário pode ser recuperado com undelete antes do período de retenção expirar.
    */
   @Transactional()
-  async execute(commentPublicId: string, userId: number): Promise<void> {
-    const user = await this.userService.getUserById(userId);
+  async execute(commentPublicId: string, publicId: string): Promise<void> {
+    const user = await this.userService.getUserByPublicId(publicId);
     const comment = await this.repository.findByPublicId(commentPublicId);
 
     if (!comment) {
       throw new NotFoundException(COMMENT_EXCEPTIONS.COMMENT_NOT_FOUND);
     }
 
-    if (comment.user.id !== user.id) {
+    if (comment.user.publicId !== user.publicId) {
       throw new UnauthorizedException(COMMENT_EXCEPTIONS.COMMENT_NOT_OWNED);
     }
 

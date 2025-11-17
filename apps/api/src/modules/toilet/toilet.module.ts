@@ -4,7 +4,6 @@ import { ToiletController } from './toilet.controller';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { ToiletEntity } from '@database/entities';
 import { ToiletRepository } from '@modules/toilet/toilet.repository';
-import { EnrichToiletsWithCommentRateUseCase } from '@modules/toilet/use-cases/enrich-toilets-with-comment-rate.use-case';
 import { CommentRateModule } from '@modules/comment-rate';
 import { UserModule } from '@modules/user';
 import {
@@ -24,7 +23,6 @@ import {
   providers: [
     ToiletService,
     ToiletRepository,
-    EnrichToiletsWithCommentRateUseCase,
     GetToiletByPublicIdUseCase,
     GetToiletsUseCase,
     GetToiletsByBoundingBoxUseCase,

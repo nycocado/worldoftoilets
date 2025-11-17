@@ -1,5 +1,4 @@
 export interface JwtPayload {
-  sub: number;
   publicId: string;
   roles: string[];
   iat?: number;
@@ -7,7 +6,6 @@ export interface JwtPayload {
 }
 
 export interface RequestUser {
-  id: number;
   publicId: string;
   roles: string[];
 }

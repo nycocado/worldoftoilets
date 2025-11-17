@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { UserResponseDto } from '@modules/auth/dto/user-response.dto';
 import { Expose, Type } from 'class-transformer';
+import { UserLoginResponseDto } from '@modules/user/dto';
 
 /**
  * DTO de Response para Login
@@ -10,7 +10,7 @@ import { Expose, Type } from 'class-transformer';
  *
  * @property {string} accessToken - JWT Token para acesso à API (curta vida)
  * @property {string} refreshToken - JWT Token para renovação (longa vida)
- * @property {UserResponseDto} user - Dados públicos do utilizador autenticado
+ * @property {UserLoginResponseDto} user - Dados públicos do utilizador autenticado
  *
  * @example
  * {
@@ -53,11 +53,11 @@ export class LoginResponseDto {
   /**
    * Dados públicos do utilizador autenticado
    *
-   * @type {UserResponseDto}
+   * @type {UserLoginResponseDto}
    * @description Informações do utilizador para utilização no cliente
    */
   @ApiProperty()
   @Expose()
-  @Type(() => UserResponseDto)
-  user: UserResponseDto;
+  @Type(() => UserLoginResponseDto)
+  user: UserLoginResponseDto;
 }
