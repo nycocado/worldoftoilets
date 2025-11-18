@@ -96,7 +96,10 @@ VALUES
     (54, 'Gerir Certificados de Parceiros',        'manage-partner-certificates'),
     (55, 'Traçar Rotas',                           'route-toilets'              ),
     (56, 'Editar Comentários Próprios',            'edit-self-comments'         ),
-    (57, 'Visualizar Todos os Comentários',        'view-all-comments'          );
+    (57, 'Visualizar Todos os Comentários',        'view-all-comments'          ),
+    (58, 'Ativar Casas de Banho',                  'enable-toilets'             ),
+    (59, 'Visualizar Todas as Casas de Banho',     'view-all-toilets'           ),
+    (60, 'Visualizar Todos os Usuários',           'view-all-users'             );
 
 INSERT INTO
     role (id, name, api_name)
@@ -193,22 +196,25 @@ VALUES
     (73, 9,  12),
     (74, 9,  13),
     (75, 9,  14),
-    (76, 10, 37),
-    (77, 10, 38),
-    (78, 10, 39),
-    (79, 10, 40),
-    (80, 10, 41),
-    (81, 10, 43),
-    (82, 10, 44),
-    (83, 10, 46),
-    (84, 10, 47),
-    (85, 10, 48),
-    (86, 10, 49),
-    (87, 11, 50),
-    (88, 11, 51),
-    (89, 11, 52),
-    (90, 11, 53),
-    (91, 11, 54);
+    (76, 9,  58),
+    (77, 9,  59),
+    (78, 10, 37),
+    (79, 10, 38),
+    (80, 10, 39),
+    (81, 10, 40),
+    (82, 10, 41),
+    (83, 10, 43),
+    (84, 10, 44),
+    (85, 10, 46),
+    (86, 10, 47),
+    (87, 10, 48),
+    (88, 10, 49),
+    (89, 10, 60),
+    (90, 11, 50),
+    (91, 11, 51),
+    (92, 11, 52),
+    (93, 11, 53),
+    (94, 11, 54);
 
 INSERT INTO
     user_role (id, user_id, role_id)
@@ -304,33 +310,6 @@ VALUES
     (89, 15, 7 );
 
 INSERT INTO
-    country (id, name, api_name)
-VALUES
-    (1, 'Portugal',       'portugal'     ),
-    (2, 'Espanha',        'spain'        ),
-    (3, 'França',         'france'       ),
-    (4, 'Alemanha',       'germany'      ),
-    (5, 'Itália',         'italy'        ),
-    (6, 'Brasil',         'brazil'       ),
-    (7, 'Estados Unidos', 'united-states'),
-    (8, 'Austrália',      'australia'    );
-
-INSERT INTO
-    city (id, country_id, name, api_name)
-VALUES
-    (1,  1, 'Lisbon',    'lisbon'   ),
-    (2,  1, 'Odivelas',  'odivelas' ),
-    (3,  1, 'Loures',    'loures'   ),
-    (4,  1, 'Porto',     'porto'    ),
-    (5,  1, 'Braga',     'braga'    ),
-    (6,  1, 'Coimbra',   'coimbra'  ),
-    (7,  2, 'Madrid',    'madrid'   ),
-    (8,  2, 'Barcelona', 'barcelona'),
-    (9,  2, 'Valencia',  'valencia' ),
-    (10, 5, 'Roma',      'rome'     ),
-    (11, 5, 'Milão',     'milan'    );
-
-INSERT INTO
     access (id, name, api_name)
 VALUES
     (1, 'Publico',              'public'        ),
@@ -387,29 +366,30 @@ VALUES
     (4, 'Acessibilidade para Deficientes Visuais', 'accessible-for-visually-impaired');
 
 INSERT INTO
-    toilet (id, city_id, access_id, name, latitude, longitude, address, photo_url, place_id, status)
+    toilet (id, access_id, name, latitude, longitude, address, city, state, country, country_code, photo_url, place_id,
+            status)
 VALUES
-    (1,  1, 2, 'IADE - Creative University',              38.707291, -9.152416, 'Av. Dom Carlos I 4, 1200-649 Lisboa',                  'http://localhost/files/toilets/00aa7ce1-83c1-4c56-b590-cba43692c753.jpg', 'ChIJMxD6jIM0GQ0RRoKIkWyW3jY', 'active'),
-    (2,  1, 3, 'McDonalds - D. Carlos I',                 38.707358, -9.152867, 'Av. Dom Carlos I 17-25, 1200-000 Lisboa',              'http://localhost/files/toilets/10d1de99-5d30-4733-b9ec-5eb13bd8c48f.jpg', 'ChIJkX3pl4M0GQ0RmvtqSz_M6Ac', 'active'),
-    (3,  1, 1, 'Time Out Market Lisboa',                  38.707194, -9.145701, 'Mercado da Ribeira, Av. 24 de Julho, 1200-479 Lisboa', 'http://localhost/files/toilets/1be72130-7491-406a-bb8d-779b7783bf0f.jpg', 'ChIJdWBeWYc0GQ0RktxySU7hjxM', 'active'),
-    (4,  2, 1, 'Strada Outlet',                           38.782470, -9.192529, 'Casal do Troca, Estr. da Paiã, 2675-626 Odivelas',     'http://localhost/files/toilets/217803f3-84ca-4fab-834c-0d98b614da72.jpg', 'ChIJB6sGWU3NHg0RUUfwGZX-tb0', 'active'),
-    (5,  2, 3, 'McDonalds Odivelas',                      38.794569, -9.181331, 'Av. Prof. Dr. Augusto Abreu Lopes, 2675-462 Odivelas', 'http://localhost/files/toilets/26cbb667-9fb2-47b3-8a01-bf7ea9e94266.jpg', 'ChIJ51HiTFYtGQ0R5XIhuMsfLVY', 'active'),
-    (6,  3, 1, 'LoureShopping',                           38.834388, -9.156086, 'Av. Descobertas 90, 2670-457 Loures',                  'http://localhost/files/toilets/30dbaf2d-e53b-4a46-ad89-fef5f902cb0f.jpg', 'ChIJrxCvrgItGQ0RiX2Lccb5AbA', 'active'),
-    (7,  1, 3, '100 Montaditos Cais do Sodré',            38.707191, -9.147277, 'Praça Dom Luís I 10, 1200-161 Lisboa',                 'http://localhost/files/toilets/38611c8a-5150-4aae-a748-1a22b0009c52.jpg', 'ChIJDZLYNoc0GQ0RKL07B4OQXME', 'active'),
-    (8,  1, 1, 'Centro Comercial Colombo',                38.753753, -9.188466, 'Av. Lusíada, 1500-392 Lisboa',                         'http://localhost/files/toilets/48941bc0-2df1-4b5b-ac5c-b50288821d55.jpg', 'ChIJX27wACozGQ0RHKvYBbB0d8Y', 'active'),
-    (9,  1, 2, 'Estádio José Alvalade',                   38.761397, -9.161714, 'Rua Professor Fernando da Fonseca, 1501-806 Lisboa',   'http://localhost/files/toilets/49f1c86d-19dd-4bb4-b867-c3aae60b1cb0.jpg', 'ChIJmyqqteUyGQ0RIo99WTWA_sQ', 'active'),
-    (10, 1, 2, 'Museu de Lisbon',                         38.758593, -9.156390, 'Campo Grande 245, 1700-091 Lisboa',                    'http://localhost/files/toilets/4e0aea75-e3cf-4d6c-bcc4-d4f9628b496d.jpg', 'ChIJXZfOrvwyGQ0RsitHFwmsKBk', 'active'),
-    (11, 1, 1, 'Jardim Zoológico de Lisboa',              38.743267, -9.169150, 'Praça Marechal Humberto Delgado, 1549-004 Lisboa',     'http://localhost/files/toilets/6cdddf3a-8489-4547-8cb2-65f7aa5f2f31.jpg', 'ChIJd6QCpSMzGQ0RXdLwrXreq0Q', 'active'),
-    (12, 1, 2, 'Oceanário de Lisboa',                     38.763777, -9.093634, 'Esplanada Dom Carlos I s/nº, 1990-005 Lisboa',         'http://localhost/files/toilets/72cc63ee-5475-4b7d-b739-cd18015cde01.jpg', 'ChIJCVgOdYMxGQ0RMOFiOmcuP5g', 'active'),
-    (13, 1, 2, 'Casino Lisboa',                           38.764799, -9.096570, 'Alameda dos Oceanos 45, 1990-204 Lisboa',              'http://localhost/files/toilets/821f63f6-ca81-498d-98c0-c92ad321cc8c.jpg', 'ChIJ8SDZi4wxGQ0RoDZJ5_249Ck', 'active'),
-    (14, 2, 1, 'Pingo Doce Póvoa de Santo Adrião',        38.795648, -9.167641, 'R. Júlio Borba, 2620-096 Póvoa de Santo Adrião',       'http://localhost/files/toilets/84ca6e37-8f7f-4fe6-903c-4406ab35084c.jpg', 'ChIJu7ldCWAtGQ0RPfAOh0c4Ykc', 'active'),
-    (15, 2, 3, 'Espiga Dourada',                          38.792340, -9.174206, 'R. José Gomes Monteiro 3A, 2675-395 Odivelas',         'http://localhost/files/toilets/99d465a8-850e-4822-9e4b-403c535db3d7.jpg', 'ChIJt05-R6cyGQ0R1i9MIVLZPqE', 'active'),
-    (16, 1, 3, 'ZeroZero',                                38.764221, -9.095761, 'Lote 2, 11.01H, 1990-225 Lisboa',                      'http://localhost/files/toilets/a069ccea-9ede-4a4c-81cb-c8cba801f42b.jpg', 'ChIJczRB3n4xGQ0RJwB-SS4UOQI', 'active'),
-    (17, 1, 1, 'Pavilhão do Conhecimento - Ciência Viva', 38.762442, -9.095872, 'Largo José Mariano Gago nº1, 1990-073 Lisboa',         'http://localhost/files/toilets/a598d5b3-3dc7-4d11-a1eb-8b05d8099e62.jpg', 'ChIJrdyrGYkxGQ0RyGeLfnIBiRY', 'active'),
-    (18, 1, 1, 'El Corte Inglés Lisboa',                  38.733321, -9.153795, 'Av. António Augusto de Aguiar 31, 1069-413 Lisboa',    'http://localhost/files/toilets/a923231a-b61d-4331-9f64-26dd1db564d9.jpg', 'ChIJa1VVFQszGQ0RUruyluObH98', 'active'),
-    (19, 1, 2, 'Museum',                                  40.717000, -74.00100, '400 Museum Ave',                                       'http://localhost/files/toilets/c69534a0-6bcb-4df4-8e0d-78fe4cc4ee6a.jpg', NULL,                          'active'),
-    (20, 1, 1, 'Zoo',                                     40.718000, -74.00000, '500 Zoo Ln',                                           'http://localhost/files/toilets/d83e46ce-e4ca-4433-95c0-8d2f8d55a7f2.jpg', NULL,                          'active'),
-    (21, 1, 1, 'Riverfront',                              40.716000, -74.00200, '300 Riverfront Blvd',                                  'http://localhost/files/toilets/e5cf1c9a-f79f-4904-9d85-ae8dc7b0efed.jpg', NULL,                          'active');
+    (1,  2, 'IADE - Creative University',              38.707291, -9.152416, 'Av. Dom Carlos I 4, 1200-649 Lisboa',                  'Lisboa',                'Lisboa',   'Portugal',      'PT', 'http://localhost/files/toilets/00aa7ce1-83c1-4c56-b590-cba43692c753.jpg', 'ChIJMxD6jIM0GQ0RRoKIkWyW3jY', 'active'),
+    (2,  3, 'McDonalds - D. Carlos I',                 38.707358, -9.152867, 'Av. Dom Carlos I 17-25, 1200-000 Lisboa',              'Lisboa',                'Lisboa',   'Portugal',      'PT', 'http://localhost/files/toilets/10d1de99-5d30-4733-b9ec-5eb13bd8c48f.jpg', 'ChIJkX3pl4M0GQ0RmvtqSz_M6Ac', 'active'),
+    (3,  1, 'Time Out Market Lisboa',                  38.707194, -9.145701, 'Mercado da Ribeira, Av. 24 de Julho, 1200-479 Lisboa', 'Lisboa',                'Lisboa',   'Portugal',      'PT', 'http://localhost/files/toilets/1be72130-7491-406a-bb8d-779b7783bf0f.jpg', 'ChIJdWBeWYc0GQ0RktxySU7hjxM', 'active'),
+    (4,  1, 'Strada Outlet',                           38.782470, -9.192529, 'Casal do Troca, Estr. da Paiã, 2675-626 Odivelas',     'Odivelas',              'Lisboa',   'Portugal',      'PT', 'http://localhost/files/toilets/217803f3-84ca-4fab-834c-0d98b614da72.jpg', 'ChIJB6sGWU3NHg0RUUfwGZX-tb0', 'active'),
+    (5,  3, 'McDonalds Odivelas',                      38.794569, -9.181331, 'Av. Prof. Dr. Augusto Abreu Lopes, 2675-462 Odivelas', 'Odivelas',              'Lisboa',   'Portugal',      'PT', 'http://localhost/files/toilets/26cbb667-9fb2-47b3-8a01-bf7ea9e94266.jpg', 'ChIJ51HiTFYtGQ0R5XIhuMsfLVY', 'active'),
+    (6,  1, 'LoureShopping',                           38.834388, -9.156086, 'Av. Descobertas 90, 2670-457 Loures',                  'Loures',                'Lisboa',   'Portugal',      'PT', 'http://localhost/files/toilets/30dbaf2d-e53b-4a46-ad89-fef5f902cb0f.jpg', 'ChIJrxCvrgItGQ0RiX2Lccb5AbA', 'active'),
+    (7,  3, '100 Montaditos Cais do Sodré',            38.707191, -9.147277, 'Praça Dom Luís I 10, 1200-161 Lisboa',                 'Lisboa',                'Lisboa',   'Portugal',      'PT', 'http://localhost/files/toilets/38611c8a-5150-4aae-a748-1a22b0009c52.jpg', 'ChIJDZLYNoc0GQ0RKL07B4OQXME', 'active'),
+    (8,  1, 'Centro Comercial Colombo',                38.753753, -9.188466, 'Av. Lusíada, 1500-392 Lisboa',                         'Lisboa',                'Lisboa',   'Portugal',      'PT', 'http://localhost/files/toilets/48941bc0-2df1-4b5b-ac5c-b50288821d55.jpg', 'ChIJX27wACozGQ0RHKvYBbB0d8Y', 'active'),
+    (9,  2, 'Estádio José Alvalade',                   38.761397, -9.161714, 'Rua Professor Fernando da Fonseca, 1501-806 Lisboa',   'Lisboa',                'Lisboa',   'Portugal',      'PT', 'http://localhost/files/toilets/49f1c86d-19dd-4bb4-b867-c3aae60b1cb0.jpg', 'ChIJmyqqteUyGQ0RIo99WTWA_sQ', 'active'),
+    (10, 2, 'Museu de Lisbon',                         38.758593, -9.156390, 'Campo Grande 245, 1700-091 Lisboa',                    'Lisboa',                'Lisboa',   'Portugal',      'PT', 'http://localhost/files/toilets/4e0aea75-e3cf-4d6c-bcc4-d4f9628b496d.jpg', 'ChIJXZfOrvwyGQ0RsitHFwmsKBk', 'active'),
+    (11, 1, 'Jardim Zoológico de Lisboa',              38.743267, -9.169150, 'Praça Marechal Humberto Delgado, 1549-004 Lisboa',     'Lisboa',                'Lisboa',   'Portugal',      'PT', 'http://localhost/files/toilets/6cdddf3a-8489-4547-8cb2-65f7aa5f2f31.jpg', 'ChIJd6QCpSMzGQ0RXdLwrXreq0Q', 'active'),
+    (12, 2, 'Oceanário de Lisboa',                     38.763777, -9.093634, 'Esplanada Dom Carlos I s/nº, 1990-005 Lisboa',         'Lisboa',                'Lisboa',   'Portugal',      'PT', 'http://localhost/files/toilets/72cc63ee-5475-4b7d-b739-cd18015cde01.jpg', 'ChIJCVgOdYMxGQ0RMOFiOmcuP5g', 'active'),
+    (13, 2, 'Casino Lisboa',                           38.764799, -9.096570, 'Alameda dos Oceanos 45, 1990-204 Lisboa',              'Lisboa',                'Lisboa',   'Portugal',      'PT', 'http://localhost/files/toilets/821f63f6-ca81-498d-98c0-c92ad321cc8c.jpg', 'ChIJ8SDZi4wxGQ0RoDZJ5_249Ck', 'active'),
+    (14, 1, 'Pingo Doce Póvoa de Santo Adrião',        38.795648, -9.167641, 'R. Júlio Borba, 2620-096 Póvoa de Santo Adrião',       'Póvoa de Santo Adrião', 'Lisboa',   'Portugal',      'PT', 'http://localhost/files/toilets/84ca6e37-8f7f-4fe6-903c-4406ab35084c.jpg', 'ChIJu7ldCWAtGQ0RPfAOh0c4Ykc', 'active'),
+    (15, 3, 'Espiga Dourada',                          38.792340, -9.174206, 'R. José Gomes Monteiro 3A, 2675-395 Odivelas',         'Odivelas',              'Lisboa',   'Portugal',      'PT', 'http://localhost/files/toilets/99d465a8-850e-4822-9e4b-403c535db3d7.jpg', 'ChIJt05-R6cyGQ0R1i9MIVLZPqE', 'active'),
+    (16, 3, 'ZeroZero',                                38.764221, -9.095761, 'Lote 2, 11.01H, 1990-225 Lisboa',                      'Lisboa',                'Lisboa',   'Portugal',      'PT', 'http://localhost/files/toilets/a069ccea-9ede-4a4c-81cb-c8cba801f42b.jpg', 'ChIJczRB3n4xGQ0RJwB-SS4UOQI', 'active'),
+    (17, 1, 'Pavilhão do Conhecimento - Ciência Viva', 38.762442, -9.095872, 'Largo José Mariano Gago nº1, 1990-073 Lisboa',         'Lisboa',                'Lisboa',   'Portugal',      'PT', 'http://localhost/files/toilets/a598d5b3-3dc7-4d11-a1eb-8b05d8099e62.jpg', 'ChIJrdyrGYkxGQ0RyGeLfnIBiRY', 'active'),
+    (18, 1, 'El Corte Inglés Lisboa',                  38.733321, -9.153795, 'Av. António Augusto de Aguiar 31, 1069-413 Lisboa',    'Lisboa',                'Lisboa',   'Portugal',      'PT', 'http://localhost/files/toilets/a923231a-b61d-4331-9f64-26dd1db564d9.jpg', 'ChIJa1VVFQszGQ0RUruyluObH98', 'active'),
+    (19, 2, 'Museum',                                  40.717000, -74.00100, '400 Museum Ave',                                       'New York',              'New York', 'United States', 'US', 'http://localhost/files/toilets/c69534a0-6bcb-4df4-8e0d-78fe4cc4ee6a.jpg', NULL,                          'active'),
+    (20, 1, 'Zoo',                                     40.718000, -74.00000, '500 Zoo Ln',                                           'New York',              'New York', 'United States', 'US', 'http://localhost/files/toilets/d83e46ce-e4ca-4433-95c0-8d2f8d55a7f2.jpg', NULL,                          'active'),
+    (21, 1, 'Riverfront',                              40.716000, -74.00200, '300 Riverfront Blvd',                                  'New York',              'New York', 'United States', 'US', 'http://localhost/files/toilets/e5cf1c9a-f79f-4904-9d85-ae8dc7b0efed.jpg', NULL,                          'active');
 
 INSERT INTO
     interaction (id, user_id, toilet_id, discriminator)

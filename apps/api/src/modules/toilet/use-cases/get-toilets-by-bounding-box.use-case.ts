@@ -2,9 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { ToiletRepository } from '@modules/toilet';
 import {
   AccessApiName,
-  CityApiName,
-  CountryApiName,
   ToiletStatus,
+  TypeExtraApiName,
 } from '@database/entities';
 import { ToiletResponseDto } from '@modules/toilet/dto';
 import { plainToInstance } from 'class-transformer';
@@ -18,22 +17,20 @@ export class GetToiletsByBoundingBoxUseCase {
     minLng: number,
     maxLat: number,
     maxLng: number,
-    city?: CityApiName,
-    country?: CountryApiName,
     access?: AccessApiName,
     status?: ToiletStatus,
     timestamp?: Date,
+    typeExtra?: TypeExtraApiName[],
   ): Promise<ToiletResponseDto[]> {
     const toilets = await this.repository.findByBoundingBox(
       minLat,
       minLng,
       maxLat,
       maxLng,
-      city,
-      country,
       access,
       status,
       timestamp,
+      typeExtra,
     );
 
     return plainToInstance(ToiletResponseDto, toilets, {

@@ -16,6 +16,7 @@ import { RolePermissionEntity } from './role-permission.entity';
 export enum PermissionApiName {
   // Permissões de casas de banho
   VIEW_TOILETS = 'view-toilets',
+  VIEW_ALL_TOILETS = 'view-all-toilets',
   SEARCH_TOILETS = 'search-toilets',
   SUGGEST_TOILETS = 'suggest-toilets',
   CREATE_TOILETS = 'create-toilets',
@@ -24,6 +25,7 @@ export enum PermissionApiName {
   EDIT_TOILETS = 'edit-toilets',
   REPORT_TOILETS = 'report-toilets',
   PUBLISH_TOILETS = 'publish-toilets',
+  ENABLE_TOILETS = 'enable-toilets',
   DISABLE_TOILETS = 'disable-toilets',
   VIEW_SUGGEST_TOILETS = 'view-suggest-toilets',
   REVIEW_SUGGEST_TOILETS = 'review-suggest-toilets',
@@ -57,6 +59,7 @@ export enum PermissionApiName {
   SHOW_REPLIES = 'show-replies',
   // Permissões de utilizadores
   VIEW_USERS = 'view-users',
+  VIEW_ALL_USERS = 'view-all-users',
   SEARCH_USERS = 'search-users',
   ACTIVATE_USER = 'activate-user',
   DEACTIVATE_USER = 'deactivate-user',

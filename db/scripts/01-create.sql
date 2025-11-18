@@ -1,16 +1,24 @@
 CREATE TABLE
     user
 (
-    id                INT                                                                               NOT NULL AUTO_INCREMENT,
-    public_id         CHAR(36)                                                                          NOT NULL DEFAULT uuid_v4(),
-    name              VARCHAR(50)                                                                       NOT NULL,
-    points            INT                                                                               NOT NULL,
-    icon              ENUM ('icon-1', 'icon-2', 'icon-3', 'icon-4', 'icon-5', 'icon-6', 'icon-default') NOT NULL DEFAULT 'icon-default',
-    birth_date        DATE                                                                              NOT NULL,
-    deactivated_by_id INT                                                                               NULL,
-    deactivated_at    TIMESTAMP                                                                         NULL,
-    created_at        TIMESTAMP                                                                         NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at        TIMESTAMP                                                                         NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    id                INT         NOT NULL AUTO_INCREMENT,
+    public_id         CHAR(36)    NOT NULL DEFAULT uuid_v4(),
+    name              VARCHAR(50) NOT NULL,
+    points            INT         NOT NULL,
+    icon              ENUM (
+        'icon-1',
+        'icon-2',
+        'icon-3',
+        'icon-4',
+        'icon-5',
+        'icon-6',
+        'icon-default'
+        )                         NOT NULL DEFAULT 'icon-default',
+    birth_date        DATE        NOT NULL,
+    deactivated_by_id INT         NULL,
+    deactivated_at    TIMESTAMP   NULL,
+    created_at        TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at        TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );
 
@@ -98,12 +106,15 @@ CREATE TABLE
 (
     id             INT                                                  NOT NULL AUTO_INCREMENT,
     public_id      CHAR(36)                                             NOT NULL DEFAULT uuid_v4(),
-    city_id        INT                                                  NOT NULL,
     access_id      INT                                                  NOT NULL,
     name           VARCHAR(50)                                          NOT NULL,
     latitude       DECIMAL(10, 8)                                       NOT NULL,
     longitude      DECIMAL(11, 8)                                       NOT NULL,
     address        VARCHAR(255)                                         NOT NULL,
+    city           VARCHAR(100)                                         NOT NULL,
+    state          VARCHAR(100)                                         NULL,
+    country        VARCHAR(100)                                         NOT NULL,
+    country_code   CHAR(2)                                              NOT NULL,
     photo_url      VARCHAR(255)                                         NULL,
     place_id       VARCHAR(255)                                         NULL,
     status         ENUM ('active', 'inactive', 'suggested', 'rejected') NOT NULL,
@@ -186,25 +197,6 @@ CREATE TABLE
     id            INT NOT NULL AUTO_INCREMENT,
     toilet_id     INT NOT NULL,
     type_extra_id INT NOT NULL,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE
-    city
-(
-    id         INT         NOT NULL AUTO_INCREMENT,
-    country_id INT         NOT NULL,
-    name       VARCHAR(50) NOT NULL,
-    api_name   VARCHAR(50) NOT NULL,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE
-    country
-(
-    id       INT         NOT NULL AUTO_INCREMENT,
-    name     VARCHAR(50) NOT NULL,
-    api_name VARCHAR(50) NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -362,16 +354,16 @@ CREATE TABLE
 CREATE TABLE
     report_reply
 (
-    id                    INT                                      NOT NULL AUTO_INCREMENT,
-    public_id             CHAR(36)                                 NOT NULL DEFAULT uuid_v4(),
-    type_report_reply_id  INT                                      NOT NULL,
-    reply_id              INT                                      NOT NULL,
-    user_id               INT                                      NOT NULL,
-    status                ENUM ('pending', 'accepted', 'rejected') NOT NULL DEFAULT 'pending',
-    reviewed_by_id        INT                                      NULL,
-    reviewed_at           TIMESTAMP                                NULL,
-    created_at            TIMESTAMP                                NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at            TIMESTAMP                                NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    id                   INT                                      NOT NULL AUTO_INCREMENT,
+    public_id            CHAR(36)                                 NOT NULL DEFAULT uuid_v4(),
+    type_report_reply_id INT                                      NOT NULL,
+    reply_id             INT                                      NOT NULL,
+    user_id              INT                                      NOT NULL,
+    status               ENUM ('pending', 'accepted', 'rejected') NOT NULL DEFAULT 'pending',
+    reviewed_by_id       INT                                      NULL,
+    reviewed_at          TIMESTAMP                                NULL,
+    created_at           TIMESTAMP                                NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at           TIMESTAMP                                NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );
 
@@ -429,15 +421,15 @@ ALTER TABLE report_user
     ADD INDEX idx_report_user_created_at (created_at);
 
 ALTER TABLE toilet
-    ADD FOREIGN KEY (city_id) REFERENCES city (id) ON DELETE NO ACTION ON UPDATE NO ACTION,
     ADD FOREIGN KEY (access_id) REFERENCES access (id) ON DELETE NO ACTION ON UPDATE NO ACTION,
     ADD FOREIGN KEY (reviewed_by_id) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
     ADD FOREIGN KEY (deleted_by_id) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
     ADD UNIQUE INDEX idx_toilet_public_id (public_id),
     ADD UNIQUE INDEX idx_toilet_place_id (place_id),
-    ADD INDEX idx_toilet_city_id (city_id),
     ADD INDEX idx_toilet_access_id (access_id),
     ADD INDEX idx_toilet_coordinates (latitude, longitude),
+    ADD INDEX idx_toilet_city (city),
+    ADD INDEX idx_toilet_country_code (country_code),
     ADD INDEX idx_toilet_status (status),
     ADD INDEX idx_toilet_reviewed_at (reviewed_at),
     ADD INDEX idx_toilet_created_at (created_at);
@@ -490,13 +482,6 @@ ALTER TABLE extra
     ADD FOREIGN KEY (toilet_id) REFERENCES toilet (id) ON DELETE CASCADE ON UPDATE NO ACTION,
     ADD FOREIGN KEY (type_extra_id) REFERENCES type_extra (id) ON DELETE NO ACTION ON UPDATE NO ACTION,
     ADD UNIQUE INDEX idx_extra_toilet_type (toilet_id, type_extra_id);
-
-ALTER TABLE city
-    ADD FOREIGN KEY (country_id) REFERENCES country (id) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    ADD UNIQUE INDEX idx_city_country_api_name (country_id, api_name);
-
-ALTER TABLE country
-    ADD UNIQUE INDEX idx_country_api_name (api_name);
 
 ALTER TABLE access
     ADD UNIQUE INDEX idx_access_api_name (api_name);

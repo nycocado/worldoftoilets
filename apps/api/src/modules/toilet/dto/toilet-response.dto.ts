@@ -1,7 +1,6 @@
-import { Expose, Transform, Type } from 'class-transformer';
-import { CityResponseDto } from '@modules/toilet/dto/city-response.dto';
+import { Expose, plainToInstance, Transform, Type } from 'class-transformer';
 import { AccessResponseDto } from '@modules/toilet/dto/access-response.dto';
-import { ExtraResponseDto } from '@modules/toilet/dto/extra-response.dto';
+import { TypeExtraResponseDto } from '@modules/toilet/dto/type-extra-response.dto';
 import { CommentRateToiletResponseDto } from '@modules/comment-rate/dto';
 
 export class ToiletResponseDto {
@@ -9,24 +8,19 @@ export class ToiletResponseDto {
   publicId!: string;
 
   @Expose()
-  @Type(() => CityResponseDto)
-  city!: CityResponseDto;
-
-  @Expose()
   @Type(() => AccessResponseDto)
   access!: AccessResponseDto;
 
   @Expose()
   @Transform(({ obj }) => {
-    const validExtras = (obj.extras ?? []).filter(
-      (extra: any) => extra.typeExtra,
+    const items = obj.extras ?? [];
+    return items.map((e: any) =>
+      plainToInstance(TypeExtraResponseDto, e, {
+        excludeExtraneousValues: true,
+      }),
     );
-    return validExtras.map((extra: any) => ({
-      name: extra.typeExtra.name,
-      apiName: extra.typeExtra.apiName,
-    }));
   })
-  extras: ExtraResponseDto[];
+  extras: Array<TypeExtraResponseDto>;
 
   @Expose()
   name!: string;
@@ -39,6 +33,18 @@ export class ToiletResponseDto {
 
   @Expose()
   address!: string;
+
+  @Expose()
+  city!: string;
+
+  @Expose()
+  state?: string;
+
+  @Expose()
+  country!: string;
+
+  @Expose()
+  countryCode!: string;
 
   @Expose()
   photoUrl!: string;

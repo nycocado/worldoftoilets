@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
   UnauthorizedException,
+  ConflictException,
 } from '@nestjs/common';
 import { CommentRateService } from '@modules/comment-rate';
 import { Transactional } from '@mikro-orm/mariadb';
@@ -98,6 +99,10 @@ export class UpdateCommentUseCase {
 
     if (!comment || !comment.rate) {
       throw new NotFoundException(COMMENT_EXCEPTIONS.COMMENT_NOT_FOUND);
+    }
+
+    if (comment.deletedBy && comment.deletedAt) {
+      throw new ConflictException(COMMENT_EXCEPTIONS.COMMENT_DELETED);
     }
 
     if (comment.user.publicId !== user.publicId) {

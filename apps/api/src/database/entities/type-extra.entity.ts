@@ -5,22 +5,23 @@ import {
   Property,
   Unique,
   Collection,
-  OneToMany,
+  ManyToMany,
 } from '@mikro-orm/core';
 import { ExtraEntity } from './extra.entity';
+import { ToiletEntity } from '@database/entities/toilet.entity';
 
 /**
  * Tipos de recursos extras disponíveis em casas de banho
  */
 export enum TypeExtraApiName {
   /** Acessibilidade para cadeirantes */
-  WHEELCHAIR_ACCESSIBLE = 'wheelchair_accessible',
+  WHEELCHAIR_ACCESSIBLE = 'wheelchair-accessible',
   /** Trocador de fraldas disponível */
-  BABY_CHANGING_STATION = 'baby_changing_station',
+  BABY_CHANGING_STATION = 'baby-changing-station',
   /** Estacionamento para deficientes */
-  DISABLED_PARKING = 'disabled_parking',
+  DISABLED_PARKING = 'disabled-parking',
   /** Acessibilidade para pessoas com deficiência visual */
-  ACCESSIBLE_FOR_VISUALLY_IMPAIRED = 'accessible_for_visually_impaired',
+  ACCESSIBLE_FOR_VISUALLY_IMPAIRED = 'accessible-for-visually-impaired',
 }
 
 /**
@@ -67,12 +68,16 @@ export class TypeExtraEntity {
   apiName!: TypeExtraApiName;
 
   /**
-   * Coleção de extras deste tipo
-   * @field extras
-   * @type Collection<ExtraEntity>
-   * @relationship one-to-many
-   * @description Instâncias deste tipo de extra em banheiros específicos
+   * Coleção de casas de banho que possuem este tipo de extra
+   * @field toilets
+   * @type Collection<ToiletEntity>
+   * @relationship many-to-many
+   * @description Banheiros que incluem este tipo de recurso extra
    */
-  @OneToMany(() => ExtraEntity, (extra) => extra.typeExtra)
-  extras: Collection<ExtraEntity> = new Collection<ExtraEntity>(this);
+  @ManyToMany({
+    entity: () => ToiletEntity,
+    mappedBy: (toilet) => toilet.extras,
+    pivotEntity: () => ExtraEntity,
+  })
+  toilets: Collection<ToiletEntity> = new Collection<ToiletEntity>(this);
 }
