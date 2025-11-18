@@ -46,8 +46,8 @@ services:
         restart: on-failure
         command: server /data --console-address ":9001"
         environment:
-            MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
-            MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+            MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+            MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
         ports:
             - "9000:9000"
             - "9001:9001"
@@ -109,6 +109,13 @@ services:
             MAIL_HOST: "mailhog"
             MAIL_PORT: 1025
             MAIL_FROM: ${MAIL_FROM}
+            MINIO_ENDPOINT: ${MINIO_ENDPOINT}
+            MINIO_PORT: 9000
+            MINIO_USE_SSL: ${MINIO_USE_SSL}
+            MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
+            MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
+            MINIO_BUCKET: ${MINIO_BUCKET}
+            MINIO_PUBLIC_URL: ${MINIO_PUBLIC_URL}
             NODE_ENV: "development"
             PORT: 3101
             WATCHPACK_POLLING: "true"

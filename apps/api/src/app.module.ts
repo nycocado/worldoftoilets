@@ -26,6 +26,7 @@ import { RoleModule } from '@modules/role';
 import { AccessModule } from '@modules/access';
 import { TypeExtraModule } from '@modules/type-extra';
 import { CommonModule } from '@common/common.module';
+import { MinioModule } from '@modules/minio';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { CommonModule } from '@common/common.module';
       isGlobal: true,
     }),
     ScheduleModule.forRoot(),
+    MinioModule,
     MikroOrmModule.forRootAsync({
       useFactory: (config: ConfigService) => createMikroOrmConfig(config),
       imports: [ConfigModule],

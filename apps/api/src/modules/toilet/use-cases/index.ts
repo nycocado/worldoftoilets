@@ -9,3 +9,4 @@ export * from './undelete-toilet.use-case';
 export * from './publish-toilet.use-case';
 export * from './disable-toilet.use-case';
 export * from './enable-toilet.use-case';
+export * from './upload-toilet-image.use-case';
