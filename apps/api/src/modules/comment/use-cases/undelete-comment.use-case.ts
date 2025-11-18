@@ -60,7 +60,7 @@ export class UndeleteCommentUseCase {
       throw new NotFoundException(COMMENT_EXCEPTIONS.COMMENT_NOT_FOUND);
     }
 
-    if (!comment.deletedBy || !comment.deletedAt) {
+    if (!comment.isDeleted) {
       return plainToInstance(CommentResponseDto, comment, {
         excludeExtraneousValues: true,
       });

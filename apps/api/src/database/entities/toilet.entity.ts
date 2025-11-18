@@ -418,4 +418,8 @@ export class ToiletEntity {
     { lazy: true },
   )
   paperAvailability: number = 0;
+
+  get isDeleted(): boolean {
+    return !!this.deletedBy && !!this.deletedAt;
+  }
 }

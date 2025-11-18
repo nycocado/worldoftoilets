@@ -236,4 +236,15 @@ export class CommentEntity {
   get user(): UserEntity {
     return this.interaction?.user;
   }
+
+  /**
+   * Indica se o comentário foi apagado (soft delete)
+   * @field isDeleted
+   * @type boolean
+   * @nullable false
+   * @description True se o comentário foi marcado como apagado
+   */
+  get isDeleted(): boolean {
+    return !!this.deletedAt && !!this.deletedBy;
+  }
 }

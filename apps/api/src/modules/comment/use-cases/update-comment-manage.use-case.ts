@@ -87,7 +87,7 @@ export class UpdateCommentManageUseCase {
       throw new NotFoundException(COMMENT_EXCEPTIONS.COMMENT_NOT_FOUND);
     }
 
-    if (comment.deletedBy && comment.deletedAt) {
+    if (comment.isDeleted) {
       throw new ConflictException(COMMENT_EXCEPTIONS.COMMENT_DELETED);
     }
 

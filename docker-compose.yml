@@ -114,6 +114,13 @@ services:
             MAIL_HOST: "mailhog"
             MAIL_PORT: 1025
             MAIL_FROM: ${MAIL_FROM}
+            MINIO_ENDPOINT: ${MINIO_ENDPOINT}
+            MINIO_PORT: 9000
+            MINIO_USE_SSL: ${MINIO_USE_SSL}
+            MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
+            MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
+            MINIO_BUCKET: ${MINIO_BUCKET}
+            MINIO_PUBLIC_URL: ${MINIO_PUBLIC_URL}
             NODE_ENV: "production"
             PORT: 3101
         volumes:
@@ -162,6 +169,13 @@ services:
             MAIL_HOST: "mailhog"
             MAIL_PORT: 1025
             MAIL_FROM: ${MAIL_FROM}
+            MINIO_ENDPOINT: ${MINIO_ENDPOINT}
+            MINIO_PORT: 9000
+            MINIO_USE_SSL: ${MINIO_USE_SSL}
+            MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
+            MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
+            MINIO_BUCKET: ${MINIO_BUCKET}
+            MINIO_PUBLIC_URL: ${MINIO_PUBLIC_URL}
             NODE_ENV: "production"
             PORT: 3102
         volumes:

@@ -73,7 +73,7 @@ export class ShowCommentUseCase {
       });
     }
 
-    if (comment.deletedBy && comment.deletedAt) {
+    if (comment.isDeleted) {
       throw new ConflictException(COMMENT_EXCEPTIONS.COMMENT_DELETED);
     }
 
