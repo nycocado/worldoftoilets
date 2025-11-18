@@ -178,8 +178,9 @@ CREATE TABLE
 CREATE TABLE
     suggestion
 (
-    id             INT                                      NOT NULL,
+    id             INT                                      NOT NULL AUTO_INCREMENT,
     public_id      CHAR(36)                                 NOT NULL DEFAULT uuid_v4(),
+    interaction_id INT                                      NOT NULL,
     latitude       DECIMAL(10, 8)                           NOT NULL,
     longitude      DECIMAL(11, 8)                           NOT NULL,
     photo_url      VARCHAR(255)                             NULL,
@@ -451,7 +452,7 @@ ALTER TABLE report_toilet
     ADD FOREIGN KEY (interaction_id) REFERENCES interaction (id) ON DELETE CASCADE ON UPDATE NO ACTION,
     ADD FOREIGN KEY (reviewed_by_id) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
     ADD UNIQUE INDEX idx_report_toilet_public_id (public_id),
-    ADD UNIQUE INDEX idx_report_toilet_interaction (interaction_id),
+    ADD UNIQUE INDEX idx_report_toilet_interaction_id (interaction_id),
     ADD INDEX idx_report_toilet_type (type_report_toilet_id),
     ADD INDEX idx_report_toilet_status (status),
     ADD INDEX idx_report_toilet_reviewed_at (reviewed_at),
@@ -470,9 +471,10 @@ ALTER TABLE interaction
     ADD INDEX idx_interaction_created_at (created_at);
 
 ALTER TABLE suggestion
-    ADD FOREIGN KEY (id) REFERENCES interaction (id) ON DELETE CASCADE ON UPDATE NO ACTION,
+    ADD FOREIGN KEY (interaction_id) REFERENCES interaction (id) ON DELETE CASCADE ON UPDATE NO ACTION,
     ADD FOREIGN KEY (reviewed_by_id) REFERENCES user (id) ON DELETE SET NULL ON UPDATE NO ACTION,
     ADD UNIQUE INDEX idx_suggestion_public_id (public_id),
+    ADD UNIQUE INDEX idx_suggestion_interaction_id (interaction_id),
     ADD INDEX idx_suggestion_coordinates (latitude, longitude),
     ADD INDEX idx_suggestion_status (status),
     ADD INDEX idx_suggestion_reviewed_at (reviewed_at),

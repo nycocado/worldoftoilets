@@ -81,7 +81,7 @@ export class ReportToiletEntity {
    * @unique true
    * @description Interação que originou este reporte
    */
-  @Unique({ name: 'idx_report_toilet_interaction_unique' })
+  @Unique({ name: 'idx_report_toilet_interaction_id' })
   @OneToOne(() => InteractionEntity, {
     owner: true,
     deleteRule: 'cascade',

@@ -75,4 +75,97 @@ export class ToiletService {
       status,
     );
   }
+
+  /**
+   * Alterar status do toilet
+   *
+   * @async
+   * @param {ToiletEntity} toilet - Entidade do toilet
+   * @param {ToiletStatus} status - Novo status
+   * @returns {Promise<ToiletEntity>} Toilet com status atualizado
+   *
+   * @description
+   * Altera o status do toilet (SUGGESTED, ACTIVE, INACTIVE, REJECTED).
+   */
+  async changeToiletStatus(
+    toilet: ToiletEntity,
+    status: ToiletStatus,
+  ): Promise<ToiletEntity> {
+    return this.toiletRepository.changeStatus(toilet, status);
+  }
+
+  /**
+   * Criar novo toilet
+   *
+   * @async
+   * @param {any} access - Entidade de tipo de acesso
+   * @param {string} name - Nome do toilet
+   * @param {number} latitude - Latitude da localização
+   * @param {number} longitude - Longitude da localização
+   * @param {string} address - Endereço completo
+   * @param {string} city - Cidade
+   * @param {string | undefined} state - Estado/província (opcional)
+   * @param {string} country - País
+   * @param {string} countryCode - Código ISO do país
+   * @param {ToiletStatus} status - Status inicial do toilet
+   * @param {string | undefined} placeId - Google Places ID (opcional)
+   * @param {any[]} [extras] - Lista de extras disponíveis
+   * @returns {Promise<ToiletEntity>} Toilet criado
+   *
+   * @description
+   * Cria novo toilet através do repositório.
+   */
+  async createToilet(
+    access: any,
+    name: string,
+    latitude: number,
+    longitude: number,
+    address: string,
+    city: string,
+    state: string | undefined,
+    country: string,
+    countryCode: string,
+    status: ToiletStatus,
+    placeId: string | undefined,
+    extras?: any[],
+  ): Promise<ToiletEntity> {
+    return this.toiletRepository.create(
+      access,
+      name,
+      latitude,
+      longitude,
+      address,
+      city,
+      state,
+      country,
+      countryCode,
+      status,
+      placeId,
+      extras,
+    );
+  }
+
+  /**
+   * Atualizar URL da foto do toilet
+   *
+   * @async
+   * @param {ToiletEntity} toilet - Entidade do toilet
+   * @param {string} photoUrl - URL pública da foto
+   * @returns {Promise<ToiletEntity>} Toilet com foto atualizada
+   *
+   * @description
+   * Atualiza o campo photoUrl do toilet.
+   * Usado após upload de imagem para MinIO/S3.
+   * Operação transacional através do repositório.
+   */
+  async updatePhotoUrl(
+    toilet: ToiletEntity,
+    photoUrl: string,
+  ): Promise<ToiletEntity> {
+    return this.toiletRepository.updatePhotoUrl(toilet, photoUrl);
+  }
+
+  async deleteToilet(toilet: ToiletEntity): Promise<void> {
+    return this.toiletRepository.delete(toilet);
+  }
 }

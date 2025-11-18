@@ -27,6 +27,7 @@ import { AccessModule } from '@modules/access';
 import { TypeExtraModule } from '@modules/type-extra';
 import { CommonModule } from '@common/common.module';
 import { MinioModule } from '@modules/minio';
+import { SuggestionModule } from '@modules/suggestion';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { MinioModule } from '@modules/minio';
     PasswordResetModule,
     CommentRateModule,
     ToiletModule,
+    SuggestionModule,
     ReplyModule,
     ReactModule,
     InteractionModule,

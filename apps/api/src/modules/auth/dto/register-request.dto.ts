@@ -90,7 +90,7 @@ export class RegisterRequestDto {
    * @description Avatar escolhido pelo utilizador. Se omitido, default para ICON_DEFAULT.
    * @example "icon-1"
    */
-  @ApiProperty()
+  @ApiProperty({ required: false, enum: UserIcon })
   @IsEnum(UserIcon)
   @IsOptional()
   icon?: UserIcon;

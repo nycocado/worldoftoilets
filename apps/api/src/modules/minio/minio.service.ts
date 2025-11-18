@@ -9,6 +9,7 @@ import {
   HeadBucketCommand,
   CreateBucketCommand,
   PutBucketPolicyCommand,
+  CopyObjectCommand,
 } from '@aws-sdk/client-s3';
 import { createMinioConfig, MinioConfig } from '@config/minio.config';
 import { Readable } from 'stream';
@@ -93,7 +94,7 @@ export class MinioService implements OnModuleInit {
 
   getPublicImageUrl(fileName: string): string {
     if (this.config.publicUrl) {
-      return `${this.config.publicUrl}/${fileName}`;
+      return `${this.config.publicUrl}/${this.config.bucket}/${fileName}`;
     }
     return this.getInternalImageUrl(fileName);
   }
@@ -106,6 +107,16 @@ export class MinioService implements OnModuleInit {
     const command = new DeleteObjectCommand({
       Bucket: this.config.bucket,
       Key: fileName,
+    });
+
+    await this.s3Client.send(command);
+  }
+
+  async copyImage(sourceFileName: string, destFileName: string): Promise<void> {
+    const command = new CopyObjectCommand({
+      Bucket: this.config.bucket,
+      CopySource: `${this.config.bucket}/${sourceFileName}`,
+      Key: destFileName,
     });
 
     await this.s3Client.send(command);
@@ -133,5 +144,37 @@ export class MinioService implements OnModuleInit {
         Boolean(key),
       ) || []
     );
+  }
+
+  /**
+   * Extrai o nome do arquivo (caminho do objeto no MinIO) a partir de uma URL pública.
+   *
+   * @param {string} url - A URL pública da imagem.
+   * @param {string} folder - Nome da pasta (ex: 'toilets', 'suggestions').
+   * @returns {string | null} O nome do arquivo (ex: 'toilets/uuid.jpg') ou `null` se a extração falhar.
+   *
+   * @description
+   * Analisa a URL e extrai o caminho relativo do arquivo dentro do bucket.
+   * Útil para obter o nome do arquivo a partir de URLs públicas antes de deletar/copiar.
+   *
+   * @example
+   * const url = 'http://localhost/files/wot/toilets/uuid.jpg';
+   * const fileName = minioService.extractFileNameFromUrl(url, 'toilets');
+   * // Retorna: 'toilets/uuid.jpg'
+   */
+  extractFileNameFromUrl(url: string, folder: string): string | null {
+    try {
+      const urlObj = new URL(url);
+      const pathParts = urlObj.pathname.split('/').filter(Boolean);
+
+      const folderIndex = pathParts.indexOf(folder);
+      if (folderIndex !== -1 && folderIndex < pathParts.length - 1) {
+        return pathParts.slice(folderIndex).join('/');
+      }
+
+      return null;
+    } catch {
+      return null;
+    }
   }
 }

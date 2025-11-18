@@ -36,7 +36,9 @@ export class PutReactRequestDto {
    * @description Reação positiva (like) ou negativa (dislike)
    * @example "like"
    */
-  @ApiProperty()
+  @ApiProperty({
+    enum: ReactType,
+  })
   @IsEnum(ReactType)
   @IsNotEmpty()
   react!: ReactType;

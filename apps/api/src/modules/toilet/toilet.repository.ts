@@ -499,6 +499,24 @@ export class ToiletRepository {
   }
 
   /**
+   * Deletar toilet
+   *
+   * @async
+   * @transactional
+   * @param {ToiletEntity} toilet - Entidade do toilet a deletar
+   * @returns {Promise<void>}
+   *
+   * @description
+   * Remove permanentemente o toilet do banco de dados.
+   * Usado para limpeza definitiva.
+   */
+  @Transactional()
+  async delete(toilet: ToiletEntity): Promise<void> {
+    const em = this.repository.getEntityManager();
+    await em.removeAndFlush(toilet);
+  }
+
+  /**
    * Alterar status do toilet (transacional)
    *
    * @async
@@ -562,6 +580,7 @@ export class ToiletRepository {
   @Transactional()
   async undelete(toilet: ToiletEntity): Promise<ToiletEntity> {
     const em = this.repository.getEntityManager();
+    toilet.status = ToiletStatus.ACTIVE;
     toilet.deletedBy = undefined;
     toilet.deletedAt = undefined;
     await em.flush();

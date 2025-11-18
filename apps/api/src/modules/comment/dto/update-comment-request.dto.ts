@@ -51,7 +51,7 @@ export class UpdateCommentRequestDto {
    * @type {UpdateCommentRateRequestDto}
    * @description Avaliações parciais para atualização (apenas campos fornecidos serão alterados)
    */
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, type: CreateCommentRateRequestDto })
   @ValidateNested()
   @IsOptional()
   @Type(() => CreateCommentRateRequestDto)

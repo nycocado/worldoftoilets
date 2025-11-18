@@ -51,7 +51,7 @@ export class RegisterAdminRequestDto {
    * @description Objeto contendo name, email, password, icon e birthDate
    * @example { "name": "Admin João", "email": "admin@example.com", "password": "MySecurePass123", "icon": "icon-1", "birthDate": "1990-01-15" }
    */
-  @ApiProperty()
+  @ApiProperty({ type: RegisterRequestDto })
   @ValidateNested()
   @Type(() => RegisterRequestDto)
   @IsNotEmpty()
@@ -64,7 +64,7 @@ export class RegisterAdminRequestDto {
    * @description Array de roles administrativas. Pode conter uma ou mais roles.
    * @example ["comments-administrator", "users-administrator"]
    */
-  @ApiProperty()
+  @ApiProperty({ enum: RoleType, isArray: true })
   @IsArray()
   @IsEnum(RoleType)
   @IsNotEmpty()

@@ -76,12 +76,6 @@ export class DeleteToiletUseCase {
       throw new ConflictException(TOILET_EXCEPTIONS.TOILET_ALREADY_DELETED);
     }
 
-    if (toilet.status === ToiletStatus.SUGGESTED) {
-      throw new ConflictException(
-        TOILET_EXCEPTIONS.CANNOT_DELETE_SUGGESTED_TOILET,
-      );
-    }
-
     const user = await this.userService.getUserByPublicId(userPublicId);
     await this.repository.softDelete(toilet, user);
   }
