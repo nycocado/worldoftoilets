@@ -24,38 +24,32 @@ export const ApiSwaggerGetToiletsBoundingBox = (): MethodDecorator =>
     ApiQuery({
       name: 'minLat',
       required: true,
-      type: Number,
       description: 'Latitude mínima (canto sudoeste)',
     }),
     ApiQuery({
       name: 'minLng',
       required: true,
-      type: Number,
       description: 'Longitude mínima (canto sudoeste)',
     }),
     ApiQuery({
       name: 'maxLat',
       required: true,
-      type: Number,
       description: 'Latitude máxima (canto nordeste)',
     }),
     ApiQuery({
       name: 'maxLng',
       required: true,
-      type: Number,
       description: 'Longitude máxima (canto nordeste)',
     }),
     ApiQuery({
       name: 'access',
       required: false,
-      enum: ['PUBLIC', 'PRIVATE', 'CUSTOMERS_ONLY'],
       description: 'Filtrar por tipo de acesso',
     }),
     ApiQuery({
       name: 'extras',
       required: false,
-      type: String,
-      description: 'Filtrar por extras (CSV: WIFI,ACCESSIBLE)',
+      description: 'Filtrar por extras',
     }),
     ApiOkResponse({
       description: 'Toilets dentro da área especificada.',

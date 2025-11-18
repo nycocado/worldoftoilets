@@ -2,8 +2,11 @@ import {
   Body,
   Controller,
   Delete,
+  FileTypeValidator,
   Get,
+  MaxFileSizeValidator,
   Param,
+  ParseFilePipe,
   ParseUUIDPipe,
   Patch,
   Post,
@@ -666,7 +669,17 @@ export class ToiletController {
   @UseInterceptors(FileInterceptor('image'))
   async uploadImage(
     @Param('publicId', ParseUUIDPipe) publicId: string,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }),
+          new FileTypeValidator({
+            fileType: /image\/(jpeg|jpg|png|webp)/,
+          }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
   ): Promise<ApiResponseDto<ToiletResponseDto>> {
     const result = await this.uploadToiletImageUseCase.execute(publicId, file);
     return new ApiResponseDto<ToiletResponseDto>(

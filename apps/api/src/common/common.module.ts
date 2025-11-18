@@ -1,5 +1,5 @@
 import { Global, Module } from '@nestjs/common';
-import { CountryService } from '@common/services';
+import { CountryService, ImageValidationService } from '@common/services';
 import {
   IsValidCountryConstraint,
   IsValidCountryCodeConstraint,
@@ -9,11 +9,13 @@ import {
 @Module({
   providers: [
     CountryService,
+    ImageValidationService,
     IsValidCountryConstraint,
     IsValidCountryCodeConstraint,
   ],
   exports: [
     CountryService,
+    ImageValidationService,
     IsValidCountryConstraint,
     IsValidCountryCodeConstraint,
   ],

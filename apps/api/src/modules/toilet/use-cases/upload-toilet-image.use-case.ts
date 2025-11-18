@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common';
 import { ToiletRepository } from '@modules/toilet/toilet.repository';
 import { MinioService } from '@modules/minio';
+import { ImageValidationService } from '@common/services';
+import { IMAGE_VALIDATION_CONFIG } from '@common/constants/image-validation.constant';
 import { TOILET_EXCEPTIONS } from '@modules/toilet/constants/exceptions.constant';
 import { ToiletResponseDto } from '@modules/toilet/dto';
 import { plainToInstance } from 'class-transformer';
@@ -38,23 +40,17 @@ import { v4 as uuidv4 } from 'uuid';
  */
 @Injectable()
 export class UploadToiletImageUseCase {
-  private readonly ALLOWED_MIME_TYPES = [
-    'image/jpeg',
-    'image/jpg',
-    'image/png',
-    'image/webp',
-  ];
-  private readonly MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-
   /**
    * Construtor do UploadToiletImageUseCase
    *
    * @param {ToiletRepository} repository - Repositório para operações de toilet
    * @param {MinioService} minioService - Serviço para interação com o Minio (armazenamento de objetos)
+   * @param {ImageValidationService} imageValidationService - Serviço de validação e sanitização de imagens
    */
   constructor(
     private readonly repository: ToiletRepository,
     private readonly minioService: MinioService,
+    private readonly imageValidationService: ImageValidationService,
   ) {}
 
   /**
@@ -70,12 +66,13 @@ export class UploadToiletImageUseCase {
    *
    * @description
    * 1. Valida a existência e o estado do toilet.
-   * 2. Valida o tipo e o tamanho do arquivo.
-   * 3. Gera um nome de arquivo único para a nova imagem.
-   * 4. Se uma imagem antiga existir, tenta deletá-la do Minio.
-   * 5. Faz o upload da nova imagem para o Minio.
-   * 6. Atualiza a `photoUrl` do toilet com a URL pública da nova imagem.
-   * 7. Retorna o DTO do toilet atualizado.
+   * 2. Valida o tamanho do arquivo.
+   * 3. Valida e processa a imagem (magic bytes, dimensões, sanitização).
+   * 4. Gera um nome de arquivo único para a nova imagem.
+   * 5. Se uma imagem antiga existir, tenta deletá-la do Minio.
+   * 6. Faz o upload da nova imagem sanitizada para o Minio.
+   * 7. Atualiza a `photoUrl` do toilet com a URL pública da nova imagem.
+   * 8. Retorna o DTO do toilet atualizado.
    */
   async execute(
     publicId: string,
@@ -91,19 +88,24 @@ export class UploadToiletImageUseCase {
       throw new ConflictException(TOILET_EXCEPTIONS.TOILET_DELETED);
     }
 
-    if (!this.ALLOWED_MIME_TYPES.includes(file.mimetype)) {
-      throw new BadRequestException(TOILET_EXCEPTIONS.INVALID_IMAGE_TYPE);
-    }
-
-    if (file.size > this.MAX_FILE_SIZE) {
+    if (file.size > IMAGE_VALIDATION_CONFIG.MAX_FILE_SIZE) {
       throw new BadRequestException(TOILET_EXCEPTIONS.IMAGE_TOO_LARGE);
     }
 
-    const extension = file.mimetype.split('/')[1];
+    // Validação e processamento seguro da imagem
+    const {
+      buffer: sanitizedBuffer,
+      extension,
+      mimeType,
+    } = await this.imageValidationService.validateAndProcessImage(file.buffer);
+
     const fileName = await this.generateUniqueFileName(extension);
 
     if (toilet.photoUrl) {
-      const oldFileName = this.extractFileNameFromUrl(toilet.photoUrl);
+      const oldFileName = this.minioService.extractFileNameFromUrl(
+        toilet.photoUrl,
+        'toilets',
+      );
       if (oldFileName) {
         try {
           await this.minioService.deleteImage(oldFileName);
@@ -113,7 +115,7 @@ export class UploadToiletImageUseCase {
       }
     }
 
-    await this.minioService.uploadImage(file.buffer, fileName, file.mimetype);
+    await this.minioService.uploadImage(sanitizedBuffer, fileName, mimeType);
 
     const publicUrl = this.minioService.getPublicImageUrl(fileName);
 
@@ -168,29 +170,6 @@ export class UploadToiletImageUseCase {
       return true;
     } catch {
       return false;
-    }
-  }
-
-  /**
-   * Extrai o nome do arquivo (caminho do objeto no Minio) a partir de uma URL pública.
-   *
-   * @private
-   * @param {string} url - A URL pública da imagem.
-   * @returns {string | null} O nome do arquivo ou `null` se a extração falhar.
-   */
-  private extractFileNameFromUrl(url: string): string | null {
-    try {
-      const urlObj = new URL(url);
-      const pathParts = urlObj.pathname.split('/').filter(Boolean);
-
-      const toiletsIndex = pathParts.indexOf('toilets');
-      if (toiletsIndex !== -1 && toiletsIndex < pathParts.length - 1) {
-        return pathParts.slice(toiletsIndex).join('/');
-      }
-
-      return null;
-    } catch {
-      return null;
     }
   }
 }

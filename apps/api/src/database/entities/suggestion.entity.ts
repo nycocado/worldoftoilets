@@ -50,10 +50,10 @@ export class SuggestionEntity {
    * @primary true
    * @description Interação que originou esta sugestão
    */
+  @Unique({ name: 'idx_suggestion_interaction_id' })
   @OneToOne(() => InteractionEntity, {
     deleteRule: 'cascade',
     updateRule: 'no action',
-    primary: true,
     orphanRemoval: true,
   })
   interaction!: InteractionEntity;
@@ -74,15 +74,24 @@ export class SuggestionEntity {
   publicId!: string;
 
   /**
-   * Coordenadas geográficas da casa de banho sugerida
-   * @field coordinates
-   * @type string
+   * Latitude da casa de banho sugerida
+   * @field latitude
+   * @type decimal(10,8)
    * @nullable false
-   * @type point (PostGIS)
-   * @description Localização em formato PostGIS point
+   * @description Latitude em formato decimal (-90 a 90)
    */
-  @Property({ columnType: 'point' })
-  coordinates!: string;
+  @Property({ columnType: 'decimal(10,8)' })
+  latitude!: number;
+
+  /**
+   * Longitude da casa de banho sugerida
+   * @field longitude
+   * @type decimal(10,8)
+   * @nullable false
+   * @description Longitude em formato decimal (-180 a 180)
+   */
+  @Property({ columnType: 'decimal(10,8)' })
+  longitude!: number;
 
   /**
    * URL da foto da casa de banho sugerida
@@ -156,4 +165,26 @@ export class SuggestionEntity {
    */
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
+
+  /**
+   * Utilizador que criou a sugestão
+   * @field user
+   * @type UserEntity
+   * @nullable false
+   * @description Acesso direto ao utilizador através da interação associada
+   */
+  get user(): UserEntity {
+    return this.interaction?.user;
+  }
+
+  /**
+   * Casa de banho associada à sugestão
+   * @field toilet
+   * @type ToiletEntity
+   * @nullable false
+   * @description Acesso direto à toilet através da interação associada
+   */
+  get toilet() {
+    return this.interaction?.toilet;
+  }
 }

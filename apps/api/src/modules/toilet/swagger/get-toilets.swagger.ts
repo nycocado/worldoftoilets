@@ -24,50 +24,42 @@ export const ApiSwaggerGetToilets = (): MethodDecorator =>
     ApiQuery({
       name: 'pageable',
       required: false,
-      type: Boolean,
       description: 'Ativar paginação',
     }),
     ApiQuery({
       name: 'page',
       required: false,
-      type: Number,
       description: 'Número da página (começa em 0)',
     }),
     ApiQuery({
       name: 'size',
       required: false,
-      type: Number,
       description: 'Tamanho da página (default: 20)',
     }),
     ApiQuery({
       name: 'city',
       required: false,
-      type: String,
       description: 'Filtrar por cidade',
     }),
     ApiQuery({
       name: 'country',
       required: false,
-      type: String,
       description: 'Filtrar por país',
     }),
     ApiQuery({
       name: 'countryCode',
       required: false,
-      type: String,
       description: 'Filtrar por código ISO do país',
     }),
     ApiQuery({
       name: 'access',
       required: false,
-      enum: ['PUBLIC', 'PRIVATE', 'CUSTOMERS_ONLY'],
       description: 'Filtrar por tipo de acesso',
     }),
     ApiQuery({
       name: 'extras',
       required: false,
-      type: String,
-      description: 'Filtrar por extras (CSV: WIFI,ACCESSIBLE)',
+      description: 'Filtrar por extras',
     }),
     ApiOkResponse({
       description: 'Lista de toilets ativos.',

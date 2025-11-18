@@ -70,7 +70,7 @@ export class CreateCommentRequestDto {
    * @type {CreateCommentRateRequestDto}
    * @description Avaliações obrigatórias de limpeza, papel, estrutura e acessibilidade
    */
-  @ApiProperty()
+  @ApiProperty({ type: CreateCommentRateRequestDto })
   @ValidateNested()
   @IsNotEmpty()
   @Type(() => CreateCommentRateRequestDto)

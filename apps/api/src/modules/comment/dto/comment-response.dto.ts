@@ -50,7 +50,7 @@ export class CommentResponseDto {
    * @description Comentário textual opcional do utilizador sobre o toilet
    * @example "Instalações muito limpas e bem mantidas!"
    */
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @Expose()
   @Transform(({ value }) => value ?? null)
   @Type(() => String)
@@ -75,7 +75,7 @@ export class CommentResponseDto {
    * @type {CommentRateCommentResponseDto}
    * @description Avaliações de limpeza, papel, estrutura e acessibilidade
    */
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @Expose()
   @Type(() => CommentRateCommentResponseDto)
   rate?: CommentRateCommentResponseDto;

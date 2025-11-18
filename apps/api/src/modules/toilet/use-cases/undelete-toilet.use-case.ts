@@ -59,7 +59,7 @@ export class UndeleteToiletUseCase {
       throw new NotFoundException(TOILET_EXCEPTIONS.TOILET_NOT_FOUND);
     }
 
-    if (toilet.isDeleted) {
+    if (!toilet.isDeleted) {
       throw new ConflictException(TOILET_EXCEPTIONS.TOILET_NOT_DELETED);
     }
 
