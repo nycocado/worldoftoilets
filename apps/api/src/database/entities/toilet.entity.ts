@@ -4,6 +4,7 @@ import {
   Enum,
   Formula,
   Index,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   OneToOne,
@@ -11,7 +12,6 @@ import {
   Property,
   Unique,
 } from '@mikro-orm/core';
-import { CityEntity } from './city.entity';
 import { AccessEntity } from './access.entity';
 import { UserEntity } from './user.entity';
 import { ExtraEntity } from './extra.entity';
@@ -21,6 +21,7 @@ import {
 } from './interaction.entity';
 import { PartnerEntity } from './partner.entity';
 import { CommentState } from '@database/entities/comment.entity';
+import { TypeExtraEntity } from '@database/entities/type-extra.entity';
 
 /**
  * Estados possíveis de uma casa de banho no sistema
@@ -69,21 +70,6 @@ export class ToiletEntity {
   @Index({ name: 'idx_toilet_public_id' })
   @Property({ length: 36, defaultRaw: 'uuid_v4()' })
   publicId!: string;
-
-  /**
-   * Cidade onde a casa de banho está localizada
-   * @field city
-   * @type CityEntity
-   * @nullable false
-   * @relationship many-to-one
-   * @description Cidade/localização geográfica principal
-   */
-  @Index({ name: 'idx_toilet_city_id' })
-  @ManyToOne(() => CityEntity, {
-    deleteRule: 'no action',
-    updateRule: 'no action',
-  })
-  city!: CityEntity;
 
   /**
    * Tipo de acesso da casa de banho
@@ -141,6 +127,50 @@ export class ToiletEntity {
    */
   @Property({ length: 255 })
   address!: string;
+
+  /**
+   * Cidade onde a casa de banho está localizada
+   * @field city
+   * @type string
+   * @nullable false
+   * @length 100
+   * @description Nome da cidade
+   */
+  @Property({ length: 100 })
+  city!: string;
+
+  /**
+   * Estado/província onde a casa de banho está localizada
+   * @field state
+   * @type string
+   * @nullable true
+   * @length 100
+   * @description Nome do estado ou província (opcional)
+   */
+  @Property({ length: 100, nullable: true })
+  state?: string;
+
+  /**
+   * País onde a casa de banho está localizada
+   * @field country
+   * @type string
+   * @nullable false
+   * @length 100
+   * @description Nome do país
+   */
+  @Property({ length: 100 })
+  country!: string;
+
+  /**
+   * Código do país (ISO 3166-1 alpha-2)
+   * @field countryCode
+   * @type string
+   * @nullable false
+   * @length 2
+   * @description Código de duas letras do país (ex: PT, BR, ES)
+   */
+  @Property({ length: 2, fieldName: 'country_code' })
+  countryCode!: string;
 
   /**
    * URL da foto da casa de banho
@@ -255,12 +285,15 @@ export class ToiletEntity {
   /**
    * Coleção de recursos extras disponíveis
    * @field extras
-   * @type Collection<ExtraEntity>
-   * @relationship one-to-many
+   * @type Collection<TypeExtraEntity>
+   * @relationship many-to-many
    * @description Amenidades/recursos (wifi, pias, espelho, etc)
    */
-  @OneToMany(() => ExtraEntity, (extra) => extra.toilet)
-  extras: Collection<ExtraEntity> = new Collection<ExtraEntity>(this);
+  @ManyToMany({
+    entity: () => TypeExtraEntity,
+    pivotEntity: () => ExtraEntity,
+  })
+  extras: Collection<TypeExtraEntity> = new Collection<TypeExtraEntity>(this);
 
   /**
    * Coleção de interações

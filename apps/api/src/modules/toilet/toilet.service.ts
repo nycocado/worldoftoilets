@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ToiletRepository } from '@modules/toilet/toilet.repository';
 import { TOILET_EXCEPTIONS } from '@modules/toilet/constants/exceptions.constant';
-import { ToiletEntity } from '@database/entities';
+import { ToiletEntity, ToiletStatus } from '@database/entities';
 
 @Injectable()
 export class ToiletService {
@@ -15,17 +15,19 @@ export class ToiletService {
     return toilet;
   }
 
-  async getByFullTextSearch(
+  async getToiletsByFullTextSearch(
     query: string,
     pageable?: boolean,
     page?: number,
     size?: number,
+    status?: ToiletStatus,
   ): Promise<ToiletEntity[]> {
     return this.toiletRepository.findByFullTextSearch(
       query,
       pageable,
       page,
       size,
+      status,
     );
   }
 }

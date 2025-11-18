@@ -1,6 +1,6 @@
 import { Expose } from 'class-transformer';
 
-export class CountryResponseDto {
+export class TypeExtraResponseDto {
   @Expose()
   name!: string;
 

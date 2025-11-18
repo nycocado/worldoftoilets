@@ -18,8 +18,6 @@ DROP TABLE IF EXISTS password_reset;
 DROP TABLE IF EXISTS email_verification;
 DROP TABLE IF EXISTS user_credential;
 DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS city;
-DROP TABLE IF EXISTS country;
 DROP TABLE IF EXISTS type_report_reply;
 DROP TABLE IF EXISTS type_report_comment;
 DROP TABLE IF EXISTS type_report_toilet;

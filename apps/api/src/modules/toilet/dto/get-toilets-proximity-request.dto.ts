@@ -8,64 +8,50 @@ import {
   IsNumber,
   IsOptional,
 } from 'class-validator';
-import { Type } from 'class-transformer';
-import {
-  AccessApiName,
-  CityApiName,
-  CountryApiName,
-  ToiletStatus,
-} from '@database/entities';
+import { Transform, Type } from 'class-transformer';
+import { AccessApiName, TypeExtraApiName } from '@database/entities';
 
 export class GetToiletsProximityRequestDto {
-  @ApiProperty({ required: true })
+  @ApiProperty()
   @IsNumber()
   @IsLatitude()
   @Type(() => Number)
   lat!: number;
 
-  @ApiProperty({ required: true })
+  @ApiProperty()
   @IsNumber()
   @IsLongitude()
   @Type(() => Number)
   lng!: number;
 
-  @ApiProperty({ required: false, default: true })
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsBoolean()
   @Type(() => Boolean)
   pageable?: boolean = true;
 
-  @ApiProperty({ required: false, default: 0 })
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
   page?: number = 0;
 
-  @ApiProperty({ required: false, default: 20 })
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
   size?: number = 20;
 
-  @ApiProperty({ required: false, enum: CityApiName })
-  @IsOptional()
-  @IsEnum(CityApiName)
-  city?: CityApiName;
-
-  @ApiProperty({ required: false, enum: CountryApiName })
-  @IsOptional()
-  @IsEnum(CountryApiName)
-  country?: CountryApiName;
-
-  @ApiProperty({ required: false, enum: AccessApiName })
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsEnum(AccessApiName)
   access?: AccessApiName;
 
-  @ApiProperty({ required: false, enum: ToiletStatus })
+  @ApiProperty({ required: false })
   @IsOptional()
-  @IsEnum(ToiletStatus)
-  status?: ToiletStatus = ToiletStatus.ACTIVE;
+  @IsEnum(TypeExtraApiName, { each: true })
+  @Transform(({ value }) => value.trim().split(','))
+  extras?: TypeExtraApiName[];
 
   @ApiProperty({ required: false })
   @IsOptional()

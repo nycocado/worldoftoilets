@@ -22,7 +22,10 @@ import { ReplyModule } from '@modules/reply';
 import { ReactModule } from '@modules/react';
 import { InteractionModule } from '@modules/interaction';
 import { SearchToiletModule } from '@modules/search-toilet';
-import { RoleModule } from './modules/role/role.module';
+import { RoleModule } from '@modules/role';
+import { AccessModule } from '@modules/access';
+import { TypeExtraModule } from '@modules/type-extra';
+import { CommonModule } from '@common/common.module';
 
 @Module({
   imports: [
@@ -36,6 +39,7 @@ import { RoleModule } from './modules/role/role.module';
       inject: [ConfigService],
       driver: MariaDbDriver,
     }),
+    CommonModule,
     CommentModule,
     HealthModule,
     AuthModule,
@@ -52,6 +56,8 @@ import { RoleModule } from './modules/role/role.module';
     InteractionModule,
     SearchToiletModule,
     RoleModule,
+    AccessModule,
+    TypeExtraModule,
   ],
   providers: [
     {

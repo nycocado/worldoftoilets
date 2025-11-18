@@ -74,7 +74,7 @@ export class HideCommentUseCase {
       });
     }
 
-    if (comment.deletedBy) {
+    if (comment.deletedBy && comment.deletedAt) {
       throw new ConflictException(COMMENT_EXCEPTIONS.COMMENT_DELETED);
     }
 

@@ -514,7 +514,7 @@ export class CommentController {
    * Mostrar comentário (moderação)
    *
    * @async
-   * @route PUT /comment/:publicId/show
+   * @route PUT /comment/:publicId/manage/show
    * @protected Requer autenticação JWT e permissão SHOW_COMMENTS
    * @param {string} publicId - Identificador público do comentário
    * @returns {Promise<ApiResponseDto<CommentResponseDto>>} Comentário tornado visível
@@ -530,7 +530,7 @@ export class CommentController {
   @ApiSwaggerShowComment()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.SHOW_COMMENTS)
-  @Put(':publicId/show')
+  @Put(':publicId/manage/show')
   async showComment(
     @Param('publicId', ParseUUIDPipe) publicId: string,
   ): Promise<ApiResponseDto<CommentResponseDto>> {
@@ -545,7 +545,7 @@ export class CommentController {
    * Ocultar comentário (moderação)
    *
    * @async
-   * @route PUT /comment/:publicId/hide
+   * @route PUT /comment/:publicId/manage/hide
    * @protected Requer autenticação JWT e permissão HIDE_COMMENTS
    * @param {string} publicId - Identificador público do comentário
    * @returns {Promise<ApiResponseDto<CommentResponseDto>>} Comentário ocultado
@@ -561,7 +561,7 @@ export class CommentController {
   @ApiSwaggerHideComment()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.HIDE_COMMENTS)
-  @Put(':publicId/hide')
+  @Put(':publicId/manage/hide')
   async hideComment(
     @Param('publicId', ParseUUIDPipe) publicId: string,
   ): Promise<ApiResponseDto<CommentResponseDto>> {
@@ -576,7 +576,7 @@ export class CommentController {
    * Recuperar comentário deletado (moderação)
    *
    * @async
-   * @route PUT /comment/:publicId/undelete
+   * @route PUT /comment/:publicId/manage/undelete
    * @protected Requer autenticação JWT e permissão UNDELETE_COMMENTS
    * @param {string} publicId - Identificador público do comentário
    * @returns {Promise<ApiResponseDto<CommentResponseDto>>} Comentário recuperado
@@ -591,7 +591,7 @@ export class CommentController {
   @ApiSwaggerUndeleteComment()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.UNDELETE_COMMENTS)
-  @Put(':publicId/undelete')
+  @Put(':publicId/manage/undelete')
   async undeleteComment(
     @Param('publicId', ParseUUIDPipe) publicId: string,
   ): Promise<ApiResponseDto<CommentResponseDto>> {

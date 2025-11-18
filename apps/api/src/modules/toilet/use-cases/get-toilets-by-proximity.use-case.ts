@@ -2,9 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { ToiletRepository } from '@modules/toilet';
 import {
   AccessApiName,
-  CityApiName,
-  CountryApiName,
   ToiletStatus,
+  TypeExtraApiName,
 } from '@database/entities';
 import { ToiletResponseDto } from '@modules/toilet/dto';
 import { plainToInstance } from 'class-transformer';
@@ -16,26 +15,24 @@ export class GetToiletsByProximityUseCase {
   async execute(
     lat: number,
     lng: number,
-    city?: CityApiName,
-    country?: CountryApiName,
     access?: AccessApiName,
     status?: ToiletStatus,
     timestamp?: Date,
     pageable?: boolean,
     page?: number,
     size?: number,
+    typeExtra?: TypeExtraApiName[],
   ): Promise<ToiletResponseDto[]> {
     const toilets = await this.repository.findByProximity(
       lat,
       lng,
-      city,
-      country,
       access,
       status,
       timestamp,
       pageable,
       page,
       size,
+      typeExtra,
     );
 
     return plainToInstance(ToiletResponseDto, toilets, {
