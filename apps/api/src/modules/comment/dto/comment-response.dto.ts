@@ -96,6 +96,16 @@ export class CommentResponseDto {
   reactCounts!: ReactCommentResponseDto;
 
   /**
+   * Número de respostas ao comentário
+   *
+   * @type {number}
+   * @description Contagem total de respostas (replies) associadas a este comentário
+   */
+  @ApiProperty()
+  @Expose()
+  replyCount!: number;
+
+  /**
    * Dados do utilizador autor do comentário
    *
    * @type {UserCommentResponseDto}

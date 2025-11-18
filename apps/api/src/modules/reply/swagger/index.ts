@@ -1,0 +1,12 @@
+export { ApiSwaggerGetRepliesByComment } from './get-replies-by-comment.swagger';
+export { ApiSwaggerGetRepliesByCommentManage } from './get-replies-by-comment-manage.swagger';
+export { ApiSwaggerGetRepliesByUserSelf } from './get-replies-by-user-self.swagger';
+export { ApiSwaggerGetRepliesByUserManage } from './get-replies-by-user-manage.swagger';
+export { ApiSwaggerCreateReply } from './create-reply.swagger';
+export { ApiSwaggerUpdateReply } from './update-reply.swagger';
+export { ApiSwaggerUpdateReplyManage } from './update-reply-manage.swagger';
+export { ApiSwaggerDeleteReply } from './delete-reply.swagger';
+export { ApiSwaggerDeleteReplyManage } from './delete-reply-manage.swagger';
+export { ApiSwaggerShowReply } from './show-reply.swagger';
+export { ApiSwaggerHideReply } from './hide-reply.swagger';
+export { ApiSwaggerUndeleteReply } from './undelete-reply.swagger';

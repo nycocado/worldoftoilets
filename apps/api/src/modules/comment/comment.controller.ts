@@ -221,7 +221,8 @@ export class CommentController {
    * Suporta paginação e filtragem por timestamp.
    */
   @ApiSwaggerGetCommentsByUserSelf()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @RequiresPermissions(PermissionApiName.VIEW_COMMENTS)
   @Get('user/self')
   async getCommentsByMyUser(
     @User() user: jwtTypes.RequestUser,

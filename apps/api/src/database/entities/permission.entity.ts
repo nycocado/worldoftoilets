@@ -49,12 +49,14 @@ export enum PermissionApiName {
   REVIEW_REPORT_COMMENTS = 'review-report-comments',
   // Permissões de respostas
   VIEW_REPLIES = 'view-replies',
+  VIEW_ALL_REPLIES = 'view-all-replies',
   SEARCH_REPLIES = 'search-replies',
   CREATE_REPLIES = 'create-replies',
   DELETE_REPLIES = 'delete-replies',
   DELETE_SELF_REPLIES = 'delete-self-replies',
   UNDELETE_REPLIES = 'undelete-replies',
   EDIT_REPLIES = 'edit-replies',
+  EDIT_SELF_REPLIES = 'edit-self-replies',
   HIDE_REPLIES = 'hide-replies',
   SHOW_REPLIES = 'show-replies',
   // Permissões de utilizadores

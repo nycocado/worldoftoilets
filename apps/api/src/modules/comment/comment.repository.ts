@@ -59,7 +59,15 @@ export class CommentRepository {
   async findByPublicId(publicId: string): Promise<CommentEntity | null> {
     return this.commentRepository.findOne(
       { publicId: publicId },
-      { populate: ['interaction.user', 'rate', 'likes', 'dislikes'] },
+      {
+        populate: [
+          'interaction.user',
+          'rate',
+          'likes',
+          'dislikes',
+          'replyCount',
+        ],
+      },
     );
   }
 
@@ -99,7 +107,13 @@ export class CommentRepository {
         createdAt: { $lte: timestamp },
       },
       {
-        populate: ['interaction.user.partner', 'rate', 'likes', 'dislikes'],
+        populate: [
+          'interaction.user.partner',
+          'rate',
+          'likes',
+          'dislikes',
+          'replyCount',
+        ],
         limit: pageable ? size : undefined,
         offset: pageable && page && size ? page * size : undefined,
         orderBy: { createdAt: QueryOrder.DESC },
@@ -143,7 +157,13 @@ export class CommentRepository {
         createdAt: { $lte: timestamp },
       },
       {
-        populate: ['interaction.toilet', 'rate', 'likes', 'dislikes'],
+        populate: [
+          'interaction.toilet',
+          'rate',
+          'likes',
+          'dislikes',
+          'replyCount',
+        ],
         limit: pageable ? size : undefined,
         offset: pageable && page && size ? page * size : undefined,
         orderBy: { createdAt: QueryOrder.DESC },
