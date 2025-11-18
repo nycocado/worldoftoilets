@@ -7,7 +7,6 @@ import { Transactional } from '@mikro-orm/mariadb';
 import { ToiletRepository } from '@modules/toilet/toilet.repository';
 import { UserService } from '@modules/user';
 import { TOILET_EXCEPTIONS } from '@modules/toilet/constants/exceptions.constant';
-import { ToiletStatus } from '@database/entities';
 
 /**
  * Caso de Uso para Deletar um Toilet
@@ -19,7 +18,6 @@ import { ToiletStatus } from '@database/entities';
  * @implements
  *   - Validação de existência do toilet
  *   - Prevenção de dupla deleção
- *   - Restrição de deleção para toilets sugeridos
  *   - Realização de soft delete
  *
  * @example
@@ -54,15 +52,13 @@ export class DeleteToiletUseCase {
    * @returns {Promise<void>}
    * @throws {NotFoundException} Se o toilet com o ID fornecido não for encontrado.
    * @throws {ConflictException} Se o toilet já estiver deletado.
-   * @throws {ConflictException} Se o toilet for uma sugestão e não puder ser deletado.
    *
    * @description
    * 1. Busca o toilet pelo ID público.
    * 2. Lança uma exceção se o toilet não for encontrado.
    * 3. Lança uma exceção se o toilet já estiver marcado como deletado.
-   * 4. Lança uma exceção se o toilet tiver o status de 'sugerido'.
-   * 5. Busca o usuário que está realizando a deleção.
-   * 6. Realiza o soft delete do toilet, registrando quem o deletou.
+   * 4. Busca o usuário que está realizando a deleção.
+   * 5. Realiza o soft delete do toilet, registrando quem o deletou.
    */
   @Transactional()
   async execute(publicId: string, userPublicId: string): Promise<void> {

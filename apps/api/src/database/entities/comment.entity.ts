@@ -195,6 +195,20 @@ export class CommentEntity {
   replies: Collection<ReplyEntity> = new Collection<ReplyEntity>(this);
 
   /**
+   * Contagem de respostas ao comentário
+   * @field replyCount
+   * @type number
+   * @formula Subquery SQL que conta respostas associadas
+   * @description Número total de respostas (replies) deste comentário
+   */
+  @Formula(
+    (alias) =>
+      `(SELECT COUNT(*) FROM reply r WHERE r.comment_id = ${alias}.id)`,
+    { lazy: true },
+  )
+  replyCount: number = 0;
+
+  /**
    * Contagem de likes do comentário
    * @field likes
    * @type number

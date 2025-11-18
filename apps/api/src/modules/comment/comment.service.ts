@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { textTimeToMilliseconds } from '@common/utils/jwt-time.util';
 import { ConfigService } from '@nestjs/config';
 import { CommentRepository } from '@modules/comment/comment.repository';
+import { CommentEntity } from '@database/entities';
+import { COMMENT_EXCEPTIONS } from '@modules/comment/constants/exceptions.constant';
 
 /**
  * Serviço de Comentários
@@ -53,5 +55,25 @@ export class CommentService {
     const retentionMs = textTimeToMilliseconds(commentRetention);
     const retention = new Date(Date.now() - retentionMs);
     return this.commentRepository.deleteExpired(retention);
+  }
+
+  /**
+   * Obter comentário por publicId
+   *
+   * @async
+   * @param {string} publicId - Identificador público do comentário
+   * @returns {Promise<CommentEntity>} Comentário encontrado
+   * @throws {NotFoundException} Se comentário não for encontrado
+   *
+   * @description
+   * Busca um comentário pelo seu publicId (UUID).
+   * Lança exceção se não encontrado.
+   */
+  async getCommentByPublicId(publicId: string): Promise<CommentEntity> {
+    const comment = await this.commentRepository.findByPublicId(publicId);
+    if (!comment) {
+      throw new NotFoundException(COMMENT_EXCEPTIONS.COMMENT_NOT_FOUND);
+    }
+    return comment;
   }
 }
