@@ -28,6 +28,7 @@ import { TypeExtraModule } from '@modules/type-extra';
 import { CommonModule } from '@common/common.module';
 import { MinioModule } from '@modules/minio';
 import { SuggestionModule } from '@modules/suggestion';
+import { RouteModule } from '@modules/route';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { SuggestionModule } from '@modules/suggestion';
     RoleModule,
     AccessModule,
     TypeExtraModule,
+    RouteModule,
   ],
   providers: [
     {

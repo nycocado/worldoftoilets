@@ -52,55 +52,55 @@ class HTTPException:
 
 class InvalidFormatException(HTTPException):
     """Exceção para formato inválido de coordenadas."""
-    
+
     def __init__(self):
         super().__init__(
             code="INVALID_FORMAT",
-            message="Use o formato /lat,lon/lat,lon/",
+            message="Invalid format. Use /lat,lon/lat,lon/",
             status_code=400
         )
 
 
 class OutOfRangeLatitudeException(HTTPException):
     """Exceção para latitude fora do intervalo válido."""
-    
+
     def __init__(self):
         super().__init__(
-            code="OUT_OF_RANGE",
-            message="Latitude deve estar entre -90 e 90",
+            code="OUT_OF_RANGE_LATITUDE",
+            message="Latitude must be between -90 and 90",
             status_code=400
         )
 
 
 class OutOfRangeLongitudeException(HTTPException):
     """Exceção para longitude fora do intervalo válido."""
-    
+
     def __init__(self):
         super().__init__(
-            code="OUT_OF_RANGE",
-            message="Longitude deve estar entre -180 e 180",
+            code="OUT_OF_RANGE_LONGITUDE",
+            message="Longitude must be between -180 and 180",
             status_code=400
         )
 
 
 class OutOfServiceAreaOriginException(HTTPException):
     """Exceção para ponto de origem fora da área de serviço."""
-    
+
     def __init__(self):
         super().__init__(
-            code="OUT_OF_SERVICE_AREA",
-            message="Ponto de origem fora da área de serviço (Lisboa)",
+            code="OUT_OF_SERVICE_AREA_ORIGIN",
+            message="Origin coordinates are outside the service area.",
             status_code=400
         )
 
 
 class OutOfServiceAreaDestException(HTTPException):
     """Exceção para ponto de destino fora da área de serviço."""
-    
+
     def __init__(self):
         super().__init__(
-            code="OUT_OF_SERVICE_AREA",
-            message="Ponto de destino fora da área de serviço (Lisboa)",
+            code="OUT_OF_SERVICE_AREA_DEST",
+            message="Destination coordinates are outside the service area.",
             status_code=400
         )
 
@@ -109,11 +109,11 @@ class OutOfServiceAreaDestException(HTTPException):
 
 class NoRouteFoundException(HTTPException):
     """Exceção quando nenhuma rota é encontrada."""
-    
+
     def __init__(self):
         super().__init__(
             code="NO_ROUTE_FOUND",
-            message="Não foi possível encontrar uma rota entre os pontos",
+            message="No route found between the specified points.",
             status_code=404
         )
 
@@ -122,22 +122,22 @@ class NoRouteFoundException(HTTPException):
 
 class MapNotLoadedException(HTTPException):
     """Exceção quando o mapa não está carregado."""
-    
+
     def __init__(self):
         super().__init__(
             code="MAP_NOT_LOADED",
-            message="O mapa não está disponível no momento",
+            message="Map is not available at the moment.",
             status_code=503
         )
 
 
 class CalculationErrorException(HTTPException):
     """Exceção para erro genérico de cálculo."""
-    
+
     def __init__(self):
         super().__init__(
             code="CALCULATION_ERROR",
-            message="Erro ao calcular a rota",
+            message="Error calculating route.",
             status_code=500
         )
 

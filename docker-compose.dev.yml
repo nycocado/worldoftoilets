@@ -118,6 +118,8 @@ services:
             MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
             MINIO_BUCKET: ${MINIO_BUCKET}
             MINIO_PUBLIC_URL: ${MINIO_PUBLIC_URL}
+            AI_SERVICE_URL: ${AI_SERVICE_URL}
+            AI_SERVICE_TIMEOUT: ${AI_SERVICE_TIMEOUT}
             NODE_ENV: "development"
             PORT: 3101
             WATCHPACK_POLLING: "true"
