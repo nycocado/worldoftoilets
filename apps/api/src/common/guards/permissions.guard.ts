@@ -8,7 +8,7 @@ import { Reflector } from '@nestjs/core';
 import { PERMISSIONS_KEY } from '@common/decorators/requires-permissions.decorator';
 import { PermissionApiName } from '@database/entities/permission.entity';
 import { RequestUser } from '@common/types/jwt.types';
-import { UserService } from '@modules/user';
+import { UserService } from '@modules/user/user.service';
 
 export const PERMISSIONS_EXCEPTIONS = {
   USER_NOT_HAVE_REQUIRED_PERMISSIONS:
