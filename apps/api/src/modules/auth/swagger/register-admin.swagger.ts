@@ -10,14 +10,6 @@ import {
 } from '@nestjs/swagger';
 import { RegisterAdminRequestDto } from '@modules/auth/dto/register-admin-request.dto';
 
-/**
- * Decorador Swagger para Registo de Administrador
- *
- * @function ApiSwaggerRegisterAdmin
- * @description Decorator que documenta o endpoint POST /auth/register/admin no Swagger.
- * Inclui documentação da operação, request body, autenticação, respostas sucesso e erro.
- * Este endpoint requer autenticação JWT e permissão CREATE_USERS.
- */
 export const ApiSwaggerRegisterAdmin = (): MethodDecorator =>
   applyDecorators(
     ApiBearerAuth(),

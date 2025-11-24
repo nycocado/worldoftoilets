@@ -9,45 +9,10 @@ import { ConfigService } from '@nestjs/config';
 import { AUTH_EXCEPTIONS } from '@modules/auth/constants';
 
 /**
- * Caso de Uso para Registo de Administrador
- *
- * @class RegisterAdminUseCase
- * @description Implementa a lógica de registo de nova conta de administrador.
- * Cria utilizador com roles administrativas específicas, credenciais, token de verificação e envia email de verificação.
- *
- * @implements
- *   - Verificação de email único
- *   - Criação de utilizador com dados básicos
- *   - Atribuição de roles administrativas personalizadas
- *   - Criação de credenciais com password hasheada
- *   - Geração de token de verificação de email
- *   - Envio de email de verificação
- *
- * @example
- * await registerAdminUseCase.execute(
- *   'Admin João',
- *   'admin@example.com',
- *   'password123',
- *   UserIcon.ICON_1,
- *   '1990-01-15',
- *   ['comments-administrator', 'users-administrator']
- * );
- * // Cria administrador com roles específicas e envia email de verificação
- *
- * @throws {ConflictException} Se email já estiver registado
+ * Implementa o caso de uso de registo de uma nova conta de administrador.
  */
 @Injectable()
 export class RegisterAdminUseCase {
-  /**
-   * Construtor do RegisterAdminUseCase
-   *
-   * @param {UserService} userService - Serviço para operações de utilizador
-   * @param {UserCredentialService} userCredentialService - Serviço para credenciais
-   * @param {EmailVerificationService} emailVerificationService - Serviço para tokens de verificação
-   * @param {RoleService} roleService - Serviço para gestão de roles
-   * @param {EmailService} emailService - Serviço para envio de endereços eletrónicos
-   * @param {ConfigService} configService - Serviço para ler configurações (FRONTEND_URL)
-   */
   constructor(
     private readonly userService: UserService,
     private readonly userCredentialService: UserCredentialService,
@@ -58,25 +23,16 @@ export class RegisterAdminUseCase {
   ) {}
 
   /**
-   * Executar caso de uso de registo de administrador
+   * Executa a lógica de registo de uma nova conta de administrador.
    *
-   * @async
-   * @param {string} name - Nome de utilizador (display name)
-   * @param {string} email - Email único
-   * @param {string} password - Password em texto plano (será hasheada)
-   * @param {UserIcon | undefined} icon - Ícone/avatar (opcional)
-   * @param {string} birthDate - Data de nascimento (ISO format)
-   * @param {RoleApiName[]} roles - Lista de roles administrativas a atribuir
+   * @param {string} name O nome de utilizador.
+   * @param {string} email O email único do utilizador.
+   * @param {string} password A password em texto plano.
+   * @param {UserIcon | undefined} icon O ícone/avatar do utilizador (opcional).
+   * @param {string} birthDate A data de nascimento (formato ISO).
+   * @param {RoleApiName[]} roles A lista de roles administrativas a atribuir.
    * @returns {Promise<void>}
-   * @throws {ConflictException} Se email já estiver registado
-   *
-   * @description
-   * 1. Verifica se email já existe
-   * 2. Cria utilizador com nome, ícone e data de nascimento
-   * 3. Atribui roles administrativas especificadas ao utilizador
-   * 4. Cria credenciais com email e password hasheada
-   * 5. Gera token de verificação de email
-   * 6. Envia email de verificação com link
+   * @throws {ConflictException} Se o email já estiver registado.
    */
   async execute(
     name: string,
@@ -86,7 +42,7 @@ export class RegisterAdminUseCase {
     birthDate: string,
     roles: RoleApiName[],
   ): Promise<void> {
-    if (await this.userService.verityUserExistsByEmail(email)) {
+    if (await this.userService.verifyUserExistsByEmail(email)) {
       throw new ConflictException(AUTH_EXCEPTIONS.EMAIL_ALREADY_IN_USE);
     }
 
