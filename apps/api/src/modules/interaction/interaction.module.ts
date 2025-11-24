@@ -4,6 +4,9 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { InteractionEntity } from '@database/entities';
 import { InteractionRepository } from '@modules/interaction/interaction.repository';
 
+/**
+ * Gerencia a funcionalidade de interações, agrupando seus componentes.
+ */
 @Module({
   imports: [MikroOrmModule.forFeature([InteractionEntity])],
   providers: [InteractionService, InteractionRepository],

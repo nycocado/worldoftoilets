@@ -6,15 +6,22 @@ import {
   ToiletEntity,
   UserEntity,
 } from '@database/entities';
-import { ConfigService } from '@nestjs/config';
 
+/**
+ * Contém a lógica de negócio para as operações de interação.
+ */
 @Injectable()
 export class InteractionService {
-  constructor(
-    private readonly configService: ConfigService,
-    private readonly interactionRepository: InteractionRepository,
-  ) {}
+  constructor(private readonly interactionRepository: InteractionRepository) {}
 
+  /**
+   * Cria uma nova interação entre um utilizador e uma casa de banho.
+   *
+   * @param {UserEntity} user O utilizador que realiza a interação.
+   * @param {ToiletEntity} toilet A casa de banho alvo da interação.
+   * @param {InteractionDiscriminator} discriminator O tipo de interação.
+   * @returns {Promise<InteractionEntity>} A entidade da interação criada.
+   */
   async createInteraction(
     user: UserEntity,
     toilet: ToiletEntity,
@@ -23,6 +30,13 @@ export class InteractionService {
     return this.interactionRepository.create(user, toilet, discriminator);
   }
 
+  /**
+   * Realiza o soft delete de uma interação.
+   *
+   * @param {InteractionEntity} interaction A interação a ser apagada.
+   * @param {UserEntity} user O utilizador (moderador) que apaga a interação.
+   * @returns {Promise<InteractionEntity>} A entidade da interação atualizada.
+   */
   async softDeleteInteraction(
     interaction: InteractionEntity,
     user: UserEntity,
