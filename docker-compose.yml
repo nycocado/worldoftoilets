@@ -140,6 +140,8 @@ services:
                 condition: service_healthy
             mailhog:
                 condition: service_started
+            ai:
+                condition: service_healthy
         healthcheck:
             test: ["CMD", "curl", "-f", "http://localhost:3101/health"]
             interval: 10s
@@ -198,6 +200,8 @@ services:
                 condition: service_healthy
             mailhog:
                 condition: service_started
+            ai:
+                condition: service_healthy
         healthcheck:
             test: ["CMD", "curl", "-f", "http://localhost:3102/health"]
             interval: 10s

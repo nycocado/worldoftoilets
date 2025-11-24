@@ -29,6 +29,7 @@ import { CommonModule } from '@common/common.module';
 import { MinioModule } from '@modules/minio';
 import { SuggestionModule } from '@modules/suggestion';
 import { RouteModule } from '@modules/route';
+import { PartnerModule } from '@modules/partner';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { RouteModule } from '@modules/route';
     AccessModule,
     TypeExtraModule,
     RouteModule,
+    PartnerModule,
   ],
   providers: [
     {
