@@ -1,3 +1,6 @@
+/**
+ * Contém as mensagens de sucesso para o módulo de utilizador.
+ */
 export const USER_MESSAGES = {
   USER_UPDATED: 'User updated successfully.',
   USER_DEACTIVATED: 'User deactivated successfully.',

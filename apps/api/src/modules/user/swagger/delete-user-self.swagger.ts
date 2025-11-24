@@ -20,6 +20,7 @@ export const ApiSwaggerDeleteUserSelf = (): MethodDecorator =>
       description: 'A conta já está desativada.',
     }),
     ApiUnauthorizedResponse({
-      description: 'Token de autenticação inválido, ausente ou senha incorreta.',
+      description:
+        'Token de autenticação inválido, ausente ou senha incorreta.',
     }),
   );

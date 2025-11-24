@@ -2,68 +2,38 @@ import { Expose, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 /**
- * DTO Base para Utilizador
- *
- * @class UserBaseDto
- * @description Transfer Object base com informações públicas do utilizador
- *
- * @property {string} publicId - ID público UUID do utilizador
- * @property {string} name - Nome de utilizador (display name)
- * @property {string} icon - Ícone/avatar do utilizador
- * @property {number} commentCount - Total de comentários feitos pelo utilizador
- *
- * @example
- * {
- *  "publicId": "550e8400-e29b-41d4-a716-446655440000",
- *  "name": "João Silva",
- *  "icon": "icon-1",
- *  "commentCount": 42
- *  }
+ * DTO com as informações base de um utilizador.
  */
 export class UserBaseDto {
-  /**
-   * ID público do utilizador em formato UUID
-   *
-   * @type {string}
-   * @format uuid
-   * @example "550e8400-e29b-41d4-a716-446655440000"
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'O ID público do utilizador.',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+    format: 'uuid',
+  })
   @Expose()
   @Type(() => String)
   publicId!: string;
 
-  /**
-   * Nome de utilizador (display name/alcunha)
-   *
-   * @type {string}
-   * @example "João Silva"
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'O nome de exibição do utilizador.',
+    example: 'John Doe',
+  })
   @Expose()
   @Type(() => String)
   name!: string;
 
-  /**
-   * Ícone/avatar do utilizador
-   *
-   * @type {string}
-   * @description Identificador do avatar escolhido pelo utilizador
-   * @example "icon-1"
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'O ícone de perfil do utilizador.',
+    example: 'icon-default',
+  })
   @Expose()
   @Type(() => String)
   icon!: string;
 
-  /**
-   * Número de comentários feitos pelo utilizador
-   *
-   * @type {number}
-   * @description Total de comentários associados ao utilizador
-   * @example 42
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'O número total de comentários feitos pelo utilizador.',
+    example: 10,
+  })
   @Expose()
   @Type(() => Number)
   commentsCount!: number;

@@ -17,4 +17,3 @@ export class AssignRolesManageRequestDto {
   @IsEnum(RoleApiName, { each: true })
   roles!: RoleApiName[];
 }
-

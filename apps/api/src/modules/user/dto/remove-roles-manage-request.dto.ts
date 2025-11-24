@@ -17,4 +17,3 @@ export class RemoveRolesManageRequestDto {
   @IsEnum(RoleApiName, { each: true })
   roles!: RoleApiName[];
 }
-

@@ -6,7 +6,7 @@ import {
   Param,
   ParseUUIDPipe,
   Patch,
-  Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -228,7 +228,7 @@ export class UserController {
   @ApiSwaggerUndeleteUserManage()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.ACTIVATE_USER)
-  @Post(':publicId/manage/undelete')
+  @Put(':publicId/manage/undelete')
   async undeleteUserManage(
     @Param('publicId', ParseUUIDPipe) publicId: string,
   ): Promise<ApiResponseDto<UserAdminResponseDto>> {
@@ -240,7 +240,7 @@ export class UserController {
    * Atribui cargos a um utilizador.
    *
    * @param {string} publicId O ID público do utilizador.
-   * @param {AssignRolesRequestDto} assignRolesDto Os cargos a atribuir.
+   * @param {AssignRolesManageRequestDto} assignRolesDto Os cargos a atribuir.
    * @returns {Promise<ApiResponseDto<UserAdminResponseDto>>} As informações atualizadas.
    * @throws {NotFoundException} Se o utilizador não for encontrado.
    * @throws {BadRequestException} Se algum cargo for inválido ou já atribuído.
@@ -248,7 +248,7 @@ export class UserController {
   @ApiSwaggerAssignRolesManage()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.MODIFY_ROLES_USERS)
-  @Post(':publicId/manage/roles')
+  @Put(':publicId/manage/roles')
   async assignRolesManage(
     @Param('publicId', ParseUUIDPipe) publicId: string,
     @Body() assignRolesDto: AssignRolesManageRequestDto,

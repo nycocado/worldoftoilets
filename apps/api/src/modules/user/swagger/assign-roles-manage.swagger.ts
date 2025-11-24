@@ -27,8 +27,7 @@ export const ApiSwaggerAssignRolesManage = (): MethodDecorator =>
       type: UserAdminResponseDto,
     }),
     ApiBadRequestResponse({
-      description:
-        'Cargos inválidos ou já atribuídos ao utilizador.',
+      description: 'Cargos inválidos ou já atribuídos ao utilizador.',
     }),
     ApiUnauthorizedResponse({
       description: 'Token de autenticação inválido ou ausente.',
