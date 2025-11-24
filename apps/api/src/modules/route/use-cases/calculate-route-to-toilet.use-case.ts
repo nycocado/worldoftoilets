@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
-import { RouteService } from '../route.service';
+import { RouteService } from '@modules/route/route.service';
 import { RouteResponseDto } from '../dto';
 import { ToiletService } from '@modules/toilet';
 
