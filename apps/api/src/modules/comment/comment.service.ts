@@ -7,45 +7,18 @@ import { CommentEntity } from '@database/entities';
 import { COMMENT_EXCEPTIONS } from '@modules/comment/constants/exceptions.constant';
 
 /**
- * Serviço de Comentários
- *
- * @class CommentService
- * @description Serviço de alto nível para gestão de comentários.
- * Oferece operações de contagem de comentários por utilizador e
- * limpeza automática de comentários expirados através de cron jobs.
- *
- * @implements
- *   - Contagem de comentários por utilizador
- *   - Contagem em batch de comentários para múltiplos utilizadores
- *   - Remoção automática de comentários com soft delete expirado
- *
- * @see CommentRepository - Repositório para acesso aos dados
+ * Contém a lógica de negócio para as operações de comentários.
  */
 @Injectable()
 export class CommentService {
-  /**
-   * Construtor do CommentService
-   *
-   * @param {ConfigService} configService - Serviço de configuração para ler variáveis de ambiente
-   * @param {CommentRepository} commentRepository - Repositório para operações de comentários
-   */
   constructor(
     private readonly configService: ConfigService,
     private readonly commentRepository: CommentRepository,
   ) {}
 
   /**
-   * Deletar comentários expirados (Cron Job)
-   *
-   * @async
-   * @cron Executado diariamente à meia-noite
-   * @returns {Promise<void>}
-   *
-   * @description
-   * Cron job que remove permanentemente comentários com soft delete expirado.
-   * Lê a configuração COMMENT_SOFT_DELETE_RETENTION para determinar o período de retenção.
-   * Comentários marcados como deletados há mais tempo que o período de retenção são removidos.
-   * Executado automaticamente todos os dias à meia-noite.
+   * Remove permanentemente os comentários que excederam o período de retenção do soft delete.
+   * Este método é executado como um Cron Job diário.
    */
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async deleteExpiredComments(): Promise<void> {
@@ -58,16 +31,11 @@ export class CommentService {
   }
 
   /**
-   * Obter comentário por publicId
+   * Busca um comentário pelo seu ID público.
    *
-   * @async
-   * @param {string} publicId - Identificador público do comentário
-   * @returns {Promise<CommentEntity>} Comentário encontrado
-   * @throws {NotFoundException} Se comentário não for encontrado
-   *
-   * @description
-   * Busca um comentário pelo seu publicId (UUID).
-   * Lança exceção se não encontrado.
+   * @param {string} publicId O ID público do comentário.
+   * @returns {Promise<CommentEntity>} A entidade do comentário encontrado.
+   * @throws {NotFoundException} Se o comentário não for encontrado.
    */
   async getCommentByPublicId(publicId: string): Promise<CommentEntity> {
     const comment = await this.commentRepository.findByPublicId(publicId);

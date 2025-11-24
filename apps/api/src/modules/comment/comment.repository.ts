@@ -15,53 +15,28 @@ import {
 } from '@mikro-orm/mariadb';
 
 /**
- * Repositório de Comentários
- *
- * @class CommentRepository
- * @description Repositório de acesso a dados para entidade CommentEntity.
- * Oferece operações CRUD e queries complexas para comentários, incluindo:
- * - Busca por publicId, toilet ou utilizador
- * - Operações transacionais de criação, atualização e remoção
- * - Gestão de soft delete e estados de comentários
- * - Queries com paginação e ordenação
- *
- * @implements
- *   - Padrão Repository para isolar lógica de acesso a dados
- *   - Transações com decorator @Transactional do MikroORM
- *   - Queries SQL nativas otimizadas para contagens
- *   - Soft delete com período de retenção
- *
- * @see CommentEntity - Entidade de domínio representando comentários
+ * Gerencia o acesso e a persistência de dados para a entidade CommentEntity.
  */
 @Injectable()
 export class CommentRepository {
-  /**
-   * Construtor do CommentRepository
-   *
-   * @param {EntityRepository<CommentEntity>} commentRepository - Repositório MikroORM injetado
-   */
   constructor(
     @InjectRepository(CommentEntity)
     private readonly commentRepository: EntityRepository<CommentEntity>,
   ) {}
 
   /**
-   * Buscar comentário por publicId
+   * Busca um comentário pelo seu ID público.
    *
-   * @async
-   * @param {string} publicId - Identificador público único do comentário
-   * @returns {Promise<CommentEntity | null>} Comentário encontrado ou null
-   *
-   * @description
-   * Busca um comentário pelo seu publicId (UUID).
-   * Carrega automaticamente o utilizador da interação e a avaliação (rate).
+   * @param {string} publicId O ID público do comentário.
+   * @returns {Promise<CommentEntity | null>} A entidade do comentário ou `null` se não for encontrado.
    */
   async findByPublicId(publicId: string): Promise<CommentEntity | null> {
     return this.commentRepository.findOne(
       { publicId: publicId },
       {
         populate: [
-          'interaction.user',
+          'interaction.user.commentsCount',
+          'interaction.user.partner',
           'rate',
           'likes',
           'dislikes',
@@ -72,22 +47,15 @@ export class CommentRepository {
   }
 
   /**
-   * Buscar comentários por toilet
+   * Busca comentários de um sanitário com opções de paginação e filtro.
    *
-   * @async
-   * @param {ToiletEntity} toilet - Entidade de toilet
-   * @param {boolean} pageable - Se deve aplicar paginação
-   * @param {number} page - Número da página (zero-indexed)
-   * @param {number} size - Tamanho da página
-   * @param {CommentState} commentState - Estado dos comentários a buscar (VISIBLE, HIDDEN, etc)
-   * @param {Date} timestamp - Data limite para buscar comentários (comentários criados antes desta data)
-   * @returns {Promise<CommentEntity[]>} Lista de comentários
-   *
-   * @description
-   * Busca comentários de um toilet específico com suporte a paginação.
-   * Filtra por estado do comentário e timestamp de criação.
-   * Carrega automaticamente utilizador (com partner), e avaliação (rate).
-   * Ordenado por data de criação descendente (mais recentes primeiro).
+   * @param {ToiletEntity} toilet A entidade do sanitário.
+   * @param {boolean} [pageable] Define se a paginação deve ser aplicada.
+   * @param {number} [page] O número da página.
+   * @param {number} [size] O tamanho da página.
+   * @param {CommentState} [commentState] O estado do comentário para filtrar.
+   * @param {Date} [timestamp] O timestamp máximo de criação.
+   * @returns {Promise<CommentEntity[]>} Uma lista de entidades de comentário.
    */
   async findByToilet(
     toilet: ToiletEntity,
@@ -108,6 +76,7 @@ export class CommentRepository {
       },
       {
         populate: [
+          'interaction.user.commentsCount',
           'interaction.user.partner',
           'rate',
           'likes',
@@ -122,22 +91,15 @@ export class CommentRepository {
   }
 
   /**
-   * Buscar comentários por utilizador
+   * Busca comentários de um utilizador com opções de paginação e filtro.
    *
-   * @async
-   * @param {UserEntity} user - Entidade de utilizador
-   * @param {boolean} pageable - Se deve aplicar paginação
-   * @param {number} page - Número da página (zero-indexed)
-   * @param {number} size - Tamanho da página
-   * @param {CommentState} commentState - Estado dos comentários a buscar (VISIBLE, HIDDEN, etc)
-   * @param {Date} timestamp - Data limite para buscar comentários (comentários criados antes desta data)
-   * @returns {Promise<CommentEntity[]>} Lista de comentários
-   *
-   * @description
-   * Busca comentários de um utilizador específico com suporte a paginação.
-   * Filtra por estado do comentário e timestamp de criação.
-   * Carrega automaticamente o toilet associado e a avaliação (rate).
-   * Ordenado por data de criação descendente (mais recentes primeiro).
+   * @param {UserEntity} user A entidade do utilizador.
+   * @param {boolean} [pageable] Define se a paginação deve ser aplicada.
+   * @param {number} [page] O número da página.
+   * @param {number} [size] O tamanho da página.
+   * @param {CommentState} [commentState] O estado do comentário para filtrar.
+   * @param {Date} [timestamp] O timestamp máximo de criação.
+   * @returns {Promise<CommentEntity[]>} Uma lista de entidades de comentário.
    */
   async findByUser(
     user: UserEntity,
@@ -158,6 +120,8 @@ export class CommentRepository {
       },
       {
         populate: [
+          'interaction.user.commentsCount',
+          'interaction.user.partner',
           'interaction.toilet',
           'rate',
           'likes',
@@ -172,15 +136,10 @@ export class CommentRepository {
   }
 
   /**
-   * Buscar comentários expirados
+   * Busca comentários que sofreram soft delete e cujo período de retenção expirou.
    *
-   * @async
-   * @param {Date} retention - Data de retenção limite
-   * @returns {Promise<CommentEntity[]>} Lista de comentários expirados
-   *
-   * @description
-   * Busca comentários soft-deleted há mais tempo que o período de retenção.
-   * Usado pelo cron job de limpeza para remover comentários permanentemente.
+   * @param {Date} retention A data limite de retenção.
+   * @returns {Promise<CommentEntity[]>} Uma lista de comentários expirados.
    */
   async findExpired(retention: Date): Promise<CommentEntity[]> {
     return this.commentRepository.find({
@@ -191,18 +150,11 @@ export class CommentRepository {
   }
 
   /**
-   * Criar novo comentário
+   * Cria e persiste um novo comentário.
    *
-   * @async
-   * @transactional Executa dentro de transação
-   * @param {InteractionEntity} interaction - Entidade de interação associada
-   * @param {string} text - Texto do comentário (opcional)
-   * @returns {Promise<CommentEntity>} Comentário criado
-   *
-   * @description
-   * Cria novo comentário associado a uma interação.
-   * Persiste imediatamente no banco de dados (flush).
-   * Texto é opcional - comentários podem ter apenas avaliação sem texto.
+   * @param {InteractionEntity} interaction A entidade de interação associada.
+   * @param {string} [text] O texto do comentário.
+   * @returns {Promise<CommentEntity>} A entidade do comentário criado.
    */
   @Transactional()
   async create(
@@ -218,18 +170,11 @@ export class CommentRepository {
   }
 
   /**
-   * Soft delete de comentário
+   * Realiza o soft delete de um comentário, marcando-o como oculto e registrando quem o deletou.
    *
-   * @async
-   * @transactional Executa dentro de transação
-   * @param {CommentEntity} comment - Comentário a ser marcado como deletado
-   * @param {UserEntity} deletedBy - Utilizador que deletou o comentário
-   * @returns {Promise<CommentEntity>} Comentário atualizado
-   *
-   * @description
-   * Marca comentário como deletado sem remover do banco de dados.
-   * Altera estado para HIDDEN, registra quem deletou e timestamp.
-   * Comentário pode ser recuperado com undelete antes de expirar.
+   * @param {CommentEntity} comment O comentário a ser deletado.
+   * @param {UserEntity} deletedBy O utilizador que realizou a exclusão.
+   * @returns {Promise<CommentEntity>} A entidade do comentário atualizado.
    */
   @Transactional()
   async softDelete(
@@ -245,16 +190,10 @@ export class CommentRepository {
   }
 
   /**
-   * Deletar comentário permanentemente
+   * Remove um comentário permanentemente do banco de dados.
    *
-   * @async
-   * @transactional Executa dentro de transação
-   * @param {CommentEntity} comment - Comentário a ser removido
+   * @param {CommentEntity} comment O comentário a ser removido.
    * @returns {Promise<void>}
-   *
-   * @description
-   * Remove comentário permanentemente do banco de dados.
-   * Operação irreversível - normalmente usado apenas pelo cron job de limpeza.
    */
   @Transactional()
   async delete(comment: CommentEntity): Promise<void> {
@@ -263,17 +202,10 @@ export class CommentRepository {
   }
 
   /**
-   * Deletar comentários expirados permanentemente
+   * Remove permanentemente os comentários cujo período de retenção do soft delete expirou.
    *
-   * @async
-   * @transactional Executa dentro de transação
-   * @param {Date} retention - Data de retenção limite
+   * @param {Date} retention A data limite de retenção.
    * @returns {Promise<void>}
-   *
-   * @description
-   * Remove permanentemente todos os comentários soft-deleted há mais tempo que o período de retenção.
-   * Chamado pelo cron job diário de limpeza.
-   * Operação em batch para eficiência.
    */
   @Transactional()
   async deleteExpired(retention: Date): Promise<void> {
@@ -283,18 +215,11 @@ export class CommentRepository {
   }
 
   /**
-   * Atualizar comentário
+   * Atualiza o texto de um comentário.
    *
-   * @async
-   * @transactional Executa dentro de transação
-   * @param {CommentEntity} comment - Comentário a ser atualizado
-   * @param {string} text - Novo texto do comentário (opcional)
-   * @returns {Promise<CommentEntity>} Comentário atualizado
-   *
-   * @description
-   * Atualiza texto do comentário se fornecido.
-   * Se text for undefined, nenhuma alteração é feita ao texto.
-   * Persiste mudanças imediatamente no banco de dados.
+   * @param {CommentEntity} comment O comentário a ser atualizado.
+   * @param {string} [text] O novo texto do comentário.
+   * @returns {Promise<CommentEntity>} A entidade do comentário atualizado.
    */
   @Transactional()
   async update(comment: CommentEntity, text?: string): Promise<CommentEntity> {
@@ -307,18 +232,11 @@ export class CommentRepository {
   }
 
   /**
-   * Alterar estado do comentário
+   * Altera o estado de visibilidade de um comentário.
    *
-   * @async
-   * @transactional Executa dentro de transação
-   * @param {CommentEntity} comment - Comentário a ser atualizado
-   * @param {CommentState} state - Novo estado (VISIBLE ou HIDDEN)
-   * @returns {Promise<CommentEntity>} Comentário atualizado
-   *
-   * @description
-   * Altera estado de visibilidade do comentário.
-   * Usado por operações de moderação (hide/show).
-   * Persiste mudanças imediatamente no banco de dados.
+   * @param {CommentEntity} comment O comentário a ser atualizado.
+   * @param {CommentState} state O novo estado do comentário.
+   * @returns {Promise<CommentEntity>} A entidade do comentário atualizado.
    */
   @Transactional()
   async changeState(
@@ -332,17 +250,10 @@ export class CommentRepository {
   }
 
   /**
-   * Recuperar comentário deletado
+   * Reverte o soft delete de um comentário.
    *
-   * @async
-   * @transactional Executa dentro de transação
-   * @param {CommentEntity} comment - Comentário a ser recuperado
-   * @returns {Promise<CommentEntity>} Comentário restaurado
-   *
-   * @description
-   * Reverte soft delete de comentário.
-   * Restaura estado para VISIBLE e limpa campos deletedBy e deletedAt.
-   * Apenas funciona para comentários soft-deleted que ainda não foram removidos permanentemente.
+   * @param {CommentEntity} comment O comentário a ser recuperado.
+   * @returns {Promise<CommentEntity>} A entidade do comentário restaurado.
    */
   @Transactional()
   async undelete(comment: CommentEntity): Promise<CommentEntity> {

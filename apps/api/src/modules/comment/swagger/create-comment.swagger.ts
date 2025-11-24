@@ -12,13 +12,6 @@ import {
   CommentResponseDto,
 } from '@modules/comment/dto';
 
-/**
- * Decorador Swagger para Criar Comentário
- *
- * @function ApiSwaggerCreateComment
- * @description Decorator que documenta o endpoint POST /comment no Swagger.
- * Inclui documentação da operação, request body e respostas.
- */
 export const ApiSwaggerCreateComment = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

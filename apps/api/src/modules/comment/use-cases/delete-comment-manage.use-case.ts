@@ -6,35 +6,10 @@ import { UserService } from '@modules/user';
 import { InteractionService } from '@modules/interaction';
 
 /**
- * Caso de Uso para Deletar Comentário (Gestão/Moderação)
- *
- * @class DeleteCommentManageUseCase
- * @description Implementa a lógica de soft delete de qualquer comentário por moderador.
- * Diferente do DeleteCommentUseCase, não verifica propriedade - usado para moderação.
- *
- * @implements
- *   - Validação de existência do comentário
- *   - Soft delete sem verificação de propriedade
- *   - Marcação de quem executou a moderação
- *
- * @example
- * await deleteCommentManageUseCase.execute('comment-public-id', moderatorUserId);
- * // Marca comentário como deletado (independente de quem é o autor)
- *
- * @throws {NotFoundException} Se comentário não existir
- *
- * @see CommentRepository - Repositório para operações de comentário
- * @see InteractionService - Serviço para soft delete de interação
+ * Contém a lógica de negócio para o soft delete de um comentário para fins de moderação.
  */
 @Injectable()
 export class DeleteCommentManageUseCase {
-  /**
-   * Construtor do DeleteCommentManageUseCase
-   *
-   * @param {CommentRepository} repository - Repositório de comentários
-   * @param {UserService} userService - Serviço para operações de utilizador
-   * @param {InteractionService} interactionService - Serviço para operações de interação
-   */
   constructor(
     private readonly repository: CommentRepository,
     private readonly userService: UserService,
@@ -42,23 +17,12 @@ export class DeleteCommentManageUseCase {
   ) {}
 
   /**
-   * Executar caso de uso de deletar comentário (moderação)
+   * Realiza o soft delete de um comentário para fins de moderação.
    *
-   * @async
-   * @transactional Executa dentro de transação
-   * @param {string} commentPublicId - Identificador público do comentário
-   * @param {string} publicId - ID público do moderador
+   * @param {string} commentPublicId O ID público do comentário.
+   * @param {string} publicId O ID público do moderador que está a realizar a exclusão.
    * @returns {Promise<void>}
-   * @throws {NotFoundException} Se comentário não existir
-   *
-   * @description
-   * 1. Busca utilizador moderador por publicId
-   * 2. Busca comentário por publicId
-   * 3. Valida existência do comentário
-   * 4. Marca comentário como soft deleted (registra moderador que deletou)
-   * 5. Marca interação associada como soft deleted
-   * Não valida propriedade - pode deletar qualquer comentário.
-   * Usado por moderadores com permissão DELETE_COMMENTS.
+   * @throws {NotFoundException} Se o comentário não for encontrado.
    */
   @Transactional()
   async execute(commentPublicId: string, publicId: string): Promise<void> {

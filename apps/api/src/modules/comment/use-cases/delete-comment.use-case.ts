@@ -10,36 +10,10 @@ import { UserService } from '@modules/user';
 import { InteractionService } from '@modules/interaction';
 
 /**
- * Caso de Uso para Deletar Comentário Próprio
- *
- * @class DeleteCommentUseCase
- * @description Implementa a lógica de soft delete de comentário pelo próprio autor.
- * Valida propriedade do comentário antes de permitir exclusão.
- *
- * @implements
- *   - Validação de existência do comentário
- *   - Verificação de propriedade (apenas autor pode deletar)
- *   - Soft delete do comentário e interação associada
- *
- * @example
- * await deleteCommentUseCase.execute('comment-public-id', userId);
- * // Marca comentário como deletado (pode ser recuperado antes de expirar)
- *
- * @throws {NotFoundException} Se comentário não existir
- * @throws {UnauthorizedException} Se utilizador não for o autor do comentário
- *
- * @see CommentRepository - Repositório para operações de comentário
- * @see InteractionService - Serviço para soft delete de interação
+ * Contém a lógica de negócio para o soft delete de um comentário pelo seu autor.
  */
 @Injectable()
 export class DeleteCommentUseCase {
-  /**
-   * Construtor do DeleteCommentUseCase
-   *
-   * @param {CommentRepository} repository - Repositório de comentários
-   * @param {UserService} userService - Serviço para operações de utilizador
-   * @param {InteractionService} interactionService - Serviço para operações de interação
-   */
   constructor(
     private readonly repository: CommentRepository,
     private readonly userService: UserService,
@@ -47,24 +21,13 @@ export class DeleteCommentUseCase {
   ) {}
 
   /**
-   * Executar caso de uso de deletar comentário próprio
+   * Realiza o soft delete de um comentário, verificando a autoria.
    *
-   * @async
-   * @transactional Executa dentro de transação
-   * @param {string} commentPublicId - Identificador público do comentário
-   * @param {string} publicId - ID público do utilizador (autor)
+   * @param {string} commentPublicId O ID público do comentário.
+   * @param {string} publicId O ID público do autor do comentário.
    * @returns {Promise<void>}
-   * @throws {NotFoundException} Se comentário não existir
-   * @throws {UnauthorizedException} Se utilizador não for o autor
-   *
-   * @description
-   * 1. Busca utilizador por publicId
-   * 2. Busca comentário por publicId
-   * 3. Valida existência do comentário
-   * 4. Verifica se utilizador é o autor do comentário
-   * 5. Marca comentário como soft deleted
-   * 6. Marca interação associada como soft deleted
-   * Comentário pode ser recuperado com undelete antes do período de retenção expirar.
+   * @throws {NotFoundException} Se o comentário não for encontrado.
+   * @throws {UnauthorizedException} Se o utilizador não for o autor do comentário.
    */
   @Transactional()
   async execute(commentPublicId: string, publicId: string): Promise<void> {

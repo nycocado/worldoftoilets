@@ -10,43 +10,10 @@ import { CommentResponseDto } from '@modules/comment/dto';
 import { plainToInstance } from 'class-transformer';
 
 /**
- * Caso de Uso para Criar Comentário
- *
- * @class CreateCommentUseCase
- * @description Implementa a lógica de criação de novo comentário em toilet.
- * Cria interação, comentário, avaliação e enriquece com dados de reações.
- *
- * @implements
- *   - Validação de existência de utilizador e toilet
- *   - Criação de interação do tipo COMMENT
- *   - Criação de comentário com texto opcional
- *   - Criação de avaliação (clean, paper, structure, accessibility)
- *   - Enriquecimento com dados de reações do utilizador
- *
- * @example
- * const comment = await createCommentUseCase.execute(
- *   userId,
- *   'toilet-public-id',
- *   4, // clean
- *   true, // paper
- *   5, // structure
- *   3, // accessibility
- *   'Excelente toilet!'
- * );
- *
- * @see CommentRepository - Repositório para persistência
+ * Contém a lógica de negócio para a criação de um novo comentário.
  */
 @Injectable()
 export class CreateCommentUseCase {
-  /**
-   * Construtor do CreateCommentUseCase
-   *
-   * @param {CommentRepository} repository - Repositório de comentários
-   * @param {UserService} userService - Serviço para operações de utilizador
-   * @param {ToiletService} toiletService - Serviço para operações de toilet
-   * @param {InteractionService} interactionService - Serviço para criar interações
-   * @param {CommentRateService} commentRateService - Serviço para criar avaliações
-   */
   constructor(
     private readonly repository: CommentRepository,
     private readonly userService: UserService,
@@ -56,28 +23,17 @@ export class CreateCommentUseCase {
   ) {}
 
   /**
-   * Executar caso de uso de criar comentário
+   * Cria um novo comentário, incluindo a interação e a avaliação associada.
    *
-   * @async
-   * @transactional Executa dentro de transação
-   * @param {string} publicId - ID público do utilizador
-   * @param {string} toiletPublicId - Identificador público do toilet
-   * @param {number} clean - Avaliação de limpeza (1-5)
-   * @param {boolean} paper - Disponibilidade de papel higiénico
-   * @param {number} structure - Avaliação de estrutura (1-5)
-   * @param {number} accessibility - Avaliação de acessibilidade (1-5)
-   * @param {string} text - Texto do comentário (opcional)
-   * @returns {Promise<CommentResponseDto>} DTO do comentário criado com reações
-   * @throws {NotFoundException} Se utilizador ou toilet não forem encontrados
-   *
-   * @description
-   * 1. Busca utilizador por publicId
-   * 2. Busca toilet por publicId
-   * 3. Cria interação do tipo COMMENT associando utilizador e toilet
-   * 4. Cria comentário com texto opcional
-   * 5. Cria avaliação com métricas de qualidade
-   * 6. Enriquece comentário com dados de reações do utilizador
-   * 7. Retorna DTO completo do comentário criado
+   * @param {string} publicId O ID público do utilizador.
+   * @param {string} toiletPublicId O ID público do sanitário.
+   * @param {number} clean A avaliação de limpeza.
+   * @param {boolean} paper A avaliação de disponibilidade de papel.
+   * @param {number} structure A avaliação de estrutura.
+   * @param {number} accessibility A avaliação de acessibilidade.
+   * @param {string} [text] O texto do comentário.
+   * @returns {Promise<CommentResponseDto>} O DTO do comentário criado.
+   * @throws {NotFoundException} Se o utilizador ou o sanitário não forem encontrados.
    */
   @Transactional()
   async execute(

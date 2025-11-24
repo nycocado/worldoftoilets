@@ -10,13 +10,6 @@ import {
 } from '@nestjs/swagger';
 import { CommentResponseDto } from '@modules/comment/dto';
 
-/**
- * Decorador Swagger para Ocultar Comentário (Moderação)
- *
- * @function ApiSwaggerHideComment
- * @description Decorator que documenta o endpoint PUT /comment/:publicId/hide no Swagger.
- * Inclui documentação da operação, parâmetros e respostas.
- */
 export const ApiSwaggerHideComment = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({
