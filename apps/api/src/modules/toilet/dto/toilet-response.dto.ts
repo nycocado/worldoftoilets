@@ -5,81 +5,28 @@ import { TypeExtraResponseDto } from '@modules/toilet/dto/type-extra-response.dt
 import { CommentRateToiletResponseDto } from '@modules/comment-rate/dto';
 
 /**
- * DTO de Response para Toilet
- *
- * @class ToiletResponseDto
- * @description Transfer Object para resposta com dados completos de um toilet
- *
- * @property {string} publicId - ID público UUID do toilet
- * @property {AccessResponseDto} access - Dados do tipo de acesso
- * @property {TypeExtraResponseDto[]} extras - Lista de extras disponíveis
- * @property {string} name - Nome do toilet
- * @property {number} latitude - Latitude da localização
- * @property {number} longitude - Longitude da localização
- * @property {string} address - Endereço completo
- * @property {string} city - Cidade
- * @property {string} [state] - Estado/província (opcional)
- * @property {string} country - País
- * @property {string} countryCode - Código ISO do país (2 letras)
- * @property {string} photoUrl - URL da foto do toilet
- * @property {string} placeId - ID do Google Places
- * @property {CommentRateToiletResponseDto} rating - Estatísticas de avaliação
- *
- * @example
- * {
- *   "publicId": "550e8400-e29b-41d4-a716-446655440000",
- *   "access": { "apiName": "PUBLIC", "name": "Público" },
- *   "extras": [{ "apiName": "WIFI", "name": "Wi-Fi" }],
- *   "name": "Casa de Banho Central",
- *   "latitude": 38.7223,
- *   "longitude": -9.1393,
- *   "address": "Praça do Comércio, 1",
- *   "city": "Lisboa",
- *   "state": "Lisboa",
- *   "country": "Portugal",
- *   "countryCode": "PT",
- *   "photoUrl": "https://api.example.com/files/toilets/uuid.jpg",
- *   "placeId": "ChIJa2s3k...",
- *   "rating": {
- *     "totalRatings": 42,
- *     "avgClean": 4.5,
- *     "avgStructure": 4.2,
- *     "avgAccessibility": 4.8,
- *     "paperAvailability": 0.95
- *   }
- * }
+ * DTO para a resposta com os dados de uma casa de banho.
  */
 export class ToiletResponseDto {
-  /**
-   * ID público do toilet
-   *
-   * @type {string}
-   * @format uuid
-   * @description Identificador único UUID do toilet
-   * @example "550e8400-e29b-41d4-a716-446655440000"
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'O ID público da casa de banho.',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
   @Expose()
   publicId!: string;
 
-  /**
-   * Dados do tipo de acesso
-   *
-   * @type {AccessResponseDto}
-   * @description Informação sobre tipo de acesso (público, privado, apenas clientes)
-   */
-  @ApiProperty({ type: () => AccessResponseDto })
+  @ApiProperty({
+    description: 'O tipo de acesso da casa de banho.',
+    type: () => AccessResponseDto,
+  })
   @Expose()
   @Type(() => AccessResponseDto)
   access!: AccessResponseDto;
 
-  /**
-   * Lista de extras disponíveis
-   *
-   * @type {TypeExtraResponseDto[]}
-   * @description Amenidades e recursos disponíveis no toilet
-   */
-  @ApiProperty({ type: () => [TypeExtraResponseDto] })
+  @ApiProperty({
+    description: 'A lista de recursos extra disponíveis.',
+    type: () => [TypeExtraResponseDto],
+  })
   @Expose()
   @Transform(({ obj }) => {
     const items = obj.extras ?? [];
@@ -91,123 +38,81 @@ export class ToiletResponseDto {
   })
   extras: Array<TypeExtraResponseDto>;
 
-  /**
-   * Nome do toilet
-   *
-   * @type {string}
-   * @description Nome identificador do toilet
-   * @example "Casa de Banho Central"
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'O nome da casa de banho.',
+    example: 'Casa de Banho Central',
+  })
   @Expose()
   name!: string;
 
-  /**
-   * Latitude da localização
-   *
-   * @type {number}
-   * @description Coordenada de latitude em graus decimais
-   * @example 38.7223
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'A latitude da localização.',
+    example: 38.7223,
+  })
   @Expose()
   latitude!: number;
 
-  /**
-   * Longitude da localização
-   *
-   * @type {number}
-   * @description Coordenada de longitude em graus decimais
-   * @example -9.1393
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'A longitude da localização.',
+    example: -9.1393,
+  })
   @Expose()
   longitude!: number;
 
-  /**
-   * Endereço completo
-   *
-   * @type {string}
-   * @description Endereço postal completo do toilet
-   * @example "Praça do Comércio, 1"
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'A morada completa.',
+    example: 'Praça do Comércio, 1',
+  })
   @Expose()
   address!: string;
 
-  /**
-   * Cidade
-   *
-   * @type {string}
-   * @description Cidade onde o toilet está localizado
-   * @example "Lisboa"
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'A cidade.',
+    example: 'Lisboa',
+  })
   @Expose()
   city!: string;
 
-  /**
-   * Estado ou província (opcional)
-   *
-   * @type {string}
-   * @description Estado/província/região onde o toilet está localizado
-   * @example "Lisboa"
-   */
-  @ApiProperty({ required: false })
+  @ApiProperty({
+    description: 'O estado ou província.',
+    required: false,
+    example: 'Lisboa',
+  })
   @Expose()
   state?: string;
 
-  /**
-   * País
-   *
-   * @type {string}
-   * @description Nome do país onde o toilet está localizado
-   * @example "Portugal"
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'O país.',
+    example: 'Portugal',
+  })
   @Expose()
   country!: string;
 
-  /**
-   * Código ISO do país
-   *
-   * @type {string}
-   * @description Código ISO 3166-1 alpha-2 do país (2 letras)
-   * @example "PT"
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'O código ISO do país.',
+    example: 'PT',
+  })
   @Expose()
   countryCode!: string;
 
-  /**
-   * URL da foto do toilet
-   *
-   * @type {string}
-   * @description URL pública da imagem do toilet
-   * @example "https://api.example.com/files/toilets/uuid.jpg"
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'O URL da foto da casa de banho.',
+    example: 'https://api.example.com/files/toilets/uuid.jpg',
+  })
   @Expose()
   photoUrl!: string;
 
-  /**
-   * Google Places ID
-   *
-   * @type {string}
-   * @description Identificador do Google Places para este local
-   * @example "ChIJa2s3kTIzGQ0RUIedOPb0Og0"
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'O ID do Google Places.',
+    example: 'ChIJa2s3kTIzGQ0RUIedOPb0Og0',
+  })
   @Expose()
   placeId!: string;
 
-  /**
-   * Estatísticas de avaliação
-   *
-   * @type {CommentRateToiletResponseDto}
-   * @description Médias de avaliações e estatísticas do toilet
-   */
-  @ApiProperty({ type: () => CommentRateToiletResponseDto })
+  @ApiProperty({
+    description: 'As estatísticas de avaliação da casa de banho.',
+    type: () => CommentRateToiletResponseDto,
+  })
   @Expose()
   @Transform(({ obj }) => ({
     totalRatings: obj.totalRatings ?? 0,

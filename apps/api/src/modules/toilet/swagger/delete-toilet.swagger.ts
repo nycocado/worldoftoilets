@@ -9,12 +9,6 @@ import {
   ApiConflictResponse,
 } from '@nestjs/swagger';
 
-/**
- * Decorador Swagger para Deletar Toilet
- *
- * @function ApiSwaggerDeleteToilet
- * @description Decorator que documenta o endpoint DELETE /toilet/:publicId/manage no Swagger.
- */
 export const ApiSwaggerDeleteToilet = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

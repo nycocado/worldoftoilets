@@ -9,12 +9,6 @@ import {
   ApiConflictResponse,
 } from '@nestjs/swagger';
 
-/**
- * Decorador Swagger para Recuperar Toilet Deletado
- *
- * @function ApiSwaggerUndeleteToilet
- * @description Decorator que documenta o endpoint PUT /toilet/:publicId/manage/undelete no Swagger.
- */
 export const ApiSwaggerUndeleteToilet = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

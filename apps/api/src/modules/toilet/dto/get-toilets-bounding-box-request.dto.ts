@@ -11,120 +11,69 @@ import { Transform, Type } from 'class-transformer';
 import { AccessApiName, TypeExtraApiName } from '@database/entities';
 
 /**
- * DTO de Request para Obter Toilets por Bounding Box
- *
- * @class GetToiletsBoundingBoxRequestDto
- * @description Transfer Object para requisição de toilets dentro de uma área geográfica retangular.
- * Define área usando coordenadas mínimas e máximas (sudoeste e nordeste).
- *
- * @property {number} minLat - Latitude mínima (canto sudoeste)
- * @property {number} minLng - Longitude mínima (canto sudoeste)
- * @property {number} maxLat - Latitude máxima (canto nordeste)
- * @property {number} maxLng - Longitude máxima (canto nordeste)
- * @property {AccessApiName} [access] - Filtrar por tipo de acesso
- * @property {TypeExtraApiName[]} [extras] - Filtrar por extras (CSV)
- * @property {Date} [timestamp] - Timestamp para cache (default: now)
- *
- * @example
- * {
- *   "minLat": 38.7,
- *   "minLng": -9.2,
- *   "maxLat": 38.8,
- *   "maxLng": -9.1,
- *   "access": "PUBLIC"
- * }
+ * DTO para a requisição de listagem de casas de banho por área geográfica.
  */
 export class GetToiletsBoundingBoxRequestDto {
-  /**
-   * Latitude mínima (canto sudoeste)
-   *
-   * @type {number}
-   * @range -90 to 90
-   * @description Latitude do canto sudoeste da bounding box
-   * @example 38.7
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'A latitude mínima da área de busca.',
+    example: 38.7,
+  })
   @IsNumber()
   @IsLatitude()
   @Type(() => Number)
   minLat!: number;
 
-  /**
-   * Longitude mínima (canto sudoeste)
-   *
-   * @type {number}
-   * @range -180 to 180
-   * @description Longitude do canto sudoeste da bounding box
-   * @example -9.2
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'A longitude mínima da área de busca.',
+    example: -9.2,
+  })
   @IsNumber()
   @IsLongitude()
   @Type(() => Number)
   minLng!: number;
 
-  /**
-   * Latitude máxima (canto nordeste)
-   *
-   * @type {number}
-   * @range -90 to 90
-   * @description Latitude do canto nordeste da bounding box
-   * @example 38.8
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'A latitude máxima da área de busca.',
+    example: 38.8,
+  })
   @IsNumber()
   @IsLatitude()
   @Type(() => Number)
   maxLat!: number;
 
-  /**
-   * Longitude máxima (canto nordeste)
-   *
-   * @type {number}
-   * @range -180 to 180
-   * @description Longitude do canto nordeste da bounding box
-   * @example -9.1
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'A longitude máxima da área de busca.',
+    example: -9.1,
+  })
   @IsNumber()
   @IsLongitude()
   @Type(() => Number)
   maxLng!: number;
 
-  /**
-   * Filtrar por tipo de acesso (opcional)
-   *
-   * @type {AccessApiName}
-   * @enum {string}
-   * @description Tipo de acesso do toilet
-   * @example "PUBLIC"
-   */
-  @ApiProperty({ required: false, enum: AccessApiName })
+  @ApiProperty({
+    description: 'Filtra por tipo de acesso.',
+    required: false,
+    enum: AccessApiName,
+  })
   @IsOptional()
   @IsEnum(AccessApiName)
   access?: AccessApiName;
 
-  /**
-   * Filtrar por extras (opcional)
-   *
-   * @type {TypeExtraApiName[]}
-   * @description Lista de extras separados por vírgula (CSV)
-   * @example "WIFI,ACCESSIBLE"
-   */
-  @ApiProperty({ required: false, enum: TypeExtraApiName, isArray: true })
+  @ApiProperty({
+    description: 'Filtra por recursos extra (separados por vírgula).',
+    required: false,
+    enum: TypeExtraApiName,
+    isArray: true,
+  })
   @IsOptional()
   @IsEnum(TypeExtraApiName, { each: true })
   @Transform(({ value }) => value.trim().split(','))
   extras?: TypeExtraApiName[];
 
-  /**
-   * Timestamp para cache (opcional)
-   *
-   * @type {Date}
-   * @description Timestamp para controle de cache
-   * @example "2025-01-15T10:30:00Z"
-   */
-  @ApiProperty({ required: false })
+  @ApiProperty({
+    description: 'Filtra por data de criação/atualização.',
+    required: false,
+  })
   @IsOptional()
   @IsDate()
   @Type(() => Date)

@@ -12,49 +12,20 @@ import {
 import { EntityRepository, Transactional } from '@mikro-orm/mariadb';
 
 /**
- * Repositório de Toilets
- *
- * @class ToiletRepository
- * @description Repositório de acesso a dados para entidade ToiletEntity.
- * Oferece operações CRUD e queries complexas para toilets, incluindo:
- * - Busca por publicId, localização, bounding box e proximidade
- * - Pesquisa full-text por nome e endereço
- * - Operações transacionais de criação, atualização e remoção
- * - Gestão de soft delete e estados de toilets
- * - Queries geoespaciais com cálculo de distância
- * - Filtros por acesso, status e extras
- *
- * @implements
- *   - Padrão Repository para isolar lógica de acesso a dados
- *   - Transações com decorator @Transactional do MikroORM
- *   - Queries geoespaciais com fórmula Haversine
- *   - Full-text search com MySQL MATCH AGAINST
- *   - Soft delete com período de retenção
- *
- * @see ToiletEntity - Entidade de domínio representando toilets
+ * Gerencia o acesso e a persistência de dados para a entidade Toilet.
  */
 @Injectable()
 export class ToiletRepository {
-  /**
-   * Construtor do ToiletRepository
-   *
-   * @param {EntityRepository<ToiletEntity>} repository - Repositório MikroORM injetado
-   */
   constructor(
     @InjectRepository(ToiletEntity)
     private readonly repository: EntityRepository<ToiletEntity>,
   ) {}
 
   /**
-   * Buscar toilet por publicId
+   * Busca uma casa de banho pelo seu ID público.
    *
-   * @async
-   * @param {string} publicId - Identificador público único do toilet (UUID)
-   * @returns {Promise<ToiletEntity | null>} Toilet encontrado ou null
-   *
-   * @description
-   * Busca um toilet pelo seu publicId (UUID).
-   * Carrega automaticamente access, extras, partner e estatísticas de avaliação.
+   * @param {string} publicId O ID público da casa de banho.
+   * @returns {Promise<ToiletEntity | null>} A entidade da casa de banho ou `null` se não for encontrada.
    */
   async findByPublicId(publicId: string): Promise<ToiletEntity | null> {
     return this.repository.findOne(
@@ -75,25 +46,19 @@ export class ToiletRepository {
   }
 
   /**
-   * Buscar toilets com filtros
+   * Busca casas de banho com base em vários filtros.
    *
-   * @async
-   * @param {string} [city] - Filtrar por cidade
-   * @param {string} [country] - Filtrar por país
-   * @param {string} [countryCode] - Filtrar por código ISO do país
-   * @param {AccessApiName} [access] - Filtrar por tipo de acesso
-   * @param {ToiletStatus} [status] - Filtrar por status
-   * @param {Date} [timestamp] - Data limite (toilets atualizados antes desta data)
-   * @param {boolean} [pageable] - Se deve aplicar paginação
-   * @param {number} [page] - Número da página (zero-indexed)
-   * @param {number} [size] - Tamanho da página
-   * @param {TypeExtraApiName[]} [extras] - Filtrar por extras disponíveis
-   * @returns {Promise<ToiletEntity[]>} Lista de toilets
-   *
-   * @description
-   * Busca toilets aplicando múltiplos filtros opcionais.
-   * Suporta paginação e filtro por extras (amenidades).
-   * Carrega automaticamente access, extras e estatísticas de avaliação.
+   * @param {string} [city] Filtra por cidade.
+   * @param {string} [country] Filtra por país.
+   * @param {string} [countryCode] Filtra por código do país.
+   * @param {AccessApiName} [access] Filtra por tipo de acesso.
+   * @param {ToiletStatus} [status] Filtra por status.
+   * @param {Date} [timestamp] Filtra por data de criação/atualização.
+   * @param {boolean} [pageable] Ativa a paginação.
+   * @param {number} [page] O número da página.
+   * @param {number} [size] O tamanho da página.
+   * @param {TypeExtraApiName[]} [extras] Filtra por recursos extra.
+   * @returns {Promise<ToiletEntity[]>} Uma lista de casas de banho.
    */
   async find(
     city?: string,
@@ -145,23 +110,17 @@ export class ToiletRepository {
   }
 
   /**
-   * Buscar toilets por bounding box (área geográfica retangular)
+   * Busca casas de banho dentro de uma área geográfica retangular.
    *
-   * @async
-   * @param {number} minLat - Latitude mínima (canto sudoeste)
-   * @param {number} minLng - Longitude mínima (canto sudoeste)
-   * @param {number} maxLat - Latitude máxima (canto nordeste)
-   * @param {number} maxLng - Longitude máxima (canto nordeste)
-   * @param {AccessApiName} [access] - Filtrar por tipo de acesso
-   * @param {ToiletStatus} [status] - Filtrar por status
-   * @param {Date} [timestamp] - Data limite (toilets atualizados antes desta data)
-   * @param {TypeExtraApiName[]} [extras] - Filtrar por extras disponíveis
-   * @returns {Promise<ToiletEntity[]>} Lista de toilets dentro da área
-   *
-   * @description
-   * Busca toilets dentro de uma área retangular definida por coordenadas geográficas.
-   * Útil para exibir toilets em mapas (como Google Maps, Leaflet, etc.).
-   * Filtra toilets onde latitude está entre minLat e maxLat, e longitude entre minLng e maxLng.
+   * @param {number} minLat A latitude mínima.
+   * @param {number} minLng A longitude mínima.
+   * @param {number} maxLat A latitude máxima.
+   * @param {number} maxLng A longitude máxima.
+   * @param {AccessApiName} [access] Filtra por tipo de acesso.
+   * @param {ToiletStatus} [status] Filtra por status.
+   * @param {Date} [timestamp] Filtra por data de criação/atualização.
+   * @param {TypeExtraApiName[]} [extras] Filtra por recursos extra.
+   * @returns {Promise<ToiletEntity[]>} Uma lista de casas de banho na área.
    */
   async findByBoundingBox(
     minLat: number,
@@ -206,25 +165,18 @@ export class ToiletRepository {
   }
 
   /**
-   * Buscar toilets por proximidade (ordenados por distância)
+   * Busca casas de banho próximas a um ponto geográfico, ordenadas por distância.
    *
-   * @async
-   * @param {number} lat - Latitude de referência
-   * @param {number} lng - Longitude de referência
-   * @param {AccessApiName} [access] - Filtrar por tipo de acesso
-   * @param {ToiletStatus} [status] - Filtrar por status
-   * @param {Date} [timestamp] - Data limite (toilets atualizados antes desta data)
-   * @param {boolean} [pageable] - Se deve aplicar paginação
-   * @param {number} [page] - Número da página (zero-indexed)
-   * @param {number} [size] - Tamanho da página
-   * @param {TypeExtraApiName[]} [extras] - Filtrar por extras disponíveis
-   * @returns {Promise<ToiletEntity[]>} Lista de toilets ordenados por distância
-   *
-   * @description
-   * Busca toilets ordenados por distância de um ponto de referência.
-   * Usa fórmula Haversine para calcular distância em quilómetros.
-   * Resultados ordenados por distância crescente (mais próximos primeiro).
-   * Útil para funcionalidade "toilets próximos de mim".
+   * @param {number} lat A latitude do ponto central.
+   * @param {number} lng A longitude do ponto central.
+   * @param {AccessApiName} [access] Filtra por tipo de acesso.
+   * @param {ToiletStatus} [status] Filtra por status.
+   * @param {Date} [timestamp] Filtra por data de criação/atualização.
+   * @param {boolean} [pageable] Ativa a paginação.
+   * @param {number} [page] O número da página.
+   * @param {number} [size] O tamanho da página.
+   * @param {TypeExtraApiName[]} [extras] Filtra por recursos extra.
+   * @returns {Promise<ToiletEntity[]>} Uma lista de casas de banho ordenadas por proximidade.
    */
   async findByProximity(
     lat: number,
@@ -288,21 +240,14 @@ export class ToiletRepository {
   }
 
   /**
-   * Pesquisar toilets por full-text search
+   * Realiza uma pesquisa full-text por casas de banho.
    *
-   * @async
-   * @param {string} query - Termo de pesquisa
-   * @param {boolean} [pageable] - Se deve aplicar paginação
-   * @param {number} [page] - Número da página (zero-indexed)
-   * @param {number} [size] - Tamanho da página
-   * @param {ToiletStatus} [state] - Filtrar por status
-   * @returns {Promise<ToiletEntity[]>} Lista de toilets ordenados por relevância
-   *
-   * @description
-   * Realiza pesquisa full-text usando MySQL MATCH AGAINST.
-   * Pesquisa nos campos name e address do toilet.
-   * Resultados ordenados por relevância descendente (mais relevantes primeiro).
-   * Requer índice FULLTEXT em (name, address) no banco de dados.
+   * @param {string} query O termo de pesquisa.
+   * @param {boolean} [pageable] Define se a paginação deve ser aplicada.
+   * @param {number} [page] O número da página.
+   * @param {number} [size] O tamanho da página.
+   * @param {ToiletStatus} [state] Filtra por status.
+   * @returns {Promise<ToiletEntity[]>} Uma lista de casas de banho ordenadas por relevância.
    */
   async findByFullTextSearch(
     query: string,
@@ -342,27 +287,21 @@ export class ToiletRepository {
   }
 
   /**
-   * Criar novo toilet (transacional)
+   * Cria e persiste uma nova casa de banho.
    *
-   * @async
-   * @transactional
-   * @param {AccessEntity} access - Entidade de tipo de acesso
-   * @param {string} name - Nome do toilet
-   * @param {number} latitude - Latitude da localização
-   * @param {number} longitude - Longitude da localização
-   * @param {string} address - Endereço completo
-   * @param {string} city - Cidade
-   * @param {string | undefined} state - Estado/província (opcional)
-   * @param {string} country - País
-   * @param {string} countryCode - Código ISO do país
-   * @param {ToiletStatus} status - Status inicial do toilet
-   * @param {string | undefined} placeId - Google Places ID (opcional)
-   * @param {TypeExtraEntity[]} [extras] - Lista de extras disponíveis
-   * @returns {Promise<ToiletEntity>} Toilet criado
-   *
-   * @description
-   * Cria novo toilet e persiste no banco de dados.
-   * Operação transacional garante atomicidade.
+   * @param {AccessEntity} access A entidade do tipo de acesso.
+   * @param {string} name O nome da casa de banho.
+   * @param {number} latitude A latitude da localização.
+   * @param {number} longitude A longitude da localização.
+   * @param {string} address A morada completa.
+   * @param {string} city A cidade.
+   * @param {string | undefined} state O estado/distrito.
+   * @param {string} country O país.
+   * @param {string} countryCode O código do país.
+   * @param {ToiletStatus} status O status inicial.
+   * @param {string | undefined} placeId O ID do Google Places.
+   * @param {TypeExtraEntity[]} [extras] A lista de recursos extra.
+   * @returns {Promise<ToiletEntity>} A entidade da casa de banho criada.
    */
   @Transactional()
   async create(
@@ -398,27 +337,21 @@ export class ToiletRepository {
   }
 
   /**
-   * Atualizar toilet (transacional)
+   * Atualiza os dados de uma casa de banho.
    *
-   * @async
-   * @transactional
-   * @param {ToiletEntity} toilet - Entidade do toilet a atualizar
-   * @param {AccessEntity} [access] - Novo tipo de acesso
-   * @param {string} [name] - Novo nome
-   * @param {number} [latitude] - Nova latitude
-   * @param {number} [longitude] - Nova longitude
-   * @param {string} [address] - Novo endereço
-   * @param {string} [city] - Nova cidade
-   * @param {string} [state] - Novo estado/província
-   * @param {string} [country] - Novo país
-   * @param {string} [countryCode] - Novo código do país
-   * @param {string} [placeId] - Novo Google Places ID
-   * @param {TypeExtraEntity[]} [extras] - Nova lista de extras
-   * @returns {Promise<ToiletEntity>} Toilet atualizado
-   *
-   * @description
-   * Atualiza campos opcionais do toilet. Apenas campos fornecidos são atualizados.
-   * Operação transacional garante atomicidade.
+   * @param {ToiletEntity} toilet A entidade da casa de banho a ser atualizada.
+   * @param {AccessEntity} [access] O novo tipo de acesso.
+   * @param {string} [name] O novo nome.
+   * @param {number} [latitude] A nova latitude.
+   * @param {number} [longitude] A nova longitude.
+   * @param {string} [address] A nova morada.
+   * @param {string} [city] A nova cidade.
+   * @param {string} [state] O novo estado/distrito.
+   * @param {string} [country] O novo país.
+   * @param {string} [countryCode] O novo código do país.
+   * @param {string} [placeId] O novo ID do Google Places.
+   * @param {TypeExtraEntity[]} [extras] A nova lista de recursos extra.
+   * @returns {Promise<ToiletEntity>} A casa de banho atualizada.
    */
   @Transactional()
   async update(
@@ -454,17 +387,10 @@ export class ToiletRepository {
   }
 
   /**
-   * Deletar toilets expirados (transacional)
+   * Remove permanentemente as casas de banho com soft delete expirado.
    *
-   * @async
-   * @transactional
-   * @param {Date} retention - Data de retenção limite
+   * @param {Date} retention A data limite de retenção.
    * @returns {Promise<void>}
-   *
-   * @description
-   * Remove permanentemente toilets com soft delete expirado.
-   * Busca toilets deletados antes da data de retenção e remove da base de dados.
-   * Usado por cron jobs para limpeza periódica.
    */
   @Transactional()
   async deleteExpired(retention: Date): Promise<void> {
@@ -476,21 +402,14 @@ export class ToiletRepository {
   }
 
   /**
-   * Marcar toilet como deletado (soft delete transacional)
+   * Realiza o soft delete de uma casa de banho.
    *
-   * @async
-   * @transactional
-   * @param {ToiletEntity} toilet - Entidade do toilet a deletar
-   * @param {any} deletedBy - Utilizador que deletou
+   * @param {ToiletEntity} toilet A entidade da casa de banho.
+   * @param {UserEntity} deletedBy O utilizador que realiza a deleção.
    * @returns {Promise<void>}
-   *
-   * @description
-   * Marca toilet como deletado (soft delete) sem remover do banco.
-   * Muda status para INACTIVE e regista quem deletou e quando.
-   * Pode ser recuperado posteriormente com undelete.
    */
   @Transactional()
-  async softDelete(toilet: ToiletEntity, deletedBy: any): Promise<void> {
+  async softDelete(toilet: ToiletEntity, deletedBy: UserEntity): Promise<void> {
     const em = this.repository.getEntityManager();
     toilet.status = ToiletStatus.INACTIVE;
     toilet.deletedBy = deletedBy;
@@ -499,16 +418,10 @@ export class ToiletRepository {
   }
 
   /**
-   * Deletar toilet
+   * Remove permanentemente uma casa de banho.
    *
-   * @async
-   * @transactional
-   * @param {ToiletEntity} toilet - Entidade do toilet a deletar
+   * @param {ToiletEntity} toilet A entidade da casa de banho a ser removida.
    * @returns {Promise<void>}
-   *
-   * @description
-   * Remove permanentemente o toilet do banco de dados.
-   * Usado para limpeza definitiva.
    */
   @Transactional()
   async delete(toilet: ToiletEntity): Promise<void> {
@@ -517,17 +430,11 @@ export class ToiletRepository {
   }
 
   /**
-   * Alterar status do toilet (transacional)
+   * Altera o status de uma casa de banho.
    *
-   * @async
-   * @transactional
-   * @param {ToiletEntity} toilet - Entidade do toilet
-   * @param {ToiletStatus} status - Novo status
-   * @returns {Promise<ToiletEntity>} Toilet com status atualizado
-   *
-   * @description
-   * Altera o status do toilet (SUGGESTED, ACTIVE, INACTIVE).
-   * Operação transacional garante atomicidade.
+   * @param {ToiletEntity} toilet A entidade da casa de banho.
+   * @param {ToiletStatus} status O novo status.
+   * @returns {Promise<ToiletEntity>} A casa de banho com o status atualizado.
    */
   @Transactional()
   async changeStatus(
@@ -541,18 +448,11 @@ export class ToiletRepository {
   }
 
   /**
-   * Publicar toilet sugerido (transacional)
+   * Publica uma casa de banho sugerida.
    *
-   * @async
-   * @transactional
-   * @param {ToiletEntity} toilet - Entidade do toilet a publicar
-   * @param {UserEntity} user - Utilizador que aprovou
-   * @returns {Promise<ToiletEntity>} Toilet publicado
-   *
-   * @description
-   * Aprova toilet sugerido, mudando status para ACTIVE.
-   * Regista quem aprovou e quando.
-   * Operação transacional garante atomicidade.
+   * @param {ToiletEntity} toilet A entidade da casa de banho.
+   * @param {UserEntity} user O utilizador que aprova a publicação.
+   * @returns {Promise<ToiletEntity>} A casa de banho publicada.
    */
   @Transactional()
   async publish(toilet: ToiletEntity, user: UserEntity): Promise<ToiletEntity> {
@@ -565,17 +465,10 @@ export class ToiletRepository {
   }
 
   /**
-   * Recuperar toilet deletado (transacional)
+   * Reverte o soft delete de uma casa de banho.
    *
-   * @async
-   * @transactional
-   * @param {ToiletEntity} toilet - Entidade do toilet a recuperar
-   * @returns {Promise<ToiletEntity>} Toilet recuperado
-   *
-   * @description
-   * Reverte soft delete do toilet, removendo marcadores de deleção.
-   * Restaura toilet para estado ativo.
-   * Operação transacional garante atomicidade.
+   * @param {ToiletEntity} toilet A entidade da casa de banho.
+   * @returns {Promise<ToiletEntity>} A casa de banho restaurada.
    */
   @Transactional()
   async undelete(toilet: ToiletEntity): Promise<ToiletEntity> {
@@ -588,18 +481,11 @@ export class ToiletRepository {
   }
 
   /**
-   * Atualizar URL da foto do toilet (transacional)
+   * Atualiza o URL da foto de uma casa de banho.
    *
-   * @async
-   * @transactional
-   * @param {ToiletEntity} toilet - Entidade do toilet
-   * @param {string} photoUrl - URL pública da foto
-   * @returns {Promise<ToiletEntity>} Toilet com foto atualizada
-   *
-   * @description
-   * Atualiza o campo photoUrl do toilet.
-   * Usado após upload de imagem para MinIO/S3.
-   * Operação transacional garante atomicidade.
+   * @param {ToiletEntity} toilet A entidade da casa de banho.
+   * @param {string} photoUrl O novo URL da foto.
+   * @returns {Promise<ToiletEntity>} A casa de banho com a foto atualizada.
    */
   @Transactional()
   async updatePhotoUrl(

@@ -11,52 +11,19 @@ import { TOILET_EXCEPTIONS } from '@modules/toilet/constants/exceptions.constant
 import { plainToInstance } from 'class-transformer';
 
 /**
- * Caso de Uso para Desativar um Toilet
- *
- * @class DisableToiletUseCase
- * @description Implementa a lógica de negócio para desativar um toilet, alterando seu status para INACTIVE.
- * É idempotente; se o toilet já estiver inativo, retorna o estado atual sem erro.
- *
- * @implements
- *   - Validação de existência do toilet
- *   - Prevenção de desativação de toilets deletados
- *   - Alteração de status para INACTIVE
- *   - Idempotência na operação
- *
- * @example
- * const toilet = await disableToiletUseCase.execute('toilet-public-id');
- *
- * @throws {NotFoundException} Se o toilet não for encontrado.
- * @throws {ConflictException} Se o toilet estiver deletado.
- *
- * @see ToiletRepository
+ * Contém a lógica de negócio para desativar uma casa de banho.
  */
 @Injectable()
 export class DisableToiletUseCase {
-  /**
-   * Construtor do DisableToiletUseCase
-   *
-   * @param {ToiletRepository} repository - Repositório para operações de toilet
-   */
   constructor(private readonly repository: ToiletRepository) {}
 
   /**
-   * Executa o caso de uso para desativar um toilet.
+   * Desativa uma casa de banho, alterando seu status para 'INACTIVE'.
    *
-   * @async
-   * @transactional
-   * @param {string} publicId - O ID público do toilet a ser desativado.
-   * @returns {Promise<ToiletResponseDto>} O DTO do toilet atualizado.
-   * @throws {NotFoundException} Se o toilet com o ID fornecido não for encontrado.
-   * @throws {ConflictException} Se o toilet estiver deletado e não puder ser modificado.
-   *
-   * @description
-   * 1. Busca o toilet pelo ID público.
-   * 2. Lança uma exceção se o toilet não for encontrado.
-   * 3. Lança uma exceção se o toilet estiver marcado como deletado.
-   * 4. Se o toilet já estiver INACTIVE, retorna o DTO sem fazer alterações (idempotência).
-   * 5. Altera o status do toilet para INACTIVE.
-   * 6. Retorna o toilet atualizado como um DTO.
+   * @param {string} publicId O ID público da casa de banho.
+   * @returns {Promise<ToiletResponseDto>} O DTO da casa de banho atualizado.
+   * @throws {NotFoundException} Se a casa de banho não for encontrada.
+   * @throws {ConflictException} Se a casa de banho estiver deletada.
    */
   @Transactional()
   async execute(publicId: string): Promise<ToiletResponseDto> {

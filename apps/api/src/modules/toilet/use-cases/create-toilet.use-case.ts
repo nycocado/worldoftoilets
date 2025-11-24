@@ -14,44 +14,10 @@ import { plainToInstance } from 'class-transformer';
 import { TOILET_EXCEPTIONS } from '@modules/toilet/constants/exceptions.constant';
 
 /**
- * Caso de Uso para Criar Toilet
- *
- * @class CreateToiletUseCase
- * @description Implementa a lógica de negócio para criar um novo toilet.
- * Valida o país, busca entidades relacionadas (acesso, extras) e persiste o novo toilet.
- *
- * @implements
- *   - Validação de código de país
- *   - Criação de um novo toilet com status ATIVO
- *   - Associação de tipo de acesso e extras
- *
- * @example
- * const toilet = await createToiletUseCase.execute(
- *   'PUBLIC',
- *   'WC da Estação',
- *   38.7, -9.1,
- *   'Rua Augusta',
- *   'Lisboa',
- *   'Lisboa',
- *   'Portugal',
- *   'place-id-123',
- *   ['WIFI', 'ACCESSIBLE']
- * );
- *
- * @throws {BadRequestException} Se o código do país for inválido.
- *
- * @see ToiletRepository
+ * Contém a lógica de negócio para a criação de uma nova casa de banho.
  */
 @Injectable()
 export class CreateToiletUseCase {
-  /**
-   * Construtor do CreateToiletUseCase
-   *
-   * @param {ToiletRepository} repository - Repositório para operações de toilet
-   * @param {AccessService} accessService - Serviço para obter tipos de acesso
-   * @param {TypeExtraService} typeExtraService - Serviço para obter tipos de extras
-   * @param {CountryService} countryService - Serviço para validação de países
-   */
   constructor(
     private readonly repository: ToiletRepository,
     private readonly accessService: AccessService,
@@ -60,29 +26,20 @@ export class CreateToiletUseCase {
   ) {}
 
   /**
-   * Executa o caso de uso para criar um novo toilet.
+   * Cria e persiste uma nova casa de banho.
    *
-   * @async
-   * @transactional
-   * @param {AccessApiName} accessApiName - Nome da API para o tipo de acesso.
-   * @param {string} name - Nome do toilet.
-   * @param {number} latitude - Latitude do toilet.
-   * @param {number} longitude - Longitude do toilet.
-   * @param {string} address - Endereço do toilet.
-   * @param {string} city - Cidade do toilet.
-   * @param {string | undefined} state - Estado/distrito do toilet.
-   * @param {string} country - País do toilet.
-   * @param {string | undefined} placeId - ID do local do Google Places.
-   * @param {TypeExtraApiName[]} [extrasApiNames] - Nomes da API para os extras.
-   * @returns {Promise<ToiletResponseDto>} O DTO do toilet criado.
+   * @param {AccessApiName} accessApiName O tipo de acesso.
+   * @param {string} name O nome da casa de banho.
+   * @param {number} latitude A latitude da localização.
+   * @param {number} longitude A longitude da localização.
+   * @param {string} address A morada.
+   * @param {string} city A cidade.
+   * @param {string | undefined} state O estado/distrito.
+   * @param {string} country O país.
+   * @param {string | undefined} placeId O ID do Google Places.
+   * @param {TypeExtraApiName[]} [extrasApiNames] A lista de recursos extra.
+   * @returns {Promise<ToiletResponseDto>} O DTO da casa de banho criada.
    * @throws {BadRequestException} Se o código do país for inválido.
-   *
-   * @description
-   * 1. Valida e obtém o código do país.
-   * 2. Obtém a entidade de acesso pelo nome da API.
-   * 3. Obtém as entidades de extras pelos nomes da API.
-   * 4. Cria um novo toilet no repositório com status ATIVO.
-   * 5. Retorna o toilet criado como um DTO.
    */
   @Transactional()
   async execute(

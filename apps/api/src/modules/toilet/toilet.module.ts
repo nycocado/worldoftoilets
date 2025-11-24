@@ -26,23 +26,7 @@ import { ViewToiletUseCase } from '@modules/toilet/use-cases/view-toilet.use-cas
 import { InteractionModule } from '@modules/interaction';
 
 /**
- * Módulo de Toilets
- *
- * @module ToiletModule
- * @description Organiza todos os componentes de gestão de toilets do sistema.
- * Gerir o ciclo de vida completo dos toilets, incluindo:
- * - Criação, edição e exclusão de toilets
- * - Listagem de toilets (por localização, bounding box, proximidade)
- * - Pesquisa full-text de toilets
- * - Sistema de status (SUGGESTED, ACTIVE, INACTIVE)
- * - Gestão de estado de toilets (publish, disable, enable, delete, undelete)
- * - Upload de imagens de toilets
- * - Gestão de extras/amenidades (Wi-Fi, acessibilidade, etc.)
- * - Registo de visualizações (analytics)
- *
- * @see ToiletController - Controlador com endpoints de toilets
- * @see ToiletService - Serviço para operações de toilets
- * @see ToiletRepository - Repositório para acesso aos dados
+ * Gerencia a funcionalidade de casas de banho, agrupando seus componentes.
  */
 @Module({
   imports: [

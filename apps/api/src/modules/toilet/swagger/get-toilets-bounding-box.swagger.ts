@@ -8,12 +8,6 @@ import {
 } from '@nestjs/swagger';
 import { ToiletResponseDto } from '@modules/toilet/dto';
 
-/**
- * Decorador Swagger para Obter Toilets por Bounding Box
- *
- * @function ApiSwaggerGetToiletsBoundingBox
- * @description Decorator que documenta o endpoint GET /toilet/bounding-box no Swagger.
- */
 export const ApiSwaggerGetToiletsBoundingBox = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

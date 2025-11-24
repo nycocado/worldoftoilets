@@ -8,12 +8,6 @@ import {
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
 
-/**
- * Decorador Swagger para Registar Visualização de Toilet
- *
- * @function ApiSwaggerViewToilet
- * @description Decorator que documenta o endpoint PUT /toilet/:publicId/view no Swagger.
- */
 export const ApiSwaggerViewToilet = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

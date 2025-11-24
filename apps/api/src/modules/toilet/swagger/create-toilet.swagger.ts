@@ -9,13 +9,6 @@ import {
 } from '@nestjs/swagger';
 import { CreateToiletRequestDto, ToiletResponseDto } from '@modules/toilet/dto';
 
-/**
- * Decorador Swagger para Criar Toilet
- *
- * @function ApiSwaggerCreateToilet
- * @description Decorator que documenta o endpoint POST /toilet/manage no Swagger.
- * Inclui documentação da operação, request body e respostas.
- */
 export const ApiSwaggerCreateToilet = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

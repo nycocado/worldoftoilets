@@ -9,66 +9,26 @@ import {
 import { plainToInstance } from 'class-transformer';
 
 /**
- * Caso de Uso para Obter Lista de Toilets
- *
- * @class GetToiletsUseCase
- * @description Implementa a lógica de listagem de toilets com filtros opcionais.
- * Suporta filtros por localização, acesso, status, extras e paginação.
- *
- * @implements
- *   - Busca com múltiplos filtros opcionais
- *   - Paginação de resultados
- *   - Filtro por localização (cidade, país, código do país)
- *   - Filtro por tipo de acesso e extras
- *   - Transformação de entidades para DTOs
- *
- * @example
- * const toilets = await getToiletsUseCase.execute(
- *   'Lisboa',          // city
- *   'Portugal',        // country
- *   'PT',             // countryCode
- *   'PUBLIC',         // access
- *   'ACTIVE',         // status
- *   new Date(),       // timestamp
- *   true,             // pageable
- *   0,                // page
- *   20,               // size
- *   ['WIFI']          // extras
- * );
- *
- * @see ToiletRepository - Repositório para busca de dados
+ * Contém a lógica de negócio para a listagem de casas de banho com filtros.
  */
 @Injectable()
 export class GetToiletsUseCase {
-  /**
-   * Construtor do GetToiletsUseCase
-   *
-   * @param {ToiletRepository} repository - Repositório de toilets
-   */
   constructor(private readonly repository: ToiletRepository) {}
 
   /**
-   * Executar caso de uso de obter lista de toilets
+   * Lista casas de banho com base em filtros opcionais de localização, acesso, status e extras.
    *
-   * @async
-   * @param {string} [city] - Filtrar por cidade
-   * @param {string} [country] - Filtrar por país
-   * @param {string} [countryCode] - Filtrar por código ISO do país
-   * @param {AccessApiName} [access] - Filtrar por tipo de acesso
-   * @param {ToiletStatus} [status] - Filtrar por status
-   * @param {Date} [timestamp] - Filtrar por data de atualização
-   * @param {boolean} [pageable] - Ativar paginação
-   * @param {number} [page] - Número da página
-   * @param {number} [size] - Tamanho da página
-   * @param {TypeExtraApiName[]} [typeExtra] - Filtrar por extras disponíveis
-   * @returns {Promise<ToiletResponseDto[]>} Lista de DTOs de toilets
-   *
-   * @description
-   * 1. Aplica filtros opcionais de localização, acesso, status e extras
-   * 2. Aplica paginação se solicitado
-   * 3. Busca toilets no repositório
-   * 4. Transforma entidades em ToiletResponseDto[]
-   * 5. Retorna lista de DTOs com dados completos
+   * @param {string} [city] Filtra por cidade.
+   * @param {string} [country] Filtra por país.
+   * @param {string} [countryCode] Filtra por código do país.
+   * @param {AccessApiName} [access] Filtra por tipo de acesso.
+   * @param {ToiletStatus} [status] Filtra por status.
+   * @param {Date} [timestamp] Filtra por data de criação/atualização.
+   * @param {boolean} [pageable] Ativa a paginação.
+   * @param {number} [page] O número da página.
+   * @param {number} [size] O tamanho da página.
+   * @param {TypeExtraApiName[]} [typeExtra] Filtra por recursos extra.
+   * @returns {Promise<ToiletResponseDto[]>} Uma lista de DTOs de casas de banho.
    */
   async execute(
     city?: string,

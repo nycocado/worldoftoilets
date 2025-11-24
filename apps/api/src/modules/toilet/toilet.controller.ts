@@ -66,56 +66,11 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 
 /**
- * Controlador de Toilets
- *
- * @class ToiletController
- * @description Controlador que expõe endpoints HTTP para operações de toilets.
- * Processa requests, valida DTOs, aplica guards de autenticação e permissões,
- * e delega lógica de negócio para os use cases apropriados.
- *
- * @route /toilet - Rota base para todos os endpoints de toilets
- *
- * @endpoints
- * - GET /toilet - Listar toilets ativos
- * - GET /toilet/manage - Listar todos toilets (gestão)
- * - GET /toilet/bounding-box - Obter toilets por área geográfica
- * - GET /toilet/proximity - Obter toilets por proximidade
- * - GET /toilet/:publicId - Obter toilet por ID
- * - PUT /toilet/:publicId/view - Registar visualização de toilet
- * - POST /toilet/manage - Criar novo toilet
- * - PATCH /toilet/:publicId/manage - Atualizar toilet
- * - DELETE /toilet/:publicId/manage - Deletar toilet (soft delete)
- * - PUT /toilet/:publicId/manage/undelete - Recuperar toilet deletado
- * - PUT /toilet/:publicId/manage/publish - Publicar toilet sugerido
- * - PUT /toilet/:publicId/manage/disable - Desativar toilet
- * - PUT /toilet/:publicId/manage/enable - Ativar toilet
- * - POST /toilet/:publicId/manage/image - Upload de imagem do toilet
- *
- * @see GetToiletByPublicIdUseCase, GetToiletsUseCase - Use cases de listagem
- * @see CreateToiletUseCase, UpdateToiletUseCase, DeleteToiletUseCase - Use cases principais
- * @see PublishToiletUseCase, DisableToiletUseCase, EnableToiletUseCase - Use cases de gestão
- * @see UploadToiletImageUseCase, ViewToiletUseCase - Use cases auxiliares
+ * Gerencia as requisições HTTP para operações relacionadas a casas de banho.
  */
 @ApiTags('Toilet')
 @Controller('toilet')
 export class ToiletController {
-  /**
-   * Construtor do ToiletController
-   *
-   * @param {GetToiletByPublicIdUseCase} getToiletsByPublicIdUseCase - Use case para obter por ID
-   * @param {GetToiletsUseCase} getToiletsUseCase - Use case para listar toilets
-   * @param {GetToiletsByBoundingBoxUseCase} getToiletsByBoundingBoxUseCase - Use case para busca por área
-   * @param {GetToiletsByProximityUseCase} getToiletsByProximityUseCase - Use case para busca por proximidade
-   * @param {CreateToiletUseCase} createToiletUseCase - Use case para criar toilet
-   * @param {UpdateToiletUseCase} updateToiletUseCase - Use case para atualizar toilet
-   * @param {DeleteToiletUseCase} deleteToiletUseCase - Use case para deletar toilet
-   * @param {UndeleteToiletUseCase} undeleteToiletUseCase - Use case para recuperar toilet
-   * @param {PublishToiletUseCase} publishToiletUseCase - Use case para publicar toilet
-   * @param {DisableToiletUseCase} disableToiletUseCase - Use case para desativar toilet
-   * @param {EnableToiletUseCase} enableToiletUseCase - Use case para ativar toilet
-   * @param {ViewToiletUseCase} viewToiletUseCase - Use case para registar visualização
-   * @param {UploadToiletImageUseCase} uploadToiletImageUseCase - Use case para upload de imagem
-   */
   constructor(
     private readonly getToiletsByPublicIdUseCase: GetToiletByPublicIdUseCase,
     private readonly getToiletsUseCase: GetToiletsUseCase,
@@ -133,19 +88,10 @@ export class ToiletController {
   ) {}
 
   /**
-   * Listar toilets ativos
+   * Lista casas de banho ativas com filtros opcionais e paginação.
    *
-   * @async
-   * @route GET /toilet
-   * @protected Requer autenticação JWT e permissão VIEW_TOILETS
-   * @param {GetToiletsRequestDto} getToiletsRequestDto - Parâmetros de paginação e filtros.
-   * @returns {Promise<ApiResponseDto<ToiletResponseDto[]>>} Lista de toilets ativos que correspondem aos filtros.
-   * @throws {UnauthorizedException} Se o token de autenticação for inválido ou ausente.
-   * @throws {ForbiddenException} Se o usuário não possuir a permissão VIEW_TOILETS.
-   *
-   * @description
-   * Retorna uma lista de toilets com status ATIVO.
-   * Suporta paginação e múltiplos filtros, como localização (cidade, país), tipo de acesso e extras.
+   * @param {GetToiletsRequestDto} getToiletsRequestDto Os parâmetros de paginação e filtros.
+   * @returns {Promise<ApiResponseDto<ToiletResponseDto[]>>} A lista de casas de banho ativas.
    */
   @ApiSwaggerGetToilets()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -186,19 +132,10 @@ export class ToiletController {
   }
 
   /**
-   * Listar todos os toilets para gestão
+   * Lista todas as casas de banho para fins de gestão, com filtros e paginação.
    *
-   * @async
-   * @route GET /toilet/manage
-   * @protected Requer autenticação JWT e permissão VIEW_ALL_TOILETS
-   * @param {GetToiletsManageRequestDto} getToiletsRequestDto - Parâmetros de paginação e filtros, incluindo status.
-   * @returns {Promise<ApiResponseDto<ToiletResponseDto[]>>} Lista de todos os toilets que correspondem aos filtros.
-   * @throws {UnauthorizedException} Se o token de autenticação for inválido ou ausente.
-   * @throws {ForbiddenException} Se o usuário não possuir a permissão VIEW_ALL_TOILETS.
-   *
-   * @description
-   * Retorna uma lista de toilets para fins de gestão, permitindo filtrar por qualquer status (ATIVO, INATIVO, SUGERIDO).
-   * Suporta os mesmos filtros que a rota pública, com a adição do filtro de status.
+   * @param {GetToiletsManageRequestDto} getToiletsRequestDto Os parâmetros de paginação e filtros.
+   * @returns {Promise<ApiResponseDto<ToiletResponseDto[]>>} A lista de todas as casas de banho.
    */
   @ApiSwaggerGetToiletsManage()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -240,19 +177,10 @@ export class ToiletController {
   }
 
   /**
-   * Obter toilets por área geográfica (bounding box)
+   * Obtém casas de banho por uma área geográfica definida (bounding box).
    *
-   * @async
-   * @route GET /toilet/bounding-box
-   * @protected Requer autenticação JWT e permissão VIEW_TOILETS
-   * @param {GetToiletsBoundingBoxRequestDto} boundingBoxDto - Coordenadas da área de busca e filtros.
-   * @returns {Promise<ApiResponseDto<ToiletResponseDto[]>>} Lista de toilets ativos dentro da área especificada.
-   * @throws {UnauthorizedException} Se o token de autenticação for inválido ou ausente.
-   * @throws {ForbiddenException} Se o usuário não possuir a permissão VIEW_TOILETS.
-   *
-   * @description
-   * Retorna todos os toilets ativos localizados dentro de um retângulo geográfico definido por coordenadas mínimas e máximas.
-   * Utilizado para buscas em mapas.
+   * @param {GetToiletsBoundingBoxRequestDto} boundingBoxDto As coordenadas da área de busca e filtros.
+   * @returns {Promise<ApiResponseDto<ToiletResponseDto[]>>} A lista de casas de banho na área especificada.
    */
   @ApiSwaggerGetToiletsBoundingBox()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -282,19 +210,10 @@ export class ToiletController {
   }
 
   /**
-   * Obter toilets por proximidade
+   * Obtém casas de banho ordenadas por proximidade a um ponto geográfico.
    *
-   * @async
-   * @route GET /toilet/proximity
-   * @protected Requer autenticação JWT e permissão VIEW_TOILETS
-   * @param {GetToiletsProximityRequestDto} proximityDto - Coordenadas do ponto de referência e filtros.
-   * @returns {Promise<ApiResponseDto<ToiletResponseDto[]>>} Lista de toilets ativos ordenados por proximidade.
-   * @throws {UnauthorizedException} Se o token de autenticação for inválido ou ausente.
-   * @throws {ForbiddenException} Se o usuário não possuir a permissão VIEW_TOILETS.
-   *
-   * @description
-   * Retorna uma lista de toilets ativos, ordenados do mais próximo ao mais distante de um ponto geográfico (latitude, longitude) fornecido.
-   * Suporta paginação.
+   * @param {GetToiletsProximityRequestDto} proximityDto As coordenadas do ponto de referência e filtros.
+   * @returns {Promise<ApiResponseDto<ToiletResponseDto[]>>} A lista de casas de banho ordenadas por proximidade.
    */
   @ApiSwaggerGetToiletsProximity()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -325,19 +244,11 @@ export class ToiletController {
   }
 
   /**
-   * Obter um toilet por ID público
+   * Obtém uma casa de banho específica pelo seu ID público.
    *
-   * @async
-   * @route GET /toilet/:publicId
-   * @protected Requer autenticação JWT e permissão VIEW_TOILETS
-   * @param {string} publicId - O ID público do toilet.
-   * @returns {Promise<ApiResponseDto<ToiletResponseDto>>} Os dados detalhados do toilet.
-   * @throws {NotFoundException} Se o toilet não for encontrado.
-   * @throws {UnauthorizedException} Se o token de autenticação for inválido ou ausente.
-   * @throws {ForbiddenException} Se o usuário não possuir a permissão VIEW_TOILETS.
-   *
-   * @description
-   * Retorna os dados completos de um único toilet, identificado pelo seu ID público.
+   * @param {string} publicId O ID público da casa de banho.
+   * @returns {Promise<ApiResponseDto<ToiletResponseDto>>} Os dados detalhados da casa de banho.
+   * @throws {NotFoundException} Se a casa de banho não for encontrada.
    */
   @ApiSwaggerGetToilet()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -354,21 +265,12 @@ export class ToiletController {
   }
 
   /**
-   * Registrar visualização de um toilet
+   * Registra a visualização de uma casa de banho por um utilizador.
    *
-   * @async
-   * @route PUT /toilet/:publicId/view
-   * @protected Requer autenticação JWT e permissão VIEW_TOILETS
-   * @param {string} publicId - O ID público do toilet visualizado.
-   * @param {jwtTypes.RequestUser} user - O usuário autenticado que realizou a visualização.
+   * @param {string} publicId O ID público da casa de banho visualizada.
+   * @param {jwtTypes.RequestUser} user O utilizador autenticado que visualizou.
    * @returns {Promise<ApiResponseDto>} Confirmação de sucesso.
-   * @throws {NotFoundException} Se o toilet não for encontrado.
-   * @throws {UnauthorizedException} Se o token de autenticação for inválido ou ausente.
-   * @throws {ForbiddenException} Se o usuário não possuir a permissão VIEW_TOILETS.
-   *
-   * @description
-   * Cria uma interação do tipo 'VIEW' para registrar que um usuário visualizou a página de detalhes de um toilet.
-   * Esta ação é "fire-and-forget" e não retorna dados.
+   * @throws {NotFoundException} Se a casa de banho não for encontrada ou estiver deletada.
    */
   @ApiSwaggerViewToilet()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -383,20 +285,11 @@ export class ToiletController {
   }
 
   /**
-   * Criar um novo toilet
+   * Cria uma nova casa de banho no sistema.
    *
-   * @async
-   * @route POST /toilet/manage
-   * @protected Requer autenticação JWT e permissão CREATE_TOILETS
-   * @param {CreateToiletRequestDto} createToiletDto - Os dados para a criação do novo toilet.
-   * @returns {Promise<ApiResponseDto<ToiletResponseDto>>} Os dados do toilet recém-criado.
-   * @throws {BadRequestException} Se os dados fornecidos forem inválidos (ex: país não reconhecido).
-   * @throws {UnauthorizedException} Se o token de autenticação for inválido ou ausente.
-   * @throws {ForbiddenException} Se o usuário não possuir a permissão CREATE_TOILETS.
-   *
-   * @description
-   * Cria um novo toilet no sistema com status ATIVO.
-   * Este endpoint é destinado para administradores ou usuários com permissões de criação.
+   * @param {CreateToiletRequestDto} createToiletDto Os dados para a criação da casa de banho.
+   * @returns {Promise<ApiResponseDto<ToiletResponseDto>>} Os dados da casa de banho recém-criada.
+   * @throws {BadRequestException} Se o código do país fornecido for inválido.
    */
   @ApiSwaggerCreateToilet()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -438,21 +331,13 @@ export class ToiletController {
   }
 
   /**
-   * Atualizar um toilet
+   * Atualiza as informações de uma casa de banho existente.
    *
-   * @async
-   * @route PATCH /toilet/:publicId/manage
-   * @protected Requer autenticação JWT e permissão EDIT_TOILETS
-   * @param {string} publicId - O ID público do toilet a ser atualizado.
-   * @param {UpdateToiletRequestDto} updateToiletDto - Os dados a serem atualizados. Apenas campos fornecidos serão alterados.
-   * @returns {Promise<ApiResponseDto<ToiletResponseDto>>} Os dados do toilet atualizado.
-   * @throws {NotFoundException} Se o toilet não for encontrado.
-   * @throws {ConflictException} Se o toilet estiver deletado.
-   * @throws {UnauthorizedException} Se o token de autenticação for inválido ou ausente.
-   * @throws {ForbiddenException} Se o usuário não possuir a permissão EDIT_TOILETS.
-   *
-   * @description
-   * Atualiza as informações de um toilet existente. Apenas os campos presentes no corpo da requisição são modificados.
+   * @param {string} publicId O ID público da casa de banho a ser atualizada.
+   * @param {UpdateToiletRequestDto} updateToiletDto Os dados a serem atualizados.
+   * @returns {Promise<ApiResponseDto<ToiletResponseDto>>} Os dados da casa de banho atualizada.
+   * @throws {NotFoundException} Se a casa de banho não for encontrada.
+   * @throws {ConflictException} Se a casa de banho estiver deletada.
    */
   @ApiSwaggerUpdateToilet()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -496,22 +381,13 @@ export class ToiletController {
   }
 
   /**
-   * Deletar um toilet (soft delete)
+   * Realiza o soft delete de uma casa de banho.
    *
-   * @async
-   * @route DELETE /toilet/:publicId/manage
-   * @protected Requer autenticação JWT e permissão DELETE_TOILETS
-   * @param {string} publicId - O ID público do toilet a ser deletado.
-   * @param {jwtTypes.RequestUser} user - O usuário autenticado que está realizando a deleção.
+   * @param {string} publicId O ID público da casa de banho a ser deletada.
+   * @param {jwtTypes.RequestUser} user O utilizador autenticado que está realizando a deleção.
    * @returns {Promise<ApiResponseDto>} Confirmação de sucesso.
-   * @throws {NotFoundException} Se o toilet não for encontrado.
-   * @throws {ConflictException} Se o toilet já estiver deletado ou for uma sugestão.
-   * @throws {UnauthorizedException} Se o token de autenticação for inválido ou ausente.
-   * @throws {ForbiddenException} Se o usuário não possuir a permissão DELETE_TOILETS.
-   *
-   * @description
-   * Realiza um "soft delete" em um toilet, marcando-o como deletado em vez de removê-lo permanentemente.
-   * A operação não é permitida em toilets com status SUGERIDO.
+   * @throws {NotFoundException} Se a casa de banho não for encontrada.
+   * @throws {ConflictException} Se a casa de banho já estiver deletada.
    */
   @ApiSwaggerDeleteToilet()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -526,20 +402,12 @@ export class ToiletController {
   }
 
   /**
-   * Recuperar um toilet deletado
+   * Reverte o soft delete de uma casa de banho.
    *
-   * @async
-   * @route PUT /toilet/:publicId/manage/undelete
-   * @protected Requer autenticação JWT e permissão UNDELETE_TOILETS
-   * @param {string} publicId - O ID público do toilet a ser recuperado.
+   * @param {string} publicId O ID público da casa de banho a ser recuperada.
    * @returns {Promise<ApiResponseDto>} Confirmação de sucesso.
-   * @throws {NotFoundException} Se o toilet não for encontrado.
-   * @throws {ConflictException} Se o toilet não estiver deletado.
-   * @throws {UnauthorizedException} Se o token de autenticação for inválido ou ausente.
-   * @throws {ForbiddenException} Se o usuário não possuir a permissão UNDELETE_TOILETS.
-   *
-   * @description
-   * Reverte a operação de "soft delete", tornando o toilet novamente acessível.
+   * @throws {NotFoundException} Se a casa de banho não for encontrada.
+   * @throws {ConflictException} Se a casa de banho não estiver deletada.
    */
   @ApiSwaggerUndeleteToilet()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -553,21 +421,13 @@ export class ToiletController {
   }
 
   /**
-   * Publicar um toilet sugerido
+   * Publica uma casa de banho sugerida.
    *
-   * @async
-   * @route PUT /toilet/:publicId/manage/publish
-   * @protected Requer autenticação JWT e permissão PUBLISH_TOILETS
-   * @param {string} publicId - O ID público do toilet a ser publicado.
-   * @param {jwtTypes.RequestUser} user - O usuário autenticado que está realizando a publicação.
+   * @param {string} publicId O ID público da casa de banho a ser publicada.
+   * @param {jwtTypes.RequestUser} user O utilizador autenticado que está realizando a publicação.
    * @returns {Promise<ApiResponseDto>} Confirmação de sucesso.
-   * @throws {NotFoundException} Se o toilet não for encontrado.
-   * @throws {ConflictException} Se o toilet estiver deletado ou não estiver com o status 'SUGGESTED'.
-   * @throws {UnauthorizedException} Se o token de autenticação for inválido ou ausente.
-   * @throws {ForbiddenException} Se o usuário não possuir a permissão PUBLISH_TOILETS.
-   *
-   * @description
-   * Altera o status de um toilet de 'SUGGESTED' para 'ACTIVE', tornando-o visível publicamente.
+   * @throws {NotFoundException} Se a casa de banho não for encontrada.
+   * @throws {ConflictException} Se a casa de banho estiver deletada ou não estiver no estado sugerido.
    */
   @ApiSwaggerPublishToilet()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -582,21 +442,12 @@ export class ToiletController {
   }
 
   /**
-   * Desativar um toilet
+   * Desativa uma casa de banho.
    *
-   * @async
-   * @route PUT /toilet/:publicId/manage/disable
-   * @protected Requer autenticação JWT e permissão DISABLE_TOILETS
-   * @param {string} publicId - O ID público do toilet a ser desativado.
-   * @returns {Promise<ApiResponseDto<ToiletResponseDto>>} Os dados do toilet atualizado.
-   * @throws {NotFoundException} Se o toilet não for encontrado.
-   * @throws {ConflictException} Se o toilet estiver deletado.
-   * @throws {UnauthorizedException} Se o token de autenticação for inválido ou ausente.
-   * @throws {ForbiddenException} Se o usuário não possuir a permissão DISABLE_TOILETS.
-   *
-   * @description
-   * Altera o status de um toilet para 'INACTIVE'. O toilet permanece no sistema, mas não é retornado em buscas públicas.
-   * A operação é idempotente; chamar em um toilet já inativo não causa erro.
+   * @param {string} publicId O ID público da casa de banho a ser desativada.
+   * @returns {Promise<ApiResponseDto<ToiletResponseDto>>} Os dados da casa de banho atualizada.
+   * @throws {NotFoundException} Se a casa de banho não for encontrada.
+   * @throws {ConflictException} Se a casa de banho estiver deletada.
    */
   @ApiSwaggerDisableToilet()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -613,21 +464,12 @@ export class ToiletController {
   }
 
   /**
-   * Ativar um toilet
+   * Ativa uma casa de banho.
    *
-   * @async
-   * @route PUT /toilet/:publicId/manage/enable
-   * @protected Requer autenticação JWT e permissão ENABLE_TOILETS
-   * @param {string} publicId - O ID público do toilet a ser ativado.
-   * @returns {Promise<ApiResponseDto<ToiletResponseDto>>} Os dados do toilet atualizado.
-   * @throws {NotFoundException} Se o toilet não for encontrado.
-   * @throws {ConflictException} Se o toilet estiver deletado.
-   * @throws {UnauthorizedException} Se o token de autenticação for inválido ou ausente.
-   * @throws {ForbiddenException} Se o usuário não possuir a permissão ENABLE_TOILETS.
-   *
-   * @description
-   * Altera o status de um toilet para 'ACTIVE'.
-   * A operação é idempotente; chamar em um toilet já ativo não causa erro.
+   * @param {string} publicId O ID público da casa de banho a ser ativada.
+   * @returns {Promise<ApiResponseDto<ToiletResponseDto>>} Os dados da casa de banho atualizada.
+   * @throws {NotFoundException} Se a casa de banho não for encontrada.
+   * @throws {ConflictException} Se a casa de banho estiver deletada.
    */
   @ApiSwaggerEnableToilet()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -644,23 +486,14 @@ export class ToiletController {
   }
 
   /**
-   * Upload de imagem do toilet
+   * Realiza o upload de uma imagem para uma casa de banho.
    *
-   * @async
-   * @route POST /toilet/:publicId/manage/image
-   * @protected Requer autenticação JWT e permissão EDIT_TOILETS
-   * @param {string} publicId - O ID público do toilet para o qual a imagem será enviada.
-   * @param {Express.Multer.File} file - O arquivo de imagem (multipart/form-data).
-   * @returns {Promise<ApiResponseDto<ToiletResponseDto>>} Os dados do toilet atualizado com a nova URL da imagem.
-   * @throws {NotFoundException} Se o toilet não for encontrado.
-   * @throws {ConflictException} Se o toilet estiver deletado.
-   * @throws {BadRequestException} Se o arquivo não for uma imagem válida ou exceder o tamanho limite.
-   * @throws {UnauthorizedException} Se o token de autenticação for inválido ou ausente.
-   * @throws {ForbiddenException} Se o usuário não possuir a permissão EDIT_TOILETS.
-   *
-   * @description
-   * Faz o upload de uma imagem para um toilet. A imagem é armazenada e a URL pública é associada ao toilet.
-   * Se uma imagem anterior existir, ela é substituída.
+   * @param {string} publicId O ID público da casa de banho para a qual a imagem será enviada.
+   * @param {Express.Multer.File} file O arquivo de imagem.
+   * @returns {Promise<ApiResponseDto<ToiletResponseDto>>} Os dados da casa de banho atualizada com a nova URL da imagem.
+   * @throws {NotFoundException} Se a casa de banho não for encontrada.
+   * @throws {ConflictException} Se a casa de banho estiver deletada.
+   * @throws {BadRequestException} Se a imagem exceder o tamanho máximo de 5MB.
    */
   @ApiSwaggerUploadToiletImage()
   @UseGuards(JwtAuthGuard, PermissionsGuard)

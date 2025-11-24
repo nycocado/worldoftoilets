@@ -8,12 +8,6 @@ import {
 } from '@nestjs/swagger';
 import { ToiletResponseDto } from '@modules/toilet/dto';
 
-/**
- * Decorador Swagger para Obter Lista de Toilets
- *
- * @function ApiSwaggerGetToilets
- * @description Decorator que documenta o endpoint GET /toilet no Swagger.
- */
 export const ApiSwaggerGetToilets = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

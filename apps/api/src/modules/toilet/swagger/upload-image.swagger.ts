@@ -13,12 +13,6 @@ import {
 } from '@nestjs/swagger';
 import { ToiletResponseDto } from '@modules/toilet/dto';
 
-/**
- * Decorador Swagger para Upload de Imagem de Toilet
- *
- * @function ApiSwaggerUploadToiletImage
- * @description Decorator que documenta o endpoint POST /toilet/:publicId/manage/image no Swagger.
- */
 export const ApiSwaggerUploadToiletImage = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

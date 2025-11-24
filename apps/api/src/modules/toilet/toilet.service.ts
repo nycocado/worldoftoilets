@@ -4,38 +4,18 @@ import { TOILET_EXCEPTIONS } from '@modules/toilet/constants/exceptions.constant
 import { ToiletEntity, ToiletStatus } from '@database/entities';
 
 /**
- * Serviço de Toilets
- *
- * @class ToiletService
- * @description Serviço de alto nível para gestão de toilets.
- * Oferece operações de obtenção de toilets por ID e pesquisa full-text.
- *
- * @implements
- *   - Obtenção de toilet por ID público
- *   - Pesquisa full-text de toilets
- *
- * @see ToiletRepository - Repositório para acesso aos dados
+ * Contém a lógica de negócio para as operações relacionadas a casas de banho.
  */
 @Injectable()
 export class ToiletService {
-  /**
-   * Construtor do ToiletService
-   *
-   * @param {ToiletRepository} toiletRepository - Repositório para operações de toilets
-   */
   constructor(private readonly toiletRepository: ToiletRepository) {}
 
   /**
-   * Obter toilet por ID público
+   * Busca uma casa de banho pelo seu ID público.
    *
-   * @async
-   * @param {string} publicId - ID público UUID do toilet
-   * @returns {Promise<ToiletEntity>} Entidade do toilet encontrado
-   * @throws {NotFoundException} Quando toilet não é encontrado
-   *
-   * @description
-   * Busca toilet pelo ID público. Se não encontrado, lança exceção.
-   * Retorna toilet com população de relações (access, extras, ratings).
+   * @param {string} publicId O ID público da casa de banho.
+   * @returns {Promise<ToiletEntity>} A entidade da casa de banho encontrada.
+   * @throws {NotFoundException} Se a casa de banho não for encontrada.
    */
   async getToiletByPublicId(publicId: string): Promise<ToiletEntity> {
     const toilet = await this.toiletRepository.findByPublicId(publicId);
@@ -46,19 +26,14 @@ export class ToiletService {
   }
 
   /**
-   * Pesquisar toilets por full-text
+   * Realiza uma pesquisa full-text por casas de banho.
    *
-   * @async
-   * @param {string} query - Termo de pesquisa
-   * @param {boolean} [pageable] - Se deve paginar resultados
-   * @param {number} [page] - Número da página (se paginado)
-   * @param {number} [size] - Tamanho da página (se paginado)
-   * @param {ToiletStatus} [status] - Status para filtrar
-   * @returns {Promise<ToiletEntity[]>} Lista de toilets encontrados
-   *
-   * @description
-   * Realiza pesquisa full-text em name e address dos toilets usando MySQL MATCH AGAINST.
-   * Resultados são ordenados por relevância. Suporta paginação e filtro por status.
+   * @param {string} query O termo de pesquisa.
+   * @param {boolean} [pageable] Define se a paginação deve ser aplicada.
+   * @param {number} [page] O número da página.
+   * @param {number} [size] O tamanho da página.
+   * @param {ToiletStatus} [status] Filtra por status.
+   * @returns {Promise<ToiletEntity[]>} Uma lista de casas de banho encontradas.
    */
   async getToiletsByFullTextSearch(
     query: string,
@@ -77,15 +52,11 @@ export class ToiletService {
   }
 
   /**
-   * Alterar status do toilet
+   * Altera o status de uma casa de banho.
    *
-   * @async
-   * @param {ToiletEntity} toilet - Entidade do toilet
-   * @param {ToiletStatus} status - Novo status
-   * @returns {Promise<ToiletEntity>} Toilet com status atualizado
-   *
-   * @description
-   * Altera o status do toilet (SUGGESTED, ACTIVE, INACTIVE, REJECTED).
+   * @param {ToiletEntity} toilet A entidade da casa de banho.
+   * @param {ToiletStatus} status O novo status.
+   * @returns {Promise<ToiletEntity>} A casa de banho com o status atualizado.
    */
   async changeToiletStatus(
     toilet: ToiletEntity,
@@ -95,25 +66,21 @@ export class ToiletService {
   }
 
   /**
-   * Criar novo toilet
+   * Cria uma nova casa de banho.
    *
-   * @async
-   * @param {any} access - Entidade de tipo de acesso
-   * @param {string} name - Nome do toilet
-   * @param {number} latitude - Latitude da localização
-   * @param {number} longitude - Longitude da localização
-   * @param {string} address - Endereço completo
-   * @param {string} city - Cidade
-   * @param {string | undefined} state - Estado/província (opcional)
-   * @param {string} country - País
-   * @param {string} countryCode - Código ISO do país
-   * @param {ToiletStatus} status - Status inicial do toilet
-   * @param {string | undefined} placeId - Google Places ID (opcional)
-   * @param {any[]} [extras] - Lista de extras disponíveis
-   * @returns {Promise<ToiletEntity>} Toilet criado
-   *
-   * @description
-   * Cria novo toilet através do repositório.
+   * @param {any} access A entidade do tipo de acesso.
+   * @param {string} name O nome da casa de banho.
+   * @param {number} latitude A latitude da localização.
+   * @param {number} longitude A longitude da localização.
+   * @param {string} address A morada completa.
+   * @param {string} city A cidade.
+   * @param {string | undefined} state O estado/distrito.
+   * @param {string} country O país.
+   * @param {string} countryCode O código do país.
+   * @param {ToiletStatus} status O status inicial.
+   * @param {string | undefined} placeId O ID do Google Places.
+   * @param {any[]} [extras] A lista de recursos extra.
+   * @returns {Promise<ToiletEntity>} A casa de banho criada.
    */
   async createToilet(
     access: any,
@@ -146,17 +113,11 @@ export class ToiletService {
   }
 
   /**
-   * Atualizar URL da foto do toilet
+   * Atualiza o URL da foto de uma casa de banho.
    *
-   * @async
-   * @param {ToiletEntity} toilet - Entidade do toilet
-   * @param {string} photoUrl - URL pública da foto
-   * @returns {Promise<ToiletEntity>} Toilet com foto atualizada
-   *
-   * @description
-   * Atualiza o campo photoUrl do toilet.
-   * Usado após upload de imagem para MinIO/S3.
-   * Operação transacional através do repositório.
+   * @param {ToiletEntity} toilet A entidade da casa de banho.
+   * @param {string} photoUrl O novo URL da foto.
+   * @returns {Promise<ToiletEntity>} A casa de banho com a foto atualizada.
    */
   async updatePhotoUrl(
     toilet: ToiletEntity,
@@ -165,6 +126,12 @@ export class ToiletService {
     return this.toiletRepository.updatePhotoUrl(toilet, photoUrl);
   }
 
+  /**
+   * Remove uma casa de banho permanentemente.
+   *
+   * @param {ToiletEntity} toilet A entidade da casa de banho a ser removida.
+   * @returns {Promise<void>}
+   */
   async deleteToilet(toilet: ToiletEntity): Promise<void> {
     return this.toiletRepository.delete(toilet);
   }
