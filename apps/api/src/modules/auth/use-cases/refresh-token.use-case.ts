@@ -7,53 +7,21 @@ import { AUTH_EXCEPTIONS } from '@modules/auth/constants';
 import { Transactional } from '@mikro-orm/mariadb';
 
 /**
- * Caso de Uso para Renovação de Token
- *
- * @class RefreshTokenUseCase
- * @description Implementa a lógica de renovação de access token via refresh token.
- * Valida refresh token e gera novo access token com os papéis atuais do utilizador.
- *
- * @implements
- *   - Validação de refresh token
- *   - Verificação de expiração
- *   - Geração de novo access token
- *   - Revogação de refresh token antigo
- *   - Criação de novo refresh token
- *
- * @example
- * const response = await refreshTokenUseCase.execute('550e8400-e29b-41d4-a716-446655440000');
- * // Retorna { accessToken, refreshToken }
- *
- * @throws {UnauthorizedException} Se token inválido ou expirado
+ * Implementa o caso de uso de renovação de token.
  */
 @Injectable()
 export class RefreshTokenUseCase {
-  /**
-   * Construtor do RefreshTokenUseCase
-   *
-   * @param {JwtService} jwtService - Serviço NestJS para geração de JWT
-   * @param {RefreshTokenService} refreshTokenService - Serviço para refresh tokens
-   */
   constructor(
     private readonly jwtService: JwtService,
     private readonly refreshTokenService: RefreshTokenService,
   ) {}
 
   /**
-   * Executar caso de uso de renovação de token
+   * Executa a lógica de renovação de token.
    *
-   * @async
-   * @param {string} token - Refresh token válido
-   * @returns {Promise<RefreshTokenResponseDto>} Novo access token e refresh token
-   * @throws {UnauthorizedException} Se token inválido, expirado ou revogado
-   *
-   * @description
-   * 1. Valida refresh token no banco de dados
-   * 2. Verifica se não está expirado ou revogado
-   * 3. Gera novo access token com papéis atuais do utilizador
-   * 4. Cria novo refresh token (para rotação de tokens)
-   * 5. Revoga refresh token antigo
-   * 6. Retorna novos tokens
+   * @param {string} token O refresh token válido.
+   * @returns {Promise<RefreshTokenResponseDto>} Novo access token e refresh token.
+   * @throws {UnauthorizedException} Se o token for inválido, expirado ou revogado.
    */
   @Transactional()
   async execute(token: string): Promise<RefreshTokenResponseDto> {

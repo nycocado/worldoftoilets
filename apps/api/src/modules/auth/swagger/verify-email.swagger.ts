@@ -7,14 +7,6 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
-/**
- * Decorador Swagger para Verificação de Email
- *
- * @function ApiSwaggerVerifyEmail
- * @description Decorator que documenta o endpoint POST /auth/verify-email no Swagger.
- * Inclui documentação da operação, autenticação via Bearer token e respostas de sucesso/erro.
- * Token é recebido via email durante o registo.
- */
 export const ApiSwaggerVerifyEmail = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

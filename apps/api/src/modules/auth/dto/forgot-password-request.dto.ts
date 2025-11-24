@@ -3,30 +3,16 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 
 /**
- * DTO de Request para Recuperação de Password
- *
- * @class ForgotPasswordRequestDto
- * @description Transfer Object para solicitar recuperação de password
- *
- * @property {string} email - Email do utilizador (3-100 caracteres)
- *
- * @example
- * {
- *   "email": "joao@example.com"
- * }
+ * DTO para solicitar a recuperação de password.
  */
 export class ForgotPasswordRequestDto {
-  /**
-   * Email do utilizador
-   *
-   * @type {string}
-   * @length 3-100
-   * @format email
-   * @description Email para o qual será enviado o link de reset de password.
-   * Por segurança, retorna sucesso mesmo se email não existir.
-   * @example "joao@example.com"
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description:
+      'O endereço de email do utilizador para recuperação de password.',
+    example: 'user@example.com',
+    minLength: 3,
+    maxLength: 100,
+  })
   @IsEmail()
   @MinLength(3)
   @MaxLength(100)

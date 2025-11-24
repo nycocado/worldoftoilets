@@ -5,49 +5,21 @@ import { AUTH_EXCEPTIONS } from '@modules/auth/constants';
 import { Transactional } from '@mikro-orm/mariadb';
 
 /**
- * Caso de Uso para Logout Global
- *
- * @class LogoutAllUseCase
- * @description Implementa a lógica de logout de todas as sessões do utilizador.
- * Revoga todos os refresh tokens do utilizador.
- *
- * @implements
- *   - Validação de refresh token para identificar utilizador
- *   - Revogação de TODOS os refresh tokens do utilizador
- *
- * @example
- * await logoutAllUseCase.execute('550e8400-e29b-41d4-a716-446655440000');
- * // Logout global - todas as sessões são terminadas
- *
- * @throws {UnauthorizedException} Se refresh token inválido
+ * Implementa o caso de uso de logout de todas as sessões do utilizador.
  */
 @Injectable()
 export class LogoutAllUseCase {
-  /**
-   * Construtor do LogoutAllUseCase
-   *
-   * @param {UserService} userService - Serviço para operações de utilizador
-   * @param {RefreshTokenService} refreshTokenService - Serviço para refresh tokens
-   */
   constructor(
     private readonly userService: UserService,
     private readonly refreshTokenService: RefreshTokenService,
   ) {}
 
   /**
-   * Executar caso de uso de logout global
+   * Executa a lógica de logout de todas as sessões do utilizador.
    *
-   * @async
-   * @param {string} token - Refresh token para identificar utilizador
+   * @param {string} token O refresh token para identificar o utilizador.
    * @returns {Promise<void>}
-   * @throws {UnauthorizedException} Se refresh token inválido ou expirado
-   *
-   * @description
-   * 1. Identifica utilizador a partir do refresh token
-   * 2. Valida token
-   * 3. Revoga TODOS os refresh tokens do utilizador
-   * 4. Todas as sessões abertas são terminadas
-   * 5. Utilizador precisa de fazer novo login
+   * @throws {UnauthorizedException} Se o refresh token for inválido ou expirado.
    */
   @Transactional()
   async execute(token: string): Promise<void> {

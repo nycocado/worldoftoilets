@@ -10,43 +10,10 @@ import { AUTH_EXCEPTIONS } from '@modules/auth/constants';
 import { RoleService } from '@modules/role';
 
 /**
- * Caso de Uso para Registo
- *
- * @class RegisterUseCase
- * @description Implementa a lógica de registo de nova conta de utilizador.
- * Cria utilizador, credenciais, token de verificação e envia email de verificação.
- *
- * @implements
- *   - Verificação de email único
- *   - Criação de utilizador com dados básicos
- *   - Criação de credenciais com password hasheada
- *   - Geração de token de verificação de email
- *   - Envio de email de verificação
- *
- * @example
- * await registerUseCase.execute(
- *   'João Silva',
- *   'joao@example.com',
- *   'password123',
- *   UserIcon.ICON_1,
- *   '1990-01-15'
- * );
- * // Cria utilizador e envia email de verificação
- *
- * @throws {ConflictException} Se email já estiver registado
+ * Implementa o caso de uso de registo de uma nova conta de utilizador.
  */
 @Injectable()
 export class RegisterUseCase {
-  /**
-   * Construtor do RegisterUseCase
-   *
-   * @param {UserService} userService - Serviço para operações de utilizador
-   * @param {UserCredentialService} userCredentialService - Serviço para credenciais
-   * @param {EmailVerificationService} emailVerificationService - Serviço para tokens de verificação
-   * @param {RoleService} roleService - Serviço para gestão de roles
-   * @param {EmailService} emailService - Serviço para envio de endereços eletrónicos
-   * @param {ConfigService} configService - Serviço para ler configurações (FRONTEND_URL)
-   */
   constructor(
     private readonly userService: UserService,
     private readonly userCredentialService: UserCredentialService,
@@ -57,23 +24,15 @@ export class RegisterUseCase {
   ) {}
 
   /**
-   * Executar caso de uso de registo
+   * Executa a lógica de registo de uma nova conta de utilizador.
    *
-   * @async
-   * @param {string} name - Nome de utilizador (display name)
-   * @param {string} email - Email único
-   * @param {string} password - Password em texto plano (será hasheada)
-   * @param {UserIcon | undefined} icon - Ícone/avatar (opcional)
-   * @param {string} birthDate - Data de nascimento (ISO format)
+   * @param {string} name O nome de utilizador.
+   * @param {string} email O email único do utilizador.
+   * @param {string} password A password em texto plano.
+   * @param {UserIcon | undefined} icon O ícone/avatar do utilizador (opcional).
+   * @param {string} birthDate A data de nascimento (formato ISO).
    * @returns {Promise<void>}
-   * @throws {ConflictException} Se email já estiver registado
-   *
-   * @description
-   * 1. Verifica se email já existe
-   * 2. Cria utilizador com nome, ícone e data de nascimento
-   * 3. Cria credenciais com email e password hasheada
-   * 4. Gera token de verificação de email
-   * 5. Envia email de verificação com link
+   * @throws {ConflictException} Se o email já estiver registado.
    */
   @Transactional()
   async execute(
@@ -83,7 +42,7 @@ export class RegisterUseCase {
     icon: UserIcon | undefined,
     birthDate: string,
   ): Promise<void> {
-    if (await this.userService.verityUserExistsByEmail(email)) {
+    if (await this.userService.verifyUserExistsByEmail(email)) {
       throw new ConflictException(AUTH_EXCEPTIONS.EMAIL_ALREADY_IN_USE);
     }
 

@@ -53,46 +53,10 @@ import { PermissionApiName, RoleApiName } from '@database/entities';
 import { RegisterAdminRequestDto } from '@modules/auth/dto/register-admin-request.dto';
 
 /**
- * Controlador de Autenticação
- *
- * @class AuthController
- * @description Controlador que expõe endpoints HTTP para todas as operações de autenticação.
- * Processa requests, valida DTOs, configura cookies seguras, e delega lógica para os use cases.
- *
- * @route /auth - Rota base para todos os endpoints de autenticação
- *
- * @endpoints
- * - POST /auth/login - Autenticar utilizador
- * - POST /auth/register - Registar novo utilizador
- * - POST /auth/register/admin - Registar novo administrador (requer permissão CREATE_USERS)
- * - POST /auth/refresh - Renovar token de acesso
- * - POST /auth/logout - Logout de sessão específica
- * - POST /auth/logout-all - Logout de todas as sessões do utilizador
- * - POST /auth/verify-email - Verificar email
- * - POST /auth/resend-verification - Reenviar email de verificação
- * - POST /auth/forgot-password - Solicitar recuperação de password
- * - POST /auth/reset-password - Efetuar reset de password
- *
- * @see LoginUseCase, RegisterUseCase, RefreshTokenUseCase - Use cases que executam a lógica de negócio
- * @see ApiSwagger - Decoradores de documentação Swagger
+ * Gerencia as requisições HTTP para operações de autenticação.
  */
 @Controller('auth')
 export class AuthController {
-  /**
-   * Construtor do AuthController
-   *
-   * @param {ConfigService} configService - Serviço de configuração para ler variáveis de ambiente
-   * @param {LoginUseCase} loginUseCase - Use case para autenticação de utilizador
-   * @param {RegisterUseCase} registerUseCase - Use case para registo de utilizador
-   * @param {RegisterAdminUseCase} registerAdminUseCase - Use case para registo de administrador
-   * @param {RefreshTokenUseCase} refreshTokenUseCase - Use case para renovação de tokens
-   * @param {VerifyEmailUseCase} verifyEmailUseCase - Use case para verificação de email
-   * @param {ResendVerificationUseCase} resendVerificationUseCase - Use case para reenvio de verificação
-   * @param {ForgotPasswordUseCase} forgotPasswordUseCase - Use case para recuperação de password
-   * @param {ResetPasswordUseCase} resetPasswordUseCase - Use case para reset de password
-   * @param {LogoutUseCase} logoutUseCase - Use case para logout de sessão específica
-   * @param {LogoutAllUseCase} logoutAllUseCase - Use case para logout de todas as sessões
-   */
   constructor(
     private readonly configService: ConfigService,
     private readonly loginUseCase: LoginUseCase,
@@ -108,21 +72,13 @@ export class AuthController {
   ) {}
 
   /**
-   * Autenticar utilizador
+   * Autentica um utilizador, gera tokens e os define em cookies seguros.
    *
-   * @async
-   * @route POST /auth/login
-   * @param {LoginRequestDto} loginDto - Email e password do utilizador
-   * @param {Response} res - Objeto de resposta Express para configurar cookies
-   * @returns {Promise<ApiResponseDto<LoginResponseDto>>} Tokens e dados da sessão
-   * @throws {BadRequestException} Se credenciais forem inválidas
-   * @throws {UnauthorizedException} Se email não estiver verificado
-   *
-   * @description
-   * Valida credenciais, gera tokens JWT, e configura cookies HTTP-only seguras.
-   * - Access token: curta vida (ex: 15m) para operações na API
-   * - Refresh token: longa vida (ex: 30d) para renovar access token
-   * Ambos os tokens são guardados em cookies seguras, HTTP-only e SameSite=Strict.
+   * @param {LoginRequestDto} loginDto DTO com email e password.
+   * @param {any} res Objeto de resposta Express para configurar cookies.
+   * @returns {Promise<ApiResponseDto<LoginResponseDto>>} Tokens e dados da sessão.
+   * @throws {BadRequestException} Se as credenciais forem inválidas.
+   * @throws {UnauthorizedException} Se o email não estiver verificado.
    */
   @ApiSwaggerLogin()
   @Post('login')
@@ -163,19 +119,11 @@ export class AuthController {
   }
 
   /**
-   * Registar novo utilizador
+   * Regista um novo utilizador e envia um email de verificação.
    *
-   * @async
-   * @route POST /auth/register
-   * @param {RegisterRequestDto} registerDto - Dados de registo (nome, email, password, icon, data nascimento)
-   * @returns {Promise<ApiResponseDto>} Confirmação de sucesso
-   * @throws {BadRequestException} Se email já existir ou dados forem inválidos
-   * @throws {ConflictException} Se email já estiver registado
-   *
-   * @description
-   * Cria conta com password hasheada e envia email de verificação.
-   * Utilizador não pode fazer login até verificar o email.
-   * Ícone é opcional e default para ICON_DEFAULT.
+   * @param {RegisterRequestDto} registerDto DTO com os dados de registo.
+   * @returns {Promise<ApiResponseDto>} Confirmação de sucesso.
+   * @throws {ConflictException} Se o email já estiver registado.
    */
   @ApiSwaggerRegister()
   @Post('register')
@@ -188,23 +136,11 @@ export class AuthController {
   }
 
   /**
-   * Registar novo administrador
+   * Regista um novo utilizador com roles administrativas. Requer permissão de 'CREATE_USERS'.
    *
-   * @async
-   * @route POST /auth/register/admin
-   * @protected Requer autenticação JWT e permissão CREATE_USERS
-   * @param {RegisterAdminRequestDto} registerDto - Dados de registo (user + roles administrativas)
-   * @returns {Promise<ApiResponseDto>} Confirmação de sucesso
-   * @throws {BadRequestException} Se email já existir ou dados forem inválidos
-   * @throws {ConflictException} Se email já estiver registado
-   * @throws {UnauthorizedException} Se token de autenticação for inválido ou ausente
-   * @throws {ForbiddenException} Se utilizador não possuir permissão CREATE_USERS
-   *
-   * @description
-   * Cria conta administrativa com roles específicas, password hasheada e envia email de verificação.
-   * Diferente do registo normal, este endpoint permite atribuir roles administrativas personalizadas.
-   * Apenas utilizadores com permissão CREATE_USERS podem criar administradores.
-   * Utilizador não pode fazer login até verificar o email.
+   * @param {RegisterAdminRequestDto} registerDto DTO com os dados de registo do utilizador e as suas roles.
+   * @returns {Promise<ApiResponseDto>} Confirmação de sucesso.
+   * @throws {ConflictException} Se o email já estiver registado.
    */
   @ApiSwaggerRegisterAdmin()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -227,20 +163,13 @@ export class AuthController {
   }
 
   /**
-   * Renovar token de acesso
+   * Renova o token de acesso e o refresh token, definindo-os em cookies seguros.
    *
-   * @async
-   * @route POST /auth/refresh
-   * @param {Request} req - Request Express (para extrair refreshToken do cookie)
-   * @param {Response} res - Response Express para configurar novo cookie de access token
-   * @param {string} authorization - Bearer token do header Authorization
-   * @returns {Promise<ApiResponseDto<RefreshTokenResponseDto>>} Novo access token
-   * @throws {UnauthorizedException} Se refresh token for inválido, expirado ou revogado
-   *
-   * @description
-   * Valida refresh token existente, verifica papéis do utilizador,
-   * e gera novo access token. Refresh token é renovado se próximo de expirar.
-   * Ambos os tokens são configurados em cookies seguras.
+   * @param {Request} req Objeto de requisição Express para extrair o refresh token do cookie.
+   * @param {any} res Objeto de resposta Express para configurar novos cookies.
+   * @param {string} [authorization] Token Bearer do cabeçalho Authorization.
+   * @returns {Promise<ApiResponseDto<RefreshTokenResponseDto>>} Novo access token e refresh token.
+   * @throws {UnauthorizedException} Se o refresh token for inválido, expirado ou revogado.
    */
   @ApiSwaggerRefresh()
   @Post('refresh')
@@ -285,20 +214,13 @@ export class AuthController {
   }
 
   /**
-   * Logout de sessão específica
+   * Realiza o logout de uma sessão específica, invalidando o refresh token e limpando os cookies.
    *
-   * @async
-   * @route POST /auth/logout
-   * @param {Request} req - Request Express (para extrair refreshToken do cookie)
-   * @param {Response} res - Response Express para limpar cookies
-   * @param {string} authorization - Bearer token do header Authorization
-   * @returns {Promise<ApiResponseDto>} Confirmação de sucesso
-   * @throws {UnauthorizedException} Se refresh token não for fornecido
-   *
-   * @description
-   * Marca refresh token como inválido, efetuando logout de uma sessão.
-   * Outras sessões do utilizador permanecem ativas.
-   * Limpa cookies de token e refreshToken no cliente.
+   * @param {Request} req Objeto de requisição Express para extrair o refresh token do cookie.
+   * @param {any} res Objeto de resposta Express para limpar os cookies.
+   * @param {string} [authorization] Token Bearer do cabeçalho Authorization.
+   * @returns {Promise<ApiResponseDto>} Confirmação de sucesso.
+   * @throws {UnauthorizedException} Se o refresh token não for fornecido.
    */
   @ApiSwaggerLogout()
   @Post('logout')
@@ -323,20 +245,13 @@ export class AuthController {
   }
 
   /**
-   * Logout de todas as sessões do utilizador
+   * Realiza o logout de todas as sessões do utilizador, invalidando todos os refresh tokens e limpando os cookies.
    *
-   * @async
-   * @route POST /auth/logout-all
-   * @param {Request} req - Request Express (para extrair refreshToken do cookie)
-   * @param {Response} res - Response Express para limpar cookies
-   * @param {string} authorization - Bearer token do header Authorization
-   * @returns {Promise<ApiResponseDto>} Confirmação de sucesso
-   * @throws {UnauthorizedException} Se refresh token não for fornecido
-   *
-   * @description
-   * Marca TODOS os refresh tokens do utilizador como inválidos.
-   * Efetua logout global - todas as sessões abertas são terminadas.
-   * Limpa cookies de token e refreshToken no cliente.
+   * @param {Request} req Objeto de requisição Express para extrair o refresh token do cookie.
+   * @param {any} res Objeto de resposta Express para limpar os cookies.
+   * @param {string} [authorization] Token Bearer do cabeçalho Authorization.
+   * @returns {Promise<ApiResponseDto>} Confirmação de sucesso.
+   * @throws {UnauthorizedException} Se o refresh token não for fornecido.
    */
   @ApiSwaggerLogoutAll()
   @Post('logout-all')
@@ -361,19 +276,12 @@ export class AuthController {
   }
 
   /**
-   * Verificar email
+   * Verifica o email do utilizador usando um token de verificação.
    *
-   * @async
-   * @route POST /auth/verify-email
-   * @param {string} authorization - Bearer token do header Authorization
-   * @returns {Promise<ApiResponseDto>} Confirmação de sucesso
-   * @throws {BadRequestException} Se token for inválido ou expirado
-   * @throws {UnauthorizedException} Se token não for fornecido
-   *
-   * @description
-   * Marca email como verificado quando utilizador clica link do email de verificação.
-   * Necessário para completar o registo e poder fazer login.
-   * Token é gerado durante o registo e enviado por email.
+   * @param {string} [authorization] Token Bearer do cabeçalho Authorization.
+   * @returns {Promise<ApiResponseDto>} Confirmação de sucesso.
+   * @throws {UnauthorizedException} Se o token não for fornecido.
+   * @throws {BadRequestException} Se o token for inválido ou expirado.
    */
   @ApiSwaggerVerifyEmail()
   @Post('verify-email')
@@ -389,18 +297,11 @@ export class AuthController {
   }
 
   /**
-   * Reenviar email de verificação
+   * Reenvia um email de verificação para o utilizador.
    *
-   * @async
-   * @route POST /auth/resend-verification
-   * @param {ResendVerificationRequestDto} resendVerificationDto - Email do utilizador (query param)
-   * @returns {Promise<ApiResponseDto>} Confirmação de sucesso
-   * @throws {BadRequestException} Se email não existir ou já estiver verificado
-   *
-   * @description
-   * Gera novo token de verificação e envia email.
-   * Útil quando utilizador não recebeu email original ou token expirou.
-   * Apenas funciona para emails não verificados.
+   * @param {ResendVerificationRequestDto} resendVerificationDto DTO com o email do utilizador.
+   * @returns {Promise<ApiResponseDto>} Confirmação de sucesso.
+   * @throws {BadRequestException} Se o email não existir ou já estiver verificado.
    */
   @ApiSwaggerResendVerification()
   @Post('resend-verification')
@@ -412,17 +313,10 @@ export class AuthController {
   }
 
   /**
-   * Solicitar recuperação de password
+   * Solicita a recuperação de password, enviando um email com um link de reset.
    *
-   * @async
-   * @route POST /auth/forgot-password
-   * @param {ForgotPasswordRequestDto} forgotPasswordDto - Email do utilizador (query param)
-   * @returns {Promise<ApiResponseDto>} Confirmação de sucesso (mesmo se email não existe, por segurança)
-   *
-   * @description
-   * Gera token de reset de password e envia email com link de recuperação.
-   * Por segurança, retorna mensagem de sucesso mesmo se email não existir,
-   * para evitar revelação de emails registados.
+   * @param {ForgotPasswordRequestDto} forgotPasswordDto DTO com o email do utilizador.
+   * @returns {Promise<ApiResponseDto>} Confirmação de sucesso.
    */
   @ApiSwaggerForgotPassword()
   @Post('forgot-password')
@@ -434,18 +328,11 @@ export class AuthController {
   }
 
   /**
-   * Efetuar reset de password
+   * Efetua o reset da password do utilizador.
    *
-   * @async
-   * @route POST /auth/reset-password
-   * @param {ResetPasswordRequestDto} resetPasswordDto - Token e nova password (body)
-   * @returns {Promise<ApiResponseDto>} Confirmação de sucesso
-   * @throws {BadRequestException} Se token for inválido, expirado ou password for fraca
-   *
-   * @description
-   * Valida token de reset, verifica requisitos da nova password,
-   * substitui password antiga, e permite novo login.
-   * Token é obtido no link do email enviado por forgot-password.
+   * @param {ResetPasswordRequestDto} resetPasswordDto DTO com o token de reset e a nova password.
+   * @returns {Promise<ApiResponseDto>} Confirmação de sucesso.
+   * @throws {BadRequestException} Se o token for inválido, expirado ou a password for fraca.
    */
   @ApiSwaggerResetPassword()
   @Post('reset-password')

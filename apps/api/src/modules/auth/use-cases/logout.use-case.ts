@@ -4,45 +4,19 @@ import { AUTH_EXCEPTIONS } from '@modules/auth/constants';
 import { Transactional } from '@mikro-orm/mariadb';
 
 /**
- * Caso de Uso para Logout de Sessão Específica
- *
- * @class LogoutUseCase
- * @description Implementa a lógica de logout de uma sessão específica.
- * Revoga o refresh token correspondente.
- *
- * @implements
- *   - Validação de refresh token
- *   - Revogação de token
- *
- * @example
- * await logoutUseCase.execute('550e8400-e29b-41d4-a716-446655440000');
- * // Logout de sessão específica
- *
- * @throws {UnauthorizedException} Se refresh token inválido
+ * Implementa o caso de uso de logout de uma sessão específica.
  */
 
 @Injectable()
 export class LogoutUseCase {
-  /**
-   * Construtor do LogoutUseCase
-   *
-   * @param {RefreshTokenService} refreshTokenService - Serviço para refresh tokens
-   */
   constructor(private readonly refreshTokenService: RefreshTokenService) {}
 
   /**
-   * Executar caso de uso de logout de sessão específica
+   * Executa a lógica de logout de uma sessão específica.
    *
-   * @async
-   * @param {string} token - Refresh token a revogar
+   * @param {string} token O refresh token a ser revogado.
    * @returns {Promise<void>}
-   * @throws {UnauthorizedException} Se refresh token inválido ou expirado
-   *
-   * @description
-   * 1. Valida refresh token
-   * 2. Marca token como inválido/revogado
-   * 3. Efetua logout de uma sessão específica
-   * 4. Outras sessões do utilizador permanecem ativas
+   * @throws {UnauthorizedException} Se o refresh token for inválido ou expirado.
    */
   @Transactional()
   async execute(token: string): Promise<void> {

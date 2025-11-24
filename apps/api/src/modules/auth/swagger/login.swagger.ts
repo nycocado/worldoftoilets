@@ -7,13 +7,6 @@ import {
 } from '@nestjs/swagger';
 import { LoginRequestDto, LoginResponseDto } from '@modules/auth/dto';
 
-/**
- * Decorador Swagger para Login
- *
- * @function ApiSwaggerLogin
- * @description Decorator que documenta o endpoint POST /auth/login no Swagger.
- * Inclui documentação da operação, request body, respostas sucesso e erro.
- */
 export const ApiSwaggerLogin = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({
