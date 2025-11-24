@@ -3,3 +3,5 @@ export * from './send-password-reset-email.use-case';
 export * from './send-simple-email.use-case';
 export * from './send-verification-email.use-case';
 export * from './send-welcome-email.use-case';
+export * from './send-partner-approval-email.use-case';
+export * from './send-partner-rejection-email.use-case';

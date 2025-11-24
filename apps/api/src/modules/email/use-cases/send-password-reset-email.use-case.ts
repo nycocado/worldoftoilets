@@ -1,10 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { SendHtmlEmailUseCase } from './send-html-email.use-case';
 
+/**
+ * Contém a lógica de negócio para o envio de um email de redefinição de password.
+ */
 @Injectable()
 export class SendPasswordResetEmailUseCase {
   constructor(private readonly sendHtmlEmailUseCase: SendHtmlEmailUseCase) {}
 
+  /**
+   * Envia um email de redefinição de password.
+   *
+   * @param {string} to O destinatário do email.
+   * @param {string} userName O nome do utilizador.
+   * @param {string} resetUrl O URL de redefinição.
+   * @returns {Promise<boolean>} `true` se o email foi enviado com sucesso.
+   */
   async execute(
     to: string,
     userName: string,

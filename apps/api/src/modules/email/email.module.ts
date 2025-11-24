@@ -7,7 +7,12 @@ import { SendPasswordResetEmailUseCase } from '@modules/email/use-cases/send-pas
 import { SendSimpleEmailUseCase } from '@modules/email/use-cases/send-simple-email.use-case';
 import { SendVerificationEmailUseCase } from '@modules/email/use-cases/send-verification-email.use-case';
 import { SendWelcomeEmailUseCase } from '@modules/email/use-cases/send-welcome-email.use-case';
+import { SendPartnerApprovalEmailUseCase } from '@modules/email/use-cases/send-partner-approval-email.use-case';
+import { SendPartnerRejectionEmailUseCase } from '@modules/email/use-cases/send-partner-rejection-email.use-case';
 
+/**
+ * Gerencia a funcionalidade de envio de emails, agrupando seus componentes.
+ */
 @Module({
   imports: [
     ConfigModule,
@@ -30,6 +35,8 @@ import { SendWelcomeEmailUseCase } from '@modules/email/use-cases/send-welcome-e
     SendSimpleEmailUseCase,
     SendVerificationEmailUseCase,
     SendWelcomeEmailUseCase,
+    SendPartnerApprovalEmailUseCase,
+    SendPartnerRejectionEmailUseCase,
   ],
   exports: [EmailService],
 })

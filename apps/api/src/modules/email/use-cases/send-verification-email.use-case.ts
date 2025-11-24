@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SendHtmlEmailUseCase } from './send-html-email.use-case';
 
+/**
+ * Contém a lógica de negócio para o envio de um email de verificação de conta.
+ */
 @Injectable()
 export class SendVerificationEmailUseCase {
   constructor(
@@ -9,6 +12,14 @@ export class SendVerificationEmailUseCase {
     private readonly configService: ConfigService,
   ) {}
 
+  /**
+   * Envia um email de verificação de conta.
+   *
+   * @param {string} to O destinatário do email.
+   * @param {string} userName O nome do utilizador.
+   * @param {string} verificationUrl O URL de verificação.
+   * @returns {Promise<boolean>} `true` se o email foi enviado com sucesso.
+   */
   async execute(
     to: string,
     userName: string,
