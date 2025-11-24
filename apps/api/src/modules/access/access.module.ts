@@ -4,6 +4,9 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { AccessEntity } from '@database/entities';
 import { AccessRepository } from '@modules/access/access.repository';
 
+/**
+ * Gerencia a funcionalidade de acesso, agrupando seus componentes.
+ */
 @Module({
   imports: [MikroOrmModule.forFeature([AccessEntity])],
   providers: [AccessService, AccessRepository],
