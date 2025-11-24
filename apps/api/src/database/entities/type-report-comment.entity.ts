@@ -10,60 +10,43 @@ import {
 import { ReportCommentEntity } from './report-comment.entity';
 
 /**
- * Tipos de razões para reportar um comentário
+ * Tipos de denúncia para um comentário.
  */
 export enum TypeReportCommentApiName {
-  /** Comentário não é útil ou relevante */
+  /** O comentário não é útil ou relevante. */
   NOT_USEFUL = 'not-useful',
-  /** Comentário contém informação falsa */
+  /** O comentário contém informação falsa. */
   FAKE_INFORMATION = 'fake-information',
-  /** Conteúdo inadequado ou fora do tópico */
+  /** O conteúdo é inadequado ou fora do tópico. */
   INAPPROPRIATE_CONTENT = 'inappropriate-content',
-  /** Conteúdo ofensivo ou abusivo */
+  /** O conteúdo é ofensivo ou abusivo. */
   OFFENSIVE_CONTENT = 'offensive-content',
-  /** Mensagem de spam ou publicidade */
+  /** O conteúdo é spam ou publicidade. */
   SPAM = 'spam',
-  /** Outras razões */
+  /** Outras razões não listadas. */
   OTHERS = 'others',
 }
 
 /**
- * Entidade que representa um tipo de razão para reporte de comentário
+ * Representa um tipo de denúncia que pode ser feita a um comentário.
  * @table type_report_comment
- * @description Razão/categoria de reporte para comentários (spam, falso, ofensivo, etc)
  */
 @Entity({ tableName: 'type_report_comment' })
 export class TypeReportCommentEntity {
   /**
-   * ID interno do tipo de reporte
-   * @field id
-   * @type number
-   * @nullable false
-   * @primary true
-   * @description Identificador único interno
+   * Identificador único interno.
    */
   @PrimaryKey()
   id!: number;
 
   /**
-   * Nome descritivo da razão
-   * @field name
-   * @type string
-   * @nullable false
-   * @length 50
-   * @description Nome legível (ex: "Conteúdo Ofensivo")
+   * Nome legível do tipo de denúncia.
    */
   @Property({ length: 50 })
   name!: string;
 
   /**
-   * Nome único da API para identificar o tipo
-   * @field apiName
-   * @type TypeReportCommentApiName (enum)
-   * @nullable false
-   * @unique true
-   * @length 50
-   * @description Identificador da API em kebab-case
+   * Identificador único do tipo para uso na API.
    */
   @Index({ name: 'idx_type_report_comment_api_name' })
   @Unique()
@@ -71,11 +54,7 @@ export class TypeReportCommentEntity {
   apiName!: TypeReportCommentApiName;
 
   /**
-   * Coleção de relatórios deste tipo
-   * @field reports
-   * @type Collection<ReportCommentEntity>
-   * @relationship one-to-many
-   * @description Todos os relatórios de comentários desta categoria
+   * Coleção de denúncias deste tipo.
    */
   @OneToMany(() => ReportCommentEntity, (report) => report.typeReportComment)
   reports: Collection<ReportCommentEntity> =

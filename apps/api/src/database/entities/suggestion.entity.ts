@@ -12,43 +12,31 @@ import { InteractionEntity } from './interaction.entity';
 import { UserEntity } from './user.entity';
 
 /**
- * Estados possíveis de uma sugestão de casa de banho
+ * O status de uma sugestão de nova casa de banho.
  */
 export enum SuggestionStatus {
-  /** Sugestão pendente de revisão */
+  /** A sugestão está pendente de revisão. */
   PENDING = 'pending',
-  /** Sugestão aceita e casa de banho criado */
+  /** A sugestão foi aceite e a casa de banho foi criada. */
   ACCEPTED = 'accepted',
-  /** Sugestão rejeitada */
+  /** A sugestão foi rejeitada. */
   REJECTED = 'rejected',
 }
 
 /**
- * Entidade que representa uma sugestão de nova casa de banho
+ * Representa uma sugestão de uma nova casa de banho feita por um utilizador.
  * @table suggestion
- * @description Sugestão de um novo local para adicionar ao sistema
  */
 @Entity({ tableName: 'suggestion' })
 export class SuggestionEntity {
   /**
-   * ID interno da sugestão
-   * @field id
-   * @type number
-   * @nullable false
-   * @primary true
-   * @description Identificador único interno
+   * Identificador único interno.
    */
   @PrimaryKey()
   id!: number;
 
   /**
-   * Interação base associada à sugestão
-   * @field interaction
-   * @type InteractionEntity
-   * @nullable false
-   * @relationship one-to-one
-   * @primary true
-   * @description Interação que originou esta sugestão
+   * A interação que originou esta sugestão.
    */
   @Unique({ name: 'idx_suggestion_interaction_id' })
   @OneToOne(() => InteractionEntity, {
@@ -59,14 +47,7 @@ export class SuggestionEntity {
   interaction!: InteractionEntity;
 
   /**
-   * ID público em formato UUID
-   * @field publicId
-   * @type string (UUID)
-   * @nullable false
-   * @unique true
-   * @length 36
-   * @default uuid_v4()
-   * @description Identificador público para referência externa
+   * Identificador público (UUID) para partilha externa através da API.
    */
   @Unique()
   @Index({ name: 'idx_suggestion_public_id' })
@@ -74,43 +55,25 @@ export class SuggestionEntity {
   publicId!: string;
 
   /**
-   * Latitude da casa de banho sugerida
-   * @field latitude
-   * @type decimal(10,8)
-   * @nullable false
-   * @description Latitude em formato decimal (-90 a 90)
+   * A latitude da localização sugerida.
    */
   @Property({ columnType: 'decimal(10,8)' })
   latitude!: number;
 
   /**
-   * Longitude da casa de banho sugerida
-   * @field longitude
-   * @type decimal(10,8)
-   * @nullable false
-   * @description Longitude em formato decimal (-180 a 180)
+   * A longitude da localização sugerida.
    */
   @Property({ columnType: 'decimal(10,8)' })
   longitude!: number;
 
   /**
-   * URL da foto da casa de banho sugerida
-   * @field photoUrl
-   * @type string
-   * @nullable true
-   * @length 255
-   * @description Link para foto/imagem do local proposto
+   * URL de uma foto do local, se fornecida.
    */
   @Property({ length: 255, nullable: true })
   photoUrl?: string;
 
   /**
-   * Status atual da sugestão
-   * @field status
-   * @type SuggestionStatus (enum)
-   * @nullable false
-   * @default PENDING
-   * @description PENDING, ACCEPTED ou REJECTED
+   * O status atual da sugestão.
    */
   @Index({ name: 'idx_suggestion_status' })
   @Enum(() => SuggestionStatus)
@@ -118,12 +81,7 @@ export class SuggestionEntity {
   status: SuggestionStatus = SuggestionStatus.PENDING;
 
   /**
-   * Utilizador que revisou a sugestão
-   * @field reviewedBy
-   * @type UserEntity
-   * @nullable true
-   * @relationship many-to-one
-   * @description Admin que revisou/aprovou (se aplicável)
+   * O administrador que reviu a sugestão.
    */
   @ManyToOne(() => UserEntity, {
     deleteRule: 'set null',
@@ -133,56 +91,34 @@ export class SuggestionEntity {
   reviewedBy?: UserEntity;
 
   /**
-   * Timestamp da revisão da sugestão
-   * @field reviewedAt
-   * @type Date
-   * @nullable true
-   * @description Data/hora de revisão/aprovação
+   * Data e hora em que a sugestão foi revista.
    */
   @Index({ name: 'idx_suggestion_reviewed_at' })
   @Property({ nullable: true })
   reviewedAt?: Date;
 
   /**
-   * Timestamp de criação da sugestão
-   * @field createdAt
-   * @type Date
-   * @nullable false
-   * @default now()
-   * @description Data/hora de criação da sugestão
+   * Data e hora de criação da sugestão.
    */
   @Index({ name: 'idx_suggestion_created_at' })
   @Property({ onCreate: () => new Date() })
   createdAt: Date = new Date();
 
   /**
-   * Timestamp da última atualização
-   * @field updatedAt
-   * @type Date
-   * @nullable false
-   * @default now()
-   * @description Data/hora da última modificação
+   * Data e hora da última atualização da sugestão.
    */
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
 
   /**
-   * Utilizador que criou a sugestão
-   * @field user
-   * @type UserEntity
-   * @nullable false
-   * @description Acesso direto ao utilizador através da interação associada
+   * O utilizador que fez a sugestão.
    */
   get user(): UserEntity {
     return this.interaction?.user;
   }
 
   /**
-   * Casa de banho associada à sugestão
-   * @field toilet
-   * @type ToiletEntity
-   * @nullable false
-   * @description Acesso direto à toilet através da interação associada
+   * A casa de banho associada à sugestão.
    */
   get toilet() {
     return this.interaction?.toilet;

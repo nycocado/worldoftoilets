@@ -11,44 +11,31 @@ import { TypeReportUserEntity } from './type-report-user.entity';
 import { UserEntity } from './user.entity';
 
 /**
- * Estados possíveis de um relatório sobre utilizador
+ * O status de uma denúncia de utilizador.
  */
 export enum ReportUserStatus {
-  /** Relatório pendente de revisão */
+  /** A denúncia está pendente de revisão. */
   PENDING = 'pending',
-  /** Relatório aceito e ação tomada */
+  /** A denúncia foi aceite e uma ação foi tomada. */
   ACCEPTED = 'accepted',
-  /** Relatório rejeitado */
+  /** A denúncia foi rejeitada. */
   REJECTED = 'rejected',
 }
 
 /**
- * Entidade que representa um relatório sobre um utilizador
+ * Representa uma denúncia feita sobre um utilizador.
  * @table report_user
- * @description Relatório de abuso/comportamento inadequado de um utilizador
  */
 @Entity({ tableName: 'report_user' })
 export class ReportUserEntity {
   /**
-   * ID interno do relatório
-   * @field id
-   * @type number
-   * @nullable false
-   * @primary true
-   * @description Identificador único interno
+   * Identificador único interno.
    */
   @PrimaryKey()
   id!: number;
 
   /**
-   * ID público em formato UUID
-   * @field publicId
-   * @type string (UUID)
-   * @nullable false
-   * @unique true
-   * @length 36
-   * @default uuid_v4()
-   * @description Identificador público para referência externa
+   * Identificador público (UUID) para partilha externa através da API.
    */
   @Unique()
   @Index({ name: 'idx_report_user_public_id' })
@@ -56,12 +43,7 @@ export class ReportUserEntity {
   publicId!: string;
 
   /**
-   * Tipo do relatório
-   * @field typeReportUser
-   * @type TypeReportUserEntity
-   * @nullable false
-   * @relationship many-to-one
-   * @description Razão/tipo do reporte (assédio, spam, conteúdo ilegal, etc)
+   * O tipo de denúncia.
    */
   @Index({ name: 'idx_report_user_type' })
   @ManyToOne(() => TypeReportUserEntity, {
@@ -71,12 +53,7 @@ export class ReportUserEntity {
   typeReportUser!: TypeReportUserEntity;
 
   /**
-   * Utilizador sendo reportado
-   * @field userReported
-   * @type UserEntity
-   * @nullable false
-   * @relationship many-to-one
-   * @description Usuário alvo do reporte
+   * O utilizador que foi denunciado.
    */
   @Index({ name: 'idx_report_user_reported' })
   @ManyToOne(() => UserEntity, {
@@ -86,12 +63,7 @@ export class ReportUserEntity {
   userReported!: UserEntity;
 
   /**
-   * Utilizador que fez o reporte
-   * @field userReporter
-   * @type UserEntity
-   * @nullable false
-   * @relationship many-to-one
-   * @description Usuário que criou o reporte
+   * O utilizador que fez a denúncia.
    */
   @Index({ name: 'idx_report_user_reporter' })
   @ManyToOne(() => UserEntity, {
@@ -101,12 +73,7 @@ export class ReportUserEntity {
   userReporter!: UserEntity;
 
   /**
-   * Status atual do relatório
-   * @field status
-   * @type ReportUserStatus (enum)
-   * @nullable false
-   * @default PENDING
-   * @description PENDING, ACCEPTED ou REJECTED
+   * O status atual da denúncia.
    */
   @Index({ name: 'idx_report_user_status' })
   @Enum(() => ReportUserStatus)
@@ -114,12 +81,7 @@ export class ReportUserEntity {
   status: ReportUserStatus = ReportUserStatus.PENDING;
 
   /**
-   * Usuário que revisou o relatório
-   * @field reviewedBy
-   * @type UserEntity
-   * @nullable true
-   * @relationship many-to-one
-   * @description Moderador que revisou (se aplicável)
+   * O administrador que reviu a denúncia.
    */
   @ManyToOne(() => UserEntity, {
     deleteRule: 'set null',
@@ -129,35 +91,21 @@ export class ReportUserEntity {
   reviewedBy?: UserEntity;
 
   /**
-   * Timestamp da revisão do relatório
-   * @field reviewedAt
-   * @type Date
-   * @nullable true
-   * @description Data/hora de revisão do reporte
+   * Data e hora em que a denúncia foi revista.
    */
   @Index({ name: 'idx_report_user_reviewed_at' })
   @Property({ nullable: true })
   reviewedAt?: Date;
 
   /**
-   * Timestamp de criação do relatório
-   * @field createdAt
-   * @type Date
-   * @nullable false
-   * @default now()
-   * @description Data/hora de criação do reporte
+   * Data e hora de criação da denúncia.
    */
   @Index({ name: 'idx_report_user_created_at' })
   @Property({ onCreate: () => new Date() })
   createdAt: Date = new Date();
 
   /**
-   * Timestamp da última atualização
-   * @field updatedAt
-   * @type Date
-   * @nullable false
-   * @default now()
-   * @description Data/hora da última modificação
+   * Data e hora da última atualização da denúncia.
    */
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();

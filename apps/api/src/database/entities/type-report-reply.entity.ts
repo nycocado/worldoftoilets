@@ -10,60 +10,43 @@ import {
 import { ReportReplyEntity } from './report-reply.entity';
 
 /**
- * Tipos de razões para reportar uma resposta
+ * Tipos de denúncia para uma resposta.
  */
 export enum TypeReportReplyApiName {
-  /** Resposta não é útil ou relevante */
+  /** A resposta não é útil ou relevante. */
   NOT_USEFUL = 'not-useful',
-  /** Resposta contém informação falsa */
+  /** A resposta contém informação falsa. */
   FAKE_INFORMATION = 'fake-information',
-  /** Conteúdo inadequado ou fora do tópico */
+  /** O conteúdo é inadequado ou fora do tópico. */
   INAPPROPRIATE_CONTENT = 'inappropriate-content',
-  /** Conteúdo ofensivo ou abusivo */
+  /** O conteúdo é ofensivo ou abusivo. */
   OFFENSIVE_CONTENT = 'offensive-content',
-  /** Mensagem de spam ou publicidade */
+  /** O conteúdo é spam ou publicidade. */
   SPAM = 'spam',
-  /** Outras razões */
+  /** Outras razões não listadas. */
   OTHERS = 'others',
 }
 
 /**
- * Entidade que representa um tipo de razão para reporte de resposta
+ * Representa um tipo de denúncia que pode ser feita a uma resposta.
  * @table type_report_reply
- * @description Razão/categoria de reporte para respostas (spam, falso, ofensivo, etc)
  */
 @Entity({ tableName: 'type_report_reply' })
 export class TypeReportReplyEntity {
   /**
-   * ID interno do tipo de reporte
-   * @field id
-   * @type number
-   * @nullable false
-   * @primary true
-   * @description Identificador único interno
+   * Identificador único interno.
    */
   @PrimaryKey()
   id!: number;
 
   /**
-   * Nome descritivo da razão
-   * @field name
-   * @type string
-   * @nullable false
-   * @length 50
-   * @description Nome legível (ex: "Conteúdo Ofensivo")
+   * Nome legível do tipo de denúncia.
    */
   @Property({ length: 50 })
   name!: string;
 
   /**
-   * Nome único da API para identificar o tipo
-   * @field apiName
-   * @type TypeReportReplyApiName (enum)
-   * @nullable false
-   * @unique true
-   * @length 50
-   * @description Identificador da API em kebab-case
+   * Identificador único do tipo para uso na API.
    */
   @Index({ name: 'idx_type_report_reply_api_name' })
   @Unique()
@@ -71,11 +54,7 @@ export class TypeReportReplyEntity {
   apiName!: TypeReportReplyApiName;
 
   /**
-   * Coleção de relatórios deste tipo
-   * @field reports
-   * @type Collection<ReportReplyEntity>
-   * @relationship one-to-many
-   * @description Todos os relatórios de respostas desta categoria
+   * Coleção de denúncias deste tipo.
    */
   @OneToMany(() => ReportReplyEntity, (report) => report.typeReportReply)
   reports: Collection<ReportReplyEntity> = new Collection<ReportReplyEntity>(

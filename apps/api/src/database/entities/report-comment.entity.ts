@@ -12,44 +12,31 @@ import { ReactEntity } from './react.entity';
 import { UserEntity } from './user.entity';
 
 /**
- * Estados possíveis de um relatório sobre comentário
+ * O status de uma denúncia de comentário.
  */
 export enum ReportCommentStatus {
-  /** Relatório pendente de revisão */
+  /** A denúncia está pendente de revisão. */
   PENDING = 'pending',
-  /** Relatório aceito e ação tomada */
+  /** A denúncia foi aceite e uma ação foi tomada. */
   ACCEPTED = 'accepted',
-  /** Relatório rejeitado */
+  /** A denúncia foi rejeitada. */
   REJECTED = 'rejected',
 }
 
 /**
- * Entidade que representa um relatório sobre um comentário
+ * Representa uma denúncia feita por um utilizador sobre um comentário.
  * @table report_comment
- * @description Relatório de abuso/problema num comentário específico
  */
 @Entity({ tableName: 'report_comment' })
 export class ReportCommentEntity {
   /**
-   * ID interno do relatório
-   * @field id
-   * @type number
-   * @nullable false
-   * @primary true
-   * @description Identificador único interno
+   * Identificador único interno.
    */
   @PrimaryKey()
   id!: number;
 
   /**
-   * ID público em formato UUID
-   * @field publicId
-   * @type string (UUID)
-   * @nullable false
-   * @unique true
-   * @length 36
-   * @default uuid_v4()
-   * @description Identificador público para referência externa
+   * Identificador público (UUID) para partilha externa através da API.
    */
   @Unique()
   @Index({ name: 'idx_report_comment_public_id' })
@@ -57,12 +44,7 @@ export class ReportCommentEntity {
   publicId!: string;
 
   /**
-   * Tipo do relatório
-   * @field typeReportComment
-   * @type TypeReportCommentEntity
-   * @nullable false
-   * @relationship many-to-one
-   * @description Razão/tipo do reporte (spam, ofensivo, etc)
+   * O tipo de denúncia.
    */
   @Index({ name: 'idx_report_comment_type_id' })
   @ManyToOne(() => TypeReportCommentEntity, {
@@ -72,12 +54,7 @@ export class ReportCommentEntity {
   typeReportComment!: TypeReportCommentEntity;
 
   /**
-   * Reação que está a ser reportada
-   * @field react
-   * @type ReactEntity
-   * @nullable false
-   * @relationship many-to-one
-   * @description Reação alvo do reporte
+   * A reação que originou esta denúncia.
    */
   @Index({ name: 'idx_report_comment_react_id' })
   @ManyToOne(() => ReactEntity, {
@@ -87,12 +64,7 @@ export class ReportCommentEntity {
   react!: ReactEntity;
 
   /**
-   * Status atual do relatório
-   * @field status
-   * @type ReportCommentStatus (enum)
-   * @nullable false
-   * @default PENDING
-   * @description PENDING, ACCEPTED ou REJECTED
+   * O status atual da denúncia.
    */
   @Index({ name: 'idx_report_comment_status' })
   @Enum(() => ReportCommentStatus)
@@ -100,12 +72,7 @@ export class ReportCommentEntity {
   status: ReportCommentStatus = ReportCommentStatus.PENDING;
 
   /**
-   * Usuário que revisou o relatório
-   * @field reviewedBy
-   * @type UserEntity
-   * @nullable true
-   * @relationship many-to-one
-   * @description Moderador que revisou (se aplicável)
+   * O administrador que reviu a denúncia.
    */
   @ManyToOne(() => UserEntity, {
     deleteRule: 'set null',
@@ -115,35 +82,21 @@ export class ReportCommentEntity {
   reviewedBy?: UserEntity;
 
   /**
-   * Timestamp da revisão do relatório
-   * @field reviewedAt
-   * @type Date
-   * @nullable true
-   * @description Data/hora de revisão do reporte
+   * Data e hora em que a denúncia foi revista.
    */
   @Index({ name: 'idx_report_comment_reviewed_at' })
   @Property({ nullable: true })
   reviewedAt?: Date;
 
   /**
-   * Timestamp de criação do relatório
-   * @field createdAt
-   * @type Date
-   * @nullable false
-   * @default now()
-   * @description Data/hora de criação do reporte
+   * Data e hora de criação da denúncia.
    */
   @Index({ name: 'idx_report_comment_created_at' })
   @Property({ onCreate: () => new Date() })
   createdAt: Date = new Date();
 
   /**
-   * Timestamp da última atualização
-   * @field updatedAt
-   * @type Date
-   * @nullable false
-   * @default now()
-   * @description Data/hora da última modificação
+   * Data e hora da última atualização da denúncia.
    */
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();

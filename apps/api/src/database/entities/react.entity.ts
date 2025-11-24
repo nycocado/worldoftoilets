@@ -14,43 +14,32 @@ import { CommentEntity } from './comment.entity';
 import { ReportCommentEntity } from './report-comment.entity';
 
 /**
- * Tipos de reações possíveis a um comentário
+ * Tipos de reações a um comentário.
  */
 export enum ReactDiscriminator {
-  /** Reação positiva (like) */
+  /** Reação positiva (like). */
   LIKE = 'like',
-  /** Reação negativa (dislike) */
+  /** Reação negativa (dislike). */
   DISLIKE = 'dislike',
-  /** Reação como relatório */
+  /** Reação do tipo denúncia. */
   REPORT = 'report',
 }
 
 /**
- * Entidade que representa uma reação de um utilizador a um comentário
+ * Representa uma reação de um utilizador a um comentário.
  * @table react
- * @description Reação (like/dislike/report) de um utilizador a um comentário
  */
 @Entity({ tableName: 'react' })
 @Unique({ properties: ['user', 'comment'], name: 'idx_react_user_comment' })
 export class ReactEntity {
   /**
-   * ID interno da reação
-   * @field id
-   * @type number
-   * @nullable false
-   * @primary true
-   * @description Identificador único interno
+   * Identificador único interno.
    */
   @PrimaryKey()
   id!: number;
 
   /**
-   * Utilizador que fez a reação
-   * @field user
-   * @type UserEntity
-   * @nullable false
-   * @relationship many-to-one
-   * @description Usuário criador da reação
+   * O utilizador que realizou a reação.
    */
   @ManyToOne(() => UserEntity, {
     deleteRule: 'cascade',
@@ -59,12 +48,7 @@ export class ReactEntity {
   user!: UserEntity;
 
   /**
-   * Comentário que recebeu a reação
-   * @field comment
-   * @type CommentEntity
-   * @nullable false
-   * @relationship many-to-one
-   * @description Comentário alvo da reação
+   * O comentário que recebeu a reação.
    */
   @Index({ name: 'idx_react_comment_id' })
   @ManyToOne(() => CommentEntity, {
@@ -74,43 +58,25 @@ export class ReactEntity {
   comment!: CommentEntity;
 
   /**
-   * Tipo de reação
-   * @field discriminator
-   * @type ReactDiscriminator (enum)
-   * @nullable false
-   * @description LIKE, DISLIKE ou REPORT (polimórfico)
+   * O tipo de reação (like, dislike ou denúncia).
    */
   @Enum(() => ReactDiscriminator)
   discriminator!: ReactDiscriminator;
 
   /**
-   * Timestamp de criação da reação
-   * @field createdAt
-   * @type Date
-   * @nullable false
-   * @default now()
-   * @description Data/hora de criação
+   * Data e hora de criação da reação.
    */
   @Property({ onCreate: () => new Date() })
   createdAt: Date = new Date();
 
   /**
-   * Timestamp da última atualização
-   * @field updatedAt
-   * @type Date
-   * @nullable false
-   * @default now()
-   * @description Data/hora da última modificação
+   * Data e hora da última atualização da reação.
    */
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
 
   /**
-   * Coleção de relatórios associados a esta reação
-   * @field reports
-   * @type Collection<ReportCommentEntity>
-   * @relationship one-to-many
-   * @description Relatórios criados quando discriminator === REPORT
+   * A denúncia associada (apenas se o discriminador for 'REPORT').
    */
   @OneToMany(() => ReportCommentEntity, (report) => report.react)
   reports: Collection<ReportCommentEntity> =

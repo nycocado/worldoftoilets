@@ -3,9 +3,8 @@ import { ToiletEntity } from './toilet.entity';
 import { TypeExtraEntity } from './type-extra.entity';
 
 /**
- * Entidade de junção (Many-to-Many) entre casas de banho e os seus recursos extras
+ * Entidade de junção que associa um recurso extra a uma casa de banho.
  * @table extra
- * @description Recursos/amenidades disponíveis numa casa de banho
  */
 @Entity({ tableName: 'extra' })
 @Unique({
@@ -14,23 +13,13 @@ import { TypeExtraEntity } from './type-extra.entity';
 })
 export class ExtraEntity {
   /**
-   * ID interno do relacionamento extra
-   * @field id
-   * @type number
-   * @nullable false
-   * @primary true
-   * @description Identificador único interno
+   * Identificador único interno.
    */
   @PrimaryKey()
   id!: number;
 
   /**
-   * Referência à casa de banho que possui este extra
-   * @field toilet
-   * @type ToiletEntity
-   * @nullable false
-   * @relationship many-to-one
-   * @description Casa de banho proprietária deste recurso
+   * A casa de banho que possui o recurso.
    */
   @ManyToOne(() => ToiletEntity, {
     deleteRule: 'cascade',
@@ -39,12 +28,7 @@ export class ExtraEntity {
   toilet!: ToiletEntity;
 
   /**
-   * Tipo de recurso extra disponível
-   * @field typeExtra
-   * @type TypeExtraEntity
-   * @nullable false
-   * @relationship many-to-one
-   * @description Tipo de amenidade (ex: wifi, pias, espelho)
+   * O tipo de recurso extra associado.
    */
   @ManyToOne(() => TypeExtraEntity, {
     deleteRule: 'no action',

@@ -3,9 +3,8 @@ import { RoleEntity } from './role.entity';
 import { PermissionEntity } from './permission.entity';
 
 /**
- * Entidade de junção (Many-to-Many) entre papéis e permissões
+ * Entidade de junção que associa uma permissão a um papel.
  * @table role_permission
- * @description Atribuição de permissões a papéis (muitos-para-muitos)
  */
 @Entity({ tableName: 'role_permission' })
 @Unique({
@@ -14,23 +13,13 @@ import { PermissionEntity } from './permission.entity';
 })
 export class RolePermissionEntity {
   /**
-   * ID interno do relacionamento
-   * @field id
-   * @type number
-   * @nullable false
-   * @primary true
-   * @description Identificador único interno
+   * Identificador único interno.
    */
   @PrimaryKey()
   id!: number;
 
   /**
-   * Referência ao papel que possui a permissão
-   * @field role
-   * @type RoleEntity
-   * @nullable false
-   * @relationship many-to-one
-   * @description Papel nesta relação de permissão
+   * O papel que possui a permissão.
    */
   @ManyToOne(() => RoleEntity, {
     deleteRule: 'cascade',
@@ -39,12 +28,7 @@ export class RolePermissionEntity {
   role!: RoleEntity;
 
   /**
-   * Referência à permissão dentro do papel
-   * @field permission
-   * @type PermissionEntity
-   * @nullable false
-   * @relationship many-to-one
-   * @description Permissão incluída neste papel
+   * A permissão associada ao papel.
    */
   @Index({ name: 'idx_role_permission_permission_id' })
   @ManyToOne(() => PermissionEntity, {

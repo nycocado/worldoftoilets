@@ -9,9 +9,8 @@ import {
 import { UserCredentialEntity } from '@database/entities/user-credential.entity';
 
 /**
- * Entidade que representa um token de reset de senha
+ * Armazena um token para redefinição de palavra-passe.
  * @table password_reset
- * @description Token enviado por endereço eletrónico para reset de senha de segurança
  */
 @Entity({ tableName: 'password_reset' })
 @Index({
@@ -20,23 +19,13 @@ import { UserCredentialEntity } from '@database/entities/user-credential.entity'
 })
 export class PasswordResetEntity {
   /**
-   * ID interno do reset de senha
-   * @field id
-   * @type number
-   * @nullable false
-   * @primary true
-   * @description Identificador único interno
+   * Identificador único interno.
    */
   @PrimaryKey()
   id!: number;
 
   /**
-   * Referência às credenciais do utilizador
-   * @field userCredential
-   * @type UserCredentialEntity
-   * @nullable false
-   * @relationship many-to-one
-   * @description Credenciais do utilizador que solicitou reset
+   * As credenciais do utilizador que solicitou a redefinição.
    */
   @ManyToOne(() => UserCredentialEntity, {
     deleteRule: 'cascade',
@@ -45,67 +34,40 @@ export class PasswordResetEntity {
   userCredential!: UserCredentialEntity;
 
   /**
-   * Token único de reset
-   * @field token
-   * @type string (UUID)
-   * @nullable false
-   * @unique true
-   * @length 36
-   * @default uuid_v4()
-   * @description Token aleatório enviado no email para reset
+   * O token de redefinição (UUID) enviado ao utilizador.
    */
   @Unique({ name: 'idx_password_reset_token' })
   @Property({ length: 36, defaultRaw: 'uuid_v4()' })
   token!: string;
 
   /**
-   * Timestamp de invalidação do token
-   * @field invalidAt
-   * @type Date
-   * @nullable true
-   * @description Data/hora quando o token foi marcado como inválido
+   * Data e hora em que o token foi invalidado (para soft delete).
    */
   @Index({ name: 'idx_password_reset_invalid_at' })
   @Property({ nullable: true })
   invalidAt?: Date;
 
   /**
-   * Timestamp de expiração automática do token
-   * @field expiresAt
-   * @type Date
-   * @nullable false
-   * @description Data/hora quando o token expira automaticamente
+   * Data e hora em que o token expira automaticamente.
    */
   @Index({ name: 'idx_password_reset_expires_at' })
   @Property()
   expiresAt!: Date;
 
   /**
-   * Timestamp de criação do token
-   * @field createdAt
-   * @type Date
-   * @nullable false
-   * @default now()
-   * @description Data/hora de criação do token
+   * Data e hora de criação do token.
    */
   @Property({ onCreate: () => new Date() })
   createdAt: Date = new Date();
 
   /**
-   * Timestamp da última atualização
-   * @field updatedAt
-   * @type Date
-   * @nullable false
-   * @default now()
-   * @description Data/hora da última modificação
+   * Data e hora da última atualização do token.
    */
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
 
   /**
-   * Verifica se o token está expirado ou inválido
-   * @returns {boolean} true se expirado ou inválido, false caso contrário
-   * @description Um token é considerado expirado se a data de expiração for passada ou se tiver sido invalidado
+   * Verifica se o token está expirado ou foi invalidado.
    */
   get isExpired(): boolean {
     return (

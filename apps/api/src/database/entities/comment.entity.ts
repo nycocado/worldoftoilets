@@ -18,43 +18,29 @@ import { ReactEntity, ReactDiscriminator } from './react.entity';
 import { ReplyEntity } from './reply.entity';
 
 /**
- * Estados possíveis de um comentário no sistema
+ * Estados de visibilidade de um comentário.
  */
 export enum CommentState {
-  /** Comentário visível a outros utilizadores */
+  /** Visível para todos. */
   VISIBLE = 'visible',
-  /** Comentário oculto pelo utilizador ou moderação */
+  /** Oculto por moderação ou pelo autor. */
   HIDDEN = 'hidden',
 }
 
 /**
- * Entidade que representa um comentário sobre uma casa de banho
+ * Armazena um comentário de um utilizador sobre uma casa de banho.
  * @table comment
- * @description Comentário com avaliação sobre uma casa de banho específica
  */
 @Entity({ tableName: 'comment' })
 export class CommentEntity {
   /**
-   * ID interno do comentário
-   * @field id
-   * @type number
-   * @nullable false
-   * @primary true
-   * @hidden true
-   * @description Identificador único interno (não exposto na API)
+   * Identificador único interno.
    */
   @PrimaryKey()
   id!: number;
 
   /**
-   * ID público do comentário em formato UUID
-   * @field publicId
-   * @type string (UUID)
-   * @nullable false
-   * @unique true
-   * @length 36
-   * @default uuid_v4()
-   * @description Identificador público para referência externa
+   * Identificador público (UUID) para partilha externa através da API.
    */
   @Unique()
   @Index({ name: 'idx_comment_public_id' })
@@ -62,13 +48,7 @@ export class CommentEntity {
   publicId!: string;
 
   /**
-   * Interação base associada ao comentário
-   * @field interaction
-   * @type InteractionEntity
-   * @nullable false
-   * @relationship one-to-one
-   * @unique true
-   * @description Relação 1:1 com a interação que originou este comentário
+   * A interação que originou este comentário.
    */
   @Unique({ name: 'idx_comment_interaction_id' })
   @OneToOne(() => InteractionEntity, {
@@ -79,33 +59,19 @@ export class CommentEntity {
   interaction!: InteractionEntity;
 
   /**
-   * Texto do comentário
-   * @field text
-   * @type string
-   * @nullable true
-   * @length 280
-   * @description Conteúdo do comentário (similar a tweet, máximo 280 caracteres)
+   * O conteúdo do comentário, limitado a 280 caracteres.
    */
   @Property({ length: 280, nullable: true })
   text?: string;
 
   /**
-   * Pontuação do comentário calculada a partir de reações e relevância
-   * @field score
-   * @type number
-   * @nullable false
-   * @description Score agregado baseado em reações e algoritmo de relevância
+   * Pontuação agregada para ordenação por relevância.
    */
   @Property()
   score: number = 0;
 
   /**
-   * Estado do comentário
-   * @field state
-   * @type CommentState (enum)
-   * @nullable false
-   * @default VISIBLE
-   * @description Indica se o comentário está visível ou oculto (moderação)
+   * Estado de visibilidade do comentário.
    */
   @Index({ name: 'idx_comment_state' })
   @Enum(() => CommentState)
@@ -113,12 +79,7 @@ export class CommentEntity {
   state: CommentState = CommentState.VISIBLE;
 
   /**
-   * Utilizador que apagou o comentário
-   * @field deletedBy
-   * @type UserEntity
-   * @nullable true
-   * @relationship many-to-one
-   * @description Referência ao admin/moderador que apagou (soft delete)
+   * Referência ao administrador que realizou o soft delete.
    */
   @ManyToOne(() => UserEntity, {
     deleteRule: 'set null',
@@ -128,45 +89,26 @@ export class CommentEntity {
   deletedBy?: UserEntity;
 
   /**
-   * Timestamp da exclusão do comentário
-   * @field deletedAt
-   * @type Date
-   * @nullable true
-   * @description Data/hora da exclusão (soft delete)
+   * Data e hora da exclusão (para soft delete).
    */
   @Property({ nullable: true })
   deletedAt?: Date;
 
   /**
-   * Timestamp de criação do comentário
-   * @field createdAt
-   * @type Date
-   * @nullable false
-   * @default now()
-   * @description Data/hora de criação do comentário
+   * Data e hora de criação do comentário.
    */
   @Index({ name: 'idx_comment_created_at' })
   @Property({ onCreate: () => new Date() })
   createdAt: Date = new Date();
 
   /**
-   * Timestamp da última atualização
-   * @field updatedAt
-   * @type Date
-   * @nullable false
-   * @default now()
-   * @description Data/hora da última modificação
+   * Data e hora da última atualização do comentário.
    */
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
 
   /**
-   * Avaliação detalhada do comentário
-   * @field rate
-   * @type CommentRateEntity
-   * @nullable true
-   * @relationship one-to-one
-   * @description Ratings detalhados (limpeza, papel, estrutura, acessibilidade)
+   * As avaliações detalhadas (limpeza, papel, etc.) associadas a este comentário.
    */
   @OneToOne(() => CommentRateEntity, (rate) => rate.comment, {
     nullable: true,
@@ -175,31 +117,19 @@ export class CommentEntity {
   rate?: CommentRateEntity;
 
   /**
-   * Coleção de reações ao comentário
-   * @field reacts
-   * @type Collection<ReactEntity>
-   * @relationship one-to-many
-   * @description Likes/dislikes de utilizadores a este comentário
+   * Coleção de reações (likes/dislikes) a este comentário.
    */
   @OneToMany(() => ReactEntity, (react) => react.comment)
   reacts: Collection<ReactEntity> = new Collection<ReactEntity>(this);
 
   /**
-   * Coleção de respostas ao comentário
-   * @field replies
-   * @type Collection<ReplyEntity>
-   * @relationship one-to-many
-   * @description Respostas/threads de outros utilizadores a este comentário
+   * Coleção de respostas a este comentário.
    */
   @OneToMany(() => ReplyEntity, (reply) => reply.comment)
   replies: Collection<ReplyEntity> = new Collection<ReplyEntity>(this);
 
   /**
-   * Contagem de respostas ao comentário
-   * @field replyCount
-   * @type number
-   * @formula Subquery SQL que conta respostas associadas
-   * @description Número total de respostas (replies) deste comentário
+   * Contagem total de respostas a este comentário (calculado).
    */
   @Formula(
     (alias) =>
@@ -209,11 +139,7 @@ export class CommentEntity {
   replyCount: number = 0;
 
   /**
-   * Contagem de likes do comentário
-   * @field likes
-   * @type number
-   * @formula Subquery SQL que conta reações do tipo LIKE
-   * @description Número total de reações positivas
+   * Contagem total de 'likes' neste comentário (calculado).
    */
   @Formula(
     (alias) =>
@@ -225,11 +151,7 @@ export class CommentEntity {
   likes: number = 0;
 
   /**
-   * Contagem de dislikes do comentário
-   * @field dislikes
-   * @type number
-   * @formula Subquery SQL que conta reações do tipo DISLIKE
-   * @description Número total de reações negativas
+   * Contagem total de 'dislikes' neste comentário (calculado).
    */
   @Formula(
     (alias) =>
@@ -241,22 +163,14 @@ export class CommentEntity {
   dislikes: number = 0;
 
   /**
-   * Utilizador que fez o comentário
-   * @field user
-   * @type UserEntity
-   * @nullable false
-   * @description Acesso direto ao utilizador através da interação associada
+   * O utilizador que criou o comentário.
    */
   get user(): UserEntity {
     return this.interaction?.user;
   }
 
   /**
-   * Indica se o comentário foi apagado (soft delete)
-   * @field isDeleted
-   * @type boolean
-   * @nullable false
-   * @description True se o comentário foi marcado como apagado
+   * Verdadeiro se o comentário foi marcado como apagado (soft delete).
    */
   get isDeleted(): boolean {
     return !!this.deletedAt && !!this.deletedBy;

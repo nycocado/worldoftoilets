@@ -11,56 +11,39 @@ import { ExtraEntity } from './extra.entity';
 import { ToiletEntity } from '@database/entities/toilet.entity';
 
 /**
- * Tipos de recursos extras disponíveis em casas de banho
+ * Tipos de recursos extras que uma casa de banho pode ter.
  */
 export enum TypeExtraApiName {
-  /** Acessibilidade para cadeirantes */
+  /** Acessibilidade para cadeirantes. */
   WHEELCHAIR_ACCESSIBLE = 'wheelchair-accessible',
-  /** Trocador de fraldas disponível */
+  /** Trocador de fraldas. */
   BABY_CHANGING_STATION = 'baby-changing-station',
-  /** Estacionamento para deficientes */
+  /** Estacionamento para deficientes. */
   DISABLED_PARKING = 'disabled-parking',
-  /** Acessibilidade para pessoas com deficiência visual */
+  /** Acessibilidade para pessoas com deficiência visual. */
   ACCESSIBLE_FOR_VISUALLY_IMPAIRED = 'accessible-for-visually-impaired',
 }
 
 /**
- * Entidade que representa um tipo de recurso extra
+ * Representa um tipo de recurso extra que pode ser associado a uma casa de banho.
  * @table type_extra
- * @description Tipo/categoria de recurso extra disponível em casas de banho
  */
 @Entity({ tableName: 'type_extra' })
 export class TypeExtraEntity {
   /**
-   * ID interno do tipo de extra
-   * @field id
-   * @type number
-   * @nullable false
-   * @primary true
-   * @description Identificador único interno
+   * Identificador único interno.
    */
   @PrimaryKey()
   id!: number;
 
   /**
-   * Nome descritivo do tipo de extra
-   * @field name
-   * @type string
-   * @nullable false
-   * @length 50
-   * @description Nome legível (ex: "Cadeira de Rodas Acessível")
+   * Nome legível do tipo de recurso.
    */
   @Property({ length: 50 })
   name!: string;
 
   /**
-   * Nome único da API para identificar o tipo
-   * @field apiName
-   * @type TypeExtraApiName (enum)
-   * @nullable false
-   * @unique true
-   * @length 50
-   * @description Identificador da API em snake_case
+   * Identificador único do tipo para uso na API.
    */
   @Index({ name: 'idx_type_extra_api_name' })
   @Unique()
@@ -68,11 +51,7 @@ export class TypeExtraEntity {
   apiName!: TypeExtraApiName;
 
   /**
-   * Coleção de casas de banho que possuem este tipo de extra
-   * @field toilets
-   * @type Collection<ToiletEntity>
-   * @relationship many-to-many
-   * @description Banheiros que incluem este tipo de recurso extra
+   * Coleção de casas de banho que possuem este tipo de recurso.
    */
   @ManyToMany({
     entity: () => ToiletEntity,

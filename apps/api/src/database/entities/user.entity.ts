@@ -26,7 +26,7 @@ import { PartnerEntity } from './partner.entity';
 import { CommentState } from '@database/entities/comment.entity';
 
 /**
- * Ícones de perfil disponíveis para utilizadores
+ * Ícones de perfil disponíveis para o utilizador.
  */
 export enum UserIcon {
   ICON_1 = 'icon-1',
@@ -39,33 +39,19 @@ export enum UserIcon {
 }
 
 /**
- * Entidade que representa um utilizador no sistema
+ * Representa um utilizador do sistema.
  * @table user
- * @description Usuário do sistema World of Toilets com perfil e papéis associados
  */
 @Entity({ tableName: 'user' })
 export class UserEntity {
   /**
-   * ID interno do utilizador
-   * @field id
-   * @type number
-   * @nullable false
-   * @primary true
-   * @hidden true
-   * @description Identificador único interno (não exposto na API)
+   * Identificador único interno.
    */
   @PrimaryKey({ hidden: true })
   id!: number;
 
   /**
-   * ID público em formato UUID
-   * @field publicId
-   * @type string (UUID)
-   * @nullable false
-   * @unique true
-   * @length 36
-   * @default uuid_v4()
-   * @description Identificador público para referência externa
+   * Identificador público (UUID) para partilha externa através da API.
    */
   @Unique()
   @Index({ name: 'idx_user_public_id' })
@@ -73,35 +59,20 @@ export class UserEntity {
   publicId!: string;
 
   /**
-   * Nome exibido do utilizador
-   * @field name
-   * @type string
-   * @nullable false
-   * @length 50
-   * @description Nome público do utilizador (alcunha/display name)
+   * Nome de exibição público do utilizador.
    */
   @Index({ name: 'idx_user_name' })
   @Property({ length: 50 })
   name!: string;
 
   /**
-   * Pontos acumulados pelo utilizador
-   * @field points
-   * @type number
-   * @nullable false
-   * @default 0
-   * @description Pontos do sistema de gamificação
+   * Pontos de gamificação acumulados pelo utilizador.
    */
   @Property()
   points: number = 0;
 
   /**
-   * Ícone/avatar selecionado pelo utilizador
-   * @field icon
-   * @type UserIcon (enum)
-   * @nullable false
-   * @default ICON_DEFAULT
-   * @description Avatar/ícone escolhido pelo usuário
+   * Ícone de perfil selecionado pelo utilizador.
    */
   @Index({ name: 'idx_user_icon' })
   @Enum(() => UserIcon)
@@ -109,24 +80,14 @@ export class UserEntity {
   icon: UserIcon = UserIcon.ICON_DEFAULT;
 
   /**
-   * Data de nascimento do utilizador
-   * @field birthDate
-   * @type Date
-   * @nullable false
-   * @type date
-   * @description Data de nascimento para confirmação de idade
+   * Data de nascimento do utilizador.
    */
   @Index({ name: 'idx_user_birth_date' })
   @Property({ type: 'date' })
   birthDate!: Date;
 
   /**
-   * Utilizador administrador que desativou esta conta
-   * @field deactivatedBy
-   * @type UserEntity
-   * @nullable true
-   * @relationship many-to-one
-   * @description Admin que desativou a conta (se aplicável)
+   * O administrador que desativou a conta (soft delete).
    */
   @ManyToOne(() => UserEntity, {
     deleteRule: 'set null',
@@ -136,46 +97,27 @@ export class UserEntity {
   deactivatedBy?: UserEntity;
 
   /**
-   * Timestamp de desativação da conta
-   * @field deactivatedAt
-   * @type Date
-   * @nullable true
-   * @description Data/hora de desativação (soft delete)
+   * Data e hora da desativação da conta (para soft delete).
    */
   @Index({ name: 'idx_user_deactivated_at' })
   @Property({ nullable: true })
   deactivatedAt?: Date;
 
   /**
-   * Timestamp de criação da conta
-   * @field createdAt
-   * @type Date
-   * @nullable false
-   * @default now()
-   * @description Data/hora de criação da conta
+   * Data e hora de criação da conta.
    */
   @Index({ name: 'idx_user_created_at' })
   @Property({ onCreate: () => new Date() })
   createdAt: Date = new Date();
 
   /**
-   * Timestamp da última atualização
-   * @field updatedAt
-   * @type Date
-   * @nullable false
-   * @default now()
-   * @description Data/hora da última modificação
+   * Data e hora da última atualização da conta.
    */
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
 
   /**
-   * Credenciais de autenticação do utilizador
-   * @field credential
-   * @type UserCredentialEntity
-   * @nullable true
-   * @relationship one-to-one
-   * @description Email, senha e tokens de verificação
+   * As credenciais de autenticação do utilizador.
    */
   @OneToOne(() => UserCredentialEntity, (credential) => credential.user, {
     nullable: true,
@@ -184,64 +126,39 @@ export class UserEntity {
   credential?: UserCredentialEntity;
 
   /**
-   * Coleção de papéis atribuídos ao utilizador
-   * @field roles
-   * @type Collection<RoleEntity>
-   * @relationship many-to-many
-   * @description Papéis/roles que determinam permissões
+   * Coleção de papéis que definem as permissões do utilizador.
    */
   @ManyToMany({ entity: () => RoleEntity, pivotEntity: () => UserRoleEntity })
   roles: Collection<RoleEntity> = new Collection<RoleEntity>(this);
 
   /**
-   * Coleção de tokens de refresh do utilizador
-   * @field refreshTokens
-   * @type Collection<RefreshTokenEntity>
-   * @relationship one-to-many
-   * @description Tokens ativos para renovação de sessão
+   * Coleção de tokens de atualização para gestão de sessão.
    */
   @OneToMany(() => RefreshTokenEntity, (token) => token.user)
   refreshTokens: Collection<RefreshTokenEntity> =
     new Collection<RefreshTokenEntity>(this);
 
   /**
-   * Coleção de interações do utilizador
-   * @field interactions
-   * @type Collection<InteractionEntity>
-   * @relationship one-to-many
-   * @description Comentários, relatórios, sugestões, visualizações
+   * Coleção de todas as interações feitas pelo utilizador.
    */
   @OneToMany(() => InteractionEntity, (interaction) => interaction.user)
   interactions: Collection<InteractionEntity> =
     new Collection<InteractionEntity>(this);
 
   /**
-   * Coleção de reações do utilizador
-   * @field reacts
-   * @type Collection<ReactEntity>
-   * @relationship one-to-many
-   * @description Likes/dislikes/reports a comentários
+   * Coleção de todas as reações feitas pelo utilizador.
    */
   @OneToMany(() => ReactEntity, (react) => react.user)
   reacts: Collection<ReactEntity> = new Collection<ReactEntity>(this);
 
   /**
-   * Coleção de respostas criadas pelo utilizador
-   * @field replies
-   * @type Collection<ReplyEntity>
-   * @relationship one-to-many
-   * @description Respostas em threads de comentários
+   * Coleção de todas as respostas criadas pelo utilizador.
    */
   @OneToMany(() => ReplyEntity, (reply) => reply.user)
   replies: Collection<ReplyEntity> = new Collection<ReplyEntity>(this);
 
   /**
-   * Parceria do utilizador com uma casa de banho
-   * @field partner
-   * @type PartnerEntity
-   * @nullable true
-   * @relationship one-to-one
-   * @description Dados de parceria (se aplicável)
+   * A parceria associada a este utilizador, se existir.
    */
   @OneToOne(() => PartnerEntity, (partner) => partner.user, {
     nullable: true,
@@ -249,12 +166,7 @@ export class UserEntity {
   partner?: PartnerEntity;
 
   /**
-   * Total de comentários feitos pelo utilizador
-   * @field commentsCount
-   * @type number
-   * @nullable true
-   * @transient true
-   * @description Contagem total de comentários visíveis (não persistido)
+   * Contagem total de comentários visíveis feitos pelo utilizador (calculado).
    */
   @Formula(
     (alias) =>
@@ -268,24 +180,14 @@ export class UserEntity {
   commentsCount: number = 0;
 
   /**
-   * Email do utilizador
-   * @field email
-   * @type string
-   * @nullable true
-   * @transient true
-   * @description Email extraído das credenciais (se existirem)
+   * O e-mail do utilizador (obtido a partir das credenciais).
    */
   get email(): string | null {
     return this.credential?.email || null;
   }
 
   /**
-   * Indica se o utilizador é parceiro
-   * @field isPartner
-   * @type boolean
-   * @nullable false
-   * @transient true
-   * @description True se o utilizador tiver uma parceria ativa
+   * Indica se o utilizador tem uma parceria ativa.
    */
   get isPartner(): boolean {
     return !!this.partner;

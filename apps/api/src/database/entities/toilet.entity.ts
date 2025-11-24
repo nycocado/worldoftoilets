@@ -24,47 +24,33 @@ import { CommentState } from '@database/entities/comment.entity';
 import { TypeExtraEntity } from '@database/entities/type-extra.entity';
 
 /**
- * Estados possíveis de uma casa de banho no sistema
+ * O status de uma casa de banho no sistema.
  */
 export enum ToiletStatus {
-  /** Casa de banho ativa e pública */
+  /** A casa de banho está ativa e visível para os utilizadores. */
   ACTIVE = 'active',
-  /** Casa de banho inativa (temporário ou permanente) */
+  /** A casa de banho está inativa e não pode ser acedida. */
   INACTIVE = 'inactive',
-  /** Casa de banho sugerida, mas não yet aprovada */
+  /** A casa de banho foi sugerida mas aguarda aprovação. */
   SUGGESTED = 'suggested',
-  /** Casa de banho com sugestão rejeitada */
+  /** A sugestão para esta casa de banho foi rejeitada. */
   REJECTED = 'rejected',
 }
 
 /**
- * Entidade que representa uma casa de banho pública
+ * Representa uma casa de banho no sistema.
  * @table toilet
- * @description Casa de banho pública registada no sistema com geolocalização
  */
 @Entity({ tableName: 'toilet' })
 export class ToiletEntity {
   /**
-   * ID interno da casa de banho
-   * @field id
-   * @type number
-   * @nullable false
-   * @primary true
-   * @hidden true
-   * @description Identificador único interno (não exposto na API)
+   * Identificador único interno.
    */
   @PrimaryKey({ hidden: true })
   id!: number;
 
   /**
-   * ID público em formato UUID
-   * @field publicId
-   * @type string (UUID)
-   * @nullable false
-   * @unique true
-   * @length 36
-   * @default uuid_v4()
-   * @description Identificador público para referência externa
+   * Identificador público (UUID) para partilha externa através da API.
    */
   @Unique()
   @Index({ name: 'idx_toilet_public_id' })
@@ -72,12 +58,7 @@ export class ToiletEntity {
   publicId!: string;
 
   /**
-   * Tipo de acesso da casa de banho
-   * @field access
-   * @type AccessEntity
-   * @nullable false
-   * @relationship many-to-one
-   * @description Tipo de acesso (público/privado/consumidores-only)
+   * O tipo de acesso da casa de banho (público, privado, etc.).
    */
   @Index({ name: 'idx_toilet_access_id' })
   @ManyToOne(() => AccessEntity, {
@@ -87,110 +68,61 @@ export class ToiletEntity {
   access!: AccessEntity;
 
   /**
-   * Nome da casa de banho
-   * @field name
-   * @type string
-   * @nullable false
-   * @length 50
-   * @description Nome/identificação local (ex: "Casa de Banho do Centro Comercial")
+   * Nome local ou designação da casa de banho.
    */
   @Property({ length: 50 })
   name!: string;
 
   /**
-   * Latitude da casa de banho
-   * @field latitude
-   * @type decimal(10,8)
-   * @nullable false
-   * @description Latitude em formato decimal (-90 a 90)
+   * A latitude da localização da casa de banho.
    */
   @Property({ columnType: 'decimal(10,8)' })
   latitude!: number;
 
   /**
-   * Longitude da casa de banho
-   * @field longitude
-   * @type decimal(10,8)
-   * @nullable false
-   * @description Longitude em formato decimal (-180 a 180)
+   * A longitude da localização da casa de banho.
    */
   @Property({ columnType: 'decimal(10,8)' })
   longitude!: number;
 
   /**
-   * Morada completa da casa de banho
-   * @field address
-   * @type string
-   * @nullable false
-   * @length 255
-   * @description Endereço completo para referência
+   * A morada completa da casa de banho.
    */
   @Property({ length: 255 })
   address!: string;
 
   /**
-   * Cidade onde a casa de banho está localizada
-   * @field city
-   * @type string
-   * @nullable false
-   * @length 100
-   * @description Nome da cidade
+   * A cidade onde a casa de banho se localiza.
    */
   @Property({ length: 100 })
   city!: string;
 
   /**
-   * Estado/província onde a casa de banho está localizada
-   * @field state
-   * @type string
-   * @nullable true
-   * @length 100
-   * @description Nome do estado ou província (opcional)
+   * O estado ou província onde a casa de banho se localiza.
    */
   @Property({ length: 100, nullable: true })
   state?: string;
 
   /**
-   * País onde a casa de banho está localizada
-   * @field country
-   * @type string
-   * @nullable false
-   * @length 100
-   * @description Nome do país
+   * O país onde a casa de banho se localiza.
    */
   @Property({ length: 100 })
   country!: string;
 
   /**
-   * Código do país (ISO 3166-1 alpha-2)
-   * @field countryCode
-   * @type string
-   * @nullable false
-   * @length 2
-   * @description Código de duas letras do país (ex: PT, BR, ES)
+   * O código do país (ISO 3166-1 alpha-2).
    */
   @Property({ length: 2, fieldName: 'country_code' })
   countryCode!: string;
 
   /**
-   * URL da foto da casa de banho
-   * @field photoUrl
-   * @type string
-   * @nullable true
-   * @length 255
-   * @description Link para foto/imagem do local
+   * URL de uma foto da casa de banho, se disponível.
    */
   @Property({ length: 255, nullable: true })
   photoUrl?: string;
 
   /**
-   * ID do local no Google Places
-   * @field placeId
-   * @type string
-   * @nullable true
-   * @unique true
-   * @length 255
-   * @description Identificador externo para rastreamento de origem
+   * ID do local no Google Places, se aplicável.
    */
   @Unique()
   @Index({ name: 'idx_toilet_place_id' })
@@ -198,23 +130,14 @@ export class ToiletEntity {
   placeId?: string;
 
   /**
-   * Status atual da casa de banho
-   * @field status
-   * @type ToiletStatus (enum)
-   * @nullable false
-   * @description ACTIVE, INACTIVE, SUGGESTED ou REJECTED
+   * O status atual da casa de banho.
    */
   @Index({ name: 'idx_toilet_status' })
   @Enum(() => ToiletStatus)
   status!: ToiletStatus;
 
   /**
-   * Utilizador que reviu/aprovou a casa de banho
-   * @field reviewedBy
-   * @type UserEntity
-   * @nullable true
-   * @relationship many-to-one
-   * @description Admin que reviu/aprovou o registo
+   * O administrador que reviu e aprovou a casa de banho.
    */
   @ManyToOne(() => UserEntity, {
     deleteRule: 'set null',
@@ -224,23 +147,14 @@ export class ToiletEntity {
   reviewedBy?: UserEntity;
 
   /**
-   * Timestamp da revisão/aprovação
-   * @field reviewedAt
-   * @type Date
-   * @nullable true
-   * @description Data/hora de revisão/aprovação
+   * Data e hora em que a casa de banho foi revista.
    */
   @Index({ name: 'idx_toilet_reviewed_at' })
   @Property({ nullable: true })
   reviewedAt?: Date;
 
   /**
-   * Utilizador que apagou a casa de banho
-   * @field deletedBy
-   * @type UserEntity
-   * @nullable true
-   * @relationship many-to-one
-   * @description Admin que apagou (soft delete)
+   * O administrador que realizou o soft delete.
    */
   @ManyToOne(() => UserEntity, {
     deleteRule: 'set null',
@@ -250,44 +164,26 @@ export class ToiletEntity {
   deletedBy?: UserEntity;
 
   /**
-   * Timestamp da exclusão da casa de banho
-   * @field deletedAt
-   * @type Date
-   * @nullable true
-   * @description Data/hora de exclusão (soft delete)
+   * Data e hora da exclusão (para soft delete).
    */
   @Property({ nullable: true })
   deletedAt?: Date;
 
   /**
-   * Timestamp de criação da casa de banho
-   * @field createdAt
-   * @type Date
-   * @nullable false
-   * @default now()
-   * @description Data/hora de criação do registo
+   * Data e hora de criação do registo.
    */
   @Index({ name: 'idx_toilet_created_at' })
   @Property({ onCreate: () => new Date() })
   createdAt: Date = new Date();
 
   /**
-   * Timestamp da última atualização
-   * @field updatedAt
-   * @type Date
-   * @nullable false
-   * @default now()
-   * @description Data/hora da última modificação
+   * Data e hora da última atualização do registo.
    */
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
 
   /**
-   * Coleção de recursos extras disponíveis
-   * @field extras
-   * @type Collection<TypeExtraEntity>
-   * @relationship many-to-many
-   * @description Amenidades/recursos (wifi, pias, espelho, etc)
+   * Coleção de recursos extras disponíveis nesta casa de banho.
    */
   @ManyToMany({
     entity: () => TypeExtraEntity,
@@ -296,23 +192,14 @@ export class ToiletEntity {
   extras: Collection<TypeExtraEntity> = new Collection<TypeExtraEntity>(this);
 
   /**
-   * Coleção de interações
-   * @field interactions
-   * @type Collection<InteractionEntity>
-   * @relationship one-to-many
-   * @description Comentários, relatórios, sugestões, visualizações
+   * Coleção de todas as interações associadas a esta casa de banho.
    */
   @OneToMany(() => InteractionEntity, (interaction) => interaction.toilet)
   interactions: Collection<InteractionEntity> =
     new Collection<InteractionEntity>(this);
 
   /**
-   * Parceiro que administra esta casa de banho
-   * @field partner
-   * @type PartnerEntity
-   * @nullable true
-   * @relationship one-to-one
-   * @description Empresa/pessoa responsável (opcional)
+   * A parceria associada a esta casa de banho, se existir.
    */
   @OneToOne(() => PartnerEntity, (partner) => partner.toilet, {
     nullable: true,
@@ -320,12 +207,7 @@ export class ToiletEntity {
   partner?: PartnerEntity;
 
   /**
-   * Total de avaliações (ratings) de comentários visíveis
-   * @field totalRatings
-   * @type number
-   * @nullable false
-   * @transient true
-   * @description Contagem de comment_rate onde o comentário está visível
+   * Contagem total de avaliações visíveis (calculado).
    */
   @Formula(
     (alias) =>
@@ -340,12 +222,7 @@ export class ToiletEntity {
   totalRatings: number = 0;
 
   /**
-   * Média da avaliação de limpeza (clean) dos comentários visíveis
-   * @field avgClean
-   * @type number
-   * @nullable false
-   * @transient true
-   * @description Média de comment_rate.clean onde o comentário está visível
+   * Média da avaliação de limpeza de 1 a 5 (calculado).
    */
   @Formula(
     (alias) =>
@@ -360,12 +237,7 @@ export class ToiletEntity {
   avgClean: number = 0;
 
   /**
-   * Média da avaliação de estrutura (structure) dos comentários visíveis
-   * @field avgStructure
-   * @type number
-   * @nullable false
-   * @transient true
-   * @description Média de comment_rate.structure onde o comentário está visível
+   * Média da avaliação de estrutura de 1 a 5 (calculado).
    */
   @Formula(
     (alias) =>
@@ -380,12 +252,7 @@ export class ToiletEntity {
   avgStructure: number = 0;
 
   /**
-   * Média da avaliação de acessibilidade (accessibility) dos comentários visíveis
-   * @field avgAccessibility
-   * @type number
-   * @nullable false
-   * @transient true
-   * @description Média de comment_rate.accessibility onde o comentário está visível
+   * Média da avaliação de acessibilidade de 1 a 5 (calculado).
    */
   @Formula(
     (alias) =>
@@ -400,12 +267,7 @@ export class ToiletEntity {
   avgAccessibility: number = 0;
 
   /**
-   * Média da disponibilidade de papel (paper) dos comentários visíveis
-   * @field paperAvailability
-   * @type number
-   * @nullable false
-   * @transient true
-   * @description Média de comment_rate.paper (true=1, false=0) onde o comentário está visível
+   * Percentagem de disponibilidade de papel higiénico (0 a 1, calculado).
    */
   @Formula(
     (alias) =>
@@ -419,6 +281,9 @@ export class ToiletEntity {
   )
   paperAvailability: number = 0;
 
+  /**
+   * Verdadeiro se a casa de banho foi marcada como apagada (soft delete).
+   */
   get isDeleted(): boolean {
     return !!this.deletedBy && !!this.deletedAt;
   }
