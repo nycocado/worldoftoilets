@@ -39,4 +39,3 @@ export const ApiSwaggerDeleteUserManage = (): MethodDecorator =>
       description: 'Utilizador não encontrado.',
     }),
   );
-

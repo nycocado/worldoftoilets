@@ -3,25 +3,13 @@ import { Expose, Type } from 'class-transformer';
 import { UserBaseDto } from '@modules/user/dto/user-base.dto';
 
 /**
- * DTO com Dados de Utilizador (Login Response)
- *
- * @class UserLoginResponseDto
- * @description Transfer Object com informações públicas do utilizador autenticado
- *
- * @property {string} publicId - ID público UUID do utilizador
- * @property {string} name - Nome de utilizador (display name)
- * @property {string} email - Email do utilizador
- * @property {UserIcon} icon - Ícone/avatar do utilizador
+ * DTO para a resposta com os dados do utilizador após o login.
  */
 export class UserLoginResponseDto extends UserBaseDto {
-  /**
-   * Email do utilizador
-   *
-   * @type {string}
-   * @format email
-   * @example "joao@example.com"
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'O email do utilizador.',
+    example: 'user@example.com',
+  })
   @Expose()
   @Type(() => String)
   email: string;
