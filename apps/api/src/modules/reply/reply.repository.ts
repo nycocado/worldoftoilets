@@ -93,7 +93,7 @@ export class ReplyRepository {
         createdAt: { $lte: timestamp },
       },
       {
-        populate: ['user.partner'],
+        populate: ['user.partner', 'user.commentsCount'],
         limit: pageable ? size : undefined,
         offset: pageable && page && size ? page * size : undefined,
         orderBy: { createdAt: QueryOrder.DESC },
@@ -134,7 +134,7 @@ export class ReplyRepository {
         createdAt: { $lte: timestamp },
       },
       {
-        populate: ['comment'],
+        populate: ['user.partner', 'user.commentsCount'],
         limit: pageable ? size : undefined,
         offset: pageable && page && size ? page * size : undefined,
         orderBy: { createdAt: QueryOrder.DESC },
