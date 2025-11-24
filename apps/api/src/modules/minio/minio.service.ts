@@ -76,10 +76,10 @@ export class MinioService implements OnModuleInit {
     );
   }
 
-  async uploadImage(
+  async uploadFile(
     file: Buffer | Readable,
     fileName: string,
-    contentType: string = 'image/jpeg',
+    contentType: string = 'application/octet-stream',
   ): Promise<string> {
     const command = new PutObjectCommand({
       Bucket: this.config.bucket,
@@ -92,18 +92,18 @@ export class MinioService implements OnModuleInit {
     return fileName;
   }
 
-  getPublicImageUrl(fileName: string): string {
+  getPublicFileUrl(fileName: string): string {
     if (this.config.publicUrl) {
       return `${this.config.publicUrl}/${this.config.bucket}/${fileName}`;
     }
-    return this.getInternalImageUrl(fileName);
+    return this.getInternalFileUrl(fileName);
   }
 
-  getInternalImageUrl(fileName: string): string {
+  getInternalFileUrl(fileName: string): string {
     return `http${this.config.useSSL ? 's' : ''}://${this.config.endPoint}:${this.config.port}/${this.config.bucket}/${fileName}`;
   }
 
-  async deleteImage(fileName: string): Promise<void> {
+  async deleteFile(fileName: string): Promise<void> {
     const command = new DeleteObjectCommand({
       Bucket: this.config.bucket,
       Key: fileName,
@@ -112,7 +112,7 @@ export class MinioService implements OnModuleInit {
     await this.s3Client.send(command);
   }
 
-  async copyImage(sourceFileName: string, destFileName: string): Promise<void> {
+  async copyFile(sourceFileName: string, destFileName: string): Promise<void> {
     const command = new CopyObjectCommand({
       Bucket: this.config.bucket,
       CopySource: `${this.config.bucket}/${sourceFileName}`,
@@ -122,7 +122,7 @@ export class MinioService implements OnModuleInit {
     await this.s3Client.send(command);
   }
 
-  async getImage(fileName: string): Promise<Readable> {
+  async getFile(fileName: string): Promise<Readable> {
     const command = new GetObjectCommand({
       Bucket: this.config.bucket,
       Key: fileName,
@@ -132,7 +132,7 @@ export class MinioService implements OnModuleInit {
     return response.Body as Readable;
   }
 
-  async listImages(prefix?: string): Promise<string[]> {
+  async listFiles(prefix?: string): Promise<string[]> {
     const command = new ListObjectsV2Command({
       Bucket: this.config.bucket,
       Prefix: prefix,

@@ -11,12 +11,6 @@ import {
 } from '@nestjs/swagger';
 import { UpdateToiletRequestDto, ToiletResponseDto } from '@modules/toilet/dto';
 
-/**
- * Decorador Swagger para Atualizar Toilet
- *
- * @function ApiSwaggerUpdateToilet
- * @description Decorator que documenta o endpoint PATCH /toilet/:publicId/manage no Swagger.
- */
 export const ApiSwaggerUpdateToilet = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

@@ -9,12 +9,6 @@ import {
   ApiConflictResponse,
 } from '@nestjs/swagger';
 
-/**
- * Decorador Swagger para Publicar Toilet Sugerido
- *
- * @function ApiSwaggerPublishToilet
- * @description Decorator que documenta o endpoint PUT /toilet/:publicId/manage/publish no Swagger.
- */
 export const ApiSwaggerPublishToilet = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

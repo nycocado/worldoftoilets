@@ -2,40 +2,20 @@ import { Expose } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 /**
- * DTO de Response para Tipo de Acesso
- *
- * @class AccessResponseDto
- * @description Transfer Object para resposta com dados do tipo de acesso do toilet
- *
- * @property {string} name - Nome legível do tipo de acesso
- * @property {string} apiName - Nome da API (enum) do tipo de acesso
- *
- * @example
- * {
- *   "name": "Público",
- *   "apiName": "PUBLIC"
- * }
+ * DTO para a resposta com os dados de um tipo de acesso.
  */
 export class AccessResponseDto {
-  /**
-   * Nome legível do tipo de acesso
-   *
-   * @type {string}
-   * @description Nome traduzido do tipo de acesso para exibição
-   * @example "Público"
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'O nome legível do tipo de acesso.',
+    example: 'Público',
+  })
   @Expose()
   name!: string;
 
-  /**
-   * Nome da API do tipo de acesso
-   *
-   * @type {string}
-   * @description Identificador enum do tipo de acesso (PUBLIC, PRIVATE, CUSTOMERS_ONLY)
-   * @example "PUBLIC"
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'O identificador único do tipo de acesso.',
+    example: 'public',
+  })
   @Expose()
   apiName!: string;
 }

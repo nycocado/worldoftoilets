@@ -10,12 +10,6 @@ import {
 } from '@nestjs/swagger';
 import { ToiletResponseDto } from '@modules/toilet/dto';
 
-/**
- * Decorador Swagger para Ativar Toilet
- *
- * @function ApiSwaggerEnableToilet
- * @description Decorator que documenta o endpoint PUT /toilet/:publicId/manage/enable no Swagger.
- */
 export const ApiSwaggerEnableToilet = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

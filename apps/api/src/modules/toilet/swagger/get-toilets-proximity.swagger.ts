@@ -8,12 +8,6 @@ import {
 } from '@nestjs/swagger';
 import { ToiletResponseDto } from '@modules/toilet/dto';
 
-/**
- * Decorador Swagger para Obter Toilets por Proximidade
- *
- * @function ApiSwaggerGetToiletsProximity
- * @description Decorator que documenta o endpoint GET /toilet/proximity no Swagger.
- */
 export const ApiSwaggerGetToiletsProximity = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

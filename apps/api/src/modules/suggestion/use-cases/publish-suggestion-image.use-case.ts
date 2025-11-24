@@ -102,9 +102,9 @@ export class PublishSuggestionImageUseCase {
     const extension = oldFileName.split('.').pop();
     const newFileName = `toilets/${uuidv4()}.${extension}`;
 
-    await this.minioService.copyImage(oldFileName, newFileName);
+    await this.minioService.copyFile(oldFileName, newFileName);
 
-    const publicUrl = this.minioService.getPublicImageUrl(newFileName);
+    const publicUrl = this.minioService.getPublicFileUrl(newFileName);
     await this.toiletService.updatePhotoUrl(toilet, publicUrl);
 
     return plainToInstance(SuggestionResponseDto, suggestion, {

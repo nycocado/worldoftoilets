@@ -5,46 +5,18 @@ import { ToiletResponseDto } from '@modules/toilet/dto';
 import { plainToInstance } from 'class-transformer';
 
 /**
- * Caso de Uso para Obter Toilet por ID Público
- *
- * @class GetToiletByPublicIdUseCase
- * @description Implementa a lógica de obtenção de toilet por ID público (UUID).
- * Busca toilet no repositório e transforma em DTO de resposta.
- *
- * @implements
- *   - Validação de existência de toilet
- *   - Busca por ID público (UUID)
- *   - Transformação de entidade para DTO
- *
- * @example
- * const toilet = await getToiletByPublicIdUseCase.execute(
- *   '550e8400-e29b-41d4-a716-446655440000'
- * );
- *
- * @see ToiletRepository - Repositório para busca de dados
+ * Contém a lógica de negócio para obter os dados de uma casa de banho pelo seu ID público.
  */
 @Injectable()
 export class GetToiletByPublicIdUseCase {
-  /**
-   * Construtor do GetToiletByPublicIdUseCase
-   *
-   * @param {ToiletRepository} repository - Repositório de toilets
-   */
   constructor(private readonly repository: ToiletRepository) {}
 
   /**
-   * Executar caso de uso de obter toilet por ID público
+   * Busca uma casa de banho pelo seu ID público.
    *
-   * @async
-   * @param {string} publicId - ID público UUID do toilet
-   * @returns {Promise<ToiletResponseDto>} DTO do toilet encontrado
-   * @throws {NotFoundException} Se toilet não for encontrado
-   *
-   * @description
-   * 1. Busca toilet por publicId no repositório
-   * 2. Se não encontrado, lança NotFoundException
-   * 3. Transforma entidade em ToiletResponseDto
-   * 4. Retorna DTO com dados completos do toilet (access, extras, ratings)
+   * @param {string} publicId O ID público da casa de banho.
+   * @returns {Promise<ToiletResponseDto>} O DTO da casa de banho.
+   * @throws {NotFoundException} Se a casa de banho não for encontrada.
    */
   async execute(publicId: string): Promise<ToiletResponseDto> {
     const toilet = await this.repository.findByPublicId(publicId);

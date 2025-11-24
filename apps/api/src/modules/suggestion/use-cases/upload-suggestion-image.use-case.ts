@@ -64,16 +64,16 @@ export class UploadSuggestionImageUseCase {
       );
       if (oldFileName) {
         try {
-          await this.minioService.deleteImage(oldFileName);
+          await this.minioService.deleteFile(oldFileName);
         } catch {
           // Ignore errors when deleting old image
         }
       }
     }
 
-    await this.minioService.uploadImage(sanitizedBuffer, fileName, mimeType);
+    await this.minioService.uploadFile(sanitizedBuffer, fileName, mimeType);
 
-    const publicUrl = this.minioService.getPublicImageUrl(fileName);
+    const publicUrl = this.minioService.getPublicFileUrl(fileName);
 
     const em = this.entityRepository.getEntityManager();
     suggestion.photoUrl = publicUrl;
@@ -104,7 +104,7 @@ export class UploadSuggestionImageUseCase {
 
   private async fileExists(fileName: string): Promise<boolean> {
     try {
-      await this.minioService.getImage(fileName);
+      await this.minioService.getFile(fileName);
       return true;
     } catch {
       return false;
