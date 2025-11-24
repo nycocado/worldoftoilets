@@ -6,14 +6,6 @@ import {
 } from '@nestjs/swagger';
 import { CommentResponseDto } from '@modules/comment/dto';
 
-/**
- * Decorador Swagger para Listar Próprios Comentários
- *
- * @function ApiSwaggerGetCommentsByUserSelf
- * @description Decorator que documenta o endpoint GET /comment/user/self no Swagger.
- * Inclui documentação da operação e respostas.
- * Query parameters (pageable, page, size, timestamp) são documentados automaticamente pelo DTO.
- */
 export const ApiSwaggerGetCommentsByUserSelf = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

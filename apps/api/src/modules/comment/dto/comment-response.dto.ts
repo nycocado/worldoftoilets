@@ -5,88 +5,48 @@ import { ReactCommentResponseDto } from '@modules/react/dto/react-comment-respon
 import { UserCommentResponseDto } from '@modules/user/dto/user-comment-response.dto';
 
 /**
- * DTO de Response para Comentário
- *
- * @class CommentResponseDto
- * @description Transfer Object para resposta com dados públicos de um comentário
- *
- * @property {string} publicId - ID público UUID do comentário
- * @property {string} text - Texto do comentário (opcional, máx 280 caracteres)
- * @property {number} score - Score calculado do comentário baseado nas avaliações
- * @property {CommentRateCommentResponseDto} rate - Avaliações atribuídas ao toilet
- * @property {ReactCommentResponseDto} reacts - Contadores de reações (likes/dislikes)
- * @property {UserCommentResponseDto} user - Dados do utilizador que criou o comentário
- * @property {Date} createdAt - Data de criação do comentário
- *
- * @example
- * {
- *   "publicId": "550e8400-e29b-41d4-a716-446655440000",
- *   "text": "Instalações muito limpas e bem mantidas!",
- *   "score": 4.5,
- *   "rate": { "clean": 5, "paper": true, "structure": 4, "accessibility": 5 },
- *   "reacts": { "likes": 10, "dislikes": 1 },
- *   "user": { "publicId": "...", "name": "João Silva", ... },
- *   "createdAt": "2025-11-14T10:30:00Z"
- * }
+ * DTO para a resposta de um comentário.
  */
 export class CommentResponseDto {
-  /**
-   * ID público do comentário em formato UUID
-   *
-   * @type {string}
-   * @format uuid
-   * @example "550e8400-e29b-41d4-a716-446655440000"
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'O ID público do comentário.',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+    format: 'uuid',
+  })
   @Expose()
   @Type(() => String)
   publicId!: string;
 
-  /**
-   * Texto opcional do comentário
-   *
-   * @type {string}
-   * @length 1-280
-   * @description Comentário textual opcional do utilizador sobre o toilet
-   * @example "Instalações muito limpas e bem mantidas!"
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'O texto do comentário.',
+    example: 'Instalações muito limpas e bem mantidas!',
+    required: false,
+  })
   @Expose()
   @Transform(({ value }) => value ?? null)
   @Type(() => String)
   text?: string;
 
-  /**
-   * Score calculado do comentário
-   *
-   * @type {number}
-   * @description Score médio calculado baseado nas avaliações (clean, structure, accessibility)
-   * @range 1-5
-   * @example 4.5
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'A pontuação média do comentário, baseada nas avaliações.',
+    example: 4.5,
+  })
   @Expose()
   @Type(() => Number)
   score!: number;
 
-  /**
-   * Avaliações atribuídas ao toilet
-   *
-   * @type {CommentRateCommentResponseDto}
-   * @description Avaliações de limpeza, papel, estrutura e acessibilidade
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'As avaliações detalhadas do comentário.',
+    type: () => CommentRateCommentResponseDto,
+  })
   @Expose()
   @Type(() => CommentRateCommentResponseDto)
   rate?: CommentRateCommentResponseDto;
 
-  /**
-   * Contadores de reações ao comentário
-   *
-   * @type {ReactCommentResponseDto}
-   * @description Total de likes e dislikes recebidos
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'A contagem de reações (likes/dislikes) do comentário.',
+    type: () => ReactCommentResponseDto,
+  })
   @Expose()
   @Transform(({ obj }) => ({
     likes: obj.likes ?? 0,
@@ -95,35 +55,26 @@ export class CommentResponseDto {
   @Type(() => ReactCommentResponseDto)
   reactCounts!: ReactCommentResponseDto;
 
-  /**
-   * Número de respostas ao comentário
-   *
-   * @type {number}
-   * @description Contagem total de respostas (replies) associadas a este comentário
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'O número de respostas que o comentário possui.',
+    example: 5,
+  })
   @Expose()
   replyCount!: number;
 
-  /**
-   * Dados do utilizador autor do comentário
-   *
-   * @type {UserCommentResponseDto}
-   * @description Informações públicas do utilizador que criou o comentário
-   */
-  @ApiProperty({ type: () => UserCommentResponseDto })
+  @ApiProperty({
+    description: 'O utilizador que criou o comentário.',
+    type: () => UserCommentResponseDto,
+  })
   @Expose()
   @Type(() => UserCommentResponseDto)
   user!: UserCommentResponseDto;
 
-  /**
-   * Data de criação do comentário
-   *
-   * @type {Date}
-   * @format date-time
-   * @example "2025-11-14T10:30:00Z"
-   */
-  @ApiProperty()
+  @ApiProperty({
+    description: 'A data de criação do comentário.',
+    example: '2025-11-14T10:30:00Z',
+    format: 'date-time',
+  })
   @Expose()
   @Type(() => Date)
   createdAt!: Date;

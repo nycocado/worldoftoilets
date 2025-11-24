@@ -13,13 +13,6 @@ import {
   CommentResponseDto,
 } from '@modules/comment/dto';
 
-/**
- * Decorador Swagger para Atualizar Qualquer Comentário (Moderação)
- *
- * @function ApiSwaggerUpdateCommentManage
- * @description Decorator que documenta o endpoint PATCH /comment/:publicId/manage no Swagger.
- * Inclui documentação da operação, parâmetros, request body e respostas.
- */
 export const ApiSwaggerUpdateCommentManage = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

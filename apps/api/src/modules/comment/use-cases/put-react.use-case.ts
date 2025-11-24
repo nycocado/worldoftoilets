@@ -8,42 +8,10 @@ import { COMMENT_EXCEPTIONS } from '@modules/comment/constants/exceptions.consta
 import { plainToInstance } from 'class-transformer';
 
 /**
- * Caso de Uso para Reagir a Comentário
- *
- * @class PutReactUseCase
- * @description Implementa a lógica de adicionar, remover ou alterar reação (like/dislike) em comentário.
- * Segue padrão idempotente: executar mesma reação remove-a, reação diferente substitui-a.
- *
- * @implements
- *   - Validação de existência do comentário
- *   - Busca de reação existente do utilizador
- *   - Criação de nova reação se não existir
- *   - Remoção de reação se for igual (toggle)
- *   - Substituição de reação se for diferente (like <-> dislike)
- *   - Enriquecimento com dados atualizados de reações
- *
- * @example
- * const comment = await putReactUseCase.execute(
- *   userId,
- *   'comment-public-id',
- *   ReactDiscriminator.LIKE
- * );
- * // Primeira chamada: adiciona like
- * // Segunda chamada: remove like
- *
- * @throws {NotFoundException} Se comentário não existir
- *
- * @see ReactService - Serviço para gestão de reações
+ * Contém a lógica de negócio para adicionar, remover ou alterar uma reação a um comentário.
  */
 @Injectable()
 export class PutReactUseCase {
-  /**
-   * Construtor do PutReactUseCase
-   *
-   * @param {CommentRepository} repository - Repositório de comentários
-   * @param {UserService} userService - Serviço para operações de utilizador
-   * @param {ReactService} reactService - Serviço para operações de reações
-   */
   constructor(
     private readonly repository: CommentRepository,
     private readonly userService: UserService,
@@ -51,26 +19,13 @@ export class PutReactUseCase {
   ) {}
 
   /**
-   * Executar caso de uso de reagir a comentário
+   * Adiciona, remove ou altera uma reação (like/dislike) a um comentário.
    *
-   * @async
-   * @param {string} publicId - ID público do utilizador
-   * @param {string} commentPublicId - Identificador público do comentário
-   * @param {ReactDiscriminator} discriminator - Tipo de reação (LIKE ou DISLIKE)
-   * @returns {Promise<CommentResponseDto>} DTO do comentário com reações atualizadas
-   * @throws {NotFoundException} Se comentário não existir
-   *
-   * @description
-   * 1. Busca utilizador por publicId
-   * 2. Busca comentário por publicId
-   * 3. Valida existência do comentário
-   * 4. Busca reação existente do utilizador no comentário
-   * 5. Se não houver reação: cria nova reação
-   * 6. Se houver reação igual: remove reação (toggle off)
-   * 7. Se houver reação diferente: substitui por nova reação
-   * 8. Enriquece comentário com contagens atualizadas de reações
-   * 9. Retorna DTO completo do comentário
-   * Comportamento idempotente para facilitar uso em interfaces.
+   * @param {string} publicId O ID público do utilizador.
+   * @param {string} commentPublicId O ID público do comentário.
+   * @param {ReactDiscriminator} discriminator O tipo de reação (like/dislike).
+   * @returns {Promise<CommentResponseDto>} O DTO do comentário com as reações atualizadas.
+   * @throws {NotFoundException} Se o comentário não for encontrado.
    */
   async execute(
     publicId: string,

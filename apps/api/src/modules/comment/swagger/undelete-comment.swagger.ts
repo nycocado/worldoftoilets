@@ -9,13 +9,6 @@ import {
 } from '@nestjs/swagger';
 import { CommentResponseDto } from '@modules/comment/dto';
 
-/**
- * Decorador Swagger para Recuperar Comentário Deletado (Moderação)
- *
- * @function ApiSwaggerUndeleteComment
- * @description Decorator que documenta o endpoint PUT /comment/:publicId/undelete no Swagger.
- * Inclui documentação da operação, parâmetros e respostas.
- */
 export const ApiSwaggerUndeleteComment = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

@@ -9,14 +9,6 @@ import {
 } from '@nestjs/swagger';
 import { CommentResponseDto } from '@modules/comment/dto';
 
-/**
- * Decorador Swagger para Reagir a Comentário
- *
- * @function ApiSwaggerPutReact
- * @description Decorator que documenta o endpoint PUT /comment/:publicId/react no Swagger.
- * Inclui documentação da operação, parâmetros e respostas.
- * Query parameter (react) é documentado automaticamente pelo DTO.
- */
 export const ApiSwaggerPutReact = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

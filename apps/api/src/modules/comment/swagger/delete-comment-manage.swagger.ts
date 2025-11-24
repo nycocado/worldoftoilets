@@ -8,13 +8,6 @@ import {
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
 
-/**
- * Decorador Swagger para Deletar Qualquer Comentário (Moderação)
- *
- * @function ApiSwaggerDeleteCommentManage
- * @description Decorator que documenta o endpoint DELETE /comment/:publicId/manage no Swagger.
- * Inclui documentação da operação, parâmetros e respostas.
- */
 export const ApiSwaggerDeleteCommentManage = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

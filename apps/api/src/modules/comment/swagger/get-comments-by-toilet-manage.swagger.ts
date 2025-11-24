@@ -9,14 +9,6 @@ import {
 } from '@nestjs/swagger';
 import { CommentResponseDto } from '@modules/comment/dto';
 
-/**
- * Decorador Swagger para Listar Todos Comentários de Toilet (Moderação)
- *
- * @function ApiSwaggerGetCommentsByToiletManage
- * @description Decorator que documenta o endpoint GET /comment/toilet/:publicId/manage no Swagger.
- * Inclui documentação da operação, parâmetros e respostas.
- * Query parameters (pageable, page, size, commentState, timestamp) são documentados automaticamente pelo DTO.
- */
 export const ApiSwaggerGetCommentsByToiletManage = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

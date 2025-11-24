@@ -10,13 +10,6 @@ import {
 } from '@nestjs/swagger';
 import { CommentResponseDto } from '@modules/comment/dto';
 
-/**
- * Decorador Swagger para Mostrar Comentário (Moderação)
- *
- * @function ApiSwaggerShowComment
- * @description Decorator que documenta o endpoint PUT /comment/:publicId/show no Swagger.
- * Inclui documentação da operação, parâmetros e respostas.
- */
 export const ApiSwaggerShowComment = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({
