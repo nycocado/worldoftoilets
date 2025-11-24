@@ -8,6 +8,9 @@ import {
 } from '@database/entities';
 import { EntityRepository, Transactional } from '@mikro-orm/mariadb';
 
+/**
+ * Gerencia o acesso e a persistência de dados para a entidade InteractionEntity.
+ */
 @Injectable()
 export class InteractionRepository {
   constructor(
@@ -15,6 +18,14 @@ export class InteractionRepository {
     private readonly interactionRepository: EntityRepository<InteractionEntity>,
   ) {}
 
+  /**
+   * Cria e persiste uma nova entidade de interação.
+   *
+   * @param {UserEntity} user O utilizador que realiza a interação.
+   * @param {ToiletEntity} toilet A casa de banho alvo da interação.
+   * @param {InteractionDiscriminator} discriminator O tipo de interação.
+   * @returns {Promise<InteractionEntity>} A entidade da interação persistida.
+   */
   @Transactional()
   async create(
     user: UserEntity,
@@ -31,6 +42,13 @@ export class InteractionRepository {
     return interaction;
   }
 
+  /**
+   * Atualiza uma entidade de interação com dados de soft delete.
+   *
+   * @param {InteractionEntity} interaction A entidade a ser atualizada.
+   * @param {UserEntity} user O utilizador (moderador) que realiza o soft delete.
+   * @returns {Promise<InteractionEntity>} A entidade da interação atualizada.
+   */
   @Transactional()
   async softDelete(
     interaction: InteractionEntity,
