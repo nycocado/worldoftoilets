@@ -8,7 +8,7 @@ Este documento define o padrão de documentação de código (JSDoc) a ser utili
 
 - **Idioma**: A documentação deve ser escrita em português.
 - **Tipagem**: **Especifique sempre os tipos** no JSDoc para clareza e consistência, utilizando o formato `{type}`.
-- **Clareza**: Use frases curtas e diretas.
+- **Clareza**: Use frases curtas e diretas. Evite o uso de exemplos (e.g., `ex:`). A descrição deve ser autoexplicativa.
 
 ## 3. Padrões por Componente
 
@@ -120,9 +120,7 @@ Estes arquivos centralizam a documentação de um endpoint da API. A padronizaç
 #### **1. Nomenclatura**
 
 - **Arquivo**: Deve descrever a operação em `kebab-case`, com o sufixo `.swagger.ts`.
-  - `get-comments-by-toilet.swagger.ts`
 - **Função**: Deve descrever a operação em `PascalCase`, com o prefixo `ApiSwagger`.
-  - `ApiSwaggerGetCommentsByToilet`
 
 #### **2. Estrutura do Arquivo**
 
@@ -131,65 +129,58 @@ Cada arquivo deve exportar uma única função que utiliza `applyDecorators` par
 - `ApiOperation`:
   - `summary`: Um título curto para a operação.
   - `description`: Uma explicação mais detalhada do que o endpoint faz.
-- `ApiParam` / `ApiQuery` / `ApiBody`:
-  - Use `ApiParam` para parâmetros de rota (e.g., `:id`).
-  - A documentação de `Query` e `Body` é feita nos DTOs através do `@ApiProperty`, então `ApiQuery` e `ApiBody` raramente são necessários aqui.
-- **Respostas de Sucesso**:
-  - Use `ApiOkResponse` (200), `ApiCreatedResponse` (201), etc.
-  - Sempre especifique a `description` e o `type` (o DTO de resposta).
-- **Respostas de Erro**:
-  - Documente todos os erros de negócio e de autenticação possíveis.
-  - Use `ApiNotFoundResponse` (404), `ApiBadRequestResponse` (400), `ApiUnauthorizedResponse` (401), `ApiForbiddenResponse` (403), etc.
-  - Sempre especifique a `description`.
+- `ApiParam` / `ApiQuery` / `ApiBody`: A documentação é feita nos DTOs.
+- **Respostas de Sucesso**: `ApiOkResponse`, `ApiCreatedResponse`, etc.
+- **Respostas de Erro**: `ApiNotFoundResponse`, `ApiBadRequestResponse`, etc.
 
-#### **3. Exemplo Completo**
+### 3.7. Entidades (`*.entity.ts`)
 
-```typescript
-// Arquivo: get-comments-by-toilet.swagger.ts
+Para manter a legibilidade, a documentação de entidades deve focar em explicar o **propósito de negócio** de cada campo, evitando repetir informações que já estão explícitas nos decoradores ou tipos.
 
-import { applyDecorators } from '@nestjs/common';
-import {
-  ApiOkResponse,
-  ApiOperation,
-  ApiParam,
-  ApiUnauthorizedResponse,
-  ApiForbiddenResponse,
-  ApiNotFoundResponse,
-} from '@nestjs/swagger';
-import { CommentResponseDto } from '@modules/comment/dto';
+#### **1. Classe da Entidade**
 
-// SEM JSDoc aqui!
-export const ApiSwaggerGetCommentsByToilet = (): MethodDecorator =>
-  applyDecorators(
-    // 1. Operação
-    ApiOperation({
-      summary: 'Listar comentários de um sanitário',
-      description: 'Lista comentários visíveis de um sanitário específico, com paginação.',
-    }),
+- **Descrição**: Um resumo de uma linha sobre o papel da entidade no sistema. A tag `@table` pode ser usada para mapear a entidade à sua tabela.
 
-    // 2. Parâmetros de rota
-    ApiParam({
-      name: 'publicId',
-      description: 'Identificador público do sanitário',
-      type: 'string',
-      format: 'uuid',
-    }),
+    ```typescript
+    /**
+     * Armazena um comentário de um utilizador sobre uma casa de banho.
+     * @table comment
+     */
+    @Entity({ tableName: 'comment' })
+    export class CommentEntity { /* ... */ }
+    ```
 
-    // 3. Resposta de sucesso
-    ApiOkResponse({
-      description: 'Lista de comentários retornada com sucesso.',
-      type: [CommentResponseDto],
-    }),
+#### **2. Propriedades (Colunas e Relações)**
 
-    // 4. Respostas de erro
-    ApiUnauthorizedResponse({
-      description: 'Acesso não autorizado. Requer token JWT.',
-    }),
-    ApiForbiddenResponse({
-      description: 'Acesso negado. Permissão VIEW_COMMENTS necessária.',
-    }),
-    ApiNotFoundResponse({
-      description: 'Sanitário não encontrado.',
-    }),
-  );
-```
+- **Descrição**: Use um bloco de comentário simples `/** ... */` que descreva o campo em termos de negócio. **Não use tags JSDoc** (`@type`, `@nullable`, etc.) nem exemplos.
+
+    ```typescript
+    /**
+     * Identificador público (UUID) para partilha externa através da API.
+     */
+    @Unique()
+    @Property()
+    publicId!: string;
+
+    /**
+     * A interação que originou este comentário.
+     */
+    @OneToOne(() => InteractionEntity)
+    interaction!: InteractionEntity;
+    ```
+
+#### **3. Getters e Enums**
+
+- Descreva o propósito com um comentário curto e direto.
+
+    ```typescript
+    /**
+     * Estados de visibilidade de um comentário.
+     */
+    export enum CommentState {
+      /** Visível para todos. */
+      VISIBLE = 'visible',
+      /** Oculto por moderação ou pelo autor. */
+      HIDDEN = 'hidden',
+    }
+    ```

@@ -131,17 +131,17 @@ CREATE TABLE
 CREATE TABLE
     partner
 (
-    id             INT                                     NOT NULL AUTO_INCREMENT,
-    public_id      CHAR(36)                                NOT NULL DEFAULT uuid_v4(),
-    toilet_id      INT                                     NOT NULL,
-    user_id        INT                                     NULL,
-    certificate    VARCHAR(255)                            NOT NULL,
-    contact_email  VARCHAR(100)                            NOT NULL,
-    status         ENUM ('active', 'inactive', 'rejected') NOT NULL,
-    reviewed_by_id INT                                     NULL,
-    reviewed_at    TIMESTAMP                               NULL,
-    created_at     TIMESTAMP                               NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at     TIMESTAMP                               NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    id             INT                                                NOT NULL AUTO_INCREMENT,
+    public_id      CHAR(36)                                           NOT NULL DEFAULT uuid_v4(),
+    toilet_id      INT                                                NOT NULL,
+    user_id        INT                                                NULL,
+    certificate    VARCHAR(255)                                       NOT NULL,
+    contact_email  VARCHAR(100)                                       NOT NULL,
+    status         ENUM ('active', 'inactive', 'rejected', 'pending') NOT NULL,
+    reviewed_by_id INT                                                NULL,
+    reviewed_at    TIMESTAMP                                          NULL,
+    created_at     TIMESTAMP                                          NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at     TIMESTAMP                                          NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );
 

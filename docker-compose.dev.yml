@@ -133,6 +133,8 @@ services:
                 condition: service_healthy
             mailhog:
                 condition: service_started
+            ai:
+                condition: service_healthy
         volumes:
             - type: bind
               source: ./apps/api
