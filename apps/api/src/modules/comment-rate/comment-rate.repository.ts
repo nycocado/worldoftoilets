@@ -3,6 +3,9 @@ import { CommentEntity, CommentRateEntity } from '@database/entities';
 import { EntityRepository, Transactional } from '@mikro-orm/mariadb';
 import { Injectable } from '@nestjs/common';
 
+/**
+ * Define a estrutura para a média de avaliações de um sanitário.
+ */
 export interface ToiletAverageRating {
   avgClean: number;
   avgStructure: number;
@@ -11,6 +14,9 @@ export interface ToiletAverageRating {
   totalRatings: number;
 }
 
+/**
+ * Gerencia o acesso e a persistência de dados para a entidade CommentRateEntity.
+ */
 @Injectable()
 export class CommentRateRepository {
   constructor(
@@ -18,81 +24,15 @@ export class CommentRateRepository {
     private readonly repository: EntityRepository<CommentRateEntity>,
   ) {}
 
-  async findAverageRatingsByToilet(
-    toiletId: number,
-  ): Promise<ToiletAverageRating | null> {
-    const knex = this.repository.getKnex();
-
-    const result = await knex('comment_rate as cr')
-      .select(
-        'i.toilet_id as toiletId',
-        knex.raw('AVG(cr.clean) as avgClean'),
-        knex.raw('AVG(cr.structure) as avgStructure'),
-        knex.raw('AVG(cr.accessibility) as avgAccessibility'),
-        knex.raw(
-          'AVG(CASE WHEN cr.paper = true THEN 1 ELSE 0 END) as paperAvailability',
-        ),
-        knex.raw('COUNT(*) as totalRatings'),
-      )
-      .join('comment as c', 'cr.id', 'c.id')
-      .join('interaction as i', 'c.interaction_id', 'i.id')
-      .where('i.toilet_id', toiletId)
-      .groupBy('i.toilet_id')
-      .first();
-
-    if (!result) {
-      return null;
-    }
-
-    return {
-      avgClean: parseFloat(result.avgClean),
-      avgStructure: parseFloat(result.avgStructure),
-      avgAccessibility: parseFloat(result.avgAccessibility),
-      paperAvailability: parseFloat(result.paperAvailability),
-      totalRatings: parseInt(result.totalRatings, 10),
-    };
-  }
-
-  async findAverageRatingsForToiletsByPublicIds(
-    publicIds: string[],
-  ): Promise<Map<string, ToiletAverageRating>> {
-    if (publicIds.length === 0) {
-      return new Map();
-    }
-
-    const knex = this.repository.getKnex();
-
-    const results = await knex('comment_rate as cr')
-      .select(
-        'i.toilet_id as toiletId',
-        't.public_id as publicId',
-        knex.raw('AVG(cr.clean) as avgClean'),
-        knex.raw('AVG(cr.structure) as avgStructure'),
-        knex.raw('AVG(cr.accessibility) as avgAccessibility'),
-        knex.raw(
-          'AVG(CASE WHEN cr.paper = true THEN 1 ELSE 0 END) as paperAvailability',
-        ),
-        knex.raw('COUNT(*) as totalRatings'),
-      )
-      .join('comment as c', 'cr.id', 'c.id')
-      .join('interaction as i', 'c.interaction_id', 'i.id')
-      .join('toilet as t', 'i.toilet_id', 't.id')
-      .whereIn('t.public_id', publicIds)
-      .groupBy('i.toilet_id', 't.public_id');
-
-    const map = new Map<string, ToiletAverageRating>();
-    for (const result of results) {
-      map.set(result.publicId, {
-        avgClean: parseFloat(result.avgClean),
-        avgStructure: parseFloat(result.avgStructure),
-        avgAccessibility: parseFloat(result.avgAccessibility),
-        paperAvailability: parseFloat(result.paperAvailability),
-        totalRatings: parseInt(result.totalRatings, 10),
-      });
-    }
-    return map;
-  }
-
+  /**
+   * Cria e persiste uma nova avaliação para um comentário.
+   * @param {CommentEntity} comment O comentário a ser avaliado.
+   * @param {number} clean A avaliação de limpeza.
+   * @param {boolean} paper A avaliação de disponibilidade de papel.
+   * @param {number} structure A avaliação de estrutura.
+   * @param {number} accessibility A avaliação de acessibilidade.
+   * @returns {Promise<CommentRateEntity>} A entidade da avaliação criada.
+   */
   @Transactional()
   async create(
     comment: CommentEntity,
@@ -113,6 +53,15 @@ export class CommentRateRepository {
     return commentRate;
   }
 
+  /**
+   * Atualiza uma avaliação de um comentário.
+   * @param {CommentRateEntity} commentRate A entidade da avaliação a ser atualizada.
+   * @param {number} [clean] A nova avaliação de limpeza.
+   * @param {boolean} [paper] A nova avaliação de disponibilidade de papel.
+   * @param {number} [structure] A nova avaliação de estrutura.
+   * @param {number} [accessibility] A nova avaliação de acessibilidade.
+   * @returns {Promise<CommentRateEntity>} A entidade da avaliação atualizada.
+   */
   @Transactional()
   async update(
     commentRate: CommentRateEntity,

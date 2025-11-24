@@ -4,6 +4,9 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { CommentRateEntity } from '@database/entities';
 import { CommentRateRepository } from '@modules/comment-rate/comment-rate.repository';
 
+/**
+ * Gerencia a funcionalidade de avaliações de comentários, agrupando seus componentes.
+ */
 @Module({
   imports: [MikroOrmModule.forFeature([CommentRateEntity])],
   providers: [CommentRateService, CommentRateRepository],
