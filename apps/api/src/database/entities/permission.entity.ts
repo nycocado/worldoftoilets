@@ -11,10 +11,9 @@ import { RoleEntity } from './role.entity';
 import { RolePermissionEntity } from './role-permission.entity';
 
 /**
- * Permissões disponíveis no sistema para controle de acesso
+ * Permissões de acesso para as funcionalidades do sistema.
  */
 export enum PermissionApiName {
-  // Permissões de casas de banho
   VIEW_TOILETS = 'view-toilets',
   VIEW_ALL_TOILETS = 'view-all-toilets',
   SEARCH_TOILETS = 'search-toilets',
@@ -31,7 +30,6 @@ export enum PermissionApiName {
   REVIEW_SUGGEST_TOILETS = 'review-suggest-toilets',
   VIEW_REPORT_TOILETS = 'view-report-toilets',
   REVIEW_REPORT_TOILETS = 'review-report-toilets',
-  // Permissões de comentários
   VIEW_COMMENTS = 'view-comments',
   VIEW_ALL_COMMENTS = 'view-all-comments',
   SEARCH_COMMENTS = 'search-comments',
@@ -47,7 +45,6 @@ export enum PermissionApiName {
   SHOW_COMMENTS = 'show-comments',
   VIEW_REPORT_COMMENTS = 'view-report-comments',
   REVIEW_REPORT_COMMENTS = 'review-report-comments',
-  // Permissões de respostas
   VIEW_REPLIES = 'view-replies',
   VIEW_ALL_REPLIES = 'view-all-replies',
   SEARCH_REPLIES = 'search-replies',
@@ -59,7 +56,6 @@ export enum PermissionApiName {
   EDIT_SELF_REPLIES = 'edit-self-replies',
   HIDE_REPLIES = 'hide-replies',
   SHOW_REPLIES = 'show-replies',
-  // Permissões de utilizadores
   VIEW_USERS = 'view-users',
   VIEW_ALL_USERS = 'view-all-users',
   SEARCH_USERS = 'search-users',
@@ -74,53 +70,34 @@ export enum PermissionApiName {
   CREATE_USERS = 'create-users',
   DELETE_USERS = 'delete-users',
   DELETE_SELF_USER = 'delete-self-user',
-  // Permissões de parceiros
   VIEW_PARTNERS = 'view-partners',
   MANAGE_PARTNERS = 'manage-partners',
   DELETE_PARTNERS = 'delete-partners',
   REVIEW_PARTNERS = 'review-partners',
   MANAGE_PARTNER_CERTIFICATES = 'manage-partner-certificates',
-  // Permissões especiais
   ROUTE_TOILETS = 'route-toilets',
 }
 
 /**
- * Entidade que representa uma permissão no sistema
+ * Representa uma permissão individual que pode ser atribuída a papéis.
  * @table permission
- * @description Permissão individual que pode ser atribuída por papéis
  */
 @Entity({ tableName: 'permission' })
 export class PermissionEntity {
   /**
-   * ID interno da permissão
-   * @field id
-   * @type number
-   * @nullable false
-   * @primary true
-   * @description Identificador único interno
+   * Identificador único interno.
    */
   @PrimaryKey()
   id!: number;
 
   /**
-   * Nome descritivo da permissão
-   * @field name
-   * @type string
-   * @nullable false
-   * @length 50
-   * @description Nome legível em português (ex: "Visualizar Casas de Banho")
+   * Nome legível para a permissão.
    */
   @Property({ length: 50 })
   name!: string;
 
   /**
-   * Nome único da API para identificar a permissão
-   * @field apiName
-   * @type PermissionApiName (enum)
-   * @nullable false
-   * @unique true
-   * @length 50
-   * @description Identificador da API em kebab-case (ex: "view-toilets")
+   * Identificador único da permissão para uso na API.
    */
   @Index({ name: 'idx_permission_api_name' })
   @Unique()
@@ -128,11 +105,7 @@ export class PermissionEntity {
   apiName!: PermissionApiName;
 
   /**
-   * Coleção de papéis que possuem esta permissão
-   * @field roles
-   * @type Collection<RoleEntity>
-   * @relationship many-to-many
-   * @description Papéis que incluem esta permissão
+   * Coleção de papéis que contêm esta permissão.
    */
   @ManyToMany({
     entity: () => RoleEntity,

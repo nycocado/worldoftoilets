@@ -13,11 +13,9 @@ import { PermissionEntity } from './permission.entity';
 import { RolePermissionEntity } from './role-permission.entity';
 
 /**
- * Papéis disponíveis no sistema
- * Combinam múltiplas permissões para controle de acesso granular
+ * Papéis de utilizador para controlo de acesso.
  */
 export enum RoleApiName {
-  // Papéis de utilizador comum
   COMMENTS_USER = 'comments-user',
   REPORT_COMMENTS_USER = 'report-comments-user',
   REACTION_USER = 'reaction-user',
@@ -25,53 +23,34 @@ export enum RoleApiName {
   SUGGEST_TOILETS_USER = 'suggest-toilets-user',
   REPORT_USERS_USER = 'report-users-user',
   DEAD_USER = 'dead-user',
-  // Papéis de administrador
   COMMENTS_ADMINISTRATOR = 'comments-administrator',
   TOILETS_ADMINISTRATOR = 'toilets-administrator',
   USERS_ADMINISTRATOR = 'users-administrator',
   PARTNERS_ADMINISTRATOR = 'partners-administrator',
   DEAD_ADMINISTRATOR = 'dead-administrator',
-  // Papel de parceiro
   PARTNER = 'partner',
 }
 
 /**
- * Entidade que representa um papel no sistema
+ * Representa um papel (role) que agrupa um conjunto de permissões.
  * @table role
- * @description Conjunto de permissões atribuído a utilizadores
  */
 @Entity({ tableName: 'role' })
 export class RoleEntity {
   /**
-   * ID interno do papel
-   * @field id
-   * @type number
-   * @nullable false
-   * @primary true
-   * @description Identificador único interno
+   * Identificador único interno.
    */
   @PrimaryKey()
   id!: number;
 
   /**
-   * Nome descritivo do papel
-   * @field name
-   * @type string
-   * @nullable false
-   * @length 50
-   * @description Nome legível em português (ex: "Administrador de Comentários")
+   * Nome legível para o papel.
    */
   @Property({ length: 50 })
   name!: string;
 
   /**
-   * Nome único da API para identificar o papel
-   * @field apiName
-   * @type RoleApiName (enum)
-   * @nullable false
-   * @unique true
-   * @length 50
-   * @description Identificador da API em kebab-case (ex: "comments-administrator")
+   * Identificador único do papel para uso na API.
    */
   @Index({ name: 'idx_role_api_name' })
   @Unique()
@@ -79,11 +58,7 @@ export class RoleEntity {
   apiName!: RoleApiName;
 
   /**
-   * Coleção de utilizadores que possuem este papel
-   * @field users
-   * @type Collection<UserEntity>
-   * @relationship many-to-many
-   * @description Usuários com este papel atribuído
+   * Coleção de utilizadores que possuem este papel.
    */
   @ManyToMany({
     entity: () => UserEntity,
@@ -93,11 +68,7 @@ export class RoleEntity {
   users: Collection<UserEntity> = new Collection<UserEntity>(this);
 
   /**
-   * Coleção de permissões contidas neste papel
-   * @field permissions
-   * @type Collection<PermissionEntity>
-   * @relationship many-to-many
-   * @description Permissões que compõem este papel
+   * Coleção de permissões associadas a este papel.
    */
   @ManyToMany({
     entity: () => PermissionEntity,

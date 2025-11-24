@@ -1,54 +1,37 @@
 import { Entity, Index, PrimaryKey, Property, Unique } from '@mikro-orm/core';
 
 /**
- * Tipos de acesso disponíveis para uma casa de banho no sistema
+ * Tipos de acesso para uma casa de banho.
  */
 export enum AccessApiName {
-  /** Casa de banho com acesso público */
+  /** Acesso público. */
   PUBLIC = 'public',
-  /** Casa de banho com acesso privado */
+  /** Acesso privado. */
   PRIVATE = 'private',
-  /** Casa de banho apenas para consumidores */
+  /** Acesso restrito a consumidores. */
   CONSUMERS_ONLY = 'consumers-only',
 }
 
 /**
- * Entidade que representa um tipo de acesso para casas de banho
+ * Representa um tipo de acesso para casas de banho.
  * @table access
- * @description Tipo de acesso para casas de banho (público, privado, consumidores-only)
  */
 @Entity({ tableName: 'access' })
 export class AccessEntity {
   /**
-   * ID interno do tipo de acesso
-   * @field id
-   * @type number
-   * @nullable false
-   * @primary true
-   * @description Identificador único interno (não exposto em API)
+   * Identificador único interno.
    */
   @PrimaryKey()
   id!: number;
 
   /**
-   * Nome descritivo do tipo de acesso
-   * @field name
-   * @type string
-   * @nullable false
-   * @length 50
-   * @description Nome legível para exibição (ex: "Público", "Privado")
+   * Nome legível para exibição.
    */
   @Property({ length: 50 })
   name!: string;
 
   /**
-   * Nome único da API para identificar o tipo de acesso
-   * @field apiName
-   * @type AccessApiName (enum)
-   * @nullable false
-   * @unique true
-   * @length 50
-   * @description Identificador da API seguindo padrão kebab-case (ex: "public", "private")
+   * Identificador único para uso na API.
    */
   @Index({ name: 'idx_access_api_name' })
   @Unique()

@@ -10,62 +10,45 @@ import {
 import { ReportUserEntity } from './report-user.entity';
 
 /**
- * Tipos de razões para reportar um utilizador
+ * Tipos de denúncia para um utilizador.
  */
 export enum TypeReportUserApiName {
-  /** Assédio ou abuso de outro utilizador */
+  /** Assédio ou abuso. */
   HARASSMENT_ABUSE = 'harassment-abuse',
-  /** Conta falsa ou fraudulenta */
+  /** Conta falsa ou fraudulenta. */
   FAKE_ACCOUNT = 'fake-account',
-  /** Suplantação de identidade ou impersonação */
+  /** Falsificação de identidade. */
   IMPERSONATION = 'impersonation',
-  /** Discurso de ódio ou discriminação */
+  /** Discurso de ódio ou discriminação. */
   HATE_SPEECH = 'hate-speech',
-  /** Violação de privacidade */
+  /** Violação de privacidade. */
   PRIVACY_VIOLATION = 'privacy-violation',
-  /** Spam ou comportamento abusivo */
+  /** Spam ou comportamento abusivo. */
   SPAM = 'spam',
-  /** Outras razões */
+  /** Outras razões não listadas. */
   OTHERS = 'others',
 }
 
 /**
- * Entidade que representa um tipo de razão para reporte de utilizador
+ * Representa um tipo de denúncia que pode ser feita a um utilizador.
  * @table type_report_user
- * @description Razão/categoria de reporte para utilizadores (assédio, spam, ódio, etc)
  */
 @Entity({ tableName: 'type_report_user' })
 export class TypeReportUserEntity {
   /**
-   * ID interno do tipo de reporte
-   * @field id
-   * @type number
-   * @nullable false
-   * @primary true
-   * @description Identificador único interno
+   * Identificador único interno.
    */
   @PrimaryKey()
   id!: number;
 
   /**
-   * Nome descritivo da razão
-   * @field name
-   * @type string
-   * @nullable false
-   * @length 50
-   * @description Nome legível (ex: "Assédio ou Abuso")
+   * Nome legível do tipo de denúncia.
    */
   @Property({ length: 50 })
   name!: string;
 
   /**
-   * Nome único da API para identificar o tipo
-   * @field apiName
-   * @type TypeReportUserApiName (enum)
-   * @nullable false
-   * @unique true
-   * @length 50
-   * @description Identificador da API em kebab-case
+   * Identificador único do tipo para uso na API.
    */
   @Index({ name: 'idx_type_report_user_api_name' })
   @Unique()
@@ -73,11 +56,7 @@ export class TypeReportUserEntity {
   apiName!: TypeReportUserApiName;
 
   /**
-   * Coleção de relatórios deste tipo
-   * @field reports
-   * @type Collection<ReportUserEntity>
-   * @relationship one-to-many
-   * @description Todos os relatórios de utilizadores desta categoria
+   * Coleção de denúncias deste tipo.
    */
   @OneToMany(() => ReportUserEntity, (report) => report.typeReportUser)
   reports: Collection<ReportUserEntity> = new Collection<ReportUserEntity>(

@@ -12,20 +12,13 @@ import { EmailVerificationEntity } from './email-verification.entity';
 import { PasswordResetEntity } from './password-reset.entity';
 
 /**
- * Entidade que armazena as credenciais de autenticação de um utilizador
+ * Armazena as credenciais de autenticação (e-mail e palavra-passe) de um utilizador.
  * @table user_credential
- * @description Credenciais (endereço eletrónico/senha) de autenticação de um utilizador
  */
 @Entity({ tableName: 'user_credential' })
 export class UserCredentialEntity {
   /**
-   * Referência ao utilizador
-   * @field user
-   * @type UserEntity
-   * @nullable false
-   * @primary true
-   * @relationship one-to-one
-   * @description Relação 1:1 com UserEntity (chave primária)
+   * O utilizador associado a estas credenciais.
    */
   @OneToOne(() => UserEntity, {
     fieldName: 'id',
@@ -37,13 +30,7 @@ export class UserCredentialEntity {
   user!: UserEntity;
 
   /**
-   * Endereço eletrónico único do utilizador
-   * @field email
-   * @type string
-   * @nullable false
-   * @unique true
-   * @length 100
-   * @description Email para login e comunicação
+   * O e-mail único do utilizador, usado para login.
    */
   @Unique()
   @Index({ name: 'idx_user_credential_email' })
@@ -51,55 +38,31 @@ export class UserCredentialEntity {
   email!: string;
 
   /**
-   * Senha do utilizador
-   * @field password
-   * @type string (hashed)
-   * @nullable false
-   * @length 255
-   * @description Hash bcrypt da senha (nunca em texto plano)
+   * A palavra-passe do utilizador (armazenada em hash).
    */
   @Property({ length: 255 })
   password!: string;
 
   /**
-   * Indicador de endereço eletrónico verificado
-   * @field emailVerified
-   * @type boolean
-   * @nullable false
-   * @default false
-   * @description True se o endereço eletrónico foi confirmado via link
+   * Indica se o e-mail do utilizador foi verificado.
    */
   @Property({ default: false })
   emailVerified: boolean = false;
 
   /**
-   * Timestamp de criação das credenciais
-   * @field createdAt
-   * @type Date
-   * @nullable false
-   * @default now()
-   * @description Data/hora de criação da conta
+   * Data e hora de criação das credenciais.
    */
   @Property({ onCreate: () => new Date() })
   createdAt: Date = new Date();
 
   /**
-   * Timestamp da última atualização
-   * @field updatedAt
-   * @type Date
-   * @nullable false
-   * @default now()
-   * @description Data/hora da última modificação
+   * Data e hora da última atualização das credenciais.
    */
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
 
   /**
-   * Coleção de tokens de verificação de endereço eletrónico
-   * @field emailVerifications
-   * @type Collection<EmailVerificationEntity>
-   * @relationship one-to-many
-   * @description Tokens enviados para verificação de endereço eletrónico
+   * Coleção de tokens de verificação de e-mail enviados.
    */
   @OneToMany(
     () => EmailVerificationEntity,
@@ -109,11 +72,7 @@ export class UserCredentialEntity {
     new Collection<EmailVerificationEntity>(this);
 
   /**
-   * Coleção de tokens de reset de senha
-   * @field passwordResets
-   * @type Collection<PasswordResetEntity>
-   * @relationship one-to-many
-   * @description Tokens enviados para reset de senha
+   * Coleção de tokens de redefinição de palavra-passe enviados.
    */
   @OneToMany(
     () => PasswordResetEntity,

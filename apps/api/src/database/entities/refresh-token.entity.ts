@@ -9,30 +9,19 @@ import {
 import { UserEntity } from './user.entity';
 
 /**
- * Entidade que representa um token de refresh para autenticação
+ * Armazena um token de atualização (refresh token) para renovação de sessão.
  * @table refresh_token
- * @description Token de longa vida para renovação de sessões
  */
 @Entity({ tableName: 'refresh_token' })
 export class RefreshTokenEntity {
   /**
-   * ID interno do token
-   * @field id
-   * @type number
-   * @nullable false
-   * @primary true
-   * @description Identificador único interno
+   * Identificador único interno.
    */
   @PrimaryKey()
   id!: number;
 
   /**
-   * Referência ao utilizador dono do token
-   * @field user
-   * @type UserEntity
-   * @nullable false
-   * @relationship many-to-one
-   * @description Usuário proprietário deste token
+   * O utilizador ao qual o token pertence.
    */
   @ManyToOne(() => UserEntity, {
     deleteRule: 'cascade',
@@ -41,77 +30,47 @@ export class RefreshTokenEntity {
   user!: UserEntity;
 
   /**
-   * Token único
-   * @field token
-   * @type string (UUID)
-   * @nullable false
-   * @unique true
-   * @length 36
-   * @default uuid_v4()
-   * @description Token seguro para refresh de sessão
+   * O token de atualização (UUID).
    */
   @Unique({ name: 'idx_refresh_token_token' })
   @Property({ length: 36, defaultRaw: 'uuid_v4()' })
   token!: string;
 
   /**
-   * Timestamp do último update de papéis do utilizador
-   * @field rolesUpdatedAt
-   * @type Date
-   * @nullable true
-   * @description Para invalidação automática de tokens quando papéis mudam
+   * Timestamp da última atualização de papéis (roles) do utilizador,
+   * usado para invalidar o token quando os papéis são alterados.
    */
   @Property({ nullable: true })
   rolesUpdatedAt?: Date;
 
   /**
-   * Timestamp de invalidação do token
-   * @field invalidAt
-   * @type Date
-   * @nullable true
-   * @description Data/hora quando o token foi marcado como inválido
+   * Data e hora em que o token foi invalidado (para soft delete).
    */
   @Index({ name: 'idx_refresh_token_invalid_at' })
   @Property({ nullable: true })
   invalidAt?: Date;
 
   /**
-   * Timestamp de expiração automática do token
-   * @field expiresAt
-   * @type Date
-   * @nullable false
-   * @description Data/hora quando o token expira automaticamente
+   * Data e hora em que o token expira automaticamente.
    */
   @Index({ name: 'idx_refresh_token_expires_at' })
   @Property()
   expiresAt!: Date;
 
   /**
-   * Timestamp de criação do token
-   * @field createdAt
-   * @type Date
-   * @nullable false
-   * @default now()
-   * @description Data/hora de criação
+   * Data e hora de criação do token.
    */
   @Property({ onCreate: () => new Date() })
   createdAt: Date = new Date();
 
   /**
-   * Timestamp da última atualização
-   * @field updatedAt
-   * @type Date
-   * @nullable false
-   * @default now()
-   * @description Data/hora da última modificação
+   * Data e hora da última atualização do token.
    */
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
 
   /**
-   * Verifica se o token está expirado
-   * @returns {boolean} true se expirado, false caso contrário
-   * @description Compara expiresAt com a data atual
+   * Verifica se o token está expirado.
    */
   get isExpired(): boolean {
     return this.expiresAt < new Date();

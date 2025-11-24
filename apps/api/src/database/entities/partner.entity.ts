@@ -12,44 +12,33 @@ import { ToiletEntity } from './toilet.entity';
 import { UserEntity } from './user.entity';
 
 /**
- * Estados possíveis de um parceiro no sistema
+ * O status de um parceiro no sistema.
  */
 export enum PartnerStatus {
-  /** Parceiro ativo e aprovado */
+  /** A candidatura está pendente de revisão. */
+  PENDING = 'pending',
+  /** A parceria está ativa e aprovada. */
   ACTIVE = 'active',
-  /** Parceiro inativo ou suspenso */
+  /** A parceria está inativa ou suspensa. */
   INACTIVE = 'inactive',
-  /** Parceiro com candidatura rejeitada */
+  /** A candidatura à parceria foi rejeitada. */
   REJECTED = 'rejected',
 }
 
 /**
- * Entidade que representa um parceiro proprietário de uma casa de banho
+ * Representa uma parceria entre um utilizador e uma casa de banho.
  * @table partner
- * @description Empresa/pessoa responsável pela administração de uma casa de banho
  */
 @Entity({ tableName: 'partner' })
 export class PartnerEntity {
   /**
-   * ID interno do parceiro
-   * @field id
-   * @type number
-   * @nullable false
-   * @primary true
-   * @description Identificador único interno
+   * Identificador único interno.
    */
   @PrimaryKey()
   id!: number;
 
   /**
-   * ID público em formato UUID
-   * @field publicId
-   * @type string (UUID)
-   * @nullable false
-   * @unique true
-   * @length 36
-   * @default uuid_v4()
-   * @description Identificador público para referência externa
+   * Identificador público (UUID) para partilha externa através da API.
    */
   @Unique()
   @Index({ name: 'idx_partner_public_id' })
@@ -57,13 +46,7 @@ export class PartnerEntity {
   publicId!: string;
 
   /**
-   * Referência à casa de banho administrada pelo parceiro
-   * @field toilet
-   * @type ToiletEntity
-   * @nullable false
-   * @relationship one-to-one
-   * @unique true
-   * @description Casa de banho proprietária (1:1)
+   * A casa de banho que pertence a esta parceria.
    */
   @Unique({ name: 'idx_partner_toilet_id' })
   @OneToOne(() => ToiletEntity, {
@@ -74,13 +57,7 @@ export class PartnerEntity {
   toilet!: ToiletEntity;
 
   /**
-   * Referência ao utilizador que é proprietário
-   * @field user
-   * @type UserEntity
-   * @nullable true
-   * @relationship one-to-one
-   * @unique true
-   * @description Usuário proprietário (pode ser null se apagado)
+   * O utilizador que é dono desta parceria.
    */
   @Unique({ name: 'idx_partner_user_id' })
   @OneToOne(() => UserEntity, {
@@ -92,46 +69,27 @@ export class PartnerEntity {
   user?: UserEntity;
 
   /**
-   * Certificação/documentação do parceiro
-   * @field certificate
-   * @type string
-   * @nullable false
-   * @length 255
-   * @description Número ou referência de certificação
+   * Documento ou número de certificação que comprova a parceria.
    */
   @Property({ length: 255 })
   certificate!: string;
 
   /**
-   * Endereço eletrónico de contacto do parceiro
-   * @field contactEmail
-   * @type string
-   * @nullable false
-   * @length 100
-   * @description Email para contacto sobre a casa de banho
+   * E-mail de contacto para assuntos relacionados com a parceria.
    */
   @Index({ name: 'idx_partner_contact_email' })
   @Property({ length: 100 })
   contactEmail!: string;
 
   /**
-   * Status atual do parceiro
-   * @field status
-   * @type PartnerStatus (enum)
-   * @nullable false
-   * @description ACTIVE, INACTIVE ou REJECTED
+   * O status atual da parceria.
    */
   @Index({ name: 'idx_partner_status' })
   @Enum(() => PartnerStatus)
   status!: PartnerStatus;
 
   /**
-   * Utilizador que revisou/aprovou a candidatura
-   * @field reviewedBy
-   * @type UserEntity
-   * @nullable true
-   * @relationship many-to-one
-   * @description Admin que revisou a candidatura do parceiro
+   * O administrador que reviu a candidatura de parceria.
    */
   @ManyToOne(() => UserEntity, {
     deleteRule: 'set null',
@@ -141,35 +99,21 @@ export class PartnerEntity {
   reviewedBy?: UserEntity;
 
   /**
-   * Timestamp da revisão da candidatura
-   * @field reviewedAt
-   * @type Date
-   * @nullable true
-   * @description Data/hora quando foi revista a candidatura
+   * Data e hora em que a candidatura foi revista.
    */
   @Index({ name: 'idx_partner_reviewed_at' })
   @Property({ nullable: true })
   reviewedAt?: Date;
 
   /**
-   * Timestamp de criação do registo de parceiro
-   * @field createdAt
-   * @type Date
-   * @nullable false
-   * @default now()
-   * @description Data/hora de criação do registo
+   * Data e hora de criação do registo de parceria.
    */
   @Index({ name: 'idx_partner_created_at' })
   @Property({ onCreate: () => new Date() })
   createdAt: Date = new Date();
 
   /**
-   * Timestamp da última atualização
-   * @field updatedAt
-   * @type Date
-   * @nullable false
-   * @default now()
-   * @description Data/hora da última modificação
+   * Data e hora da última atualização do registo.
    */
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
