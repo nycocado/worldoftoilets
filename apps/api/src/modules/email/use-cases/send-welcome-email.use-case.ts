@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SendHtmlEmailUseCase } from './send-html-email.use-case';
 
+/**
+ * Contém a lógica de negócio para o envio de um email de boas-vindas.
+ */
 @Injectable()
 export class SendWelcomeEmailUseCase {
   constructor(
@@ -9,6 +12,13 @@ export class SendWelcomeEmailUseCase {
     private readonly configService: ConfigService,
   ) {}
 
+  /**
+   * Envia um email de boas-vindas.
+   *
+   * @param {string} to O destinatário do email.
+   * @param {string} userName O nome do utilizador.
+   * @returns {Promise<boolean>} `true` se o email foi enviado com sucesso.
+   */
   async execute(to: string, userName: string): Promise<boolean> {
     const subject = 'Welcome to World of Toilets!';
     const html = `
@@ -21,12 +31,6 @@ export class SendWelcomeEmailUseCase {
           <li>Share your experiences with the community</li>
           <li>Help others find clean and accessible facilities</li>
         </ul>
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${this.configService.get('APP_URL', 'http://localhost:3000')}"
-             style="background-color: #4CAF50; color: white; padding: 14px 28px; text-decoration: none; border-radius: 4px; display: inline-block;">
-            Start Exploring
-          </a>
-        </div>
         <p style="color: #666;">Happy toilet hunting!</p>
       </div>
     `;
