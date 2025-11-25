@@ -5,6 +5,9 @@ import { PasswordResetEntity } from '@database/entities';
 import { VerifyTokenUseCase } from '@modules/password-reset/use-cases/verify-token.use-case';
 import { PasswordResetRepository } from '@modules/password-reset/password-reset.repository';
 
+/**
+ * Gerencia a funcionalidade de redefinição de senha, agrupando seus componentes.
+ */
 @Module({
   imports: [MikroOrmModule.forFeature([PasswordResetEntity])],
   providers: [
