@@ -7,13 +7,17 @@ import {
   TypeExtraApiName,
 } from '@database/entities';
 import { plainToInstance } from 'class-transformer';
+import { UserService } from '@modules/user/user.service';
 
 /**
  * Contém a lógica de negócio para a listagem de casas de banho com filtros.
  */
 @Injectable()
 export class GetToiletsUseCase {
-  constructor(private readonly repository: ToiletRepository) {}
+  constructor(
+    private readonly repository: ToiletRepository,
+    private readonly userService: UserService,
+  ) {}
 
   /**
    * Lista casas de banho com base em filtros opcionais de localização, acesso, status e extras.
@@ -28,6 +32,7 @@ export class GetToiletsUseCase {
    * @param {number} [page] O número da página.
    * @param {number} [size] O tamanho da página.
    * @param {TypeExtraApiName[]} [typeExtra] Filtra por recursos extra.
+   * @param {string} [userPublicId] O ID público do utilizador, para filtrar casas de banho denunciadas por ele.
    * @returns {Promise<ToiletResponseDto[]>} Uma lista de DTOs de casas de banho.
    */
   async execute(
@@ -41,7 +46,12 @@ export class GetToiletsUseCase {
     page?: number,
     size?: number,
     typeExtra?: TypeExtraApiName[],
+    userPublicId?: string,
   ): Promise<ToiletResponseDto[]> {
+    const user = userPublicId
+      ? await this.userService.getUserByPublicId(userPublicId)
+      : undefined;
+
     const toilets = await this.repository.find(
       city,
       country,
@@ -53,6 +63,7 @@ export class GetToiletsUseCase {
       page,
       size,
       typeExtra,
+      user,
     );
 
     return plainToInstance(ToiletResponseDto, toilets, {

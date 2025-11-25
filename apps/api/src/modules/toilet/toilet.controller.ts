@@ -91,6 +91,7 @@ export class ToiletController {
    * Lista casas de banho ativas com filtros opcionais e paginação.
    *
    * @param {GetToiletsRequestDto} getToiletsRequestDto Os parâmetros de paginação e filtros.
+   * @param {jwtTypes.RequestUser} user O utilizador autenticado.
    * @returns {Promise<ApiResponseDto<ToiletResponseDto[]>>} A lista de casas de banho ativas.
    */
   @ApiSwaggerGetToilets()
@@ -99,6 +100,7 @@ export class ToiletController {
   @Get('')
   async getToilets(
     @Query() getToiletsRequestDto: GetToiletsRequestDto,
+    @User() user: jwtTypes.RequestUser,
   ): Promise<ApiResponseDto<ToiletResponseDto[]>> {
     const {
       pageable,
@@ -123,6 +125,7 @@ export class ToiletController {
       page,
       size,
       extras,
+      user.publicId,
     );
 
     return new ApiResponseDto<ToiletResponseDto[]>(
@@ -180,6 +183,7 @@ export class ToiletController {
    * Obtém casas de banho por uma área geográfica definida (bounding box).
    *
    * @param {GetToiletsBoundingBoxRequestDto} boundingBoxDto As coordenadas da área de busca e filtros.
+   * @param {jwtTypes.RequestUser} user O utilizador autenticado.
    * @returns {Promise<ApiResponseDto<ToiletResponseDto[]>>} A lista de casas de banho na área especificada.
    */
   @ApiSwaggerGetToiletsBoundingBox()
@@ -188,6 +192,7 @@ export class ToiletController {
   @Get('bounding-box')
   async getToiletsByBoundingBox(
     @Query() boundingBoxDto: GetToiletsBoundingBoxRequestDto,
+    @User() user: jwtTypes.RequestUser,
   ): Promise<ApiResponseDto<ToiletResponseDto[]>> {
     const { minLat, minLng, maxLat, maxLng, access, extras, timestamp } =
       boundingBoxDto;
@@ -201,6 +206,7 @@ export class ToiletController {
       ToiletStatus.ACTIVE,
       timestamp,
       extras,
+      user.publicId,
     );
 
     return new ApiResponseDto<ToiletResponseDto[]>(
@@ -213,6 +219,7 @@ export class ToiletController {
    * Obtém casas de banho ordenadas por proximidade a um ponto geográfico.
    *
    * @param {GetToiletsProximityRequestDto} proximityDto As coordenadas do ponto de referência e filtros.
+   * @param {jwtTypes.RequestUser} user O utilizador autenticado.
    * @returns {Promise<ApiResponseDto<ToiletResponseDto[]>>} A lista de casas de banho ordenadas por proximidade.
    */
   @ApiSwaggerGetToiletsProximity()
@@ -221,6 +228,7 @@ export class ToiletController {
   @Get('proximity')
   async getToiletsByProximity(
     @Query() proximityDto: GetToiletsProximityRequestDto,
+    @User() user: jwtTypes.RequestUser,
   ): Promise<ApiResponseDto<ToiletResponseDto[]>> {
     const { lat, lng, pageable, page, size, access, timestamp, extras } =
       proximityDto;
@@ -235,6 +243,7 @@ export class ToiletController {
       page,
       size,
       extras,
+      user.publicId,
     );
 
     return new ApiResponseDto<ToiletResponseDto[]>(

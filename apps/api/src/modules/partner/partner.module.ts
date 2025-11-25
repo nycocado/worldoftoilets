@@ -22,6 +22,7 @@ import {
   DeactivatePartnerManageUseCase,
   DeletePartnerManageUseCase,
 } from './use-cases';
+import { EmailVerificationModule } from '@modules/email-verification';
 
 /**
  * Gerencia a funcionalidade de parcerias, agrupando seus componentes.
@@ -34,6 +35,7 @@ import {
     UserCredentialModule,
     RoleModule,
     EmailModule,
+    EmailVerificationModule,
     MinioModule,
   ],
   controllers: [PartnerController],

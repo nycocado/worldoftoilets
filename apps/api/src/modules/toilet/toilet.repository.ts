@@ -3,6 +3,7 @@ import { InjectRepository } from '@mikro-orm/nestjs';
 import {
   AccessApiName,
   AccessEntity,
+  InteractionDiscriminator,
   ToiletEntity,
   ToiletStatus,
   TypeExtraApiName,
@@ -58,6 +59,7 @@ export class ToiletRepository {
    * @param {number} [page] O número da página.
    * @param {number} [size] O tamanho da página.
    * @param {TypeExtraApiName[]} [extras] Filtra por recursos extra.
+   * @param {UserEntity} [user] O utilizador autenticado, para filtrar casas de banho denunciadas por ele.
    * @returns {Promise<ToiletEntity[]>} Uma lista de casas de banho.
    */
   async find(
@@ -71,6 +73,7 @@ export class ToiletRepository {
     page?: number,
     size?: number,
     extras?: TypeExtraApiName[],
+    user?: UserEntity,
   ): Promise<ToiletEntity[]> {
     return this.repository.find(
       {
@@ -88,6 +91,15 @@ export class ToiletRepository {
               },
             },
           }),
+        ...(user && {
+          interactions: {
+            $none: {
+              user: user,
+              discriminator: InteractionDiscriminator.REPORT,
+              deletedAt: null,
+            },
+          },
+        }),
       },
       {
         populate: [
@@ -120,6 +132,7 @@ export class ToiletRepository {
    * @param {ToiletStatus} [status] Filtra por status.
    * @param {Date} [timestamp] Filtra por data de criação/atualização.
    * @param {TypeExtraApiName[]} [extras] Filtra por recursos extra.
+   * @param {UserEntity} [user] O utilizador autenticado, para filtrar casas de banho denunciadas por ele.
    * @returns {Promise<ToiletEntity[]>} Uma lista de casas de banho na área.
    */
   async findByBoundingBox(
@@ -131,6 +144,7 @@ export class ToiletRepository {
     status?: ToiletStatus,
     timestamp?: Date,
     extras?: TypeExtraApiName[],
+    user?: UserEntity,
   ): Promise<ToiletEntity[]> {
     return this.repository.find(
       {
@@ -149,6 +163,15 @@ export class ToiletRepository {
               },
             },
           }),
+        ...(user && {
+          interactions: {
+            $none: {
+              user: user,
+              discriminator: InteractionDiscriminator.REPORT,
+              deletedAt: null,
+            },
+          },
+        }),
       },
       {
         populate: [
@@ -176,6 +199,7 @@ export class ToiletRepository {
    * @param {number} [page] O número da página.
    * @param {number} [size] O tamanho da página.
    * @param {TypeExtraApiName[]} [extras] Filtra por recursos extra.
+   * @param {UserEntity} [user] O utilizador autenticado, para filtrar casas de banho denunciadas por ele.
    * @returns {Promise<ToiletEntity[]>} Uma lista de casas de banho ordenadas por proximidade.
    */
   async findByProximity(
@@ -188,6 +212,7 @@ export class ToiletRepository {
     page?: number,
     size?: number,
     extras?: TypeExtraApiName[],
+    user?: UserEntity,
   ): Promise<ToiletEntity[]> {
     const em = this.repository.getEntityManager();
     const qb = this.repository.createQueryBuilder('t');
@@ -204,6 +229,19 @@ export class ToiletRepository {
     if (timestamp) qb.andWhere({ updatedAt: { $lte: timestamp } });
     if (extras && extras.length > 0) {
       qb.andWhere({ 'extras.apiName': { $in: extras } });
+    }
+
+    // Filtrar casas de banho denunciadas pelo utilizador
+    if (user) {
+      qb.andWhere({
+        interactions: {
+          $none: {
+            user: user,
+            discriminator: InteractionDiscriminator.REPORT,
+            deletedAt: null,
+          },
+        },
+      });
     }
 
     if (extras && extras.length > 0) {
@@ -247,6 +285,7 @@ export class ToiletRepository {
    * @param {number} [page] O número da página.
    * @param {number} [size] O tamanho da página.
    * @param {ToiletStatus} [state] Filtra por status.
+   * @param {UserEntity} [user] O utilizador autenticado, para filtrar casas de banho denunciadas por ele.
    * @returns {Promise<ToiletEntity[]>} Uma lista de casas de banho ordenadas por relevância.
    */
   async findByFullTextSearch(
@@ -255,6 +294,7 @@ export class ToiletRepository {
     page?: number,
     size?: number,
     state?: ToiletStatus,
+    user?: UserEntity,
   ): Promise<ToiletEntity[]> {
     const em = this.repository.getEntityManager();
     const qb = this.repository.createQueryBuilder('t');
@@ -266,6 +306,19 @@ export class ToiletRepository {
     qb.where(`MATCH(t.name, t.address) AGAINST(? IN NATURAL LANGUAGE MODE)`, [
       query,
     ]);
+
+    // Filtrar casas de banho denunciadas pelo utilizador
+    if (user) {
+      qb.andWhere({
+        interactions: {
+          $none: {
+            user: user,
+            discriminator: InteractionDiscriminator.REPORT,
+            deletedAt: null,
+          },
+        },
+      });
+    }
 
     if (pageable && page !== undefined && size !== undefined) {
       qb.limit(size).offset(page * size);

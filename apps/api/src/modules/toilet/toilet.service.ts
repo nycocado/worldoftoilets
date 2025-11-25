@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ToiletRepository } from '@modules/toilet/toilet.repository';
 import { TOILET_EXCEPTIONS } from '@modules/toilet/constants/exceptions.constant';
-import { ToiletEntity, ToiletStatus } from '@database/entities';
+import { ToiletEntity, ToiletStatus, UserEntity } from '@database/entities';
 
 /**
  * Contém a lógica de negócio para as operações relacionadas a casas de banho.
@@ -33,6 +33,7 @@ export class ToiletService {
    * @param {number} [page] O número da página.
    * @param {number} [size] O tamanho da página.
    * @param {ToiletStatus} [status] Filtra por status.
+   * @param {UserEntity} [user] O utilizador autenticado, para filtrar casas de banho denunciadas por ele.
    * @returns {Promise<ToiletEntity[]>} Uma lista de casas de banho encontradas.
    */
   async getToiletsByFullTextSearch(
@@ -41,6 +42,7 @@ export class ToiletService {
     page?: number,
     size?: number,
     status?: ToiletStatus,
+    user?: UserEntity,
   ): Promise<ToiletEntity[]> {
     return this.toiletRepository.findByFullTextSearch(
       query,
@@ -48,6 +50,7 @@ export class ToiletService {
       page,
       size,
       status,
+      user,
     );
   }
 

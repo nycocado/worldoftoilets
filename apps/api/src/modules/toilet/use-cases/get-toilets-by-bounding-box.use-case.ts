@@ -7,13 +7,17 @@ import {
 } from '@database/entities';
 import { ToiletResponseDto } from '@modules/toilet/dto';
 import { plainToInstance } from 'class-transformer';
+import { UserService } from '@modules/user/user.service';
 
 /**
  * Contém a lógica de negócio para a busca de casas de banho dentro de uma área geográfica.
  */
 @Injectable()
 export class GetToiletsByBoundingBoxUseCase {
-  constructor(private readonly repository: ToiletRepository) {}
+  constructor(
+    private readonly repository: ToiletRepository,
+    private readonly userService: UserService,
+  ) {}
 
   /**
    * Busca casas de banho dentro de uma área geográfica retangular (bounding box).
@@ -26,6 +30,7 @@ export class GetToiletsByBoundingBoxUseCase {
    * @param {ToiletStatus} [status] Filtra por status.
    * @param {Date} [timestamp] Filtra por data de criação/atualização.
    * @param {TypeExtraApiName[]} [typeExtra] Filtra por recursos extra.
+   * @param {string} [userPublicId] O ID público do utilizador, para filtrar casas de banho denunciadas por ele.
    * @returns {Promise<ToiletResponseDto[]>} Uma lista de DTOs de casas de banho.
    */
   async execute(
@@ -37,7 +42,12 @@ export class GetToiletsByBoundingBoxUseCase {
     status?: ToiletStatus,
     timestamp?: Date,
     typeExtra?: TypeExtraApiName[],
+    userPublicId?: string,
   ): Promise<ToiletResponseDto[]> {
+    const user = userPublicId
+      ? await this.userService.getUserByPublicId(userPublicId)
+      : undefined;
+
     const toilets = await this.repository.findByBoundingBox(
       minLat,
       minLng,
@@ -47,6 +57,7 @@ export class GetToiletsByBoundingBoxUseCase {
       status,
       timestamp,
       typeExtra,
+      user,
     );
 
     return plainToInstance(ToiletResponseDto, toilets, {

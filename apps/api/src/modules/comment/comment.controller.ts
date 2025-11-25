@@ -92,6 +92,7 @@ export class CommentController {
   async getCommentsByToilet(
     @Param('publicId') publicId: string,
     @Query() getByToiletsRequestDto: GetCommentsRequestDto,
+    @User() user: jwtTypes.RequestUser,
   ): Promise<ApiResponseDto<CommentResponseDto[]>> {
     const { pageable, page, size, timestamp } = getByToiletsRequestDto || {};
 
@@ -102,6 +103,7 @@ export class CommentController {
       size,
       CommentState.VISIBLE,
       timestamp,
+      user.publicId,
     );
 
     return new ApiResponseDto<CommentResponseDto[]>(
