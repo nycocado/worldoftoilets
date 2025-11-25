@@ -10,12 +10,6 @@ import {
 } from '@nestjs/swagger';
 import { SuggestionResponseDto } from '@modules/suggestion/dto';
 
-/**
- * Decorador Swagger para Reverter Sugestão para Pendente
- *
- * @function ApiSwaggerPendingSuggestion
- * @description Decorator que documenta o endpoint PUT /suggestion/:publicId/manage/pending no Swagger.
- */
 export const ApiSwaggerPendingSuggestion = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

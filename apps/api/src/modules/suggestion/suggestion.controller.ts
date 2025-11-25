@@ -48,6 +48,9 @@ import {
   ApiSwaggerPublishSuggestionImage,
 } from '@modules/suggestion/swagger';
 
+/**
+ * Gerencia as requisições HTTP para operações relacionadas a sugestões.
+ */
 @ApiTags('Suggestion')
 @Controller('suggestion')
 export class SuggestionController {
@@ -62,6 +65,14 @@ export class SuggestionController {
     private readonly publishSuggestionImageUseCase: PublishSuggestionImageUseCase,
   ) {}
 
+  /**
+   * Cria uma nova sugestão de casa de banho.
+   *
+   * @param {CreateSuggestionRequestDto} createSuggestionDto Os dados da sugestão.
+   * @param {jwtTypes.RequestUser} user O utilizador que está a criar a sugestão.
+   * @param {Express.Multer.File} file A imagem da casa de banho.
+   * @returns {Promise<ApiResponseDto<SuggestionResponseDto>>} A sugestão criada.
+   */
   @ApiSwaggerCreateSuggestion()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.SUGGEST_TOILETS)
@@ -107,6 +118,13 @@ export class SuggestionController {
     );
   }
 
+  /**
+   * Obtém as sugestões do próprio utilizador.
+   *
+   * @param {GetSuggestionsRequestDto} getSuggestionsRequestDto Os parâmetros de paginação e filtros.
+   * @param {jwtTypes.RequestUser} user O utilizador autenticado.
+   * @returns {Promise<ApiResponseDto<SuggestionResponseDto[]>>} A lista de sugestões do utilizador.
+   */
   @ApiSwaggerGetSuggestions()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.SUGGEST_TOILETS)
@@ -131,6 +149,12 @@ export class SuggestionController {
     );
   }
 
+  /**
+   * Obtém uma sugestão pelo seu ID público.
+   *
+   * @param {string} publicId O ID público da sugestão.
+   * @returns {Promise<ApiResponseDto<SuggestionResponseDto>>} A sugestão encontrada.
+   */
   @ApiSwaggerGetSuggestion()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.SUGGEST_TOILETS)
@@ -145,6 +169,12 @@ export class SuggestionController {
     );
   }
 
+  /**
+   * Obtém todas as sugestões para gestão.
+   *
+   * @param {GetSuggestionsRequestDto} getSuggestionsRequestDto Os parâmetros de paginação e filtros.
+   * @returns {Promise<ApiResponseDto<SuggestionResponseDto[]>>} A lista de sugestões.
+   */
   @ApiSwaggerGetSuggestionsManage()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.VIEW_SUGGEST_TOILETS)
@@ -167,6 +197,13 @@ export class SuggestionController {
     );
   }
 
+  /**
+   * Aceita uma sugestão.
+   *
+   * @param {string} publicId O ID público da sugestão.
+   * @param {jwtTypes.RequestUser} user O utilizador que está a aceitar a sugestão.
+   * @returns {Promise<ApiResponseDto<SuggestionResponseDto>>} A sugestão aceite.
+   */
   @ApiSwaggerAcceptSuggestion()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.REVIEW_SUGGEST_TOILETS)
@@ -185,6 +222,13 @@ export class SuggestionController {
     );
   }
 
+  /**
+   * Rejeita uma sugestão.
+   *
+   * @param {string} publicId O ID público da sugestão.
+   * @param {jwtTypes.RequestUser} user O utilizador que está a rejeitar a sugestão.
+   * @returns {Promise<ApiResponseDto<SuggestionResponseDto>>} A sugestão rejeitada.
+   */
   @ApiSwaggerRejectSuggestion()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.REVIEW_SUGGEST_TOILETS)
@@ -203,6 +247,12 @@ export class SuggestionController {
     );
   }
 
+  /**
+   * Define o estado de uma sugestão como pendente.
+   *
+   * @param {string} publicId O ID público da sugestão.
+   * @returns {Promise<ApiResponseDto<SuggestionResponseDto>>} A sugestão com o estado atualizado.
+   */
   @ApiSwaggerPendingSuggestion()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.REVIEW_SUGGEST_TOILETS)
@@ -217,6 +267,12 @@ export class SuggestionController {
     );
   }
 
+  /**
+   * Publica a imagem de uma sugestão.
+   *
+   * @param {string} publicId O ID público da sugestão.
+   * @returns {Promise<ApiResponseDto<SuggestionResponseDto>>} A sugestão com a imagem publicada.
+   */
   @ApiSwaggerPublishSuggestionImage()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.REVIEW_SUGGEST_TOILETS)

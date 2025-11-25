@@ -14,13 +14,19 @@ import {
 import { Type } from 'class-transformer';
 import { IsValidCountry } from '@common/decorators';
 
+/**
+ * DTO para os detalhes de uma casa de banho sugerida.
+ */
 export class ToiletSuggestionRequestDto {
-  @ApiProperty({ enum: AccessApiName })
+  @ApiProperty({
+    description: 'O tipo de acesso da casa de banho.',
+    enum: AccessApiName,
+  })
   @IsEnum(AccessApiName)
   @IsNotEmpty()
   access!: AccessApiName;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'O nome da casa de banho.' })
   @IsString()
   @MinLength(1)
   @MaxLength(50)
@@ -28,7 +34,7 @@ export class ToiletSuggestionRequestDto {
   @Type(() => String)
   name!: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'A morada da casa de banho.' })
   @IsString()
   @MinLength(1)
   @MaxLength(255)
@@ -36,33 +42,36 @@ export class ToiletSuggestionRequestDto {
   @Type(() => String)
   address!: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'A latitude da casa de banho.' })
   @IsLatitude()
   @IsNotEmpty()
   @Type(() => Number)
   latitude!: number;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'A longitude da casa de banho.' })
   @IsLongitude()
   @IsNotEmpty()
   @Type(() => Number)
   longitude!: number;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'A cidade da casa de banho.' })
   @IsString()
   @MaxLength(100)
   @IsNotEmpty()
   @Type(() => String)
   city!: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({
+    description: 'O estado/distrito da casa de banho.',
+    required: false,
+  })
   @IsString()
   @MaxLength(100)
   @IsOptional()
   @Type(() => String)
   state?: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'O país da casa de banho.' })
   @IsString()
   @MaxLength(100)
   @IsNotEmpty()
@@ -70,7 +79,10 @@ export class ToiletSuggestionRequestDto {
   @Type(() => String)
   country!: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({
+    description: 'O ID do Google Places da casa de banho.',
+    required: false,
+  })
   @IsString()
   @MaxLength(255)
   @IsOptional()
@@ -78,6 +90,7 @@ export class ToiletSuggestionRequestDto {
   placeId?: string;
 
   @ApiProperty({
+    description: 'A lista de extras da casa de banho.',
     required: false,
     enum: TypeExtraApiName,
     isArray: true,

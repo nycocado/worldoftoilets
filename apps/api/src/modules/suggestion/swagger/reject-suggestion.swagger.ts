@@ -10,12 +10,6 @@ import {
 } from '@nestjs/swagger';
 import { SuggestionResponseDto } from '@modules/suggestion/dto';
 
-/**
- * Decorador Swagger para Rejeitar Sugestão
- *
- * @function ApiSwaggerRejectSuggestion
- * @description Decorator que documenta o endpoint PUT /suggestion/:publicId/manage/reject no Swagger.
- */
 export const ApiSwaggerRejectSuggestion = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

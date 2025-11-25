@@ -1,1 +1,1 @@
-export * from './search-toilets.swagger.ts';
+export * from './search-toilets.swagger';

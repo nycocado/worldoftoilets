@@ -22,6 +22,9 @@ import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/mariadb';
 import { TOILET_EXCEPTIONS } from '@modules/toilet/constants/exceptions.constant';
 
+/**
+ * Contém a lógica de negócio para a criação de uma nova sugestão.
+ */
 @Injectable()
 export class CreateSuggestionUseCase {
   constructor(
@@ -38,6 +41,24 @@ export class CreateSuggestionUseCase {
     private readonly countryService: CountryService,
   ) {}
 
+  /**
+   * Cria e persiste uma nova sugestão de casa de banho.
+   *
+   * @param {string} userPublicId O ID público do utilizador.
+   * @param {number} latitude A latitude da sugestão.
+   * @param {number} longitude A longitude da sugestão.
+   * @param {AccessApiName} accessApiName O tipo de acesso da casa de banho.
+   * @param {string} name O nome da casa de banho.
+   * @param {string} address A morada da casa de banho.
+   * @param {string} city A cidade da casa de banho.
+   * @param {string | undefined} state O estado/distrito da casa de banho.
+   * @param {string} country O país da casa de banho.
+   * @param {string | undefined} placeId O ID do Google Places.
+   * @param {TypeExtraApiName[]} [extrasApiNames] A lista de extras da casa de banho.
+   * @param {Express.Multer.File} [file] A imagem da casa de banho.
+   * @returns {Promise<SuggestionResponseDto>} O DTO da sugestão criada.
+   * @throws {BadRequestException} Se o código do país for inválido.
+   */
   @Transactional()
   async execute(
     userPublicId: string,

@@ -8,6 +8,9 @@ import {
 } from '@database/entities';
 import { EntityRepository, Transactional } from '@mikro-orm/mariadb';
 
+/**
+ * Gerencia o acesso e a persistência de dados para a entidade Suggestion.
+ */
 @Injectable()
 export class SuggestionRepository {
   constructor(
@@ -15,6 +18,12 @@ export class SuggestionRepository {
     private readonly repository: EntityRepository<SuggestionEntity>,
   ) {}
 
+  /**
+   * Busca uma sugestão pelo seu ID público.
+   *
+   * @param {string} publicId O ID público da sugestão.
+   * @returns {Promise<SuggestionEntity | null>} A entidade da sugestão ou `null` se não for encontrada.
+   */
   async findByPublicId(publicId: string): Promise<SuggestionEntity | null> {
     return this.repository.findOne(
       { publicId },
@@ -37,6 +46,15 @@ export class SuggestionRepository {
     );
   }
 
+  /**
+   * Busca sugestões com base em filtros.
+   *
+   * @param {SuggestionStatus} [status] Filtra por status.
+   * @param {boolean} [pageable] Ativa a paginação.
+   * @param {number} [page] O número da página.
+   * @param {number} [size] O tamanho da página.
+   * @returns {Promise<SuggestionEntity[]>} Uma lista de sugestões.
+   */
   async find(
     status?: SuggestionStatus,
     pageable?: boolean,
@@ -72,6 +90,16 @@ export class SuggestionRepository {
     );
   }
 
+  /**
+   * Busca sugestões de um utilizador específico.
+   *
+   * @param {string} userPublicId O ID público do utilizador.
+   * @param {SuggestionStatus} [status] Filtra por status.
+   * @param {boolean} [pageable] Ativa a paginação.
+   * @param {number} [page] O número da página.
+   * @param {number} [size] O tamanho da página.
+   * @returns {Promise<SuggestionEntity[]>} Uma lista de sugestões.
+   */
   async findByUser(
     userPublicId: string,
     status?: SuggestionStatus,
@@ -109,6 +137,14 @@ export class SuggestionRepository {
     );
   }
 
+  /**
+   * Cria uma nova sugestão.
+   *
+   * @param {InteractionEntity} interaction A interação associada.
+   * @param {number} latitude A latitude da sugestão.
+   * @param {number} longitude A longitude da sugestão.
+   * @returns {Promise<SuggestionEntity>} A sugestão criada.
+   */
   @Transactional()
   async create(
     interaction: InteractionEntity,
@@ -125,6 +161,13 @@ export class SuggestionRepository {
     return suggestion;
   }
 
+  /**
+   * Aceita uma sugestão.
+   *
+   * @param {SuggestionEntity} suggestion A sugestão a ser aceite.
+   * @param {UserEntity} reviewer O utilizador que está a rever a sugestão.
+   * @returns {Promise<SuggestionEntity>} A sugestão atualizada.
+   */
   @Transactional()
   async acceptSuggestion(
     suggestion: SuggestionEntity,
@@ -138,6 +181,13 @@ export class SuggestionRepository {
     return suggestion;
   }
 
+  /**
+   * Rejeita uma sugestão.
+   *
+   * @param {SuggestionEntity} suggestion A sugestão a ser rejeitada.
+   * @param {UserEntity} reviewer O utilizador que está a rever a sugestão.
+   * @returns {Promise<SuggestionEntity>} A sugestão atualizada.
+   */
   @Transactional()
   async rejectSuggestion(
     suggestion: SuggestionEntity,
@@ -151,6 +201,12 @@ export class SuggestionRepository {
     return suggestion;
   }
 
+  /**
+   * Define o estado de uma sugestão como pendente.
+   *
+   * @param {SuggestionEntity} suggestion A sugestão a ser atualizada.
+   * @returns {Promise<SuggestionEntity>} A sugestão atualizada.
+   */
   @Transactional()
   async setPending(suggestion: SuggestionEntity): Promise<SuggestionEntity> {
     const em = this.repository.getEntityManager();
@@ -161,6 +217,13 @@ export class SuggestionRepository {
     return suggestion;
   }
 
+  /**
+   * Realiza o soft delete de uma sugestão.
+   *
+   * @param {SuggestionEntity} suggestion A sugestão a ser deletada.
+   * @param {UserEntity} deletedBy O utilizador que realiza a exclusão.
+   * @returns {Promise<void>}
+   */
   @Transactional()
   async softDelete(
     suggestion: SuggestionEntity,
@@ -172,6 +235,12 @@ export class SuggestionRepository {
     await em.flush();
   }
 
+  /**
+   * Remove uma sugestão permanentemente.
+   *
+   * @param {SuggestionEntity} suggestion A sugestão a ser removida.
+   * @returns {Promise<void>}
+   */
   @Transactional()
   async delete(suggestion: SuggestionEntity): Promise<void> {
     const em = this.repository.getEntityManager();

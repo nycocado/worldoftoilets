@@ -21,6 +21,9 @@ import { TypeExtraModule } from '@modules/type-extra';
 import { ToiletModule } from '@modules/toilet';
 import { MinioModule } from '@modules/minio';
 
+/**
+ * Gerencia a funcionalidade de sugestões, agrupando seus componentes.
+ */
 @Module({
   imports: [
     MikroOrmModule.forFeature([SuggestionEntity, ToiletEntity]),

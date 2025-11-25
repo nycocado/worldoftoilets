@@ -9,6 +9,9 @@ import { SuggestionStatus, ToiletStatus } from '@database/entities';
 import { SUGGESTION_EXCEPTIONS } from '@modules/suggestion/constants/exceptions.constant';
 import { plainToInstance } from 'class-transformer';
 
+/**
+ * Contém a lógica de negócio para aceitar uma sugestão.
+ */
 @Injectable()
 export class AcceptSuggestionUseCase {
   constructor(
@@ -18,6 +21,14 @@ export class AcceptSuggestionUseCase {
     private readonly toiletService: ToiletService,
   ) {}
 
+  /**
+   * Aceita uma sugestão e ativa a casa de banho correspondente.
+   *
+   * @param {string} suggestionPublicId O ID público da sugestão.
+   * @param {string} reviewerPublicId O ID público do revisor.
+   * @returns {Promise<SuggestionResponseDto>} A sugestão aceite.
+   * @throws {ConflictException} Se a sugestão não estiver pendente.
+   */
   @Transactional()
   async execute(
     suggestionPublicId: string,
