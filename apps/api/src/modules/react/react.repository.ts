@@ -12,6 +12,9 @@ import {
   Transactional,
 } from '@mikro-orm/mariadb';
 
+/**
+ * Interface para a contagem de reações de um comentário.
+ */
 export interface CommentReactionCount {
   commentId: number;
   publicId: string;
@@ -19,6 +22,9 @@ export interface CommentReactionCount {
   dislikes: number;
 }
 
+/**
+ * Gerencia o acesso e a persistência de dados para a entidade React.
+ */
 @Injectable()
 export class ReactRepository {
   constructor(
@@ -27,6 +33,13 @@ export class ReactRepository {
     private readonly em: EntityManager,
   ) {}
 
+  /**
+   * Busca uma reação de um utilizador a um comentário específico.
+   *
+   * @param {UserEntity} user O utilizador que reagiu.
+   * @param {CommentEntity} comment O comentário que recebeu a reação.
+   * @returns {Promise<ReactEntity | null>} A entidade da reação ou `null` se não for encontrada.
+   */
   async findByUserAndComment(
     user: UserEntity,
     comment: CommentEntity,
@@ -37,6 +50,14 @@ export class ReactRepository {
     });
   }
 
+  /**
+   * Cria uma nova reação.
+   *
+   * @param {UserEntity} user O utilizador que está a reagir.
+   * @param {CommentEntity} comment O comentário que está a receber a reação.
+   * @param {ReactDiscriminator} discriminator O tipo de reação (like/dislike).
+   * @returns {Promise<ReactEntity>} A entidade da reação criada.
+   */
   @Transactional()
   async create(
     user: UserEntity,
@@ -52,6 +73,13 @@ export class ReactRepository {
     return react;
   }
 
+  /**
+   * Atualiza o tipo de uma reação existente.
+   *
+   * @param {ReactEntity} react A reação a ser atualizada.
+   * @param {ReactDiscriminator} discriminator O novo tipo de reação.
+   * @returns {Promise<ReactEntity>} A entidade da reação atualizada.
+   */
   @Transactional()
   async update(
     react: ReactEntity,
@@ -63,6 +91,12 @@ export class ReactRepository {
     return react;
   }
 
+  /**
+   * Remove uma reação.
+   *
+   * @param {ReactEntity} react A reação a ser removida.
+   * @returns {Promise<void>}
+   */
   @Transactional()
   async delete(react: ReactEntity): Promise<void> {
     const em = this.repository.getEntityManager();

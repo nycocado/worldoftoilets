@@ -4,6 +4,9 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { ReactEntity } from '@database/entities';
 import { ReactRepository } from '@modules/react/react.repository';
 
+/**
+ * Gerencia a funcionalidade de reações, agrupando seus componentes.
+ */
 @Module({
   imports: [MikroOrmModule.forFeature([ReactEntity])],
   providers: [ReactService, ReactRepository],
