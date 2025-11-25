@@ -7,13 +7,6 @@ import {
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
 
-/**
- * Decorador Swagger para Deletar Resposta (Moderação)
- *
- * @function ApiSwaggerDeleteReplyManage
- * @description Decorator que documenta o endpoint DELETE /reply/:publicId/manage no Swagger.
- * Inclui documentação da operação e respostas.
- */
 export const ApiSwaggerDeleteReplyManage = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

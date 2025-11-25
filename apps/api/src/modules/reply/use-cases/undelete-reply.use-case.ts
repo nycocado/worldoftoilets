@@ -6,48 +6,18 @@ import { ReplyResponseDto } from '@modules/reply/dto';
 import { plainToInstance } from 'class-transformer';
 
 /**
- * Caso de Uso para Recuperar Resposta Deletada (Moderação)
- *
- * @class UndeleteReplyUseCase
- * @description Implementa a lógica de recuperar uma resposta soft-deleted.
- * Reverte soft delete e restaura estado VISIBLE.
- *
- * @implements
- *   - Validação de existência da resposta
- *   - Reversão do soft delete
- *   - Restauração do estado VISIBLE
- *
- * @example
- * const reply = await undeleteReplyUseCase.execute('reply-public-id');
- *
- * @throws {NotFoundException} Se resposta não existir
- *
- * @see ReplyRepository - Repositório para operações de resposta
+ * Contém a lógica de negócio para restaurar uma resposta que sofreu soft delete.
  */
 @Injectable()
 export class UndeleteReplyUseCase {
-  /**
-   * Construtor do UndeleteReplyUseCase
-   *
-   * @param {ReplyRepository} repository - Repositório de respostas
-   */
   constructor(private readonly repository: ReplyRepository) {}
 
   /**
-   * Executar caso de uso de recuperar resposta deletada
+   * Restaura uma resposta que sofreu soft delete.
    *
-   * @async
-   * @transactional Executa dentro de transação
-   * @param {string} publicId - Identificador público da resposta
-   * @returns {Promise<ReplyResponseDto>} DTO da resposta recuperada
-   * @throws {NotFoundException} Se resposta não existir
-   *
-   * @description
-   * 1. Busca resposta por publicId
-   * 2. Valida existência da resposta
-   * 3. Reverte soft delete (limpa deletedBy e deletedAt)
-   * 4. Restaura estado para VISIBLE
-   * 5. Retorna DTO completo da resposta
+   * @param {string} publicId O ID público da resposta a ser restaurada.
+   * @returns {Promise<ReplyResponseDto>} O DTO da resposta restaurada.
+   * @throws {NotFoundException} Se a resposta não for encontrada.
    */
   @Transactional()
   async execute(publicId: string): Promise<ReplyResponseDto> {

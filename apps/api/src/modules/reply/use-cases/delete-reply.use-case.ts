@@ -9,57 +9,23 @@ import { REPLY_EXCEPTIONS } from '@modules/reply/constants/exceptions.constant';
 import { UserService } from '@modules/user';
 
 /**
- * Caso de Uso para Deletar Resposta Própria
- *
- * @class DeleteReplyUseCase
- * @description Implementa a lógica de soft delete de resposta pelo próprio autor.
- * Valida propriedade da resposta antes de permitir exclusão.
- *
- * @implements
- *   - Validação de existência da resposta
- *   - Verificação de propriedade (apenas autor pode deletar)
- *   - Soft delete da resposta
- *
- * @example
- * await deleteReplyUseCase.execute('reply-public-id', userId);
- * // Marca resposta como deletada (pode ser recuperada antes de expirar)
- *
- * @throws {NotFoundException} Se resposta não existir
- * @throws {UnauthorizedException} Se utilizador não for o autor da resposta
- *
- * @see ReplyRepository - Repositório para operações de resposta
+ * Contém a lógica de negócio para o soft delete de uma resposta pelo seu autor.
  */
 @Injectable()
 export class DeleteReplyUseCase {
-  /**
-   * Construtor do DeleteReplyUseCase
-   *
-   * @param {ReplyRepository} repository - Repositório de respostas
-   * @param {UserService} userService - Serviço para operações de utilizador
-   */
   constructor(
     private readonly repository: ReplyRepository,
     private readonly userService: UserService,
   ) {}
 
   /**
-   * Executar caso de uso de deletar resposta própria
+   * Realiza o soft delete de uma resposta, verificando a autoria.
    *
-   * @async
-   * @transactional Executa dentro de transação
-   * @param {string} replyPublicId - Identificador público da resposta
-   * @param {string} userPublicId - ID público do utilizador (autor)
+   * @param {string} replyPublicId O ID público da resposta.
+   * @param {string} userPublicId O ID público do autor da resposta.
    * @returns {Promise<void>}
-   * @throws {NotFoundException} Se resposta não existir
-   * @throws {UnauthorizedException} Se utilizador não for o autor
-   *
-   * @description
-   * 1. Busca utilizador por publicId
-   * 2. Busca resposta por publicId
-   * 3. Valida existência da resposta
-   * 4. Verifica se utilizador é o autor da resposta
-   * 5. Marca resposta como soft deleted
-   * Resposta pode ser recuperada com undelete antes do período de retenção expirar.
+   * @throws {NotFoundException} Se a resposta não for encontrada.
+   * @throws {UnauthorizedException} Se o utilizador não for o autor da resposta.
    */
   @Transactional()
   async execute(replyPublicId: string, userPublicId: string): Promise<void> {

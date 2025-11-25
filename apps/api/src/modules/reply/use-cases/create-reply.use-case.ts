@@ -7,33 +7,10 @@ import { ReplyResponseDto } from '@modules/reply/dto';
 import { plainToInstance } from 'class-transformer';
 
 /**
- * Caso de Uso para Criar Resposta
- *
- * @class CreateReplyUseCase
- * @description Implementa a lógica de criação de nova resposta a um comentário.
- *
- * @implements
- *   - Validação de existência de utilizador e comentário
- *   - Criação de resposta com texto obrigatório
- *
- * @example
- * const reply = await createReplyUseCase.execute(
- *   userId,
- *   'comment-public-id',
- *   'Concordo completamente!'
- * );
- *
- * @see ReplyRepository - Repositório para persistência
+ * Contém a lógica de negócio para a criação de uma nova resposta.
  */
 @Injectable()
 export class CreateReplyUseCase {
-  /**
-   * Construtor do CreateReplyUseCase
-   *
-   * @param {ReplyRepository} repository - Repositório de respostas
-   * @param {UserService} userService - Serviço para operações de utilizador
-   * @param {CommentService} commentService - Serviço para operações de comentário
-   */
   constructor(
     private readonly repository: ReplyRepository,
     private readonly userService: UserService,
@@ -41,21 +18,13 @@ export class CreateReplyUseCase {
   ) {}
 
   /**
-   * Executar caso de uso de criar resposta
+   * Cria uma nova resposta para um comentário.
    *
-   * @async
-   * @transactional Executa dentro de transação
-   * @param {string} userPublicId - ID público do utilizador
-   * @param {string} commentPublicId - Identificador público do comentário
-   * @param {string} text - Texto da resposta
-   * @returns {Promise<ReplyResponseDto>} DTO da resposta criada
-   * @throws {NotFoundException} Se utilizador ou comentário não forem encontrados
-   *
-   * @description
-   * 1. Busca utilizador por publicId
-   * 2. Busca comentário por publicId
-   * 3. Cria resposta com texto
-   * 4. Retorna DTO completo da resposta criada
+   * @param {string} userPublicId O ID público do utilizador.
+   * @param {string} commentPublicId O ID público do comentário.
+   * @param {string} text O texto da resposta.
+   * @returns {Promise<ReplyResponseDto>} O DTO da resposta criada.
+   * @throws {NotFoundException} Se o utilizador ou o comentário não forem encontrados.
    */
   @Transactional()
   async execute(

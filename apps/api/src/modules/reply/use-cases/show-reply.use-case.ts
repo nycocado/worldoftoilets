@@ -11,49 +11,19 @@ import { plainToInstance } from 'class-transformer';
 import { ReplyState } from '@database/entities';
 
 /**
- * Caso de Uso para Mostrar Resposta (Moderação)
- *
- * @class ShowReplyUseCase
- * @description Implementa a lógica de tornar uma resposta visível.
- * Altera estado de HIDDEN para VISIBLE.
- *
- * @implements
- *   - Validação de existência da resposta
- *   - Alteração de estado para VISIBLE
- *
- * @example
- * const reply = await showReplyUseCase.execute('reply-public-id');
- *
- * @throws {NotFoundException} Se resposta não existir
- * @throws {ConflictException} Se resposta foi deletada
- *
- * @see ReplyRepository - Repositório para operações de resposta
+ * Contém a lógica de negócio para tornar uma resposta visível.
  */
 @Injectable()
 export class ShowReplyUseCase {
-  /**
-   * Construtor do ShowReplyUseCase
-   *
-   * @param {ReplyRepository} repository - Repositório de respostas
-   */
   constructor(private readonly repository: ReplyRepository) {}
 
   /**
-   * Executar caso de uso de mostrar resposta
+   * Torna uma resposta visível, alterando seu estado para 'VISIBLE'.
    *
-   * @async
-   * @transactional Executa dentro de transação
-   * @param {string} publicId - Identificador público da resposta
-   * @returns {Promise<ReplyResponseDto>} DTO da resposta tornada visível
-   * @throws {NotFoundException} Se resposta não existir
-   * @throws {ConflictException} Se resposta foi deletada
-   *
-   * @description
-   * 1. Busca resposta por publicId
-   * 2. Valida existência da resposta
-   * 3. Verifica se resposta não foi deletada
-   * 4. Altera estado para VISIBLE
-   * 5. Retorna DTO completo da resposta
+   * @param {string} publicId O ID público da resposta.
+   * @returns {Promise<ReplyResponseDto>} O DTO da resposta atualizada.
+   * @throws {NotFoundException} Se a resposta não for encontrada.
+   * @throws {ConflictException} Se a resposta já foi deletada.
    */
   @Transactional()
   async execute(publicId: string): Promise<ReplyResponseDto> {

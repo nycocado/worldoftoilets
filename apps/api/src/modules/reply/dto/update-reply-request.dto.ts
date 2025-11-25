@@ -3,28 +3,15 @@ import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 /**
- * DTO de Request para Atualizar Resposta
- *
- * @class UpdateReplyRequestDto
- * @description Transfer Object para requisição de atualização de resposta existente
- *
- * @property {string} text - Novo texto da resposta (1-280 caracteres)
- *
- * @example
- * {
- *   "text": "Concordo completamente! Atualizado."
- * }
+ * DTO para a operação de atualização de uma resposta.
  */
 export class UpdateReplyRequestDto {
-  /**
-   * Novo texto da resposta
-   *
-   * @type {string}
-   * @length 1-280
-   * @description Texto atualizado da resposta ao comentário
-   * @example "Concordo completamente! Atualizado."
-   */
-  @ApiProperty({ required: false })
+  @ApiProperty({
+    description: 'O novo texto da resposta.',
+    minLength: 1,
+    maxLength: 280,
+    required: false,
+  })
   @IsString()
   @MinLength(1)
   @MaxLength(280)

@@ -9,13 +9,6 @@ import {
 } from '@nestjs/swagger';
 import { ReplyResponseDto } from '@modules/reply/dto';
 
-/**
- * Decorador Swagger para Mostrar Resposta (Moderação)
- *
- * @function ApiSwaggerShowReply
- * @description Decorator que documenta o endpoint PUT /reply/:publicId/manage/show no Swagger.
- * Inclui documentação da operação e respostas.
- */
 export const ApiSwaggerShowReply = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({
