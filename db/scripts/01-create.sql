@@ -135,7 +135,7 @@ CREATE TABLE
     public_id      CHAR(36)                                           NOT NULL DEFAULT uuid_v4(),
     toilet_id      INT                                                NOT NULL,
     user_id        INT                                                NULL,
-    certificate    VARCHAR(255)                                       NOT NULL,
+    certificate    VARCHAR(255)                                       NULL,
     contact_email  VARCHAR(100)                                       NOT NULL,
     status         ENUM ('active', 'inactive', 'rejected', 'pending') NOT NULL,
     reviewed_by_id INT                                                NULL,

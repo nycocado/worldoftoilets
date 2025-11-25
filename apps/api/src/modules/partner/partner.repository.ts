@@ -169,7 +169,7 @@ export class PartnerRepository {
    */
   async create(
     toilet: ToiletEntity,
-    certificate: string,
+    certificate: string | undefined,
     contactEmail: string,
   ): Promise<PartnerEntity> {
     const em = this.repository.getEntityManager();
@@ -180,6 +180,23 @@ export class PartnerRepository {
     partner.status = PartnerStatus.PENDING;
     await em.persistAndFlush(partner);
     return partner;
+  }
+
+  /**
+   * Atualiza o certificado de uma parceria.
+   *
+   * @param {PartnerEntity} partner A entidade da parceria.
+   * @param {string} certificateUrl A nova URL do certificado.
+   * @returns {Promise<void>}
+   */
+  @Transactional()
+  async updateCertificate(
+    partner: PartnerEntity,
+    certificateUrl: string,
+  ): Promise<void> {
+    const em = this.repository.getEntityManager();
+    partner.certificate = certificateUrl;
+    await em.flush();
   }
 
   /**

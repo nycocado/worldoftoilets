@@ -18,4 +18,7 @@ export const SUGGESTION_EXCEPTIONS = {
   INVALID_IMAGE_URL_FORMAT: 'Invalid image URL format.',
   INVALID_IMAGE_TYPE: 'Invalid image type.',
   IMAGE_TOO_LARGE: 'Image too large (max 5MB).',
+  NOT_SUGGESTION_AUTHOR: 'You are not the author of this suggestion.',
+  CANNOT_UPDATE_REVIEWED_SUGGESTION:
+    'Cannot update image for reviewed suggestions.',
 };

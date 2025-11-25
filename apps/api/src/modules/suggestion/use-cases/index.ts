@@ -1,4 +1,5 @@
 export * from './create-suggestion.use-case';
+export * from './upload-suggestion-image.use-case';
 export * from './get-suggestions.use-case';
 export * from './get-suggestion-by-public-id.use-case';
 export * from './get-suggestions-by-user.use-case';

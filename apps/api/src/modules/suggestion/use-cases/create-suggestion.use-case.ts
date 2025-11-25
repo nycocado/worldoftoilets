@@ -72,7 +72,6 @@ export class CreateSuggestionUseCase {
     country: string,
     placeId: string | undefined,
     extrasApiNames?: TypeExtraApiName[],
-    file?: Express.Multer.File,
   ): Promise<SuggestionResponseDto> {
     const finalCountryCode = this.countryService.getCountryCode(country);
 
@@ -112,27 +111,6 @@ export class CreateSuggestionUseCase {
       latitude,
       longitude,
     );
-
-    if (file) {
-      const {
-        buffer: sanitizedBuffer,
-        extension,
-        mimeType,
-      } = await this.imageValidationService.validateAndProcessImage(
-        file.buffer,
-      );
-
-      const fileName = await this.minioService.generateUniqueFileName(
-        'suggestions',
-        extension,
-      );
-      await this.minioService.uploadFile(sanitizedBuffer, fileName, mimeType);
-      const publicUrl = this.minioService.getPublicFileUrl(fileName);
-
-      const em = this.entityRepository.getEntityManager();
-      suggestion.photoUrl = publicUrl;
-      await em.flush();
-    }
 
     return plainToInstance(SuggestionResponseDto, suggestion, {
       excludeExtraneousValues: true,

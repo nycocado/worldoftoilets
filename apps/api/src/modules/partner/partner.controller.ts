@@ -34,6 +34,7 @@ import {
 } from '@modules/partner/dto';
 import {
   ApplyPartnerUseCase,
+  UploadPartnerCertificateUseCase,
   GetPartnerSelfUseCase,
   UpdatePartnerSelfUseCase,
   GetPartnersManageUseCase,
@@ -56,6 +57,7 @@ import {
   ApiSwaggerDeactivatePartnerManage,
   ApiSwaggerDeletePartnerManage,
 } from '@modules/partner/swagger';
+import { ApiUploadCertificateSwagger } from '@modules/partner/swagger/upload-certificate.swagger';
 
 /**
  * Gerencia as requisições HTTP para operações relacionadas a parcerias.
@@ -65,6 +67,7 @@ import {
 export class PartnerController {
   constructor(
     private readonly applyPartnerUseCase: ApplyPartnerUseCase,
+    private readonly uploadPartnerCertificateUseCase: UploadPartnerCertificateUseCase,
     private readonly getPartnerSelfUseCase: GetPartnerSelfUseCase,
     private readonly updatePartnerSelfUseCase: UpdatePartnerSelfUseCase,
     private readonly getPartnersManageUseCase: GetPartnersManageUseCase,
@@ -80,17 +83,37 @@ export class PartnerController {
    * Submete uma candidatura de parceria para uma casa de banho.
    *
    * @param {ApplyPartnerRequestDto} applyPartnerDto Os dados da candidatura.
-   * @param {Express.Multer.File} file O certificado de parceria.
    * @returns {Promise<ApiResponseDto<PartnerApplicationResponseDto>>} A candidatura criada.
    * @throws {NotFoundException} Se a casa de banho não for encontrada.
    * @throws {ConflictException} Se a casa de banho já tiver parceiro ou candidatura pendente.
-   * @throws {BadRequestException} Se o arquivo for inválido ou exceder 10MB.
    */
   @ApiSwaggerApplyPartner()
   @Post('apply')
-  @UseInterceptors(FileInterceptor('certificate'))
   async applyPartner(
     @Body() applyPartnerDto: ApplyPartnerRequestDto,
+  ): Promise<ApiResponseDto<PartnerApplicationResponseDto>> {
+    const result = await this.applyPartnerUseCase.execute(
+      applyPartnerDto.toiletPublicId,
+      applyPartnerDto.contactEmail,
+    );
+
+    return new ApiResponseDto(PARTNER_MESSAGES.APPLICATION_SUBMITTED, result);
+  }
+
+  /**
+   * Faz upload do certificado de uma aplicação de parceria pendente.
+   *
+   * @param {string} publicId O ID público da aplicação de parceria.
+   * @param {Express.Multer.File} file O certificado de parceria.
+   * @returns {Promise<ApiResponseDto<PartnerApplicationResponseDto>>} A aplicação atualizada.
+   * @throws {NotFoundException} Se a aplicação não for encontrada.
+   * @throws {BadRequestException} Se a aplicação não estiver pendente ou o arquivo for inválido.
+   */
+  @ApiUploadCertificateSwagger()
+  @Post(':publicId/certificate')
+  @UseInterceptors(FileInterceptor('certificate'))
+  async uploadCertificate(
+    @Param('publicId', ParseUUIDPipe) publicId: string,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -103,13 +126,12 @@ export class PartnerController {
     )
     file: Express.Multer.File,
   ): Promise<ApiResponseDto<PartnerApplicationResponseDto>> {
-    const result = await this.applyPartnerUseCase.execute(
-      applyPartnerDto.toiletPublicId,
-      applyPartnerDto.contactEmail,
+    const result = await this.uploadPartnerCertificateUseCase.execute(
+      publicId,
       file,
     );
 
-    return new ApiResponseDto(PARTNER_MESSAGES.APPLICATION_SUBMITTED, result);
+    return new ApiResponseDto(PARTNER_MESSAGES.CERTIFICATE_UPLOADED, result);
   }
 
   /**
