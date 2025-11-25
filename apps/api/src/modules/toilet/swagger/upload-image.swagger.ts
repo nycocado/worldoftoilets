@@ -11,7 +11,7 @@ import {
   ApiConflictResponse,
   ApiBadRequestResponse,
 } from '@nestjs/swagger';
-import { ToiletResponseDto } from '@modules/toilet/dto';
+import { ToiletResponseDto, UploadImageDto } from '@modules/toilet/dto';
 
 export const ApiSwaggerUploadToiletImage = (): MethodDecorator =>
   applyDecorators(
@@ -27,17 +27,7 @@ export const ApiSwaggerUploadToiletImage = (): MethodDecorator =>
     }),
     ApiConsumes('multipart/form-data'),
     ApiBody({
-      schema: {
-        type: 'object',
-        properties: {
-          image: {
-            type: 'string',
-            format: 'binary',
-            description: 'Arquivo de imagem (JPEG, PNG ou WebP, máx 5MB)',
-          },
-        },
-        required: ['image'],
-      },
+      type: UploadImageDto,
     }),
     ApiOkResponse({
       description: 'Imagem enviada com sucesso.',

@@ -8,15 +8,11 @@ import {
   ApiForbiddenResponse,
   ApiBadRequestResponse,
 } from '@nestjs/swagger';
-import { SuggestionResponseDto } from '@modules/suggestion/dto';
+import {
+  CreateSuggestionSwaggerDto,
+  SuggestionResponseDto,
+} from '@modules/suggestion/dto';
 
-/**
- * Decorador Swagger para Criar Sugestão
- *
- * @function ApiSwaggerCreateSuggestion
- * @description Decorator que documenta o endpoint POST /suggestion no Swagger.
- * Inclui documentação da operação, request body e respostas.
- */
 export const ApiSwaggerCreateSuggestion = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({
@@ -26,43 +22,7 @@ export const ApiSwaggerCreateSuggestion = (): MethodDecorator =>
     }),
     ApiConsumes('multipart/form-data'),
     ApiBody({
-      schema: {
-        type: 'object',
-        required: ['latitude', 'longitude', 'toilet', 'image'],
-        properties: {
-          latitude: {
-            type: 'number',
-            format: 'double',
-            description: 'Latitude da localização',
-            example: 38.7139,
-          },
-          longitude: {
-            type: 'number',
-            format: 'double',
-            description: 'Longitude da localização',
-            example: -9.1399,
-          },
-          toilet: {
-            type: 'object',
-            description: 'Informações da casa de banho sugerida (JSON string)',
-            example: JSON.stringify({
-              access: 'public',
-              name: 'Casa de Banho Central',
-              address: 'Rua Principal, 123',
-              city: 'Lisboa',
-              state: 'Lisboa',
-              country: 'Portugal',
-              placeId: 'ChIJl7p_yNc1GQ0RoG7PI_I0',
-              extras: ['accessible', 'baby-changing'],
-            }),
-          },
-          image: {
-            type: 'string',
-            format: 'binary',
-            description: 'Imagem da casa de banho (JPEG, PNG ou WebP, máx 5MB)',
-          },
-        },
-      },
+      type: CreateSuggestionSwaggerDto,
     }),
     ApiCreatedResponse({
       description: 'Sugestão criada com sucesso.',

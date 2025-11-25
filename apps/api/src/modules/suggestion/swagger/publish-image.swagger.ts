@@ -10,12 +10,6 @@ import {
 } from '@nestjs/swagger';
 import { SuggestionResponseDto } from '@modules/suggestion/dto';
 
-/**
- * Decorador Swagger para Publicar Imagem da Sugestão
- *
- * @function ApiSwaggerPublishSuggestionImage
- * @description Decorator que documenta o endpoint POST /suggestion/:publicId/manage/image/publish no Swagger.
- */
 export const ApiSwaggerPublishSuggestionImage = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

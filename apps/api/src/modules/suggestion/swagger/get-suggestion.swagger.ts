@@ -9,12 +9,6 @@ import {
 } from '@nestjs/swagger';
 import { SuggestionResponseDto } from '@modules/suggestion/dto';
 
-/**
- * Decorador Swagger para Obter Sugestão por ID
- *
- * @function ApiSwaggerGetSuggestion
- * @description Decorator que documenta o endpoint GET /suggestion/:publicId/manage no Swagger.
- */
 export const ApiSwaggerGetSuggestion = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

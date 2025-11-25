@@ -1,3 +1,6 @@
+/**
+ * Contém as mensagens de sucesso para o módulo de sugestões.
+ */
 export const SUGGESTION_MESSAGES = {
   GET_SUGGESTION_SUCCESS: 'Suggestion retrieved successfully.',
   GET_SUGGESTIONS_SUCCESS: 'Suggestions retrieved successfully.',

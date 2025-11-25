@@ -1,3 +1,6 @@
+/**
+ * Contém as mensagens de exceção para o módulo de sugestões.
+ */
 export const SUGGESTION_EXCEPTIONS = {
   SUGGESTION_NOT_FOUND: 'Suggestion not found.',
   SUGGESTION_ALREADY_REVIEWED: 'Suggestion has already been reviewed.',

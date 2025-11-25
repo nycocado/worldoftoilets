@@ -14,28 +14,7 @@ import { plainToInstance } from 'class-transformer';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
- * Caso de Uso para Publicar Imagem de Sugestão
- *
- * @class PublishSuggestionImageUseCase
- * @description Implementa a lógica de negócio para copiar a imagem de uma sugestão aceite
- * para a toilet correspondente, migrando de suggestions/ para toilets/ no armazenamento.
- *
- * @implements
- *   - Validação de que a sugestão foi aceite
- *   - Validação de que a sugestão tem imagem
- *   - Validação de que a toilet está ativa
- *   - Cópia da imagem do bucket suggestions/ para toilets/
- *   - Atualização da photoUrl na toilet
- *
- * @example
- * const result = await publishSuggestionImageUseCase.execute('suggestion-public-id');
- *
- * @throws {NotFoundException} Se a sugestão não for encontrada ou não tiver imagem.
- * @throws {ConflictException} Se a sugestão não estiver aceite ou a toilet não estiver ativa.
- *
- * @see SuggestionService
- * @see ToiletService
- * @see MinioService
+ * Contém a lógica de negócio para publicar a imagem de uma sugestão.
  */
 @Injectable()
 export class PublishSuggestionImageUseCase {
@@ -46,25 +25,12 @@ export class PublishSuggestionImageUseCase {
   ) {}
 
   /**
-   * Executa o caso de uso para publicar a imagem da sugestão.
+   * Publica a imagem de uma sugestão aceite, associando-a à casa de banho correspondente.
    *
-   * @async
-   * @transactional
-   * @param {string} suggestionPublicId - O ID público da sugestão.
+   * @param {string} suggestionPublicId O ID público da sugestão.
    * @returns {Promise<SuggestionResponseDto>} O DTO da sugestão com a imagem publicada.
    * @throws {NotFoundException} Se a sugestão não for encontrada ou não tiver imagem.
-   * @throws {ConflictException} Se a sugestão não estiver aceite ou a toilet não estiver ativa.
-   *
-   * @description
-   * 1. Busca a sugestão pelo ID público.
-   * 2. Valida que a sugestão foi aceite (status ACCEPTED).
-   * 3. Valida que a sugestão tem uma imagem (photoUrl não nulo).
-   * 4. Valida que a toilet associada está ativa (status ACTIVE).
-   * 5. Extrai o nome do arquivo da URL da sugestão.
-   * 6. Gera um novo nome de arquivo para a pasta toilets/.
-   * 7. Copia a imagem de suggestions/ para toilets/ no MinIO.
-   * 8. Atualiza a photoUrl da toilet com a nova URL pública.
-   * 9. Retorna o DTO da sugestão atualizado.
+   * @throws {ConflictException} Se a sugestão não estiver aceite ou a casa de banho não estiver ativa.
    */
   @Transactional()
   async execute(suggestionPublicId: string): Promise<SuggestionResponseDto> {

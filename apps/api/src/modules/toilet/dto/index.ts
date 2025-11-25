@@ -6,3 +6,5 @@ export * from './get-toilets-bounding-box-request.dto';
 export * from './get-toilets-proximity-request.dto';
 export * from './toilet-response.dto';
 export * from './update-toilet-request.dto';
+export * from './create-toilet-swagger.dto';
+export * from './upload-image.dto';

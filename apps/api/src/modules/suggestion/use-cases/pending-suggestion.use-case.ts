@@ -8,6 +8,9 @@ import { SuggestionStatus, ToiletStatus } from '@database/entities';
 import { SUGGESTION_EXCEPTIONS } from '@modules/suggestion/constants/exceptions.constant';
 import { plainToInstance } from 'class-transformer';
 
+/**
+ * Contém a lógica de negócio para definir uma sugestão como pendente.
+ */
 @Injectable()
 export class SetPendingSuggestionUseCase {
   constructor(
@@ -16,6 +19,13 @@ export class SetPendingSuggestionUseCase {
     private readonly toiletService: ToiletService,
   ) {}
 
+  /**
+   * Define uma sugestão como pendente.
+   *
+   * @param {string} suggestionPublicId O ID público da sugestão.
+   * @returns {Promise<SuggestionResponseDto>} A sugestão atualizada.
+   * @throws {ConflictException} Se a sugestão já estiver pendente.
+   */
   @Transactional()
   async execute(suggestionPublicId: string): Promise<SuggestionResponseDto> {
     const suggestion =

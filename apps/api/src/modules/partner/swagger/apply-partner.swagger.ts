@@ -8,7 +8,10 @@ import {
   ApiNotFoundResponse,
   ApiBody,
 } from '@nestjs/swagger';
-import { PartnerApplicationResponseDto } from '@modules/partner/dto';
+import {
+  ApplyPartnerSwaggerDto,
+  PartnerApplicationResponseDto,
+} from '@modules/partner/dto';
 
 export const ApiSwaggerApplyPartner = (): MethodDecorator =>
   applyDecorators(
@@ -19,31 +22,7 @@ export const ApiSwaggerApplyPartner = (): MethodDecorator =>
     }),
     ApiConsumes('multipart/form-data'),
     ApiBody({
-      schema: {
-        type: 'object',
-        required: ['toiletPublicId', 'contactEmail', 'certificate'],
-        properties: {
-          toiletPublicId: {
-            type: 'string',
-            format: 'uuid',
-            description: 'O ID público da casa de banho',
-            example: '550e8400-e29b-41d4-a716-446655440000',
-          },
-          contactEmail: {
-            type: 'string',
-            format: 'email',
-            description: 'E-mail de contacto para a parceria',
-            example: 'contacto@shopping-colombo.pt',
-            maxLength: 100,
-          },
-          certificate: {
-            type: 'string',
-            format: 'binary',
-            description:
-              'Documento de certificação (PDF, JPEG, PNG ou WebP, máx 10MB)',
-          },
-        },
-      },
+      type: ApplyPartnerSwaggerDto,
     }),
     ApiCreatedResponse({
       description: 'Candidatura submetida com sucesso.',
