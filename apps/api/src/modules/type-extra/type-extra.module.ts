@@ -4,6 +4,9 @@ import { TypeExtraEntity } from '@database/entities';
 import { TypeExtraService } from './type-extra.service';
 import { TypeExtraRepository } from './type-extra.repository';
 
+/**
+ * Gerencia a funcionalidade de tipos de extra, agrupando seus componentes.
+ */
 @Module({
   imports: [MikroOrmModule.forFeature([TypeExtraEntity])],
   providers: [TypeExtraService, TypeExtraRepository],
