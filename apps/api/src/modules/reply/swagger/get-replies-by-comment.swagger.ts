@@ -5,17 +5,10 @@ import {
   ApiUnauthorizedResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
-  ApiQuery,
+  ApiParam,
 } from '@nestjs/swagger';
 import { ReplyResponseDto } from '@modules/reply/dto';
 
-/**
- * Decorador Swagger para Listar Respostas por Comentário
- *
- * @function ApiSwaggerGetRepliesByComment
- * @description Decorator que documenta o endpoint GET /reply/comment/:publicId no Swagger.
- * Inclui documentação da operação, query parameters e respostas.
- */
 export const ApiSwaggerGetRepliesByComment = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({
@@ -23,10 +16,12 @@ export const ApiSwaggerGetRepliesByComment = (): MethodDecorator =>
       description:
         'Lista respostas VISÍVEIS de um comentário específico. Suporta paginação.',
     }),
-    ApiQuery({ name: 'pageable', required: false, type: Boolean }),
-    ApiQuery({ name: 'page', required: false, type: Number }),
-    ApiQuery({ name: 'size', required: false, type: Number }),
-    ApiQuery({ name: 'timestamp', required: false, type: Date }),
+    ApiParam({
+      name: 'publicId',
+      description: 'O ID público do comentário.',
+      type: 'string',
+      format: 'uuid',
+    }),
     ApiOkResponse({
       description: 'Lista de respostas retornada com sucesso.',
       type: [ReplyResponseDto],

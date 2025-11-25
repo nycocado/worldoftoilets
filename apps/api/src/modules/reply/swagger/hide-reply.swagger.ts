@@ -9,13 +9,6 @@ import {
 } from '@nestjs/swagger';
 import { ReplyResponseDto } from '@modules/reply/dto';
 
-/**
- * Decorador Swagger para Ocultar Resposta (Moderação)
- *
- * @function ApiSwaggerHideReply
- * @description Decorator que documenta o endpoint PUT /reply/:publicId/manage/hide no Swagger.
- * Inclui documentação da operação e respostas.
- */
 export const ApiSwaggerHideReply = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

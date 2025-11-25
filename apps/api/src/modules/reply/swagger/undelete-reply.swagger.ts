@@ -8,13 +8,6 @@ import {
 } from '@nestjs/swagger';
 import { ReplyResponseDto } from '@modules/reply/dto';
 
-/**
- * Decorador Swagger para Recuperar Resposta Deletada (Moderação)
- *
- * @function ApiSwaggerUndeleteReply
- * @description Decorator que documenta o endpoint PUT /reply/:publicId/manage/undelete no Swagger.
- * Inclui documentação da operação e respostas.
- */
 export const ApiSwaggerUndeleteReply = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

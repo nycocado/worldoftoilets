@@ -20,19 +20,7 @@ import {
 } from '@modules/reply/use-cases';
 
 /**
- * Módulo de Respostas
- *
- * @module ReplyModule
- * @description Organiza todos os componentes de gestão de respostas do sistema.
- * Gerir o ciclo de vida completo das respostas a comentários, incluindo:
- * - Criação, edição e exclusão de respostas
- * - Listagem de respostas por comentário ou utilizador
- * - Gestão de estado de respostas (visível/oculto)
- * - Moderação de respostas (hide/show/delete/undelete)
- *
- * @see ReplyController - Controlador com endpoints de respostas
- * @see ReplyService - Serviço para operações de respostas
- * @see ReplyRepository - Repositório para acesso aos dados
+ * Gerencia a funcionalidade de respostas, agrupando seus componentes.
  */
 @Module({
   imports: [

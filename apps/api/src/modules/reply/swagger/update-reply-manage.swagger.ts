@@ -10,13 +10,6 @@ import {
 } from '@nestjs/swagger';
 import { UpdateReplyRequestDto, ReplyResponseDto } from '@modules/reply/dto';
 
-/**
- * Decorador Swagger para Atualizar Resposta (Moderação)
- *
- * @function ApiSwaggerUpdateReplyManage
- * @description Decorator que documenta o endpoint PATCH /reply/:publicId/manage no Swagger.
- * Inclui documentação da operação, request body e respostas.
- */
 export const ApiSwaggerUpdateReplyManage = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

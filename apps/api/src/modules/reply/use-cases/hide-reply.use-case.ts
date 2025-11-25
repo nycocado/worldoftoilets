@@ -11,49 +11,19 @@ import { plainToInstance } from 'class-transformer';
 import { ReplyState } from '@database/entities';
 
 /**
- * Caso de Uso para Ocultar Resposta (Moderação)
- *
- * @class HideReplyUseCase
- * @description Implementa a lógica de ocultar uma resposta do público.
- * Altera estado de VISIBLE para HIDDEN sem deletar.
- *
- * @implements
- *   - Validação de existência da resposta
- *   - Alteração de estado para HIDDEN
- *
- * @example
- * const reply = await hideReplyUseCase.execute('reply-public-id');
- *
- * @throws {NotFoundException} Se resposta não existir
- * @throws {ConflictException} Se resposta foi deletada
- *
- * @see ReplyRepository - Repositório para operações de resposta
+ * Contém a lógica de negócio para ocultar uma resposta.
  */
 @Injectable()
 export class HideReplyUseCase {
-  /**
-   * Construtor do HideReplyUseCase
-   *
-   * @param {ReplyRepository} repository - Repositório de respostas
-   */
   constructor(private readonly repository: ReplyRepository) {}
 
   /**
-   * Executar caso de uso de ocultar resposta
+   * Oculta uma resposta, alterando seu estado para 'HIDDEN'.
    *
-   * @async
-   * @transactional Executa dentro de transação
-   * @param {string} publicId - Identificador público da resposta
-   * @returns {Promise<ReplyResponseDto>} DTO da resposta ocultada
-   * @throws {NotFoundException} Se resposta não existir
-   * @throws {ConflictException} Se resposta foi deletada
-   *
-   * @description
-   * 1. Busca resposta por publicId
-   * 2. Valida existência da resposta
-   * 3. Verifica se resposta não foi deletada
-   * 4. Altera estado para HIDDEN
-   * 5. Retorna DTO completo da resposta
+   * @param {string} publicId O ID público da resposta.
+   * @returns {Promise<ReplyResponseDto>} O DTO da resposta atualizada.
+   * @throws {NotFoundException} Se a resposta não for encontrada.
+   * @throws {ConflictException} Se a resposta já foi deletada.
    */
   @Transactional()
   async execute(publicId: string): Promise<ReplyResponseDto> {

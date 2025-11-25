@@ -13,45 +13,20 @@ import {
 } from '@mikro-orm/mariadb';
 
 /**
- * Repositório de Respostas
- *
- * @class ReplyRepository
- * @description Repositório de acesso a dados para entidade ReplyEntity.
- * Oferece operações CRUD e queries complexas para respostas, incluindo:
- * - Busca por publicId, comentário ou utilizador
- * - Operações transacionais de criação, atualização e remoção
- * - Gestão de soft delete e estados de respostas
- * - Queries com paginação e ordenação
- *
- * @implements
- *   - Padrão Repository para isolar lógica de acesso a dados
- *   - Transações com decorator @Transactional do MikroORM
- *   - Soft delete com período de retenção
- *
- * @see ReplyEntity - Entidade de domínio representando respostas
+ * Gerencia o acesso e a persistência de dados para a entidade Reply.
  */
 @Injectable()
 export class ReplyRepository {
-  /**
-   * Construtor do ReplyRepository
-   *
-   * @param {EntityRepository<ReplyEntity>} repository - Repositório MikroORM injetado
-   */
   constructor(
     @InjectRepository(ReplyEntity)
     private readonly repository: EntityRepository<ReplyEntity>,
   ) {}
 
   /**
-   * Buscar resposta por publicId
+   * Busca uma resposta pelo seu ID público.
    *
-   * @async
-   * @param {string} publicId - Identificador público único da resposta
-   * @returns {Promise<ReplyEntity | null>} Resposta encontrada ou null
-   *
-   * @description
-   * Busca uma resposta pelo seu publicId (UUID).
-   * Carrega automaticamente o utilizador e o comentário associado.
+   * @param {string} publicId O ID público da resposta.
+   * @returns {Promise<ReplyEntity | null>} A entidade da resposta ou `null` se não for encontrada.
    */
   async findByPublicId(publicId: string): Promise<ReplyEntity | null> {
     return this.repository.findOne(
@@ -61,22 +36,15 @@ export class ReplyRepository {
   }
 
   /**
-   * Buscar respostas por comentário
+   * Busca respostas de um comentário com opções de paginação e filtro.
    *
-   * @async
-   * @param {CommentEntity} comment - Entidade de comentário
-   * @param {boolean} pageable - Se deve aplicar paginação
-   * @param {number} page - Número da página (zero-indexed)
-   * @param {number} size - Tamanho da página
-   * @param {ReplyState} replyState - Estado das respostas a buscar (VISIBLE, HIDDEN)
-   * @param {Date} timestamp - Data limite para buscar respostas (respostas criadas antes desta data)
-   * @returns {Promise<ReplyEntity[]>} Lista de respostas
-   *
-   * @description
-   * Busca respostas de um comentário específico com suporte a paginação.
-   * Filtra por estado da resposta e timestamp de criação.
-   * Carrega automaticamente o utilizador (com partner).
-   * Ordenado por data de criação descendente (mais recentes primeiro).
+   * @param {CommentEntity} comment A entidade do comentário.
+   * @param {boolean} [pageable] Define se a paginação deve ser aplicada.
+   * @param {number} [page] O número da página.
+   * @param {number} [size] O tamanho da página.
+   * @param {ReplyState} [replyState] O estado da resposta para filtrar.
+   * @param {Date} [timestamp] O timestamp máximo de criação.
+   * @returns {Promise<ReplyEntity[]>} Uma lista de entidades de resposta.
    */
   async findByComment(
     comment: CommentEntity,
@@ -102,22 +70,15 @@ export class ReplyRepository {
   }
 
   /**
-   * Buscar respostas por utilizador
+   * Busca respostas de um utilizador com opções de paginação e filtro.
    *
-   * @async
-   * @param {UserEntity} user - Entidade de utilizador
-   * @param {boolean} pageable - Se deve aplicar paginação
-   * @param {number} page - Número da página (zero-indexed)
-   * @param {number} size - Tamanho da página
-   * @param {ReplyState} replyState - Estado das respostas a buscar (VISIBLE, HIDDEN)
-   * @param {Date} timestamp - Data limite para buscar respostas (respostas criadas antes desta data)
-   * @returns {Promise<ReplyEntity[]>} Lista de respostas
-   *
-   * @description
-   * Busca respostas de um utilizador específico com suporte a paginação.
-   * Filtra por estado da resposta e timestamp de criação.
-   * Carrega automaticamente o comentário associado.
-   * Ordenado por data de criação descendente (mais recentes primeiro).
+   * @param {UserEntity} user A entidade do utilizador.
+   * @param {boolean} [pageable] Define se a paginação deve ser aplicada.
+   * @param {number} [page] O número da página.
+   * @param {number} [size] O tamanho da página.
+   * @param {ReplyState} [replyState] O estado da resposta para filtrar.
+   * @param {Date} [timestamp] O timestamp máximo de criação.
+   * @returns {Promise<ReplyEntity[]>} Uma lista de entidades de resposta.
    */
   async findByUser(
     user: UserEntity,
@@ -143,15 +104,10 @@ export class ReplyRepository {
   }
 
   /**
-   * Buscar respostas expiradas
+   * Busca respostas que sofreram soft delete e cujo período de retenção expirou.
    *
-   * @async
-   * @param {Date} retention - Data de retenção limite
-   * @returns {Promise<ReplyEntity[]>} Lista de respostas expiradas
-   *
-   * @description
-   * Busca respostas soft-deleted há mais tempo que o período de retenção.
-   * Usado pelo cron job de limpeza para remover respostas permanentemente.
+   * @param {Date} retention A data limite de retenção.
+   * @returns {Promise<ReplyEntity[]>} Uma lista de respostas expiradas.
    */
   async findExpired(retention: Date): Promise<ReplyEntity[]> {
     return this.repository.find({
@@ -162,18 +118,12 @@ export class ReplyRepository {
   }
 
   /**
-   * Criar nova resposta
+   * Cria e persiste uma nova resposta.
    *
-   * @async
-   * @transactional Executa dentro de transação
-   * @param {CommentEntity} comment - Comentário ao qual a resposta pertence
-   * @param {UserEntity} user - Utilizador que criou a resposta
-   * @param {string} text - Texto da resposta
-   * @returns {Promise<ReplyEntity>} Resposta criada
-   *
-   * @description
-   * Cria nova resposta associada a um comentário e utilizador.
-   * Persiste imediatamente no banco de dados (flush).
+   * @param {CommentEntity} comment A entidade do comentário associada.
+   * @param {UserEntity} user O utilizador que criou a resposta.
+   * @param {string} text O texto da resposta.
+   * @returns {Promise<ReplyEntity>} A entidade da resposta criada.
    */
   @Transactional()
   async create(
@@ -191,18 +141,11 @@ export class ReplyRepository {
   }
 
   /**
-   * Soft delete de resposta
+   * Realiza o soft delete de uma resposta, marcando-a como oculta e registrando quem a deletou.
    *
-   * @async
-   * @transactional Executa dentro de transação
-   * @param {ReplyEntity} reply - Resposta a ser marcada como deletada
-   * @param {UserEntity} deletedBy - Utilizador que deletou a resposta
-   * @returns {Promise<ReplyEntity>} Resposta atualizada
-   *
-   * @description
-   * Marca resposta como deletada sem remover do banco de dados.
-   * Altera estado para HIDDEN, registra quem deletou e timestamp.
-   * Resposta pode ser recuperada com undelete antes de expirar.
+   * @param {ReplyEntity} reply A resposta a ser deletada.
+   * @param {UserEntity} deletedBy O utilizador que realizou a exclusão.
+   * @returns {Promise<ReplyEntity>} A entidade da resposta atualizada.
    */
   @Transactional()
   async softDelete(
@@ -218,16 +161,10 @@ export class ReplyRepository {
   }
 
   /**
-   * Deletar resposta permanentemente
+   * Remove uma resposta permanentemente do banco de dados.
    *
-   * @async
-   * @transactional Executa dentro de transação
-   * @param {ReplyEntity} reply - Resposta a ser removida
+   * @param {ReplyEntity} reply A resposta a ser removida.
    * @returns {Promise<void>}
-   *
-   * @description
-   * Remove resposta permanentemente do banco de dados.
-   * Operação irreversível - normalmente usado apenas pelo cron job de limpeza.
    */
   @Transactional()
   async delete(reply: ReplyEntity): Promise<void> {
@@ -236,17 +173,10 @@ export class ReplyRepository {
   }
 
   /**
-   * Deletar respostas expiradas permanentemente
+   * Remove permanentemente as respostas cujo período de retenção do soft delete expirou.
    *
-   * @async
-   * @transactional Executa dentro de transação
-   * @param {Date} retention - Data de retenção limite
+   * @param {Date} retention A data limite de retenção.
    * @returns {Promise<void>}
-   *
-   * @description
-   * Remove permanentemente todas as respostas soft-deleted há mais tempo que o período de retenção.
-   * Chamado pelo cron job diário de limpeza.
-   * Operação em batch para eficiência.
    */
   @Transactional()
   async deleteExpired(retention: Date): Promise<void> {
@@ -256,18 +186,11 @@ export class ReplyRepository {
   }
 
   /**
-   * Atualizar resposta
+   * Atualiza o texto de uma resposta.
    *
-   * @async
-   * @transactional Executa dentro de transação
-   * @param {ReplyEntity} reply - Resposta a ser atualizada
-   * @param {string} text - Novo texto da resposta (opcional)
-   * @returns {Promise<ReplyEntity>} Resposta atualizada
-   *
-   * @description
-   * Atualiza texto da resposta se fornecido.
-   * Se text for undefined, nenhuma alteração é feita ao texto.
-   * Persiste mudanças imediatamente no banco de dados.
+   * @param {ReplyEntity} reply A resposta a ser atualizada.
+   * @param {string} [text] O novo texto da resposta.
+   * @returns {Promise<ReplyEntity>} A entidade da resposta atualizada.
    */
   @Transactional()
   async update(reply: ReplyEntity, text?: string): Promise<ReplyEntity> {
@@ -280,18 +203,11 @@ export class ReplyRepository {
   }
 
   /**
-   * Alterar estado da resposta
+   * Altera o estado de visibilidade de uma resposta.
    *
-   * @async
-   * @transactional Executa dentro de transação
-   * @param {ReplyEntity} reply - Resposta a ser atualizada
-   * @param {ReplyState} state - Novo estado (VISIBLE ou HIDDEN)
-   * @returns {Promise<ReplyEntity>} Resposta atualizada
-   *
-   * @description
-   * Altera estado de visibilidade da resposta.
-   * Usado por operações de moderação (hide/show).
-   * Persiste mudanças imediatamente no banco de dados.
+   * @param {ReplyEntity} reply A resposta a ser atualizada.
+   * @param {ReplyState} state O novo estado da resposta.
+   * @returns {Promise<ReplyEntity>} A entidade da resposta atualizada.
    */
   @Transactional()
   async changeState(
@@ -305,17 +221,10 @@ export class ReplyRepository {
   }
 
   /**
-   * Recuperar resposta deletada
+   * Reverte o soft delete de uma resposta.
    *
-   * @async
-   * @transactional Executa dentro de transação
-   * @param {ReplyEntity} reply - Resposta a ser recuperada
-   * @returns {Promise<ReplyEntity>} Resposta restaurada
-   *
-   * @description
-   * Reverte soft delete de resposta.
-   * Restaura estado para VISIBLE e limpa campos deletedBy e deletedAt.
-   * Apenas funciona para respostas soft-deleted que ainda não foram removidas permanentemente.
+   * @param {ReplyEntity} reply A resposta a ser recuperada.
+   * @returns {Promise<ReplyEntity>} A entidade da resposta restaurada.
    */
   @Transactional()
   async undelete(reply: ReplyEntity): Promise<ReplyEntity> {

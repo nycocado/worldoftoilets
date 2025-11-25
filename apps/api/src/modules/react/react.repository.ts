@@ -6,21 +6,7 @@ import {
   ReactEntity,
   UserEntity,
 } from '@database/entities';
-import {
-  EntityManager,
-  EntityRepository,
-  Transactional,
-} from '@mikro-orm/mariadb';
-
-/**
- * Interface para a contagem de reações de um comentário.
- */
-export interface CommentReactionCount {
-  commentId: number;
-  publicId: string;
-  likes: number;
-  dislikes: number;
-}
+import { EntityRepository, Transactional } from '@mikro-orm/mariadb';
 
 /**
  * Gerencia o acesso e a persistência de dados para a entidade React.
@@ -30,7 +16,6 @@ export class ReactRepository {
   constructor(
     @InjectRepository(ReactEntity)
     private readonly repository: EntityRepository<ReactEntity>,
-    private readonly em: EntityManager,
   ) {}
 
   /**

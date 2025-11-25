@@ -5,42 +5,18 @@ import { ConfigService } from '@nestjs/config';
 import { ReplyRepository } from '@modules/reply/reply.repository';
 
 /**
- * Serviço de Respostas
- *
- * @class ReplyService
- * @description Serviço de alto nível para gestão de respostas.
- * Oferece limpeza automática de respostas expiradas através de cron jobs.
- *
- * @implements
- *   - Remoção automática de respostas com soft delete expirado
- *
- * @see ReplyRepository - Repositório para acesso aos dados
+ * Contém a lógica de negócio para as operações de respostas.
  */
 @Injectable()
 export class ReplyService {
-  /**
-   * Construtor do ReplyService
-   *
-   * @param {ConfigService} configService - Serviço de configuração para ler variáveis de ambiente
-   * @param {ReplyRepository} replyRepository - Repositório para operações de respostas
-   */
   constructor(
     private readonly configService: ConfigService,
     private readonly replyRepository: ReplyRepository,
   ) {}
 
   /**
-   * Deletar respostas expiradas (Cron Job)
-   *
-   * @async
-   * @cron Executado diariamente à meia-noite
-   * @returns {Promise<void>}
-   *
-   * @description
-   * Cron job que remove permanentemente respostas com soft delete expirado.
-   * Lê a configuração REPLY_SOFT_DELETE_RETENTION para determinar o período de retenção.
-   * Respostas marcadas como deletadas há mais tempo que o período de retenção são removidas.
-   * Executado automaticamente todos os dias à meia-noite.
+   * Remove permanentemente as respostas que excederam o período de retenção do soft delete.
+   * Este método é executado como um Cron Job diário.
    */
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async deleteExpiredReplies(): Promise<void> {

@@ -50,49 +50,10 @@ import {
 } from '@modules/reply/swagger';
 
 /**
- * Controlador de Respostas
- *
- * @class ReplyController
- * @description Controlador que expõe endpoints HTTP para operações de respostas a comentários.
- * Processa requests, valida DTOs, aplica guards de autenticação e permissões,
- * e delega lógica de negócio para os use cases apropriados.
- *
- * @route /reply - Rota base para todos os endpoints de respostas
- *
- * @endpoints
- * - GET /reply/comment/:publicId - Listar respostas de comentário (público)
- * - GET /reply/comment/:publicId/manage - Listar todas respostas de comentário (moderação)
- * - GET /reply/user/self - Listar respostas do próprio utilizador
- * - GET /reply/user/:publicId/manage - Listar respostas de utilizador (moderação)
- * - POST /reply - Criar nova resposta
- * - PATCH /reply/:publicId - Atualizar própria resposta
- * - PATCH /reply/:publicId/manage - Atualizar qualquer resposta (moderação)
- * - DELETE /reply/:publicId - Deletar própria resposta
- * - DELETE /reply/:publicId/manage - Deletar qualquer resposta (moderação)
- * - PUT /reply/:publicId/manage/show - Tornar resposta visível (moderação)
- * - PUT /reply/:publicId/manage/hide - Ocultar resposta (moderação)
- * - PUT /reply/:publicId/manage/undelete - Recuperar resposta deletada (moderação)
- *
- * @see CreateReplyUseCase, UpdateReplyUseCase, DeleteReplyUseCase - Use cases principais
- * @see GetRepliesByCommentUseCase, GetRepliesByUserUseCase - Use cases de listagem
- * @see ShowReplyUseCase, HideReplyUseCase, UndeleteReplyUseCase - Use cases de moderação
+ * Gerencia as requisições HTTP para operações relacionadas a respostas de comentários.
  */
 @Controller('reply')
 export class ReplyController {
-  /**
-   * Construtor do ReplyController
-   *
-   * @param {CreateReplyUseCase} createReplyUseCase - Use case para criar resposta
-   * @param {DeleteReplyUseCase} deleteReplyUseCase - Use case para deletar própria resposta
-   * @param {DeleteReplyManageUseCase} deleteReplyManageUseCase - Use case para deletar qualquer resposta
-   * @param {GetRepliesByCommentUseCase} getRepliesByCommentUseCase - Use case para listar por comentário
-   * @param {GetRepliesByUserUseCase} getRepliesByUserUseCase - Use case para listar por utilizador
-   * @param {UpdateReplyUseCase} updateReplyUseCase - Use case para atualizar própria resposta
-   * @param {UpdateReplyManageUseCase} updateReplyManageUseCase - Use case para atualizar qualquer resposta
-   * @param {ShowReplyUseCase} showReplyUseCase - Use case para tornar resposta visível
-   * @param {HideReplyUseCase} hideReplyUseCase - Use case para ocultar resposta
-   * @param {UndeleteReplyUseCase} undeleteReplyUseCase - Use case para recuperar resposta deletada
-   */
   constructor(
     private readonly createReplyUseCase: CreateReplyUseCase,
     private readonly deleteReplyUseCase: DeleteReplyUseCase,
@@ -107,22 +68,12 @@ export class ReplyController {
   ) {}
 
   /**
-   * Listar respostas de comentário (público)
+   * Lista as respostas visíveis de um comentário específico.
    *
-   * @async
-   * @route GET /reply/comment/:publicId
-   * @protected Requer autenticação JWT e permissão VIEW_REPLIES
-   * @param {string} publicId - Identificador público do comentário
-   * @param {GetRepliesRequestDto} getRepliesRequestDto - Parâmetros de paginação e filtros
-   * @returns {Promise<ApiResponseDto<ReplyResponseDto[]>>} Lista de respostas visíveis
-   * @throws {NotFoundException} Se comentário não existir
-   * @throws {UnauthorizedException} Se token de autenticação for inválido ou ausente
-   * @throws {ForbiddenException} Se utilizador não possuir permissão VIEW_REPLIES
-   *
-   * @description
-   * Lista respostas VISÍVEIS de um comentário específico.
-   * Suporta paginação e filtragem por timestamp.
-   * Respostas ocultas ou deletadas não são retornadas.
+   * @param {string} publicId O identificador público do comentário.
+   * @param {GetRepliesRequestDto} getRepliesRequestDto DTO com parâmetros de paginação e filtros.
+   * @returns {Promise<ApiResponseDto<ReplyResponseDto[]>>} A lista de respostas.
+   * @throws {NotFoundException} Se o comentário não for encontrado.
    */
   @ApiSwaggerGetRepliesByComment()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -150,21 +101,12 @@ export class ReplyController {
   }
 
   /**
-   * Listar todas respostas de comentário (moderação)
+   * Lista todas as respostas de um comentário para fins de moderação.
    *
-   * @async
-   * @route GET /reply/comment/:publicId/manage
-   * @protected Requer autenticação JWT e permissão VIEW_REPLIES
-   * @param {string} publicId - Identificador público do comentário
-   * @param {GetRepliesManageRequestDto} getRepliesRequestDto - Parâmetros de paginação, filtros e estado
-   * @returns {Promise<ApiResponseDto<ReplyResponseDto[]>>} Lista de todas as respostas
-   * @throws {NotFoundException} Se comentário não existir
-   * @throws {UnauthorizedException} Se token de autenticação for inválido ou ausente
-   * @throws {ForbiddenException} Se utilizador não possuir permissão VIEW_REPLIES
-   *
-   * @description
-   * Lista TODAS as respostas de um comentário (visíveis, ocultas, deletadas).
-   * Suporta filtro por estado de resposta. Usado por moderadores.
+   * @param {string} publicId O identificador público do comentário.
+   * @param {GetRepliesManageRequestDto} getRepliesRequestDto DTO com parâmetros de paginação e filtros de estado.
+   * @returns {Promise<ApiResponseDto<ReplyResponseDto[]>>} A lista de respostas.
+   * @throws {NotFoundException} Se o comentário não for encontrado.
    */
   @ApiSwaggerGetRepliesByCommentManage()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -192,19 +134,11 @@ export class ReplyController {
   }
 
   /**
-   * Listar próprias respostas
+   * Lista as respostas visíveis do próprio utilizador autenticado.
    *
-   * @async
-   * @route GET /reply/user/self
-   * @protected Requer autenticação JWT
-   * @param {jwtTypes.RequestUser} user - Utilizador autenticado (extraído do JWT)
-   * @param {GetRepliesRequestDto} getRepliesRequestDto - Parâmetros de paginação e filtros
-   * @returns {Promise<ApiResponseDto<ReplyResponseDto[]>>} Lista de próprias respostas visíveis
-   * @throws {UnauthorizedException} Se token de autenticação for inválido ou ausente
-   *
-   * @description
-   * Lista respostas VISÍVEIS do próprio utilizador autenticado.
-   * Suporta paginação e filtragem por timestamp.
+   * @param {jwtTypes.RequestUser} user O utilizador autenticado.
+   * @param {GetRepliesRequestDto} getRepliesRequestDto DTO com parâmetros de paginação e filtros.
+   * @returns {Promise<ApiResponseDto<ReplyResponseDto[]>>} A lista de respostas do utilizador.
    */
   @ApiSwaggerGetRepliesByUserSelf()
   @UseGuards(JwtAuthGuard)
@@ -232,21 +166,12 @@ export class ReplyController {
   }
 
   /**
-   * Listar respostas de utilizador (moderação)
+   * Lista todas as respostas de um utilizador específico para fins de moderação.
    *
-   * @async
-   * @route GET /reply/user/:publicId/manage
-   * @protected Requer autenticação JWT e permissão VIEW_REPLIES
-   * @param {string} publicId - Identificador público do utilizador
-   * @param {GetRepliesManageRequestDto} getRepliesRequestDto - Parâmetros de paginação, filtros e estado
-   * @returns {Promise<ApiResponseDto<ReplyResponseDto[]>>} Lista de respostas do utilizador
-   * @throws {NotFoundException} Se utilizador não existir
-   * @throws {UnauthorizedException} Se token de autenticação for inválido ou ausente
-   * @throws {ForbiddenException} Se utilizador não possuir permissão VIEW_REPLIES
-   *
-   * @description
-   * Lista TODAS as respostas de um utilizador específico.
-   * Suporta filtro por estado de resposta. Usado por moderadores.
+   * @param {string} publicId O identificador público do utilizador.
+   * @param {GetRepliesManageRequestDto} getRepliesRequestDto DTO com parâmetros de paginação e filtros de estado.
+   * @returns {Promise<ApiResponseDto<ReplyResponseDto[]>>} A lista de respostas do utilizador.
+   * @throws {NotFoundException} Se o utilizador não for encontrado.
    */
   @ApiSwaggerGetRepliesByUserManage()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -274,20 +199,12 @@ export class ReplyController {
   }
 
   /**
-   * Criar resposta
+   * Cria uma nova resposta para um comentário.
    *
-   * @async
-   * @route POST /reply
-   * @protected Requer autenticação JWT e permissão CREATE_REPLIES
-   * @param {jwtTypes.RequestUser} user - Utilizador autenticado (extraído do JWT)
-   * @param {CreateReplyRequestDto} createReplyDto - Dados da resposta (comentário, texto)
-   * @returns {Promise<ApiResponseDto<ReplyResponseDto>>} Resposta criada
-   * @throws {NotFoundException} Se comentário não existir
-   * @throws {UnauthorizedException} Se token de autenticação for inválido ou ausente
-   * @throws {ForbiddenException} Se utilizador não possuir permissão CREATE_REPLIES
-   *
-   * @description
-   * Cria nova resposta a um comentário com texto obrigatório.
+   * @param {jwtTypes.RequestUser} user O utilizador autenticado.
+   * @param {CreateReplyRequestDto} createReplyDto DTO com os dados da nova resposta.
+   * @returns {Promise<ApiResponseDto<ReplyResponseDto>>} A resposta criada.
+   * @throws {NotFoundException} Se o comentário não for encontrado.
    */
   @ApiSwaggerCreateReply()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -309,22 +226,14 @@ export class ReplyController {
   }
 
   /**
-   * Atualizar própria resposta
+   * Atualiza a própria resposta.
    *
-   * @async
-   * @route PATCH /reply/:publicId
-   * @protected Requer autenticação JWT e permissão EDIT_REPLIES
-   * @param {string} publicId - Identificador público da resposta
-   * @param {jwtTypes.RequestUser} user - Utilizador autenticado (extraído do JWT)
-   * @param {UpdateReplyRequestDto} updateReplyDto - Novos dados da resposta
-   * @returns {Promise<ApiResponseDto<ReplyResponseDto>>} Resposta atualizada
-   * @throws {NotFoundException} Se resposta não existir
-   * @throws {UnauthorizedException} Se token inválido, ausente ou utilizador não é o autor
-   * @throws {ForbiddenException} Se utilizador não possuir permissão EDIT_REPLIES
-   *
-   * @description
-   * Atualiza texto da própria resposta.
-   * Apenas o autor pode editar sua resposta.
+   * @param {string} publicId O identificador público da resposta.
+   * @param {jwtTypes.RequestUser} user O utilizador autenticado.
+   * @param {UpdateReplyRequestDto} updateReplyDto DTO com os dados a serem atualizados.
+   * @returns {Promise<ApiResponseDto<ReplyResponseDto>>} A resposta atualizada.
+   * @throws {NotFoundException} Se a resposta não for encontrada.
+   * @throws {UnauthorizedException} Se o utilizador não for o autor da resposta.
    */
   @ApiSwaggerUpdateReply()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -347,21 +256,12 @@ export class ReplyController {
   }
 
   /**
-   * Atualizar qualquer resposta (moderação)
+   * Atualiza uma resposta para fins de moderação.
    *
-   * @async
-   * @route PATCH /reply/:publicId/manage
-   * @protected Requer autenticação JWT e permissão EDIT_REPLIES
-   * @param {string} publicId - Identificador público da resposta
-   * @param {UpdateReplyRequestDto} updateReplyDto - Novos dados da resposta
-   * @returns {Promise<ApiResponseDto<ReplyResponseDto>>} Resposta atualizada
-   * @throws {NotFoundException} Se resposta não existir
-   * @throws {UnauthorizedException} Se token de autenticação for inválido ou ausente
-   * @throws {ForbiddenException} Se utilizador não possuir permissão EDIT_REPLIES
-   *
-   * @description
-   * Atualiza texto de qualquer resposta.
-   * Não verifica propriedade - usado por moderadores.
+   * @param {string} publicId O identificador público da resposta.
+   * @param {UpdateReplyRequestDto} updateReplyDto DTO com os dados a serem atualizados.
+   * @returns {Promise<ApiResponseDto<ReplyResponseDto>>} A resposta atualizada.
+   * @throws {NotFoundException} Se a resposta não for encontrada.
    */
   @ApiSwaggerUpdateReplyManage()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -382,21 +282,13 @@ export class ReplyController {
   }
 
   /**
-   * Deletar própria resposta
+   * Realiza o soft delete da própria resposta.
    *
-   * @async
-   * @route DELETE /reply/:publicId
-   * @protected Requer autenticação JWT e permissão DELETE_SELF_REPLIES
-   * @param {string} publicId - Identificador público da resposta
-   * @param {jwtTypes.RequestUser} user - Utilizador autenticado (extraído do JWT)
-   * @returns {Promise<ApiResponseDto>} Confirmação de sucesso
-   * @throws {NotFoundException} Se resposta não existir
-   * @throws {UnauthorizedException} Se token inválido, ausente ou utilizador não é o autor
-   * @throws {ForbiddenException} Se utilizador não possuir permissão DELETE_SELF_REPLIES
-   *
-   * @description
-   * Soft delete da própria resposta. Apenas o autor pode deletar.
-   * Pode ser recuperada antes do período de retenção expirar.
+   * @param {string} publicId O identificador público da resposta.
+   * @param {jwtTypes.RequestUser} user O utilizador autenticado.
+   * @returns {Promise<ApiResponseDto>} Confirmação de sucesso.
+   * @throws {NotFoundException} Se a resposta não for encontrada.
+   * @throws {UnauthorizedException} Se o utilizador não for o autor da resposta.
    */
   @ApiSwaggerDeleteReply()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -411,21 +303,12 @@ export class ReplyController {
   }
 
   /**
-   * Deletar qualquer resposta (moderação)
+   * Realiza o soft delete de uma resposta para fins de moderação.
    *
-   * @async
-   * @route DELETE /reply/:publicId/manage
-   * @protected Requer autenticação JWT e permissão DELETE_REPLIES
-   * @param {string} publicId - Identificador público da resposta
-   * @param {jwtTypes.RequestUser} user - Moderador autenticado (extraído do JWT)
-   * @returns {Promise<ApiResponseDto>} Confirmação de sucesso
-   * @throws {NotFoundException} Se resposta não existir
-   * @throws {UnauthorizedException} Se token de autenticação for inválido ou ausente
-   * @throws {ForbiddenException} Se utilizador não possuir permissão DELETE_REPLIES
-   *
-   * @description
-   * Soft delete de qualquer resposta. Não verifica propriedade.
-   * Usado por moderadores. Pode ser recuperada antes de expirar.
+   * @param {string} publicId O identificador público da resposta.
+   * @param {jwtTypes.RequestUser} user O moderador autenticado.
+   * @returns {Promise<ApiResponseDto>} Confirmação de sucesso.
+   * @throws {NotFoundException} Se a resposta não for encontrada.
    */
   @ApiSwaggerDeleteReplyManage()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -440,21 +323,12 @@ export class ReplyController {
   }
 
   /**
-   * Mostrar resposta (moderação)
+   * Torna uma resposta visível (moderação).
    *
-   * @async
-   * @route PUT /reply/:publicId/manage/show
-   * @protected Requer autenticação JWT e permissão SHOW_REPLIES
-   * @param {string} publicId - Identificador público da resposta
-   * @returns {Promise<ApiResponseDto<ReplyResponseDto>>} Resposta tornada visível
-   * @throws {NotFoundException} Se resposta não existir
-   * @throws {UnauthorizedException} Se token de autenticação for inválido ou ausente
-   * @throws {ForbiddenException} Se utilizador não possuir permissão SHOW_REPLIES
-   * @throws {ConflictException} Se resposta foi deletada
-   *
-   * @description
-   * Torna resposta visível publicamente alterando estado de HIDDEN para VISIBLE.
-   * Usado por moderadores.
+   * @param {string} publicId O identificador público da resposta.
+   * @returns {Promise<ApiResponseDto<ReplyResponseDto>>} A resposta atualizada.
+   * @throws {NotFoundException} Se a resposta não for encontrada.
+   * @throws {ConflictException} Se a resposta já foi deletada.
    */
   @ApiSwaggerShowReply()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -471,21 +345,12 @@ export class ReplyController {
   }
 
   /**
-   * Ocultar resposta (moderação)
+   * Oculta uma resposta (moderação).
    *
-   * @async
-   * @route PUT /reply/:publicId/manage/hide
-   * @protected Requer autenticação JWT e permissão HIDE_REPLIES
-   * @param {string} publicId - Identificador público da resposta
-   * @returns {Promise<ApiResponseDto<ReplyResponseDto>>} Resposta ocultada
-   * @throws {NotFoundException} Se resposta não existir
-   * @throws {UnauthorizedException} Se token de autenticação for inválido ou ausente
-   * @throws {ForbiddenException} Se utilizador não possuir permissão HIDE_REPLIES
-   * @throws {ConflictException} Se resposta foi deletada
-   *
-   * @description
-   * Oculta resposta do público alterando estado de VISIBLE para HIDDEN sem deletar.
-   * Usado por moderadores.
+   * @param {string} publicId O identificador público da resposta.
+   * @returns {Promise<ApiResponseDto<ReplyResponseDto>>} A resposta atualizada.
+   * @throws {NotFoundException} Se a resposta não for encontrada.
+   * @throws {ConflictException} Se a resposta já foi deletada.
    */
   @ApiSwaggerHideReply()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -502,20 +367,11 @@ export class ReplyController {
   }
 
   /**
-   * Recuperar resposta deletada (moderação)
+   * Recupera uma resposta que sofreu soft delete (moderação).
    *
-   * @async
-   * @route PUT /reply/:publicId/manage/undelete
-   * @protected Requer autenticação JWT e permissão UNDELETE_REPLIES
-   * @param {string} publicId - Identificador público da resposta
-   * @returns {Promise<ApiResponseDto<ReplyResponseDto>>} Resposta recuperada
-   * @throws {NotFoundException} Se resposta não existir
-   * @throws {UnauthorizedException} Se token de autenticação for inválido ou ausente
-   * @throws {ForbiddenException} Se utilizador não possuir permissão UNDELETE_REPLIES
-   *
-   * @description
-   * Recupera resposta soft-deleted revertendo soft delete e restaurando estado VISIBLE.
-   * Usado por moderadores. Apenas funciona para respostas que ainda não expiraram.
+   * @param {string} publicId O identificador público da resposta.
+   * @returns {Promise<ApiResponseDto<ReplyResponseDto>>} A resposta recuperada.
+   * @throws {NotFoundException} Se a resposta não for encontrada.
    */
   @ApiSwaggerUndeleteReply()
   @UseGuards(JwtAuthGuard, PermissionsGuard)

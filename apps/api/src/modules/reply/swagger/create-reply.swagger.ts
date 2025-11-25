@@ -9,13 +9,6 @@ import {
 } from '@nestjs/swagger';
 import { CreateReplyRequestDto, ReplyResponseDto } from '@modules/reply/dto';
 
-/**
- * Decorador Swagger para Criar Resposta
- *
- * @function ApiSwaggerCreateReply
- * @description Decorator que documenta o endpoint POST /reply no Swagger.
- * Inclui documentação da operação, request body e respostas.
- */
 export const ApiSwaggerCreateReply = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({

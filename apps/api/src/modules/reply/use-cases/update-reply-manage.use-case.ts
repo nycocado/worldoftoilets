@@ -10,51 +10,20 @@ import { ReplyResponseDto } from '@modules/reply/dto';
 import { plainToInstance } from 'class-transformer';
 
 /**
- * Caso de Uso para Atualizar Resposta (Moderação)
- *
- * @class UpdateReplyManageUseCase
- * @description Implementa a lógica de atualização de qualquer resposta por moderador.
- * Permite atualizar texto sem verificar propriedade.
- *
- * @implements
- *   - Validação de existência da resposta
- *   - Atualização de texto sem verificar autor
- *
- * @example
- * const updated = await updateReplyManageUseCase.execute(
- *   'reply-public-id',
- *   'Novo texto'
- * );
- *
- * @throws {NotFoundException} Se resposta não existir
- *
- * @see ReplyRepository - Repositório para operações de resposta
+ * Contém a lógica de negócio para a atualização de uma resposta para fins de moderação.
  */
 @Injectable()
 export class UpdateReplyManageUseCase {
-  /**
-   * Construtor do UpdateReplyManageUseCase
-   *
-   * @param {ReplyRepository} repository - Repositório de respostas
-   */
   constructor(private readonly repository: ReplyRepository) {}
 
   /**
-   * Executar caso de uso de atualizar resposta por moderação
+   * Atualiza os dados de uma resposta para fins de moderação.
    *
-   * @async
-   * @transactional Executa dentro de transação
-   * @param {string} replyPublicId - Identificador público da resposta
-   * @param {string} text - Novo texto da resposta (opcional)
-   * @returns {Promise<ReplyResponseDto>} DTO da resposta atualizada
-   * @throws {NotFoundException} Se resposta não existir
-   * @throws {ConflictException} Se resposta foi deletada
-   *
-   * @description
-   * 1. Busca resposta por publicId
-   * 2. Valida existência da resposta
-   * 3. Atualiza texto se fornecido
-   * 4. Retorna DTO completo da resposta atualizada
+   * @param {string} replyPublicId O ID público da resposta.
+   * @param {string} [text] O novo texto da resposta.
+   * @returns {Promise<ReplyResponseDto>} O DTO da resposta atualizada.
+   * @throws {NotFoundException} Se a resposta não for encontrada.
+   * @throws {ConflictException} Se a resposta já foi deletada.
    */
   @Transactional()
   async execute(
