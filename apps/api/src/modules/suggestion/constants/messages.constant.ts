@@ -13,4 +13,5 @@ export const SUGGESTION_MESSAGES = {
   PENDING_SUGGESTION_SUCCESS:
     'Suggestion status reverted to pending successfully.',
   PUBLISH_IMAGE_SUCCESS: 'Suggestion image published successfully.',
+  UPLOAD_IMAGE_SUCCESS: 'Image uploaded successfully.',
 };

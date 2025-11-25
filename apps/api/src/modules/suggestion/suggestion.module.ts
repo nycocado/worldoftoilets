@@ -6,6 +6,7 @@ import { SuggestionService } from './suggestion.service';
 import { SuggestionRepository } from './suggestion.repository';
 import {
   CreateSuggestionUseCase,
+  UploadSuggestionImageUseCase,
   GetSuggestionsUseCase,
   GetSuggestionByPublicIdUseCase,
   GetSuggestionsByUserUseCase,
@@ -39,6 +40,7 @@ import { MinioModule } from '@modules/minio';
     SuggestionService,
     SuggestionRepository,
     CreateSuggestionUseCase,
+    UploadSuggestionImageUseCase,
     GetSuggestionsUseCase,
     GetSuggestionByPublicIdUseCase,
     GetSuggestionsByUserUseCase,

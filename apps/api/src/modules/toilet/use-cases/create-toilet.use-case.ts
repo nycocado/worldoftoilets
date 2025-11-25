@@ -58,7 +58,6 @@ export class CreateToiletUseCase {
     country: string,
     placeId: string | undefined,
     extrasApiNames?: TypeExtraApiName[],
-    file?: Express.Multer.File,
   ): Promise<ToiletResponseDto> {
     const finalCountryCode = this.countryService.getCountryCode(country);
 
@@ -85,29 +84,6 @@ export class CreateToiletUseCase {
       placeId,
       typeExtras,
     );
-
-    if (file) {
-      if (file.size > IMAGE_VALIDATION_CONFIG.MAX_FILE_SIZE) {
-        throw new BadRequestException(TOILET_EXCEPTIONS.IMAGE_TOO_LARGE);
-      }
-
-      const {
-        buffer: sanitizedBuffer,
-        extension,
-        mimeType,
-      } = await this.imageValidationService.validateAndProcessImage(
-        file.buffer,
-      );
-
-      const fileName = await this.minioService.generateUniqueFileName(
-        'toilets',
-        extension,
-      );
-      await this.minioService.uploadFile(sanitizedBuffer, fileName, mimeType);
-      const publicUrl = this.minioService.getPublicFileUrl(fileName);
-
-      await this.repository.updatePhotoUrl(toilet, publicUrl);
-    }
 
     return plainToInstance(ToiletResponseDto, toilet, {
       excludeExtraneousValues: true,

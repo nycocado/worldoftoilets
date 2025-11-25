@@ -297,29 +297,15 @@ export class ToiletController {
    * Cria uma nova casa de banho no sistema.
    *
    * @param {CreateToiletRequestDto} createToiletDto Os dados para a criação da casa de banho.
-   * @param {Express.Multer.File} [file] A imagem da casa de banho (opcional).
    * @returns {Promise<ApiResponseDto<ToiletResponseDto>>} Os dados da casa de banho recém-criada.
-   * @throws {BadRequestException} Se o código do país fornecido for inválido ou imagem inválida.
+   * @throws {BadRequestException} Se o código do país fornecido for inválido.
    */
   @ApiSwaggerCreateToilet()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.CREATE_TOILETS)
   @Post('manage')
-  @UseInterceptors(FileInterceptor('image'))
   async createToilet(
     @Body() createToiletDto: CreateToiletRequestDto,
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }),
-          new FileTypeValidator({
-            fileType: /image\/(jpeg|jpg|png|webp)/,
-          }),
-        ],
-        fileIsRequired: false,
-      }),
-    )
-    file?: Express.Multer.File,
   ): Promise<ApiResponseDto<ToiletResponseDto>> {
     const {
       access,
@@ -345,7 +331,6 @@ export class ToiletController {
       country,
       placeId,
       extras,
-      file,
     );
 
     return new ApiResponseDto<ToiletResponseDto>(

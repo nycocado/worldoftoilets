@@ -1,7 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import {
   ApiBody,
-  ApiConsumes,
   ApiCreatedResponse,
   ApiOperation,
   ApiUnauthorizedResponse,
@@ -9,20 +8,19 @@ import {
   ApiBadRequestResponse,
 } from '@nestjs/swagger';
 import {
-  CreateSuggestionSwaggerDto,
+  CreateSuggestionRequestDto,
   SuggestionResponseDto,
 } from '@modules/suggestion/dto';
 
 export const ApiSwaggerCreateSuggestion = (): MethodDecorator =>
   applyDecorators(
     ApiOperation({
-      summary: 'Criar sugestão com imagem',
+      summary: 'Criar sugestão',
       description:
-        'Cria nova sugestão de toilet com localização, informações e imagem. Requer permissão SUGGEST_TOILETS.',
+        'Cria nova sugestão de toilet com localização e informações. Para adicionar imagem, utilize o endpoint separado POST /suggestion/:publicId/image. Requer permissão SUGGEST_TOILETS.',
     }),
-    ApiConsumes('multipart/form-data'),
     ApiBody({
-      type: CreateSuggestionSwaggerDto,
+      type: CreateSuggestionRequestDto,
     }),
     ApiCreatedResponse({
       description: 'Sugestão criada com sucesso.',
@@ -35,7 +33,6 @@ export const ApiSwaggerCreateSuggestion = (): MethodDecorator =>
       description: 'Utilizador não possui permissão SUGGEST_TOILETS.',
     }),
     ApiBadRequestResponse({
-      description:
-        'Dados inválidos, país não reconhecido, imagem excede 5MB ou formato não suportado.',
+      description: 'Dados inválidos ou país não reconhecido.',
     }),
   );

@@ -12,6 +12,7 @@ import { EmailModule } from '@modules/email';
 import { MinioModule } from '@modules/minio';
 import {
   ApplyPartnerUseCase,
+  UploadPartnerCertificateUseCase,
   GetPartnerSelfUseCase,
   UpdatePartnerSelfUseCase,
   GetPartnersManageUseCase,
@@ -43,6 +44,7 @@ import { EmailVerificationModule } from '@modules/email-verification';
     PartnerService,
     PartnerRepository,
     ApplyPartnerUseCase,
+    UploadPartnerCertificateUseCase,
     GetPartnerSelfUseCase,
     UpdatePartnerSelfUseCase,
     GetPartnersManageUseCase,

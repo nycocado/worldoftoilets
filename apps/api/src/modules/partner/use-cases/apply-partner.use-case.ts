@@ -33,7 +33,6 @@ export class ApplyPartnerUseCase {
   async execute(
     toiletPublicId: string,
     contactEmail: string,
-    file: Express.Multer.File,
   ): Promise<PartnerApplicationResponseDto> {
     const toilet = await this.toiletService.getToiletByPublicId(toiletPublicId);
 
@@ -57,18 +56,9 @@ export class ApplyPartnerUseCase {
       }
     }
 
-    const extension = file.originalname.split('.').pop() || 'bin';
-
-    const fileName = await this.minioService.generateUniqueFileName(
-      'partner-certificates',
-      extension,
-    );
-    await this.minioService.uploadFile(file.buffer, fileName, file.mimetype);
-    const certificateUrl = this.minioService.getPublicFileUrl(fileName);
-
     const partner = await this.repository.create(
       toilet,
-      certificateUrl,
+      undefined,
       contactEmail,
     );
 

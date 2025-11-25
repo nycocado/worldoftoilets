@@ -246,4 +246,21 @@ export class SuggestionRepository {
     const em = this.repository.getEntityManager();
     await em.removeAndFlush(suggestion);
   }
+
+  /**
+   * Atualiza a URL da foto de uma sugestão.
+   *
+   * @param {SuggestionEntity} suggestion A sugestão a ser atualizada.
+   * @param {string} photoUrl A nova URL da foto.
+   * @returns {Promise<void>}
+   */
+  @Transactional()
+  async updatePhotoUrl(
+    suggestion: SuggestionEntity,
+    photoUrl: string,
+  ): Promise<void> {
+    const em = this.repository.getEntityManager();
+    suggestion.photoUrl = photoUrl;
+    await em.flush();
+  }
 }

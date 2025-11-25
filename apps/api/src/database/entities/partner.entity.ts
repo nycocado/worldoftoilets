@@ -71,8 +71,8 @@ export class PartnerEntity {
   /**
    * Documento ou número de certificação que comprova a parceria.
    */
-  @Property({ length: 255 })
-  certificate!: string;
+  @Property({ length: 255, nullable: true })
+  certificate?: string;
 
   /**
    * E-mail de contacto para assuntos relacionados com a parceria.

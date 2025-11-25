@@ -1,4 +1,5 @@
 export * from './apply-partner.use-case';
+export * from './upload-partner-certificate.use-case';
 export * from './get-partner-self.use-case';
 export * from './update-partner-self.use-case';
 export * from './get-partners-manage.use-case';

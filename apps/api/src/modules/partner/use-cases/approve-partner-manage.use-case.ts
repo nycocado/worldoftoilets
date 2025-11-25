@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   ConflictException,
+  BadRequestException,
 } from '@nestjs/common';
 import { Transactional } from '@mikro-orm/mariadb';
 import { PartnerRepository } from '@modules/partner/partner.repository';
@@ -49,6 +50,10 @@ export class ApprovePartnerManageUseCase {
 
     if (partner.status !== PartnerStatus.PENDING) {
       throw new ConflictException(PARTNER_EXCEPTIONS.APPLICATION_NOT_PENDING);
+    }
+
+    if (!partner.certificate) {
+      throw new BadRequestException(PARTNER_EXCEPTIONS.CERTIFICATE_REQUIRED);
     }
 
     const admin = await this.userService.getUserByPublicId(adminPublicId);

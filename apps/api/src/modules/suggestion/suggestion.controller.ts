@@ -29,6 +29,7 @@ import * as jwtTypes from '@common/types/jwt.types';
 import { SUGGESTION_MESSAGES } from '@modules/suggestion/constants/messages.constant';
 import {
   CreateSuggestionUseCase,
+  UploadSuggestionImageUseCase,
   GetSuggestionsUseCase,
   GetSuggestionByPublicIdUseCase,
   GetSuggestionsByUserUseCase,
@@ -47,6 +48,7 @@ import {
   ApiSwaggerPendingSuggestion,
   ApiSwaggerPublishSuggestionImage,
 } from '@modules/suggestion/swagger';
+import { UploadSuggestionImageSwagger } from '@modules/suggestion/swagger/upload-image.swagger';
 
 /**
  * Gerencia as requisições HTTP para operações relacionadas a sugestões.
@@ -56,6 +58,7 @@ import {
 export class SuggestionController {
   constructor(
     private readonly createSuggestionUseCase: CreateSuggestionUseCase,
+    private readonly uploadSuggestionImageUseCase: UploadSuggestionImageUseCase,
     private readonly getSuggestionsUseCase: GetSuggestionsUseCase,
     private readonly getSuggestionByPublicIdUseCase: GetSuggestionByPublicIdUseCase,
     private readonly getSuggestionsByUserUseCase: GetSuggestionsByUserUseCase,
@@ -70,28 +73,15 @@ export class SuggestionController {
    *
    * @param {CreateSuggestionRequestDto} createSuggestionDto Os dados da sugestão.
    * @param {jwtTypes.RequestUser} user O utilizador que está a criar a sugestão.
-   * @param {Express.Multer.File} file A imagem da casa de banho.
    * @returns {Promise<ApiResponseDto<SuggestionResponseDto>>} A sugestão criada.
    */
   @ApiSwaggerCreateSuggestion()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.SUGGEST_TOILETS)
   @Post('')
-  @UseInterceptors(FileInterceptor('image'))
   async createSuggestion(
     @Body() createSuggestionDto: CreateSuggestionRequestDto,
     @User() user: jwtTypes.RequestUser,
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }),
-          new FileTypeValidator({
-            fileType: /image\/(jpeg|jpg|png|webp)/,
-          }),
-        ],
-      }),
-    )
-    file: Express.Multer.File,
   ): Promise<ApiResponseDto<SuggestionResponseDto>> {
     const { latitude, longitude, toilet } = createSuggestionDto;
     const { access, name, address, city, state, country, placeId, extras } =
@@ -109,13 +99,52 @@ export class SuggestionController {
       country,
       placeId,
       extras,
-      file,
     );
 
     return new ApiResponseDto<SuggestionResponseDto>(
       SUGGESTION_MESSAGES.CREATE_SUGGESTION_SUCCESS,
       result,
     );
+  }
+
+  /**
+   * Faz upload de uma imagem para uma sugestão pendente.
+   *
+   * @param {string} publicId O ID público da sugestão.
+   * @param {jwtTypes.RequestUser} user O utilizador autenticado.
+   * @param {Express.Multer.File} file A imagem da sugestão.
+   * @returns {Promise<ApiResponseDto<SuggestionResponseDto>>} A sugestão atualizada.
+   * @throws {NotFoundException} Se a sugestão não for encontrada.
+   * @throws {ForbiddenException} Se o utilizador não for o autor da sugestão.
+   * @throws {BadRequestException} Se a sugestão não estiver pendente ou o arquivo for inválido.
+   */
+  @UploadSuggestionImageSwagger()
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @RequiresPermissions(PermissionApiName.SUGGEST_TOILETS)
+  @Post(':publicId/image')
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadImage(
+    @Param('publicId', ParseUUIDPipe) publicId: string,
+    @User() user: jwtTypes.RequestUser,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }),
+          new FileTypeValidator({
+            fileType: /image\/(jpeg|jpg|png|webp)/,
+          }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ): Promise<ApiResponseDto<SuggestionResponseDto>> {
+    const result = await this.uploadSuggestionImageUseCase.execute(
+      publicId,
+      user.publicId,
+      file,
+    );
+
+    return new ApiResponseDto(SUGGESTION_MESSAGES.UPLOAD_IMAGE_SUCCESS, result);
   }
 
   /**
