@@ -387,6 +387,18 @@ export class ToiletRepository {
   }
 
   /**
+   * Busca casas de banho com soft delete expirado.
+   *
+   * @param {Date} retention A data limite de retenção.
+   * @returns {Promise<ToiletEntity[]>} Uma lista de casas de banho expiradas.
+   */
+  async findExpired(retention: Date): Promise<ToiletEntity[]> {
+    return this.repository.find({
+      deletedAt: { $lte: retention },
+    });
+  }
+
+  /**
    * Remove permanentemente as casas de banho com soft delete expirado.
    *
    * @param {Date} retention A data limite de retenção.
@@ -395,9 +407,7 @@ export class ToiletRepository {
   @Transactional()
   async deleteExpired(retention: Date): Promise<void> {
     const em = this.repository.getEntityManager();
-    const toilets = await this.repository.find({
-      deletedAt: { $lte: retention },
-    });
+    const toilets = await this.findExpired(retention);
     await em.removeAndFlush(toilets);
   }
 

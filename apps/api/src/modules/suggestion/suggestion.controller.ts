@@ -35,12 +35,10 @@ import {
   AcceptSuggestionUseCase,
   RejectSuggestionUseCase,
   SetPendingSuggestionUseCase,
-  UploadSuggestionImageUseCase,
   PublishSuggestionImageUseCase,
 } from '@modules/suggestion/use-cases';
 import {
   ApiSwaggerCreateSuggestion,
-  ApiSwaggerUploadSuggestionImage,
   ApiSwaggerGetSuggestions,
   ApiSwaggerGetSuggestion,
   ApiSwaggerGetSuggestionsManage,
@@ -61,7 +59,6 @@ export class SuggestionController {
     private readonly acceptSuggestionUseCase: AcceptSuggestionUseCase,
     private readonly rejectSuggestionUseCase: RejectSuggestionUseCase,
     private readonly setPendingSuggestionUseCase: SetPendingSuggestionUseCase,
-    private readonly uploadSuggestionImageUseCase: UploadSuggestionImageUseCase,
     private readonly publishSuggestionImageUseCase: PublishSuggestionImageUseCase,
   ) {}
 
@@ -69,9 +66,21 @@ export class SuggestionController {
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.SUGGEST_TOILETS)
   @Post('')
+  @UseInterceptors(FileInterceptor('image'))
   async createSuggestion(
     @Body() createSuggestionDto: CreateSuggestionRequestDto,
     @User() user: jwtTypes.RequestUser,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }),
+          new FileTypeValidator({
+            fileType: /image\/(jpeg|jpg|png|webp)/,
+          }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
   ): Promise<ApiResponseDto<SuggestionResponseDto>> {
     const { latitude, longitude, toilet } = createSuggestionDto;
     const { access, name, address, city, state, country, placeId, extras } =
@@ -89,39 +98,11 @@ export class SuggestionController {
       country,
       placeId,
       extras,
+      file,
     );
 
     return new ApiResponseDto<SuggestionResponseDto>(
       SUGGESTION_MESSAGES.CREATE_SUGGESTION_SUCCESS,
-      result,
-    );
-  }
-
-  @ApiSwaggerUploadSuggestionImage()
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @RequiresPermissions(PermissionApiName.SUGGEST_TOILETS)
-  @Post(':publicId/image')
-  @UseInterceptors(FileInterceptor('image'))
-  async uploadImage(
-    @Param('publicId', ParseUUIDPipe) publicId: string,
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }),
-          new FileTypeValidator({
-            fileType: /image\/(jpeg|jpg|png|webp)/,
-          }),
-        ],
-      }),
-    )
-    file: Express.Multer.File,
-  ): Promise<ApiResponseDto<SuggestionResponseDto>> {
-    const result = await this.uploadSuggestionImageUseCase.execute(
-      publicId,
-      file,
-    );
-    return new ApiResponseDto<SuggestionResponseDto>(
-      'Image uploaded successfully.',
       result,
     );
   }

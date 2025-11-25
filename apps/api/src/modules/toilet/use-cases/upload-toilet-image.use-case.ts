@@ -11,7 +11,6 @@ import { IMAGE_VALIDATION_CONFIG } from '@common/constants/image-validation.cons
 import { TOILET_EXCEPTIONS } from '@modules/toilet/constants/exceptions.constant';
 import { ToiletResponseDto } from '@modules/toilet/dto';
 import { plainToInstance } from 'class-transformer';
-import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Contém a lógica de negócio para o upload de uma imagem de uma casa de banho.
@@ -59,7 +58,10 @@ export class UploadToiletImageUseCase {
       mimeType,
     } = await this.imageValidationService.validateAndProcessImage(file.buffer);
 
-    const fileName = await this.generateUniqueFileName(extension);
+    const fileName = await this.minioService.generateUniqueFileName(
+      'toilets',
+      extension,
+    );
 
     if (toilet.photoUrl) {
       const oldFileName = this.minioService.extractFileNameFromUrl(
@@ -67,11 +69,7 @@ export class UploadToiletImageUseCase {
         'toilets',
       );
       if (oldFileName) {
-        try {
-          await this.minioService.deleteFile(oldFileName);
-        } catch {
-          // Ignore errors when deleting old image
-        }
+        await this.minioService.deleteFile(oldFileName).catch(() => {});
       }
     }
 
@@ -84,32 +82,5 @@ export class UploadToiletImageUseCase {
     return plainToInstance(ToiletResponseDto, toilet, {
       excludeExtraneousValues: true,
     });
-  }
-
-  private async generateUniqueFileName(extension: string): Promise<string> {
-    const maxAttempts = 5;
-    let attempts = 0;
-
-    while (attempts < maxAttempts) {
-      const fileName = `toilets/${uuidv4()}.${extension}`;
-
-      const exists = await this.fileExists(fileName);
-      if (!exists) {
-        return fileName;
-      }
-
-      attempts++;
-    }
-
-    return `toilets/${Date.now()}-${uuidv4()}.${extension}`;
-  }
-
-  private async fileExists(fileName: string): Promise<boolean> {
-    try {
-      await this.minioService.getFile(fileName);
-      return true;
-    } catch {
-      return false;
-    }
   }
 }

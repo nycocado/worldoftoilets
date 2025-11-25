@@ -13,6 +13,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { createMinioConfig, MinioConfig } from '@config/minio.config';
 import { Readable } from 'stream';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class MinioService implements OnModuleInit {
@@ -144,6 +145,53 @@ export class MinioService implements OnModuleInit {
         Boolean(key),
       ) || []
     );
+  }
+
+  /**
+   * Gera um nome de arquivo único no MinIO, evitando colisões.
+   *
+   * @param {string} folder - Nome da pasta (ex: 'toilets', 'suggestions', 'partner-certificates').
+   * @param {string} extension - A extensão do arquivo (ex: 'jpg', 'png', 'pdf').
+   * @returns {Promise<string>} O nome único do arquivo (ex: 'toilets/uuid.jpg').
+   *
+   * @description
+   * Tenta gerar um nome de arquivo único usando UUID.
+   * Se após 5 tentativas ainda houver colisão, adiciona timestamp ao nome.
+   */
+  async generateUniqueFileName(
+    folder: string,
+    extension: string,
+  ): Promise<string> {
+    const maxAttempts = 5;
+    let attempts = 0;
+
+    while (attempts < maxAttempts) {
+      const fileName = `${folder}/${uuidv4()}.${extension}`;
+
+      const exists = await this.fileExists(fileName);
+      if (!exists) {
+        return fileName;
+      }
+
+      attempts++;
+    }
+
+    return `${folder}/${Date.now()}-${uuidv4()}.${extension}`;
+  }
+
+  /**
+   * Verifica se um arquivo existe no MinIO.
+   *
+   * @param {string} fileName - O nome do arquivo a verificar.
+   * @returns {Promise<boolean>} `true` se o arquivo existir, `false` caso contrário.
+   */
+  async fileExists(fileName: string): Promise<boolean> {
+    try {
+      await this.getFile(fileName);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   /**

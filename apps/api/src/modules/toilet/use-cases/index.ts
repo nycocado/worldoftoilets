@@ -11,3 +11,4 @@ export * from './disable-toilet.use-case';
 export * from './enable-toilet.use-case';
 export * from './view-toilet.use-case';
 export * from './upload-toilet-image.use-case';
+export * from './delete-expired-toilets.use-case';

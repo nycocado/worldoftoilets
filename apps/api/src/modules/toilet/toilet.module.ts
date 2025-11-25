@@ -2,7 +2,11 @@ import { Module } from '@nestjs/common';
 import { ToiletService } from './toilet.service';
 import { ToiletController } from './toilet.controller';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
-import { ToiletEntity, TypeExtraEntity } from '@database/entities';
+import {
+  ToiletEntity,
+  TypeExtraEntity,
+  SuggestionEntity,
+} from '@database/entities';
 import { ToiletRepository } from '@modules/toilet/toilet.repository';
 import { CommentRateModule } from '@modules/comment-rate';
 import { UserModule } from '@modules/user';
@@ -21,6 +25,7 @@ import {
   DisableToiletUseCase,
   EnableToiletUseCase,
   UploadToiletImageUseCase,
+  DeleteExpiredToiletsUseCase,
 } from '@modules/toilet/use-cases';
 import { ViewToiletUseCase } from '@modules/toilet/use-cases/view-toilet.use-case';
 import { InteractionModule } from '@modules/interaction';
@@ -30,7 +35,11 @@ import { InteractionModule } from '@modules/interaction';
  */
 @Module({
   imports: [
-    MikroOrmModule.forFeature([ToiletEntity, TypeExtraEntity]),
+    MikroOrmModule.forFeature([
+      ToiletEntity,
+      TypeExtraEntity,
+      SuggestionEntity,
+    ]),
     CommentRateModule,
     UserModule,
     AccessModule,
@@ -54,6 +63,7 @@ import { InteractionModule } from '@modules/interaction';
     EnableToiletUseCase,
     ViewToiletUseCase,
     UploadToiletImageUseCase,
+    DeleteExpiredToiletsUseCase,
   ],
   exports: [ToiletService],
 })

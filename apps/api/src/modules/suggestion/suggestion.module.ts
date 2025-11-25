@@ -12,7 +12,6 @@ import {
   AcceptSuggestionUseCase,
   RejectSuggestionUseCase,
   SetPendingSuggestionUseCase,
-  UploadSuggestionImageUseCase,
   PublishSuggestionImageUseCase,
 } from './use-cases';
 import { InteractionModule } from '@modules/interaction';
@@ -43,7 +42,6 @@ import { MinioModule } from '@modules/minio';
     AcceptSuggestionUseCase,
     RejectSuggestionUseCase,
     SetPendingSuggestionUseCase,
-    UploadSuggestionImageUseCase,
     PublishSuggestionImageUseCase,
   ],
   exports: [SuggestionService],
