@@ -15,6 +15,9 @@ import { createMinioConfig, MinioConfig } from '@config/minio.config';
 import { Readable } from 'stream';
 import { v4 as uuidv4 } from 'uuid';
 
+/**
+ * Contém a lógica de negócio para as operações de armazenamento de objetos no Minio.
+ */
 @Injectable()
 export class MinioService implements OnModuleInit {
   private readonly s3Client: S3Client;
@@ -34,6 +37,9 @@ export class MinioService implements OnModuleInit {
     });
   }
 
+  /**
+   * Garante que o bucket exista no Minio ao iniciar o módulo.
+   */
   async onModuleInit() {
     await this.ensureBucketExists();
   }
@@ -77,6 +83,14 @@ export class MinioService implements OnModuleInit {
     );
   }
 
+  /**
+   * Faz upload de um arquivo para o Minio.
+   *
+   * @param {Buffer | Readable} file O conteúdo do arquivo.
+   * @param {string} fileName O nome do arquivo no bucket.
+   * @param {string} [contentType='application/octet-stream'] O tipo de conteúdo do arquivo.
+   * @returns {Promise<string>} O nome do arquivo salvo.
+   */
   async uploadFile(
     file: Buffer | Readable,
     fileName: string,
@@ -93,6 +107,12 @@ export class MinioService implements OnModuleInit {
     return fileName;
   }
 
+  /**
+   * Retorna a URL pública de um arquivo.
+   *
+   * @param {string} fileName O nome do arquivo.
+   * @returns {string} A URL pública do arquivo.
+   */
   getPublicFileUrl(fileName: string): string {
     if (this.config.publicUrl) {
       return `${this.config.publicUrl}/${this.config.bucket}/${fileName}`;
@@ -100,10 +120,22 @@ export class MinioService implements OnModuleInit {
     return this.getInternalFileUrl(fileName);
   }
 
+  /**
+   * Retorna a URL interna de um arquivo.
+   *
+   * @param {string} fileName O nome do arquivo.
+   * @returns {string} A URL interna do arquivo.
+   */
   getInternalFileUrl(fileName: string): string {
     return `http${this.config.useSSL ? 's' : ''}://${this.config.endPoint}:${this.config.port}/${this.config.bucket}/${fileName}`;
   }
 
+  /**
+   * Deleta um arquivo do Minio.
+   *
+   * @param {string} fileName O nome do arquivo a ser deletado.
+   * @returns {Promise<void>}
+   */
   async deleteFile(fileName: string): Promise<void> {
     const command = new DeleteObjectCommand({
       Bucket: this.config.bucket,
@@ -113,6 +145,13 @@ export class MinioService implements OnModuleInit {
     await this.s3Client.send(command);
   }
 
+  /**
+   * Copia um arquivo de um local para outro dentro do mesmo bucket.
+   *
+   * @param {string} sourceFileName O nome do arquivo de origem.
+   * @param {string} destFileName O nome do arquivo de destino.
+   * @returns {Promise<void>}
+   */
   async copyFile(sourceFileName: string, destFileName: string): Promise<void> {
     const command = new CopyObjectCommand({
       Bucket: this.config.bucket,
@@ -123,6 +162,12 @@ export class MinioService implements OnModuleInit {
     await this.s3Client.send(command);
   }
 
+  /**
+   * Obtém o conteúdo de um arquivo como um stream.
+   *
+   * @param {string} fileName O nome do arquivo.
+   * @returns {Promise<Readable>} Um stream do conteúdo do arquivo.
+   */
   async getFile(fileName: string): Promise<Readable> {
     const command = new GetObjectCommand({
       Bucket: this.config.bucket,
@@ -133,6 +178,12 @@ export class MinioService implements OnModuleInit {
     return response.Body as Readable;
   }
 
+  /**
+   * Lista os arquivos em um determinado diretório (prefixo).
+   *
+   * @param {string} [prefix] O prefixo do diretório a ser listado.
+   * @returns {Promise<string[]>} Uma lista com os nomes dos arquivos.
+   */
   async listFiles(prefix?: string): Promise<string[]> {
     const command = new ListObjectsV2Command({
       Bucket: this.config.bucket,
@@ -153,10 +204,6 @@ export class MinioService implements OnModuleInit {
    * @param {string} folder - Nome da pasta (ex: 'toilets', 'suggestions', 'partner-certificates').
    * @param {string} extension - A extensão do arquivo (ex: 'jpg', 'png', 'pdf').
    * @returns {Promise<string>} O nome único do arquivo (ex: 'toilets/uuid.jpg').
-   *
-   * @description
-   * Tenta gerar um nome de arquivo único usando UUID.
-   * Se após 5 tentativas ainda houver colisão, adiciona timestamp ao nome.
    */
   async generateUniqueFileName(
     folder: string,
@@ -200,15 +247,6 @@ export class MinioService implements OnModuleInit {
    * @param {string} url - A URL pública da imagem.
    * @param {string} folder - Nome da pasta (ex: 'toilets', 'suggestions').
    * @returns {string | null} O nome do arquivo (ex: 'toilets/uuid.jpg') ou `null` se a extração falhar.
-   *
-   * @description
-   * Analisa a URL e extrai o caminho relativo do arquivo dentro do bucket.
-   * Útil para obter o nome do arquivo a partir de URLs públicas antes de deletar/copiar.
-   *
-   * @example
-   * const url = 'http://localhost/files/wot/toilets/uuid.jpg';
-   * const fileName = minioService.extractFileNameFromUrl(url, 'toilets');
-   * // Retorna: 'toilets/uuid.jpg'
    */
   extractFileNameFromUrl(url: string, folder: string): string | null {
     try {
