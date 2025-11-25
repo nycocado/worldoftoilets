@@ -12,6 +12,8 @@ import { EmailService } from '@modules/email';
 import { PARTNER_EXCEPTIONS } from '@modules/partner/constants';
 import { PartnerStatus, RoleApiName, UserIcon } from '@database/entities';
 import * as crypto from 'crypto';
+import { EmailVerificationService } from '@modules/email-verification';
+import { ConfigService } from '@nestjs/config';
 
 /**
  * Contém a lógica de negócio para aprovar uma candidatura de parceria (admin).
@@ -24,6 +26,8 @@ export class ApprovePartnerManageUseCase {
     private readonly userCredentialService: UserCredentialService,
     private readonly roleService: RoleService,
     private readonly emailService: EmailService,
+    private readonly emailVerificationService: EmailVerificationService,
+    private readonly configService: ConfigService,
   ) {}
 
   /**
@@ -51,15 +55,13 @@ export class ApprovePartnerManageUseCase {
 
     const generatedPassword = this.generateStrongPassword();
 
-    const userName = partner.contactEmail.split('@')[0];
+    const userName = partner.toilet.name || partner.contactEmail.split('@')[0];
 
     const user = await this.userService.createUser(
       userName,
       UserIcon.ICON_DEFAULT,
       new Date('2000-01-01').toISOString(),
     );
-
-    await this.roleService.assignDefaultRolesToUser(user);
 
     const partnerRoles = await this.roleService.getRolesByApiNames([
       RoleApiName.PARTNER,
@@ -68,11 +70,12 @@ export class ApprovePartnerManageUseCase {
       await this.roleService.assignRolesToUser(user, [RoleApiName.PARTNER]);
     }
 
-    await this.userCredentialService.createUserCredential(
-      user,
-      partner.contactEmail,
-      generatedPassword,
-    );
+    const userCredential =
+      await this.userCredentialService.createUserCredential(
+        user,
+        partner.contactEmail,
+        generatedPassword,
+      );
 
     await this.repository.approve(partner, user, admin);
 
@@ -80,6 +83,19 @@ export class ApprovePartnerManageUseCase {
       partner.contactEmail,
       partner.contactEmail,
       generatedPassword,
+    );
+
+    const verification =
+      await this.emailVerificationService.createVerificationToken(
+        userCredential,
+      );
+
+    const verificationUrl = `${this.configService.getOrThrow('FRONTEND_URL')}/auth/verify-email?token=${verification.token}`;
+
+    await this.emailService.sendVerificationEmail(
+      userCredential.email,
+      user.name,
+      verificationUrl,
     );
   }
 
