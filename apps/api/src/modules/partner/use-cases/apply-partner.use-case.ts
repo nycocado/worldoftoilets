@@ -57,7 +57,12 @@ export class ApplyPartnerUseCase {
       }
     }
 
-    const fileName = `partner-certificates/${Date.now()}-${file.originalname}`;
+    const extension = file.originalname.split('.').pop() || 'bin';
+
+    const fileName = await this.minioService.generateUniqueFileName(
+      'partner-certificates',
+      extension,
+    );
     await this.minioService.uploadFile(file.buffer, fileName, file.mimetype);
     const certificateUrl = this.minioService.getPublicFileUrl(fileName);
 
