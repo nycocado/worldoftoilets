@@ -3,7 +3,9 @@ import { Transactional } from '@mikro-orm/mariadb';
 import { ToiletRepository } from '@modules/toilet/toilet.repository';
 import { AccessService } from '@modules/access';
 import { TypeExtraService } from '@modules/type-extra';
-import { CountryService } from '@common/services';
+import { MinioService } from '@modules/minio';
+import { ImageValidationService, CountryService } from '@common/services';
+import { IMAGE_VALIDATION_CONFIG } from '@common/constants/image-validation.constant';
 import {
   ToiletStatus,
   AccessApiName,
@@ -22,6 +24,8 @@ export class CreateToiletUseCase {
     private readonly repository: ToiletRepository,
     private readonly accessService: AccessService,
     private readonly typeExtraService: TypeExtraService,
+    private readonly minioService: MinioService,
+    private readonly imageValidationService: ImageValidationService,
     private readonly countryService: CountryService,
   ) {}
 
@@ -38,8 +42,9 @@ export class CreateToiletUseCase {
    * @param {string} country O país.
    * @param {string | undefined} placeId O ID do Google Places.
    * @param {TypeExtraApiName[]} [extrasApiNames] A lista de recursos extra.
+   * @param {Express.Multer.File} [file] A imagem da casa de banho (opcional).
    * @returns {Promise<ToiletResponseDto>} O DTO da casa de banho criada.
-   * @throws {BadRequestException} Se o código do país for inválido.
+   * @throws {BadRequestException} Se o código do país for inválido ou imagem inválida.
    */
   @Transactional()
   async execute(
@@ -53,6 +58,7 @@ export class CreateToiletUseCase {
     country: string,
     placeId: string | undefined,
     extrasApiNames?: TypeExtraApiName[],
+    file?: Express.Multer.File,
   ): Promise<ToiletResponseDto> {
     const finalCountryCode = this.countryService.getCountryCode(country);
 
@@ -79,6 +85,29 @@ export class CreateToiletUseCase {
       placeId,
       typeExtras,
     );
+
+    if (file) {
+      if (file.size > IMAGE_VALIDATION_CONFIG.MAX_FILE_SIZE) {
+        throw new BadRequestException(TOILET_EXCEPTIONS.IMAGE_TOO_LARGE);
+      }
+
+      const {
+        buffer: sanitizedBuffer,
+        extension,
+        mimeType,
+      } = await this.imageValidationService.validateAndProcessImage(
+        file.buffer,
+      );
+
+      const fileName = await this.minioService.generateUniqueFileName(
+        'toilets',
+        extension,
+      );
+      await this.minioService.uploadFile(sanitizedBuffer, fileName, mimeType);
+      const publicUrl = this.minioService.getPublicFileUrl(fileName);
+
+      await this.repository.updatePhotoUrl(toilet, publicUrl);
+    }
 
     return plainToInstance(ToiletResponseDto, toilet, {
       excludeExtraneousValues: true,

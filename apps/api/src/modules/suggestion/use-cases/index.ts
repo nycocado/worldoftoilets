@@ -5,5 +5,4 @@ export * from './get-suggestions-by-user.use-case';
 export * from './accept-suggestion.use-case';
 export * from './reject-suggestion.use-case';
 export * from './pending-suggestion.use-case';
-export * from './upload-suggestion-image.use-case';
 export * from './publish-suggestion-image.use-case';
