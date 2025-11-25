@@ -5,6 +5,7 @@ import {
   CommentState,
   InteractionDiscriminator,
   InteractionEntity,
+  ReactDiscriminator,
   ToiletEntity,
   UserEntity,
 } from '@database/entities';
@@ -55,6 +56,7 @@ export class CommentRepository {
    * @param {number} [size] O tamanho da página.
    * @param {CommentState} [commentState] O estado do comentário para filtrar.
    * @param {Date} [timestamp] O timestamp máximo de criação.
+   * @param {UserEntity} [user] O utilizador autenticado, para filtrar comentários denunciados por ele.
    * @returns {Promise<CommentEntity[]>} Uma lista de entidades de comentário.
    */
   async findByToilet(
@@ -64,6 +66,7 @@ export class CommentRepository {
     size?: number,
     commentState?: CommentState,
     timestamp?: Date,
+    user?: UserEntity,
   ): Promise<CommentEntity[]> {
     return this.commentRepository.find(
       {
@@ -73,6 +76,14 @@ export class CommentRepository {
           toilet: toilet,
         },
         createdAt: { $lte: timestamp },
+        ...(user && {
+          reacts: {
+            $none: {
+              user: user,
+              discriminator: ReactDiscriminator.REPORT,
+            },
+          },
+        }),
       },
       {
         populate: [
@@ -99,6 +110,7 @@ export class CommentRepository {
    * @param {number} [size] O tamanho da página.
    * @param {CommentState} [commentState] O estado do comentário para filtrar.
    * @param {Date} [timestamp] O timestamp máximo de criação.
+   * @param {UserEntity} [requestUser] O utilizador autenticado que está fazendo a consulta, para filtrar comentários denunciados por ele.
    * @returns {Promise<CommentEntity[]>} Uma lista de entidades de comentário.
    */
   async findByUser(
@@ -108,6 +120,7 @@ export class CommentRepository {
     size?: number,
     commentState?: CommentState,
     timestamp?: Date,
+    requestUser?: UserEntity,
   ): Promise<CommentEntity[]> {
     return this.commentRepository.find(
       {
@@ -117,6 +130,14 @@ export class CommentRepository {
           user: user,
         },
         createdAt: { $lte: timestamp },
+        ...(requestUser && {
+          reacts: {
+            $none: {
+              user: requestUser,
+              discriminator: ReactDiscriminator.REPORT,
+            },
+          },
+        }),
       },
       {
         populate: [

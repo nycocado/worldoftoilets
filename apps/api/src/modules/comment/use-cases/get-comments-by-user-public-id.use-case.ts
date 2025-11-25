@@ -24,6 +24,7 @@ export class GetCommentsByUserPublicIdUseCase {
    * @param {number} [size] O tamanho da página.
    * @param {CommentState} [commentState] O estado do comentário para filtrar.
    * @param {Date} [timestamp] O timestamp máximo de criação.
+   * @param {string} [requestUserPublicId] O ID público do utilizador autenticado que está fazendo a consulta, para filtrar comentários denunciados por ele.
    * @returns {Promise<CommentResponseDto[]>} Uma lista de DTOs de comentário.
    * @throws {NotFoundException} Se o utilizador não for encontrado.
    */
@@ -34,8 +35,13 @@ export class GetCommentsByUserPublicIdUseCase {
     size?: number,
     commentState?: CommentState,
     timestamp?: Date,
+    requestUserPublicId?: string,
   ): Promise<CommentResponseDto[]> {
     const user = await this.userService.getUserByPublicId(userPublicId);
+    const requestUser = requestUserPublicId
+      ? await this.userService.getUserByPublicId(requestUserPublicId)
+      : undefined;
+
     const result = await this.repository.findByUser(
       user,
       pageable,
@@ -43,6 +49,7 @@ export class GetCommentsByUserPublicIdUseCase {
       size,
       commentState,
       timestamp,
+      requestUser,
     );
     return plainToInstance(CommentResponseDto, result, {
       excludeExtraneousValues: true,
