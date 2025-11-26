@@ -15,7 +15,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags } from '@nestjs/swagger';
 import { ApiResponseDto } from '@common/dto/api-response.dto';
 import {
   CreateSuggestionRequestDto,

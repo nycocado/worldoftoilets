@@ -3,6 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { CommentRateCommentResponseDto } from '@modules/comment-rate/dto/comment-rate-comment-response.dto';
 import { ReactCommentResponseDto } from '@modules/react/dto/react-comment-response.dto';
 import { UserCommentResponseDto } from '@modules/user/dto/user-comment-response.dto';
+import { ReactType } from '@modules/comment/dto/put-react-request.dto';
 
 /**
  * DTO para a resposta de um comentário.
@@ -69,6 +70,17 @@ export class CommentResponseDto {
   @Expose()
   @Type(() => UserCommentResponseDto)
   user!: UserCommentResponseDto;
+
+  @ApiProperty({
+    description:
+      'A reação do utilizador autenticado ao comentário (like/dislike).',
+    example: 'like',
+    enum: ReactType,
+    nullable: true,
+    required: false,
+  })
+  @Expose()
+  myReact?: ReactType | null;
 
   @ApiProperty({
     description: 'A data de criação do comentário.',

@@ -175,4 +175,11 @@ export class CommentEntity {
   get isDeleted(): boolean {
     return !!this.deletedAt && !!this.deletedBy;
   }
+
+  /**
+   * Armazena a reação do utilizador que fez a requisição.
+   * Preenchido dinamicamente por consulta.
+   */
+  @Property({ persist: false })
+  myReact?: ReactDiscriminator | null;
 }

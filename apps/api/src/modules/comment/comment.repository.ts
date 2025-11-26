@@ -4,8 +4,8 @@ import {
   CommentEntity,
   CommentState,
   InteractionDiscriminator,
-  InteractionEntity,
   ReactDiscriminator,
+  ReactEntity,
   ToiletEntity,
   UserEntity,
 } from '@database/entities';
@@ -14,6 +14,7 @@ import {
   QueryOrder,
   Transactional,
 } from '@mikro-orm/mariadb';
+import { InteractionEntity } from '@database/entities/interaction.entity';
 
 /**
  * Gerencia o acesso e a persistência de dados para a entidade CommentEntity.
@@ -49,6 +50,53 @@ export class CommentRepository {
   }
 
   /**
+   * Busca um comentário pelo seu ID público com a reação do utilizador autenticado.
+   *
+   * @param {string} publicId O ID público do comentário.
+   * @param {UserEntity} user O utilizador autenticado para buscar sua reação.
+   * @returns {Promise<CommentEntity | null>} A entidade do comentário com myReact preenchido ou `null` se não for encontrado.
+   */
+  async findByPublicIdWithUserReact(
+    publicId: string,
+    user: UserEntity,
+  ): Promise<CommentEntity | null> {
+    const comment = await this.commentRepository.findOne(
+      { publicId: publicId },
+      {
+        populate: [
+          'interaction.toilet',
+          'interaction.user.commentsCount',
+          'interaction.user.partner',
+          'rate',
+          'likes',
+          'dislikes',
+          'replyCount',
+        ],
+      },
+    );
+
+    if (!comment) {
+      return null;
+    }
+
+    // Enriquecer comentário com myReact
+    const em = this.commentRepository.getEntityManager();
+
+    const reacts = await em.find(ReactEntity, {
+      comment: comment,
+      user: user,
+      discriminator: {
+        $in: [ReactDiscriminator.LIKE, ReactDiscriminator.DISLIKE],
+      },
+    });
+
+    (comment as any).myReact =
+      reacts.length > 0 ? reacts[0].discriminator : null;
+
+    return comment;
+  }
+
+  /**
    * Busca comentários de um sanitário com opções de paginação e filtro.
    *
    * @param {ToiletEntity} toilet A entidade do sanitário.
@@ -57,7 +105,7 @@ export class CommentRepository {
    * @param {number} [size] O tamanho da página.
    * @param {CommentState} [commentState] O estado do comentário para filtrar.
    * @param {Date} [timestamp] O timestamp máximo de criação.
-   * @param {UserEntity} [user] O utilizador autenticado, para filtrar comentários denunciados por ele.
+   * @param {UserEntity} [user] O utilizador autenticado, para filtrar comentários denunciados por ele e buscar sua reação.
    * @returns {Promise<CommentEntity[]>} Uma lista de entidades de comentário.
    */
   async findByToilet(
@@ -69,7 +117,7 @@ export class CommentRepository {
     timestamp?: Date,
     user?: UserEntity,
   ): Promise<CommentEntity[]> {
-    return this.commentRepository.find(
+    const comments = await this.commentRepository.find(
       {
         state: commentState,
         interaction: {
@@ -101,6 +149,37 @@ export class CommentRepository {
         orderBy: { createdAt: QueryOrder.DESC },
       },
     );
+
+    // Se o usuário está autenticado, enriquecer comentários com myReact
+    if (user) {
+      const em = this.commentRepository.getEntityManager();
+
+      const reacts = await em.find(ReactEntity, {
+        comment: {
+          id: {
+            $in: comments.map((c) => c.id),
+          },
+        },
+        user: user,
+        discriminator: {
+          $in: [ReactDiscriminator.LIKE, ReactDiscriminator.DISLIKE],
+        },
+      });
+
+      const reactMap = new Map(
+        reacts.map((r) => [r.comment.id, r.discriminator]),
+      );
+
+      comments.forEach((comment) => {
+        (comment as any).myReact = reactMap.get(comment.id) || null;
+      });
+    } else {
+      comments.forEach((comment) => {
+        (comment as any).myReact = null;
+      });
+    }
+
+    return comments;
   }
 
   /**
@@ -112,7 +191,7 @@ export class CommentRepository {
    * @param {number} [size] O tamanho da página.
    * @param {CommentState} [commentState] O estado do comentário para filtrar.
    * @param {Date} [timestamp] O timestamp máximo de criação.
-   * @param {UserEntity} [requestUser] O utilizador autenticado que está fazendo a consulta, para filtrar comentários denunciados por ele.
+   * @param {UserEntity} [requestUser] O utilizador autenticado que está fazendo a consulta, para filtrar comentários denunciados por ele e buscar sua reação.
    * @returns {Promise<CommentEntity[]>} Uma lista de entidades de comentário.
    */
   async findByUser(
@@ -124,7 +203,7 @@ export class CommentRepository {
     timestamp?: Date,
     requestUser?: UserEntity,
   ): Promise<CommentEntity[]> {
-    return this.commentRepository.find(
+    const comments = await this.commentRepository.find(
       {
         state: commentState,
         interaction: {
@@ -146,7 +225,6 @@ export class CommentRepository {
           'interaction.toilet',
           'interaction.user.commentsCount',
           'interaction.user.partner',
-          'interaction.toilet',
           'rate',
           'likes',
           'dislikes',
@@ -157,6 +235,37 @@ export class CommentRepository {
         orderBy: { createdAt: QueryOrder.DESC },
       },
     );
+
+    // Se o usuário está autenticado, enriquecer comentários com myReact
+    if (requestUser) {
+      const em = this.commentRepository.getEntityManager();
+
+      const reacts = await em.find(ReactEntity, {
+        comment: {
+          id: {
+            $in: comments.map((c) => c.id),
+          },
+        },
+        user: requestUser,
+        discriminator: {
+          $in: [ReactDiscriminator.LIKE, ReactDiscriminator.DISLIKE],
+        },
+      });
+
+      const reactMap = new Map(
+        reacts.map((r) => [r.comment.id, r.discriminator]),
+      );
+
+      comments.forEach((comment) => {
+        (comment as any).myReact = reactMap.get(comment.id) || null;
+      });
+    } else {
+      comments.forEach((comment) => {
+        (comment as any).myReact = null;
+      });
+    }
+
+    return comments;
   }
 
   /**

@@ -82,6 +82,7 @@ export class CommentController {
    *
    * @param {string} publicId O identificador público do sanitário.
    * @param {GetCommentsRequestDto} getByToiletsRequestDto DTO com parâmetros de paginação e filtros.
+   * @param {jwtTypes.RequestUser} user O utilizador autenticado.
    * @returns {Promise<ApiResponseDto<CommentResponseDto[]>>} A lista de comentários.
    * @throws {NotFoundException} Se o sanitário não for encontrado.
    */
@@ -117,6 +118,7 @@ export class CommentController {
    *
    * @param {string} publicId O identificador público do sanitário.
    * @param {GetCommentsManageRequestDto} getByToiletsRequestDto DTO com parâmetros de paginação e filtros de estado.
+   * @param {jwtTypes.RequestUser} user O utilizador autenticado.
    * @returns {Promise<ApiResponseDto<CommentResponseDto[]>>} A lista de comentários.
    * @throws {NotFoundException} Se o sanitário não for encontrado.
    */
@@ -127,6 +129,7 @@ export class CommentController {
   async getCommentsByToiletManage(
     @Param('publicId') publicId: string,
     @Query() getByToiletsRequestDto: GetCommentsManageRequestDto,
+    @User() user: jwtTypes.RequestUser,
   ): Promise<ApiResponseDto<CommentResponseDto[]>> {
     const { pageable, page, size, commentState, timestamp } =
       getByToiletsRequestDto || {};
@@ -137,6 +140,7 @@ export class CommentController {
       size,
       commentState,
       timestamp,
+      user.publicId,
     );
 
     return new ApiResponseDto<CommentResponseDto[]>(
@@ -169,6 +173,7 @@ export class CommentController {
       size,
       CommentState.VISIBLE,
       timestamp,
+      user.publicId,
     );
 
     return new ApiResponseDto<CommentResponseDto[]>(
@@ -182,6 +187,7 @@ export class CommentController {
    *
    * @param {string} publicId O identificador público do utilizador.
    * @param {GetCommentsManageRequestDto} getByToiletsRequestDto DTO com parâmetros de paginação e filtros de estado.
+   * @param {jwtTypes.RequestUser} user O utilizador autenticado.
    * @returns {Promise<ApiResponseDto<CommentResponseDto[]>>} A lista de comentários do utilizador.
    * @throws {NotFoundException} Se o utilizador não for encontrado.
    */
@@ -192,6 +198,7 @@ export class CommentController {
   async getCommentsByUserManage(
     @Param('publicId', ParseUUIDPipe) publicId: string,
     @Query() getByToiletsRequestDto: GetCommentsManageRequestDto,
+    @User() user: jwtTypes.RequestUser,
   ): Promise<ApiResponseDto<CommentResponseDto[]>> {
     const { pageable, page, size, commentState, timestamp } =
       getByToiletsRequestDto || {};
@@ -202,6 +209,7 @@ export class CommentController {
       size,
       commentState,
       timestamp,
+      user.publicId,
     );
 
     return new ApiResponseDto<CommentResponseDto[]>(
