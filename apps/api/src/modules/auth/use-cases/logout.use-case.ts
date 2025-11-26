@@ -1,6 +1,5 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { RefreshTokenService } from '@modules/refresh-token/refresh-token.service';
-import { AUTH_EXCEPTIONS } from '@modules/auth/constants';
+import { Injectable } from '@nestjs/common';
+import { RefreshTokenService } from '@modules/refresh-token';
 import { Transactional } from '@mikro-orm/mariadb';
 
 /**

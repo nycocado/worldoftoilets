@@ -56,7 +56,12 @@ export class PutReactUseCase {
       await this.reactService.updateReact(react, discriminator);
     }
 
-    return plainToInstance(CommentResponseDto, comment, {
+    const newComment = await this.repository.findByPublicIdWithUserReact(
+      commentPublicId,
+      user,
+    );
+
+    return plainToInstance(CommentResponseDto, newComment, {
       excludeExtraneousValues: true,
     });
   }

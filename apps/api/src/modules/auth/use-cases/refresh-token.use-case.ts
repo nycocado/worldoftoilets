@@ -1,10 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { RefreshTokenService } from '@modules/refresh-token/refresh-token.service';
-import { RefreshTokenResponseDto } from '@modules/auth/dto';
-import { createAccessToken } from '@modules/auth/utils/token.utils';
-import { AUTH_EXCEPTIONS } from '@modules/auth/constants';
+import { RefreshTokenService } from '@modules/refresh-token';
 import { Transactional } from '@mikro-orm/mariadb';
+import { createAccessToken } from '@modules/auth/utils';
+import { RefreshTokenResponseDto } from '@modules/auth/dto';
 
 /**
  * Implementa o caso de uso de renovação de token.
