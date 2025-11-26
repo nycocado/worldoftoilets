@@ -60,4 +60,24 @@ export class InteractionRepository {
     await em.persistAndFlush(interaction);
     return interaction;
   }
+
+  /**
+   * Busca uma interação específica baseada em utilizador, casa de banho e discriminador.
+   *
+   * @param {UserEntity} user O utilizador da interação.
+   * @param {ToiletEntity} toilet A casa de banho da interação.
+   * @param {InteractionDiscriminator} discriminator O tipo de interação.
+   * @returns {Promise<InteractionEntity | null>} A interação encontrada ou null.
+   */
+  async findOne(
+    user: UserEntity,
+    toilet: ToiletEntity,
+    discriminator: InteractionDiscriminator,
+  ): Promise<InteractionEntity | null> {
+    return this.interactionRepository.findOne({
+      user,
+      toilet,
+      discriminator,
+    });
+  }
 }

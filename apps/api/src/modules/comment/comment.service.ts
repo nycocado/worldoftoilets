@@ -3,7 +3,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { textTimeToMilliseconds } from '@common/utils/jwt-time.util';
 import { ConfigService } from '@nestjs/config';
 import { CommentRepository } from '@modules/comment/comment.repository';
-import { CommentEntity } from '@database/entities';
+import { CommentEntity, UserEntity } from '@database/entities';
 import { COMMENT_EXCEPTIONS } from '@modules/comment/constants/exceptions.constant';
 
 /**
@@ -43,5 +43,29 @@ export class CommentService {
       throw new NotFoundException(COMMENT_EXCEPTIONS.COMMENT_NOT_FOUND);
     }
     return comment;
+  }
+
+  /**
+   * Realiza o soft delete de um comentário.
+   *
+   * @param {CommentEntity} comment O comentário a ser deletado.
+   * @param {UserEntity} deletedBy O utilizador que está a realizar a exclusão.
+   * @returns {Promise<CommentEntity>} O comentário com soft delete aplicado.
+   */
+  async softDeleteComment(
+    comment: CommentEntity,
+    deletedBy: UserEntity,
+  ): Promise<CommentEntity> {
+    return this.commentRepository.softDelete(comment, deletedBy);
+  }
+
+  /**
+   * Faz undelete de um comentário.
+   *
+   * @param {CommentEntity} comment O comentário a ser restaurado.
+   * @returns {Promise<CommentEntity>} O comentário restaurado.
+   */
+  async undeleteComment(comment: CommentEntity): Promise<CommentEntity> {
+    return this.commentRepository.undelete(comment);
   }
 }

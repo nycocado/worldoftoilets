@@ -48,12 +48,11 @@ import {
   ApiSwaggerPendingSuggestion,
   ApiSwaggerPublishSuggestionImage,
 } from '@modules/suggestion/swagger';
-import { UploadSuggestionImageSwagger } from '@modules/suggestion/swagger/upload-image.swagger';
+import { ApiUploadSuggestionImageSwagger } from '@modules/suggestion/swagger/upload-image.swagger';
 
 /**
  * Gerencia as requisições HTTP para operações relacionadas a sugestões.
  */
-@ApiTags('Suggestion')
 @Controller('suggestion')
 export class SuggestionController {
   constructor(
@@ -118,7 +117,7 @@ export class SuggestionController {
    * @throws {ForbiddenException} Se o utilizador não for o autor da sugestão.
    * @throws {BadRequestException} Se a sugestão não estiver pendente ou o arquivo for inválido.
    */
-  @UploadSuggestionImageSwagger()
+  @ApiUploadSuggestionImageSwagger()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequiresPermissions(PermissionApiName.SUGGEST_TOILETS)
   @Post(':publicId/image')

@@ -5,7 +5,6 @@ import { AccessService } from '@modules/access';
 import { TypeExtraService } from '@modules/type-extra';
 import { MinioService } from '@modules/minio';
 import { ImageValidationService, CountryService } from '@common/services';
-import { IMAGE_VALIDATION_CONFIG } from '@common/constants/image-validation.constant';
 import {
   ToiletStatus,
   AccessApiName,

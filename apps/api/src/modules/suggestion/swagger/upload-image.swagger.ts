@@ -1,6 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
 import {
-  ApiTags,
   ApiOperation,
   ApiConsumes,
   ApiBody,
@@ -14,9 +13,8 @@ import { UploadSuggestionImageDto } from '@modules/suggestion/dto/upload-image.d
  *
  * @returns {MethodDecorator} Conjunto de decoradores aplicados.
  */
-export function UploadSuggestionImageSwagger() {
+export function ApiUploadSuggestionImageSwagger(): MethodDecorator {
   return applyDecorators(
-    ApiTags('suggestion'),
     ApiOperation({
       summary: 'Upload de imagem de sugestão',
       description:

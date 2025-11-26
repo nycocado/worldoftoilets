@@ -49,9 +49,7 @@ export class UploadSuggestionImageUseCase {
     }
 
     if (suggestion.interaction.user.publicId !== userId) {
-      throw new ForbiddenException(
-        SUGGESTION_EXCEPTIONS.NOT_SUGGESTION_AUTHOR,
-      );
+      throw new ForbiddenException(SUGGESTION_EXCEPTIONS.NOT_SUGGESTION_AUTHOR);
     }
 
     if (suggestion.status !== SuggestionStatus.PENDING) {
