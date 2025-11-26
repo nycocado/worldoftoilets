@@ -104,4 +104,28 @@ export class UserService {
   ): Promise<UserEntity> {
     return this.userRepository.create(name, icon, birthDate);
   }
+
+  /**
+   * Faz soft delete de um utilizador.
+   *
+   * @param {UserEntity} user O utilizador a ser desativado.
+   * @param {UserEntity} deactivatedBy O utilizador que desativou.
+   * @returns {Promise<void>}
+   */
+  async softDeleteUser(
+    user: UserEntity,
+    deactivatedBy: UserEntity,
+  ): Promise<void> {
+    return this.userRepository.softDelete(user, deactivatedBy);
+  }
+
+  /**
+   * Faz undelete de um utilizador.
+   *
+   * @param {UserEntity} user O utilizador a ser restaurado.
+   * @returns {Promise<UserEntity>} O utilizador restaurado.
+   */
+  async undeleteUser(user: UserEntity): Promise<UserEntity> {
+    return this.userRepository.undelete(user);
+  }
 }

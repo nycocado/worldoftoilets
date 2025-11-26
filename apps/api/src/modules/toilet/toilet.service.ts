@@ -138,4 +138,28 @@ export class ToiletService {
   async deleteToilet(toilet: ToiletEntity): Promise<void> {
     return this.toiletRepository.delete(toilet);
   }
+
+  /**
+   * Realiza a remoção lógica (soft delete) de uma casa de banho.
+   *
+   * @param {ToiletEntity} toilet A entidade da casa de banho a ser removida.
+   * @param {UserEntity} deletedBy O utilizador que está a realizar a remoção.
+   * @returns {Promise<void>}
+   */
+  async softDeleteToilet(
+    toilet: ToiletEntity,
+    deletedBy: UserEntity,
+  ): Promise<void> {
+    return this.toiletRepository.softDelete(toilet, deletedBy);
+  }
+
+  /**
+   * Faz undelete de uma casa de banho.
+   *
+   * @param {ToiletEntity} toilet A casa de banho a ser restaurada.
+   * @returns {Promise<ToiletEntity>} A casa de banho restaurada.
+   */
+  async undeleteToilet(toilet: ToiletEntity): Promise<ToiletEntity> {
+    return this.toiletRepository.undelete(toilet);
+  }
 }

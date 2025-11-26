@@ -43,4 +43,20 @@ export class InteractionService {
   ): Promise<InteractionEntity> {
     return this.interactionRepository.softDelete(interaction, user);
   }
+
+  /**
+   * Busca uma interação específica baseada em utilizador, casa de banho e discriminador.
+   *
+   * @param {UserEntity} user O utilizador da interação.
+   * @param {ToiletEntity} toilet A casa de banho da interação.
+   * @param {InteractionDiscriminator} discriminator O tipo de interação.
+   * @returns {Promise<InteractionEntity | null>} A interação encontrada ou null.
+   */
+  async findInteraction(
+    user: UserEntity,
+    toilet: ToiletEntity,
+    discriminator: InteractionDiscriminator,
+  ): Promise<InteractionEntity | null> {
+    return this.interactionRepository.findOne(user, toilet, discriminator);
+  }
 }

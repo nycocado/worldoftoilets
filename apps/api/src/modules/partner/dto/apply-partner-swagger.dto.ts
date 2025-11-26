@@ -8,8 +8,7 @@ export class ApplyPartnerSwaggerDto extends ApplyPartnerRequestDto {
   @ApiProperty({
     type: 'string',
     format: 'binary',
-    description:
-      'Documento de certificação (PDF, JPEG, PNG ou WebP, máx 10MB)',
+    description: 'Documento de certificação (PDF, JPEG, PNG ou WebP, máx 10MB)',
   })
   certificate: unknown;
 }

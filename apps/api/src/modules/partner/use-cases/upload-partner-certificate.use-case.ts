@@ -65,11 +65,7 @@ export class UploadPartnerCertificateUseCase {
       }
     }
 
-    await this.minioService.uploadFile(
-      file.buffer,
-      fileName,
-      file.mimetype,
-    );
+    await this.minioService.uploadFile(file.buffer, fileName, file.mimetype);
 
     const publicUrl = this.minioService.getPublicFileUrl(fileName);
 

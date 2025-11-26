@@ -2,7 +2,6 @@ import { Injectable, ConflictException } from '@nestjs/common';
 import { Transactional } from '@mikro-orm/mariadb';
 import { PartnerRepository } from '@modules/partner/partner.repository';
 import { ToiletService } from '@modules/toilet';
-import { MinioService } from '@modules/minio';
 import { PartnerApplicationResponseDto } from '@modules/partner/dto';
 import { plainToInstance } from 'class-transformer';
 import { PARTNER_EXCEPTIONS } from '@modules/partner/constants';
@@ -16,7 +15,6 @@ export class ApplyPartnerUseCase {
   constructor(
     private readonly repository: PartnerRepository,
     private readonly toiletService: ToiletService,
-    private readonly minioService: MinioService,
   ) {}
 
   /**

@@ -7,10 +7,7 @@ import {
   ApiForbiddenResponse,
   ApiBadRequestResponse,
 } from '@nestjs/swagger';
-import {
-  CreateToiletRequestDto,
-  ToiletResponseDto,
-} from '@modules/toilet/dto';
+import { CreateToiletRequestDto, ToiletResponseDto } from '@modules/toilet/dto';
 
 export const ApiSwaggerCreateToilet = (): MethodDecorator =>
   applyDecorators(

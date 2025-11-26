@@ -30,6 +30,10 @@ import { MinioModule } from '@modules/minio';
 import { SuggestionModule } from '@modules/suggestion';
 import { RouteModule } from '@modules/route';
 import { PartnerModule } from '@modules/partner';
+import { ReportToiletModule } from '@modules/report-toilet';
+import { ReportCommentModule } from '@modules/report-comment';
+import { ReportUserModule } from '@modules/report-user';
+import { ReportReplyModule } from '@modules/report-reply';
 
 @Module({
   imports: [
@@ -66,6 +70,10 @@ import { PartnerModule } from '@modules/partner';
     TypeExtraModule,
     RouteModule,
     PartnerModule,
+    ReportToiletModule,
+    ReportCommentModule,
+    ReportUserModule,
+    ReportReplyModule,
   ],
   providers: [
     {
