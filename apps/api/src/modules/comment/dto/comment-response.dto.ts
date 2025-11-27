@@ -1,9 +1,10 @@
-import { Expose, Transform, Type } from 'class-transformer';
+import { Expose, plainToInstance, Transform, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { CommentRateCommentResponseDto } from '@modules/comment-rate/dto/comment-rate-comment-response.dto';
 import { ReactCommentResponseDto } from '@modules/react/dto/react-comment-response.dto';
 import { UserCommentResponseDto } from '@modules/user/dto/user-comment-response.dto';
 import { ReactType } from '@modules/comment/dto/put-react-request.dto';
+import { ToiletResponseDto } from '@modules/toilet/dto';
 
 /**
  * DTO para a resposta de um comentário.
@@ -70,6 +71,24 @@ export class CommentResponseDto {
   @Expose()
   @Type(() => UserCommentResponseDto)
   user!: UserCommentResponseDto;
+
+  @ApiProperty({
+    description: 'A informação do toilet associada ao comentário.',
+    nullable: true,
+    type: () => ToiletResponseDto,
+  })
+  @Expose()
+  @Type(() => ToiletResponseDto)
+  @Transform(({ obj }) => {
+    const toilet = obj.interaction?.toilet || null;
+    if (!toilet) {
+      return null;
+    }
+    return plainToInstance(ToiletResponseDto, toilet, {
+      excludeExtraneousValues: true,
+    });
+  })
+  toilet?: ToiletResponseDto;
 
   @ApiProperty({
     description:

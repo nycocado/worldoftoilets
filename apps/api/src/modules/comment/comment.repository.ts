@@ -222,7 +222,13 @@ export class CommentRepository {
       },
       {
         populate: [
-          'interaction.toilet',
+          'interaction.toilet.access',
+          'interaction.toilet.extras',
+          'interaction.toilet.totalRatings',
+          'interaction.toilet.avgClean',
+          'interaction.toilet.avgStructure',
+          'interaction.toilet.avgAccessibility',
+          'interaction.toilet.paperAvailability',
           'interaction.user.commentsCount',
           'interaction.user.partner',
           'rate',
