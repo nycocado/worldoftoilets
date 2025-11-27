@@ -1,4 +1,4 @@
-import { Expose, Type } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { UserBaseDto } from '@modules/user/dto/user-base.dto';
 
@@ -12,5 +12,6 @@ export class UserSuggestionResponseDto extends UserBaseDto {
   })
   @Expose()
   @Type(() => String)
+  @Transform(({ obj }) => obj.credential?.email)
   email: string;
 }
