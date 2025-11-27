@@ -21,9 +21,6 @@ import androidx.compose.ui.unit.dp
 import com.worldoftoilets.app.models.Toilet
 import com.worldoftoilets.app.models.UiState
 import com.worldoftoilets.app.models.responses.PageResponse
-import com.worldoftoilets.app.tests.generateLocationStateFlow
-import com.worldoftoilets.app.tests.generateToiletsNearbyIdsStateFlow
-import com.worldoftoilets.app.tests.generateToiletsStateFlow
 import com.worldoftoilets.app.ui.components.LoadMoreCard
 import com.worldoftoilets.app.ui.components.LocationCard
 import kotlinx.coroutines.flow.StateFlow
@@ -32,11 +29,11 @@ import com.worldoftoilets.app.R
 
 @Composable
 fun ToiletListScreen(
-    toiletsStateFlow: StateFlow<Map<Int, Toilet>>,
-    toiletsNearbyIdsStateFlow: StateFlow<UiState<PageResponse<Int>>>,
-    locationStateFlow: StateFlow<Location>,
-    navigateToToiletDetail: (Int) -> Unit = {},
-    onClickLoadMore: (PageResponse<Int>) -> Unit = {}
+    toiletsStateFlow: StateFlow<Map<String, Toilet>>,
+    toiletsNearbyIdsStateFlow: StateFlow<UiState<PageResponse<String>>>,
+    locationStateFlow: StateFlow<Location?>,
+    navigateToToiletDetail: (String) -> Unit = {},
+    onClickLoadMore: (PageResponse<String>) -> Unit = {}
 ) {
     val context = LocalContext.current
     val toilets = toiletsStateFlow.collectAsState().value
@@ -91,9 +88,14 @@ fun ToiletListScreen(
                 Text(context.getString(R.string.error_unexpected))
             }
         }
+
+        UiState.Idle -> {
+            // Nothing to show
+        }
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
 fun ToiletListPreview() {
@@ -107,3 +109,4 @@ fun ToiletListPreview() {
         locationStateFlow = locationStateFlow
     )
 }
+*/

@@ -3,29 +3,31 @@ package com.worldoftoilets.app.models
 import android.net.Uri
 import androidx.compose.runtime.Composable
 import com.google.gson.annotations.SerializedName
-import com.worldoftoilets.app.models.enums.TypeAccess
-import com.worldoftoilets.app.models.enums.TypeExtra
-import com.worldoftoilets.app.BuildConfig
 import java.io.Serializable
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
+import androidx.core.net.toUri
 
 data class Toilet(
-    @SerializedName("id") var id: Int,
+    @SerializedName("publicId") val publicId: String,
     @SerializedName("name") val name: String,
     @SerializedName("address") val address: String,
-    @SerializedName("rating") var rating: Rating,
+    @SerializedName("city") val city: String,
+    @SerializedName("state") val state: String?,
+    @SerializedName("country") val country: String,
+    @SerializedName("countryCode") val countryCode: String,
     @SerializedName("latitude") val latitude: Double,
     @SerializedName("longitude") val longitude: Double,
-    @SerializedName("numComments") var numComments: Int,
-    @SerializedName("placeId") val placeId: String? = null,
+    @SerializedName("access") val access: Access,
     @SerializedName("extras") val extras: List<TypeExtra>,
-    @SerializedName("access") val access: TypeAccess
+    @SerializedName("photoUrl") val photoUrl: String?,
+    @SerializedName("placeId") val placeId: String?,
+    @SerializedName("rating") val rating: ToiletRating
 ) : Serializable {
-    fun getAverageRating(): Float {
-        return rating.average()
+    fun getAverageRating(): Double {
+        return (rating.avgClean + rating.avgStructure + rating.avgAccessibility) / 3f
     }
 
     private fun distanceTo(lat: Double, lon: Double): Double {
@@ -59,7 +61,24 @@ data class Toilet(
 
     @Composable
     fun getImageUrl(): Uri {
-        val url = BuildConfig.API_URL + "toilets/${this.id}/image?API_KEY=" + BuildConfig.API_KEY
-        return Uri.parse(url)
+        return photoUrl?.replace("localhost", "10.0.2.2")?.toUri() ?: Uri.EMPTY
     }
 }
+
+data class Access(
+    @SerializedName("name") val name: String,
+    @SerializedName("apiName") val apiName: String
+) : Serializable
+
+data class TypeExtra(
+    @SerializedName("name") val name: String,
+    @SerializedName("apiName") val apiName: String
+) : Serializable
+
+data class ToiletRating(
+    @SerializedName("totalRatings") val totalRatings: Int,
+    @SerializedName("avgClean") val avgClean: Double,
+    @SerializedName("avgStructure") val avgStructure: Double,
+    @SerializedName("avgAccessibility") val avgAccessibility: Double,
+    @SerializedName("paperAvailability") val paperAvailability: Double
+) : Serializable

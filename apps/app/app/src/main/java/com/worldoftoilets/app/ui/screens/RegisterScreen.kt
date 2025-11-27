@@ -44,19 +44,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import com.worldoftoilets.app.R
 import com.worldoftoilets.app.models.enums.UserIcon
-import com.worldoftoilets.app.models.responses.ApiResponse
 import com.worldoftoilets.app.ui.components.ClickableTextField
 import com.worldoftoilets.app.ui.components.CustomDatePickerDialog
 import com.worldoftoilets.app.ui.components.IconCarousel
 import com.worldoftoilets.app.ui.components.NextTextField
-import java.text.ParseException
-import java.text.SimpleDateFormat
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
-    registerStateFlow: StateFlow<Result<ApiResponse>?> = MutableStateFlow(null),
-    onRegister: (name: String, email: String, password: String, iconId: String?, birthDate: String?) -> Unit = { _, _, _, _, _ -> },
+    registerStateFlow: StateFlow<Result<Unit>?> = MutableStateFlow(null),
+    onRegister: (name: String, email: String, password: String, icon: String?, birthDate: String) -> Unit = { _, _, _, _, _ -> },
     onRegisterSuccess: () -> Unit = {},
     navigateToBack: () -> Unit = {}
 ) {
@@ -70,10 +67,11 @@ fun RegisterScreen(
     var emailSupportText by remember { mutableStateOf("") }
     var passwordSupportText by remember { mutableStateOf("") }
     var confirmPasswordSupportText by remember { mutableStateOf("") }
+    var birthDateSupportText by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
     val isAllowedToRegister =
-        nameSupportText.isEmpty() && emailSupportText.isEmpty() && passwordSupportText.isEmpty() && confirmPasswordSupportText.isEmpty()
+        nameSupportText.isEmpty() && emailSupportText.isEmpty() && passwordSupportText.isEmpty() && confirmPasswordSupportText.isEmpty() && birthDateSupportText.isEmpty() && birthDate.isNotEmpty()
 
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -85,7 +83,7 @@ fun RegisterScreen(
     val currentPage = pagerState.currentPage
     val currentIcon = UserIcon.entries[currentPage].id
 
-    LaunchedEffect(name, email, password, confirmPassword) {
+    LaunchedEffect(name, email, password, confirmPassword, birthDate) {
         nameSupportText = when {
             name.isEmpty() -> context.getString(R.string.error_required_name)
             name.length > 50 -> context.getString(R.string.error_too_long_name)
@@ -113,6 +111,11 @@ fun RegisterScreen(
             confirmPassword != password -> context.getString(R.string.error_passwords_do_not_match)
             else -> ""
         }
+
+        birthDateSupportText = when {
+            birthDate.isEmpty() -> context.getString(R.string.error_required_date)
+            else -> ""
+        }
     }
 
     LaunchedEffect(registerState) {
@@ -121,6 +124,7 @@ fun RegisterScreen(
             emailSupportText = ""
             passwordSupportText = ""
             confirmPasswordSupportText = ""
+            birthDateSupportText = ""
             isLoading = false
 
             scope.launch {
@@ -135,6 +139,7 @@ fun RegisterScreen(
                     nameSupportText = ""
                     passwordSupportText = ""
                     confirmPasswordSupportText = ""
+                    birthDateSupportText = ""
                     isLoading = false
                 }
 
@@ -143,6 +148,7 @@ fun RegisterScreen(
                     emailSupportText = ""
                     passwordSupportText = ""
                     confirmPasswordSupportText = ""
+                    birthDateSupportText = ""
                     isLoading = false
                 }
             }
@@ -248,7 +254,7 @@ fun RegisterScreen(
                                     email,
                                     password,
                                     currentIcon,
-                                    formatBirthDate(birthDate)
+                                    birthDate
                                 )
                                 isLoading = true
                             }
@@ -291,20 +297,6 @@ fun RegisterScreen(
                 onDismiss = { showDatePicker = false }
             )
         }
-    }
-}
-
-@SuppressLint("SimpleDateFormat")
-private fun formatBirthDate(birthDate: String): String? {
-    if (birthDate.isEmpty()) return null
-
-    val inputFormat = SimpleDateFormat("dd/MM/yyyy")
-    val outputFormat = SimpleDateFormat("yyyy-MM-dd")
-    return try {
-        val date = inputFormat.parse(birthDate)
-        date?.let { outputFormat.format(it) }
-    } catch (e: ParseException) {
-        null
     }
 }
 

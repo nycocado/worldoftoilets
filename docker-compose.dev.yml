@@ -150,27 +150,6 @@ services:
             start_period: 10s
         networks:
             - wot-network
-
-    old-api:
-        build:
-            context: ./apps/old-api
-            dockerfile: Dockerfile
-        container_name: wot-old-api
-        restart: always
-        environment:
-            MYSQL_URL: mariadb://old-db:3307/${MARIADB_OLD_DATABASE}
-            MYSQL_USER: ${MARIADB_OLD_USER}
-            MYSQL_PASSWORD: ${MARIADB_OLD_PASSWORD}
-            API_KEY_ADMIN: ${API_KEY_ADMIN}
-            API_KEY_USER: ${API_KEY_USER}
-            SERVER_PORT: 3200
-        ports:
-            - "3200:3200"
-        depends_on:
-            old-db:
-                condition: service_healthy
-        networks:
-            - wot-network
     
     web-1:
         build:
@@ -288,39 +267,6 @@ services:
         networks:
             - wot-network
 
-    old-db:
-        image: bitnami/mariadb:latest
-        container_name: wot-old-db
-        restart: on-failure
-        environment:
-            MARIADB_ROOT_PASSWORD: ${MARIADB_OLD_ROOT_PASSWORD}
-            MARIADB_USER: ${MARIADB_OLD_USER}
-            MARIADB_PASSWORD: ${MARIADB_OLD_PASSWORD}
-            MARIADB_DATABASE: ${MARIADB_OLD_DATABASE}
-            MARIADB_PORT_NUMBER: 3307
-        ports:
-            - "3307:3307"
-        volumes:
-            - type: volume
-              source: mariadb_db_old
-              target: /bitnami/mariadb
-            - type: bind
-              source: ./db/old-scripts/01-create.sql
-              target: /docker-entrypoint-initdb.d/01-create.sql
-              read_only: true
-            - type: bind
-              source: ./db/old-scripts/02-populate.sql
-              target: /docker-entrypoint-initdb.d/02-insert.sql
-              read_only: true
-        healthcheck:
-            test: ['CMD', '/opt/bitnami/scripts/mariadb/healthcheck.sh']
-            interval: 15s
-            timeout: 5s
-            retries: 6
-            start_period: 15s
-        networks:
-            - wot-network
-
 volumes:
     api_1_node_modules:
         driver: local
@@ -335,8 +281,6 @@ volumes:
     ai_data_dev:
         driver: local
     mariadb_db_1_data:
-        driver: local
-    mariadb_db_old:
         driver: local
 
 networks:

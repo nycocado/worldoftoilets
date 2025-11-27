@@ -1,42 +1,41 @@
 package com.worldoftoilets.app.models
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import com.google.gson.annotations.SerializedName
 import com.worldoftoilets.app.R
 import java.io.Serializable
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.math.floor
 
 data class Comment(
-    @SerializedName("id") var id: Int,
-    @SerializedName("toiletId") var toiletId: Int,
-    @SerializedName("userId") val userId: Int,
-    @SerializedName("text") val text: String,
-    @SerializedName("ratingClean") val ratingClean: Int,
-    @SerializedName("ratingPaper") val ratingPaper: Boolean,
-    @SerializedName("ratingStructure") val ratingStructure: Int,
-    @SerializedName("ratingAccessibility") val ratingAccessibility: Int,
-    @SerializedName("datetime") val dateTime: String,
-    @SerializedName("numLikes") var like: Int,
-    @SerializedName("numDislikes") var dislike: Int,
-    @SerializedName("score") var score: Int,
+    @SerializedName("publicId") val publicId: String,
+    @SerializedName("text") val text: String?,
+    @SerializedName("score") val score: Double,
+    @SerializedName("rate") val rate: CommentRate,
+    @SerializedName("reactCounts") val reactCounts: ReactCounts,
+    @SerializedName("replyCount") val replyCount: Int,
+    @SerializedName("user") val user: UserCommentResponse,
+    @SerializedName("createdAt") val createdAt: String,
+    @SerializedName("myReact") val myReact: String?
 ) : Serializable {
     fun average(): Float {
         var avgPaper = 0f
-        if (ratingPaper) {
-            avgPaper = 2f // 40%
+        if (rate.paper) {
+            avgPaper = 2f
         }
-        return ((ratingClean * 0.2f) + avgPaper + (ratingStructure * 0.2f) + (ratingAccessibility * 0.2f))
+        return ((rate.clean * 0.2f) + avgPaper + (rate.structure * 0.2f) + (rate.accessibility * 0.2f))
     }
 
     @Composable
     fun getDateTimeString(): String {
         val context = LocalContext.current
-        val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
-        val commentDate = LocalDateTime.parse(dateTime, formatter)
+        val commentDate = java.time.Instant.parse(createdAt)
+            .atZone(java.time.ZoneId.systemDefault())
+            .toLocalDateTime()
         val year = ChronoUnit.YEARS.between(commentDate, LocalDateTime.now())
         val month = ChronoUnit.MONTHS.between(commentDate, LocalDateTime.now())
         val days = ChronoUnit.DAYS.between(commentDate, LocalDateTime.now())
@@ -82,6 +81,46 @@ data class Comment(
             else -> {
                 context.getString(R.string.time_hour_less)
             }
+        }
+    }
+}
+
+data class CommentRate(
+    @SerializedName("clean") val clean: Int,
+    @SerializedName("paper") val paper: Boolean,
+    @SerializedName("structure") val structure: Int,
+    @SerializedName("accessibility") val accessibility: Int
+) : Serializable
+
+data class ReactCounts(
+    @SerializedName("likes") val likes: Int,
+    @SerializedName("dislikes") val dislikes: Int
+) : Serializable {
+    val likeCount: Int
+        get() = likes
+    val dislikeCount: Int
+        get() = dislikes
+}
+
+data class UserCommentResponse(
+    @SerializedName("publicId") val publicId: String,
+    @SerializedName("name") val name: String,
+    @SerializedName("icon") val icon: String,
+    @SerializedName("commentsCount") val commentsCount: Int,
+    @SerializedName("points") val points: Int,
+    @SerializedName("isPartner") val isPartner: Boolean
+) : Serializable {
+    @Composable
+    fun getIcon(): Painter {
+        return when (icon) {
+            "icon-1" -> painterResource(R.drawable.icon1)
+            "icon-2" -> painterResource(R.drawable.icon2)
+            "icon-3" -> painterResource(R.drawable.icon3)
+            "icon-4" -> painterResource(R.drawable.icon4)
+            "icon-5" -> painterResource(R.drawable.icon5)
+            "icon-6" -> painterResource(R.drawable.icon6)
+            "icon-default" -> painterResource(R.drawable.icon_default)
+            else -> painterResource(R.drawable.icon_default)
         }
     }
 }

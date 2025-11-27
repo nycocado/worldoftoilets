@@ -1,45 +1,22 @@
 package com.worldoftoilets.app.network
 
 import com.worldoftoilets.app.models.User
+import com.worldoftoilets.app.models.requests.DeleteUserRequest
+import com.worldoftoilets.app.models.requests.UpdateUserRequest
+import com.worldoftoilets.app.models.responses.ApiResponse
 import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.PATCH
 
 interface UserService {
-    @GET("users")
-    suspend fun getUsers(
-        @Query("ids") ids: List<Int>? = null
-    ): List<User>
+    @GET("user/self")
+    suspend fun getSelf(): Response<ApiResponse<User>>
 
-    @GET("users/{id}")
-    suspend fun getUserById(@Path("id") id: Int): User
+    @PATCH("user/self")
+    suspend fun updateSelf(@Body request: UpdateUserRequest): Response<ApiResponse<User>>
 
-    @POST("users/{id}/edit/name")
-    suspend fun editName(
-        @Path("id") id: Int,
-        @Query("name") name: String,
-        @Query("password") password: String
-    ): Response<User>
-
-    @POST("users/{id}/edit/email")
-    suspend fun editEmail(
-        @Path("id") id: Int,
-        @Query("email") email: String,
-        @Query("password") password: String
-    ): Response<User>
-
-    @POST("users/{id}/edit/password")
-    suspend fun editPassword(
-        @Path("id") id: Int,
-        @Query("password") password: String,
-        @Query("newPassword") newPassword: String
-    ): Response<User>
-
-    @POST("users/{id}/edit/icon ")
-    suspend fun editIcon(
-        @Path("id") id: Int,
-        @Query("iconId") iconId: String
-    ): Response<User>
+    @DELETE("user/self")
+    suspend fun deleteSelf(@Body request: DeleteUserRequest): Response<ApiResponse<Unit>>
 }

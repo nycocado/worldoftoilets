@@ -51,7 +51,7 @@ import com.worldoftoilets.app.R
 fun LoginScreen(
     loginStateFlow: StateFlow<Result<User>?>,
     onLogin: (email: String, password: String) -> Unit = { _, _ -> },
-    onLoginSuccess: (user: User) -> Unit = { },
+    onLoginSuccess: () -> Unit = { },
     navigateToRegister: () -> Unit = { }
 ) {
     val loginState = loginStateFlow.collectAsState().value
@@ -82,39 +82,20 @@ fun LoginScreen(
     }
 
     LaunchedEffect(loginState) {
-        loginState?.onSuccess { user ->
+        loginState?.onSuccess {
             emailSupportText = ""
             passwordSupportText = ""
             isLoading = false
 
             scope.launch {
-                onLoginSuccess(user)
+                onLoginSuccess()
             }
         }
 
         loginState?.onFailure { error ->
-            when {
-                error.message?.contains("email") == true -> {
-                    emailSupportText = context.getString(R.string.error_invalid_email)
-                    passwordSupportText = ""
-                    isLoading = false
-                }
-
-                error.message?.contains("password") == true -> {
-                    passwordSupportText = context.getString(R.string.error_invalid_password)
-                    emailSupportText = ""
-                    isLoading = false
-                }
-
-                else -> {
-                    emailSupportText = ""
-                    passwordSupportText = ""
-                    isLoading = false
-
-                    scope.launch {
-                        snackbarHostState.showSnackbar(context.getString(R.string.error_login))
-                    }
-                }
+            isLoading = false
+            scope.launch {
+                snackbarHostState.showSnackbar(error.message ?: context.getString(R.string.error_login))
             }
         }
     }

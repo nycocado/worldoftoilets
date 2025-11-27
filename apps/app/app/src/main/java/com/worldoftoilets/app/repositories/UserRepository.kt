@@ -1,69 +1,62 @@
 package com.worldoftoilets.app.repositories
 
 import com.worldoftoilets.app.models.User
-import com.worldoftoilets.app.network.RetrofitClient
+import com.worldoftoilets.app.models.requests.DeleteUserRequest
+import com.worldoftoilets.app.models.requests.UpdateUserRequest
 import com.worldoftoilets.app.network.UserService
 import javax.inject.Inject
 
-class UserRepository @Inject constructor() {
-    private val userService = RetrofitClient.retrofit.create(UserService::class.java)
-
-    suspend fun getUsers(
-        ids: List<Int>? = null
-    ): List<User> {
-        return userService.getUsers(ids)
-    }
-
-    suspend fun getUserById(userId: Int): User {
-        return userService.getUserById(userId)
-    }
-
-    suspend fun editName(userId: Int, name: String, password: String): Result<User> {
+class UserRepository @Inject constructor(
+    private val userService: UserService
+) {
+    suspend fun getSelf(): Result<User> {
         return try {
-            val response = userService.editName(userId, name, password)
-            if (response.isSuccessful) {
-                Result.success(response.body()!!)
+            val response = userService.getSelf()
+            val apiResponse = response.body()
+
+            if (response.isSuccessful && apiResponse?.data != null) {
+                Result.success(apiResponse.data)
             } else {
-                Result.failure(Exception(response.errorBody()?.string()))
+                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Failed to get user"
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    suspend fun editEmail(userId: Int, email: String, password: String): Result<User> {
+    suspend fun updateSelf(
+        name: String?,
+        icon: String?,
+        birthDate: String?
+    ): Result<User> {
         return try {
-            val response = userService.editEmail(userId, email, password)
-            if (response.isSuccessful) {
-                Result.success(response.body()!!)
+            val response = userService.updateSelf(
+                UpdateUserRequest(name, icon, birthDate)
+            )
+            val apiResponse = response.body()
+
+            if (response.isSuccessful && apiResponse?.data != null) {
+                Result.success(apiResponse.data)
             } else {
-                Result.failure(Exception(response.errorBody()?.string()))
+                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Failed to update user"
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    suspend fun editPassword(userId: Int, password: String, newPassword: String): Result<User> {
+    suspend fun deleteSelf(password: String): Result<Unit> {
         return try {
-            val response = userService.editPassword(userId, password, newPassword)
-            if (response.isSuccessful) {
-                Result.success(response.body()!!)
-            } else {
-                Result.failure(Exception(response.errorBody()?.string()))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
+            val response = userService.deleteSelf(DeleteUserRequest(password))
+            val apiResponse = response.body()
 
-    suspend fun editIcon(userId: Int, iconId: String): Result<User> {
-        return try {
-            val response = userService.editIcon(userId, iconId)
             if (response.isSuccessful) {
-                Result.success(response.body()!!)
+                Result.success(Unit)
             } else {
-                Result.failure(Exception(response.errorBody()?.string()))
+                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Failed to delete user"
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
             Result.failure(e)

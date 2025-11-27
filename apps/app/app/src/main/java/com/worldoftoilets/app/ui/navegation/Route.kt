@@ -25,7 +25,6 @@ object MainGraph {
     const val ROOT = "main_graph"
     const val HOME = "main/home"
     const val HOME_WITH_ARGUMENTS = "main/home?toiletId={toiletId}"
-    const val HISTORY = "main/history"
     const val PROFILE = "main/profile"
     val HOME_ARGUMENTS = listOf(
         navArgument("toiletId") {
@@ -35,7 +34,7 @@ object MainGraph {
         }
     )
 
-    fun homeToiletDetail(toiletId: Int) = "main/home?toiletId=$toiletId"
+    fun homeToiletDetail(toiletId: String) = "main/home?toiletId=$toiletId"
 }
 
 object BottomSheetGraph {
@@ -44,11 +43,11 @@ object BottomSheetGraph {
     const val TOILET_DETAILS = "bottom_sheet/toilet/details/{toiletId}"
     val TOILET_DETAILS_ARGUMENTS = listOf (
         navArgument("toiletId") {
-            type = NavType.IntType
+            type = NavType.StringType
         }
     )
 
-    fun toiletDetail(toiletId: Int) = "bottom_sheet/toilet/details/$toiletId"
+    fun toiletDetail(toiletId: String) = "bottom_sheet/toilet/details/$toiletId"
 }
 
 object AuthGraph {
@@ -62,11 +61,11 @@ object RatingGraph {
     const val RATING = "rating/{toiletId}"
     val RATING_ARGUMENTS = listOf (
         navArgument("toiletId") {
-            type = NavType.IntType
+            type = NavType.StringType
         }
     )
 
-    fun rating(toiletId: Int) = "rating/$toiletId"
+    fun rating(toiletId: String) = "rating/$toiletId"
 }
 
 object SettingsGraph {
@@ -91,7 +90,7 @@ object ReportGraph {
             type = NavType.StringType
         },
         navArgument("id") {
-            type = NavType.IntType
+            type = NavType.StringType
         }
     )
     val REPORT_CONFIRMATION_ARGUMENTS = listOf (
@@ -103,8 +102,8 @@ object ReportGraph {
         }
     )
 
-    fun reportToilet(toiletId: Int) = "report/toilet/$toiletId"
-    fun reportComment(commentId: Int) = "report/comment/$commentId"
+    fun reportToilet(toiletId: String) = "report/toilet/$toiletId"
+    fun reportComment(commentId: String) = "report/comment/$commentId"
     fun reportConfirmation(type: String, confirmation: Boolean) = "report/confirmation/$type/$confirmation"
 }
 
@@ -128,17 +127,6 @@ sealed class NavRoute(
         }
     }
 
-    data class History(private val context: Context) : NavRoute(
-        selectedIcon = R.drawable.history_24px,
-        unselectedIcon = R.drawable.history_24px,
-        hasNews = false,
-        route = AppGraph.main.HISTORY
-    ) {
-        override fun getTitle(): String {
-            return context.getString(R.string.history)
-        }
-    }
-
     data class Profile(private val context: Context) : NavRoute(
         selectedIcon = R.drawable.account_circle_filled_24px,
         unselectedIcon = R.drawable.account_circle_24px,
@@ -156,7 +144,6 @@ fun getBottomRoutes(): List<NavRoute> {
     val context: Context = LocalContext.current
     return listOf(
         NavRoute.Home(context),
-        NavRoute.History(context),
         NavRoute.Profile(context)
     )
 }

@@ -2,101 +2,103 @@ package com.worldoftoilets.app.repositories
 
 import com.google.gson.Gson
 import com.worldoftoilets.app.models.Comment
-import com.worldoftoilets.app.models.Reaction
-import com.worldoftoilets.app.models.requests.CommentRequest
-import com.worldoftoilets.app.models.requests.ReactionRequest
+import com.worldoftoilets.app.models.requests.CreateCommentRequest
+import com.worldoftoilets.app.models.requests.CommentRateRequest
 import com.worldoftoilets.app.models.responses.ApiResponse
 import com.worldoftoilets.app.network.CommentService
-import com.worldoftoilets.app.network.RetrofitClient
 import javax.inject.Inject
 
-class CommentRepository @Inject constructor() {
-    private val commentService = RetrofitClient.retrofit.create(CommentService::class.java)
-
-    suspend fun getCommentsByToiletId(
-        toiletId: Int,
-        userId: Int
-    ): List<Comment> {
-        return commentService.getCommentsByToiletId(toiletId, userId)
-    }
-
-    suspend fun getCommentsByUserId(userId: Int): List<Comment> {
-        return commentService.getCommentsByUserId(userId)
-    }
-
-    suspend fun getReactionsByUserId(
-        userId: Int,
-        commentIds: List<Int>
-    ): List<Reaction> {
-        return commentService.getReactionsByUserId(userId, commentIds)
-    }
-
-    suspend fun postComment(
-        toiletId: Int,
-        userId: Int,
-        text: String,
-        ratingClean: Int,
-        ratingPaper: Boolean,
-        ratingStructure: Int,
-        ratingAccessibility: Int
-    ): Result<Comment> {
+class CommentRepository @Inject constructor(
+    private val commentService: CommentService
+) {
+    suspend fun getCommentsByToilet(
+        toiletPublicId: String,
+        page: Int = 0,
+        size: Int = 20,
+        timestamp: String? = null
+    ): Result<List<Comment>> {
         return try {
-            val response = commentService.postComment(
-                CommentRequest(
-                    toiletId,
-                    userId,
-                    text,
-                    ratingClean,
-                    ratingPaper,
-                    ratingStructure,
-                    ratingAccessibility
-                )
+            val response = commentService.getCommentsByToilet(
+                toiletPublicId, true, page, size, timestamp
             )
-            if (response.isSuccessful) {
-                response.body()?.let {
-                    Result.success(it)
-                } ?: Result.failure(Exception("No comment found"))
-            } else {
-                val errorBody = response.errorBody()?.string()
-                val errorResponse = Gson().fromJson(errorBody, ApiResponse::class.java)
-                Result.failure(Exception(errorResponse.message))
-            }
-        } catch (e: Exception) {
-            throw e
-        }
-    }
+            val apiResponse = response.body()
 
-    suspend fun postReaction(
-        commentId: Int,
-        userId: Int,
-        typeReaction: String
-    ): Result<ApiResponse> {
-        return try {
-            val response = commentService.postReaction(
-                ReactionRequest(
-                    commentId,
-                    userId,
-                    typeReaction
-                )
-            )
-            if (response.isSuccessful) {
-                response.body()?.let {
-                    Result.success(it)
-                } ?: Result.failure(Exception("No response found"))
+            if (response.isSuccessful && apiResponse?.data != null) {
+                Result.success(apiResponse.data)
             } else {
-                val errorBody = response.errorBody()?.string()
-                val errorResponse = Gson().fromJson(errorBody, ApiResponse::class.java)
-                Result.failure(Exception(errorResponse.message))
+                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Error getting comments"
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    suspend fun deleteReaction(
-        commentId: Int,
-        userId: Int
-    ) {
-        commentService.deleteReaction(commentId, userId)
+    suspend fun getMyComments(
+        page: Int = 0,
+        size: Int = 20,
+        timestamp: String? = null
+    ): Result<List<Comment>> {
+        return try {
+            val response = commentService.getMyComments(true, page, size, timestamp)
+            val apiResponse = response.body()
+
+            if (response.isSuccessful && apiResponse?.data != null) {
+                Result.success(apiResponse.data)
+            } else {
+                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Error getting my comments"
+                Result.failure(Exception(errorMsg))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun createComment(
+        toiletPublicId: String,
+        text: String?,
+        clean: Int,
+        paper: Boolean,
+        structure: Int,
+        accessibility: Int
+    ): Result<Comment> {
+        return try {
+            val response = commentService.createComment(
+                CreateCommentRequest(
+                    toiletPublicId,
+                    text,
+                    CommentRateRequest(clean, paper, structure, accessibility)
+                )
+            )
+            val apiResponse = response.body()
+
+            if (response.isSuccessful && apiResponse?.data != null) {
+                Result.success(apiResponse.data)
+            } else {
+                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Error creating comment"
+                Result.failure(Exception(errorMsg))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun reactToComment(
+        commentPublicId: String,
+        react: String
+    ): Result<Comment> {
+        return try {
+            val response = commentService.reactToComment(commentPublicId, react)
+            val apiResponse = response.body()
+
+            if (response.isSuccessful && apiResponse?.data != null) {
+                Result.success(apiResponse.data)
+            } else {
+                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Error reacting to comment"
+                Result.failure(Exception(errorMsg))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }
