@@ -1,66 +1,68 @@
 package com.worldoftoilets.app.network
 
-import com.worldoftoilets.app.models.SearchToilet
 import com.worldoftoilets.app.models.Toilet
-import com.worldoftoilets.app.models.requests.ReportRequest
 import com.worldoftoilets.app.models.responses.ApiResponse
 import retrofit2.Response
-import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
+import okhttp3.MultipartBody
+import retrofit2.http.Body
 
 interface ToiletService {
-    @GET("toilets")
+    @GET("toilet")
     suspend fun getToilets(
-        @Query("ids") ids: List<Int>? = null,
-        @Query("userId") userId: Int? = null,
-        @Query("pageable") pageable: Boolean = false,
+        @Query("pageable") pageable: Boolean = true,
         @Query("page") page: Int = 0,
         @Query("size") size: Int = 20,
-        @Query("state") state: String? = "active"
-    ): List<Toilet>
+        @Query("city") city: String? = null,
+        @Query("country") country: String? = null,
+        @Query("countryCode") countryCode: String? = null,
+        @Query("access") access: String? = null,
+        @Query("extras") extras: List<String>? = null,
+        @Query("timestamp") timestamp: String? = null
+    ): Response<ApiResponse<List<Toilet>>>
 
-    @GET("toilets/{id}")
-    suspend fun getToiletById(@Path("id") id: Int): Response<Toilet>
-
-    @GET("toilets/nearby")
-    suspend fun getNearbyToilets(
+    @GET("toilet/proximity")
+    suspend fun getToiletsByProximity(
         @Query("lat") lat: Double,
-        @Query("lon") lon: Double,
-        @Query("userId") userId: Int? = null,
-        @Query("pageable") pageable: Boolean = false,
+        @Query("lng") lng: Double,
+        @Query("pageable") pageable: Boolean = true,
         @Query("page") page: Int = 0,
         @Query("size") size: Int = 20,
-        @Query("state") state: String? = "active"
-    ): List<Toilet>
+        @Query("access") access: String? = null,
+        @Query("extras") extras: List<String>? = null,
+        @Query("timestamp") timestamp: String? = null
+    ): Response<ApiResponse<List<Toilet>>>
 
-    @GET("toilets/users/{id}")
-    suspend fun getToiletsByUserId(
-        @Path("id") id: Int,
-        @Query("pageable") pageable: Boolean = false,
-        @Query("page") page: Int = 0,
-        @Query("size") size: Int = 20,
-        @Query("state") state: String? = "active"
-    ): List<Toilet>
-
-    @POST("toilets/reports")
-    suspend fun reportToilet(@Body reportRequest: ReportRequest): Response<ApiResponse>
-
-    @GET("toilets/search/{query}")
-    suspend fun searchToilets(
-        @Path("query") query: String,
-        @Query("state") pageable: Boolean = false,
-        @Query("page") page: Int = 0,
-        @Query("size") size: Int = 5
-    ): List<SearchToilet>
-
-    @GET("toilets/bounding")
-    suspend fun getToiletsInBoundingBox(
+    @GET("toilet/bounding-box")
+    suspend fun getToiletsByBoundingBox(
         @Query("minLat") minLat: Double,
+        @Query("minLng") minLng: Double,
         @Query("maxLat") maxLat: Double,
-        @Query("minLon") minLon: Double,
-        @Query("maxLon") maxLon: Double
-    ): List<Toilet>
+        @Query("maxLng") maxLng: Double,
+        @Query("access") access: String? = null,
+        @Query("extras") extras: List<String>? = null,
+        @Query("timestamp") timestamp: String? = null
+    ): Response<ApiResponse<List<Toilet>>>
+
+    @GET("toilet/{publicId}")
+    suspend fun getToilet(@Path("publicId") publicId: String): Response<ApiResponse<Toilet>>
+
+    @PUT("toilet/{publicId}/view")
+    suspend fun viewToilet(@Path("publicId") publicId: String): Response<ApiResponse<Unit>>
+
+    @POST("toilet/manage")
+    suspend fun createToilet(@Body request: com.worldoftoilets.app.models.requests.CreateToiletRequest): Response<ApiResponse<Toilet>>
+
+    @POST("toilet/{publicId}/manage/image")
+    @Multipart
+    suspend fun uploadImage(
+        @Path("publicId") publicId: String,
+        @Part image: MultipartBody.Part
+    ): Response<ApiResponse<Toilet>>
 }

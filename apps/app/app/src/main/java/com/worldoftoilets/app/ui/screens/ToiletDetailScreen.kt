@@ -1,5 +1,6 @@
 package com.worldoftoilets.app.ui.screens
 
+import android.util.Log
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
@@ -46,10 +47,6 @@ import com.worldoftoilets.app.models.Reaction
 import com.worldoftoilets.app.models.Toilet
 import com.worldoftoilets.app.models.User
 import com.worldoftoilets.app.models.enums.TypeReaction
-import com.worldoftoilets.app.tests.generateCommentsList
-import com.worldoftoilets.app.tests.generateRandomToilet
-import com.worldoftoilets.app.tests.generateReactions
-import com.worldoftoilets.app.tests.generateUserMain
 import com.worldoftoilets.app.ui.components.ChipsToilet
 import com.worldoftoilets.app.ui.components.CommentToilet
 import com.worldoftoilets.app.ui.components.ProgressBar
@@ -59,28 +56,25 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import com.worldoftoilets.app.R
+import androidx.core.net.toUri
 
 @SuppressLint("DefaultLocale")
 @Composable
 fun ToiletDetailScreen(
-    toiletId: Int,
-    toiletsStateFlow: StateFlow<Map<Int, Toilet>>,
-    commentsStateFlow: StateFlow<List<Comment>>,
+    toiletId: String,
+    toiletsStateFlow: StateFlow<Map<String, Toilet>>,
+    commentsCacheStateFlow: StateFlow<Map<String, List<Comment>>>,
     isLoadingCommentsToiletStateFlow: StateFlow<Boolean>,
-    reactionsStateFlow: StateFlow<Map<Int, Reaction>>,
-    usersStateFlow: StateFlow<Map<Int, User>>,
     userMainStateFlow: StateFlow<User?>,
-    navigateToRating: (toiletId: Int) -> Unit = {},
-    navigateToToiletReport: (toiletId: Int) -> Unit = {},
-    navigateToCommentReport: (commentId: Int) -> Unit = {},
+    navigateToRating: (toiletId: String) -> Unit = {},
+    navigateToToiletReport: (toiletId: String) -> Unit = {},
+    navigateToCommentReport: (commentId: String) -> Unit = {},
     navigateToBack: () -> Unit = {},
-    onReaction: (comment: Int, typeReaction: TypeReaction) -> Unit = { _, _ -> }
+    onReaction: (toiletId: String, commentPublicId: String, react: String) -> Unit = { _, _, _ -> }
 ) {
     val toilet = toiletsStateFlow.collectAsState().value[toiletId]!!
-    val comments = commentsStateFlow.collectAsState().value.filter { it.toiletId == toiletId }
+    val comments = commentsCacheStateFlow.collectAsState().value[toiletId] ?: emptyList()
     val isLoadingCommentsToilet = isLoadingCommentsToiletStateFlow.collectAsState().value
-    val reactions = reactionsStateFlow.collectAsState().value
-    val users = usersStateFlow.collectAsState().value
     val userMain = userMainStateFlow.collectAsState().value
 
     val scope = rememberCoroutineScope()
@@ -108,10 +102,10 @@ fun ToiletDetailScreen(
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Stars(
-                        rating = toilet.getAverageRating(), size = 22.dp
+                        rating = toilet.getAverageRating().toFloat(), size = 22.dp
                     )
                     Text(
-                        text = "%.1f".format(toilet.getAverageRating()) + " - " + context.getString(toilet.access.value),
+                        text = "%.1f".format(toilet.getAverageRating()) + " - " + toilet.access.name,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold,
                         overflow = TextOverflow.Ellipsis,
@@ -124,7 +118,7 @@ fun ToiletDetailScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 FilledIconButton(
-                    onClick = { navigateToToiletReport(toilet.id) },
+                    onClick = { navigateToToiletReport(toilet.publicId) },
                     modifier = Modifier
                         .size(38.dp),
                     colors = IconButtonColors(
@@ -174,6 +168,22 @@ fun ToiletDetailScreen(
                     model = ImageRequest.Builder(platformContext)
                         .data(toilet.getImageUrl())
                         .crossfade(true)
+                        .listener(
+                            onStart = {
+                                Log.d(
+                                    "CoilDebug",
+                                    "Started loading image: ${toilet.photoUrl}"
+                                )
+                            },
+                            onSuccess = { _, _ -> Log.d("CoilDebug", "Image loaded successfully") },
+                            onError = { _, result ->
+                                Log.e(
+                                    "CoilDebug",
+                                    "Error loading image: ${result.throwable.message}",
+                                    result.throwable
+                                )
+                            }
+                        )
                         .build(),
                     contentDescription = context.getString(R.string.content_description_toilet_image) + ": " + toilet.name,
                     modifier = Modifier
@@ -235,11 +245,11 @@ fun ToiletDetailScreen(
                         onClick = {
                             val intent = Intent(
                                 Intent.ACTION_VIEW,
-                                Uri.parse(toilet.getMapsUrl())
+                                toilet.getMapsUrl().toUri()
                             ).apply {
                                 putExtra(
                                     Intent.EXTRA_REFERRER,
-                                    Uri.parse(context.getString(R.string.maps_uri))
+                                    context.getString(R.string.maps_uri).toUri()
                                 )
                             }
                             context.startActivity(intent)
@@ -285,38 +295,38 @@ fun ToiletDetailScreen(
                             fontWeight = FontWeight.Bold
                         )
                         Stars(
-                            rating = toilet.getAverageRating(), size = 20.dp
+                            rating = toilet.getAverageRating().toFloat(), size = 20.dp
                         )
                     }
                     Column(
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         ProgressBar(
-                            progress = toilet.rating.clean,
+                            progress = toilet.rating.avgClean.toFloat(),
                             text = String.format(
                                 "%.1f",
-                                toilet.rating.clean
+                                toilet.rating.avgClean
                             ) + " " + context.getString(R.string.clean)
                         )
                         ProgressBar(
-                            progress = toilet.rating.structure,
+                            progress = toilet.rating.avgStructure.toFloat(),
                             text = String.format(
                                 "%.1f",
-                                toilet.rating.structure
+                                toilet.rating.avgStructure
                             ) + " " + context.getString(R.string.structure)
                         )
                         ProgressBar(
-                            progress = toilet.rating.accessibility,
+                            progress = toilet.rating.avgAccessibility.toFloat(),
                             text = String.format(
                                 "%.1f",
-                                toilet.rating.accessibility
+                                toilet.rating.avgAccessibility
                             ) + " " + context.getString(R.string.accessibility)
                         )
                         ProgressBar(
-                            progress = toilet.rating.paper,
+                            progress = (toilet.rating.paperAvailability * 100).toFloat(),
                             text = String.format(
                                 "%.0f",
-                                toilet.rating.paper
+                                toilet.rating.paperAvailability * 100
                             ) + "% " + context.getString(R.string.paper),
                             maxValue = 100f
                         )
@@ -329,7 +339,7 @@ fun ToiletDetailScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 4.dp),
-                    onClick = { scope.launch { navigateToRating(toilet.id) } },
+                    onClick = { scope.launch { navigateToRating(toilet.publicId) } },
                     colors = ButtonColors(
                         containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                         contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
@@ -360,7 +370,7 @@ fun ToiletDetailScreen(
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
-                        text = toilet.numComments.toString(),
+                        text = toilet.rating.totalRatings.toString(),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Medium,
                         color = Color.Gray
@@ -377,23 +387,16 @@ fun ToiletDetailScreen(
 
                 false -> {
                     items(comments) { comment ->
-                        val user = users[comment.userId]
-                        if (user != null) {
-                            reactions[comment.id]?.let {
-                                CommentToilet(
-                                    comment = comment,
-                                    reaction = it,
-                                    user = user,
-                                    userMain = userMain!!,
-                                    navigateToReport = { commentId ->
-                                        navigateToCommentReport(commentId)
-                                    },
-                                    onReaction = { commentId, typeReaction ->
-                                        onReaction(commentId, typeReaction)
-                                    },
-                                )
-                            }
-                        }
+                        CommentToilet(
+                            comment = comment,
+                            userMain = userMain,
+                            navigateToReport = { commentId ->
+                                navigateToCommentReport(commentId)
+                            },
+                            onReaction = { commentId, typeReaction ->
+                                onReaction(toiletId, commentId, typeReaction)
+                            },
+                        )
                     }
                 }
             }
@@ -401,6 +404,7 @@ fun ToiletDetailScreen(
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
 fun ToiletDetailScreenPreview() {
@@ -435,3 +439,4 @@ fun ToiletDetailScreenPreview() {
         )
     }
 }
+*/

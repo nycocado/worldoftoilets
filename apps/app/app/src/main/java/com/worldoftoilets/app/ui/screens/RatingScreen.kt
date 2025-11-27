@@ -42,16 +42,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.worldoftoilets.app.models.Comment
 import com.worldoftoilets.app.models.Toilet
-import com.worldoftoilets.app.models.User
-import com.worldoftoilets.app.tests.generateRandomToilet
-import com.worldoftoilets.app.tests.generateUser
 import com.worldoftoilets.app.ui.components.RatingItem
 import com.worldoftoilets.app.ui.components.Stars
-import com.worldoftoilets.app.ui.theme.AppTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -61,9 +56,8 @@ import com.worldoftoilets.app.R
 @Composable
 fun RatingScreen(
     toilet: Toilet,
-    user: User,
     ratingStateFlow: StateFlow<Result<Comment>?> = MutableStateFlow(null),
-    onRating: (toiletId: Int, userId: Int, text: String, ratingClean: Int, ratingPaper: Boolean, ratingStructure: Int, ratingAccessibility: Int) -> Unit = { _, _, _, _, _, _, _ -> },
+    onRating: (toiletPublicId: String, text: String?, ratingClean: Int, ratingPaper: Boolean, ratingStructure: Int, ratingAccessibility: Int) -> Unit = { _, _, _, _, _, _ -> },
     onRatingSuccess: () -> Unit = {},
     navigateToBack: () -> Unit = {}
 ) {
@@ -286,9 +280,8 @@ fun RatingScreen(
                         if (!commentError)
                             scope.launch {
                                 onRating(
-                                    toilet.id,
-                                    user.id!!,
-                                    comment,
+                                    toilet.publicId,
+                                    comment.ifEmpty { null },
                                     ratingClean,
                                     ratingPaper,
                                     ratingStructure,
@@ -321,6 +314,7 @@ fun RatingScreen(
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
@@ -331,3 +325,4 @@ fun DefaultPreview() {
         )
     }
 }
+*/

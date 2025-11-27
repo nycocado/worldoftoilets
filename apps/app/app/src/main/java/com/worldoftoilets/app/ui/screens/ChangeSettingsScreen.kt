@@ -39,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.worldoftoilets.app.models.User
 import com.worldoftoilets.app.models.enums.ChangeSettingType
+import com.worldoftoilets.app.ui.components.ClickableTextField
 import com.worldoftoilets.app.ui.components.GoTextField
 import com.worldoftoilets.app.ui.components.NextTextField
 import com.worldoftoilets.app.ui.theme.AppTheme
@@ -50,15 +51,15 @@ import com.worldoftoilets.app.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChangeSettingsScreen(
-    editUserStateFlow: StateFlow<Result<User>?>,
+    updateUserStateFlow: StateFlow<Result<User>?>,
     changeSettingType: ChangeSettingType,
     navigateToBack: () -> Unit = {},
-    onChangeName: (String, String) -> Unit = { _, _ -> },
-    onChangeEmail: (String, String) -> Unit = { _, _ -> },
-    onChangePassword: (String, String) -> Unit = { _, _ -> },
-    onChangeSuccess: (User) -> Unit = { }
+    onChangeName: (String) -> Unit = {},
+    onChangeEmail: (String) -> Unit = {},
+    onChangePassword: (String) -> Unit = {},
+    onChangeSuccess: () -> Unit = {}
 ) {
-    val editUser = editUserStateFlow.collectAsState().value
+    val updateUserState = updateUserStateFlow.collectAsState().value
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var name by remember { mutableStateOf("") }
@@ -112,8 +113,8 @@ fun ChangeSettingsScreen(
         }
     }
 
-    LaunchedEffect(editUser) {
-        editUser?.onSuccess {
+    LaunchedEffect(updateUserState) {
+        updateUserState?.onSuccess {
             nameSupportText = ""
             emailSupportText = ""
             passwordSupportText = ""
@@ -122,11 +123,11 @@ fun ChangeSettingsScreen(
             isLoading = false
 
             scope.launch {
-                onChangeSuccess(it)
+                onChangeSuccess()
             }
         }
 
-        editUser?.onFailure {
+        updateUserState?.onFailure {
             when {
                 it.message?.contains("Email") == true -> {
                     emailSupportText = context.getString(R.string.error_in_use_email)
@@ -209,7 +210,7 @@ fun ChangeSettingsScreen(
                                 onGo = {
                                     if (isAllowedToChangeName) {
                                         scope.launch {
-                                            onChangeName(name, password)
+                                            onChangeName(name)
                                             isLoading = true
                                         }
                                     }
@@ -234,7 +235,7 @@ fun ChangeSettingsScreen(
                                 onGo = {
                                     if (isAllowedToChangeEmail) {
                                         scope.launch {
-                                            onChangeEmail(email, password)
+                                            onChangeEmail(email)
                                             isLoading = true
                                         }
                                     }
@@ -265,7 +266,7 @@ fun ChangeSettingsScreen(
                                 onGo = {
                                     if (isAllowedToChangePassword) {
                                         scope.launch {
-                                            onChangePassword(password, newPassword)
+                                            onChangePassword(newPassword)
                                             isLoading = true
                                         }
                                     }
@@ -285,7 +286,7 @@ fun ChangeSettingsScreen(
                             ChangeSettingType.NAME -> {
                                 if (isAllowedToChangeName) {
                                     scope.launch {
-                                        onChangeName(name, password)
+                                        onChangeName(name)
                                         isLoading = true
                                     }
                                 }
@@ -294,7 +295,7 @@ fun ChangeSettingsScreen(
                             ChangeSettingType.EMAIL -> {
                                 if (isAllowedToChangeEmail) {
                                     scope.launch {
-                                        onChangeEmail(email, password)
+                                        onChangeEmail(email)
                                         isLoading = true
                                     }
                                 }
@@ -303,7 +304,7 @@ fun ChangeSettingsScreen(
                             ChangeSettingType.PASSWORD -> {
                                 if (isAllowedToChangePassword) {
                                     scope.launch {
-                                        onChangePassword(password, newPassword)
+                                        onChangePassword(newPassword)
                                         isLoading = true
                                     }
                                 }
@@ -344,13 +345,15 @@ fun ChangeSettingsScreen(
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
-fun ChangeSettingsScreenPreview() {
+fun ChangeSettingsPreview() {
     AppTheme {
         ChangeSettingsScreen(
-            editUserStateFlow = MutableStateFlow(null),
+            updateUserStateFlow = MutableStateFlow(null),
             changeSettingType = ChangeSettingType.NAME
         )
     }
 }
+*/

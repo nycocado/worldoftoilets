@@ -24,11 +24,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.worldoftoilets.app.BuildConfig
 import com.worldoftoilets.app.models.Toilet
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapListener
 import org.osmdroid.events.ScrollEvent
 import org.osmdroid.events.ZoomEvent
@@ -60,11 +62,11 @@ private val cartoDarkTileSource = XYTileSource(
 @SuppressLint("UseCompatLoadingForDrawables")
 @Composable
 fun OpenStreetMapsView(
-    locationStateFlow: StateFlow<Location>,
-    toiletsStateFlow: StateFlow<Map<Int, Toilet>>,
-    toiletsBoundingBoxIdsStateFlow: StateFlow<List<Int>>,
+    locationStateFlow: StateFlow<Location?>,
+    toiletsStateFlow: StateFlow<Map<String, Toilet>>,
+    toiletsBoundingBoxIdsStateFlow: StateFlow<List<String>>,
     onRequestToiletsBoundingBox: (BoundingBox) -> Unit,
-    onClickMarker: (Int) -> Unit
+    onClickMarker: (String) -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val toilets = toiletsStateFlow.collectAsState().value
@@ -80,13 +82,18 @@ fun OpenStreetMapsView(
         AndroidView(
             modifier = Modifier.fillMaxSize(),
             factory = { context ->
+                Configuration.getInstance().load(context, androidx.preference.PreferenceManager.getDefaultSharedPreferences(context))
+                Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID
+
                 MapView(context).apply {
                     tileProvider.tileSource = when (isDarkTheme) {
                         true -> cartoDarkTileSource
                         false -> cartoLightTileSource
                     }
                     controller.setZoom(19.0)
-                    controller.setCenter(GeoPoint(location.latitude, location.longitude))
+                    if (location != null) {
+                        controller.setCenter(GeoPoint(location.latitude, location.longitude))
+                    }
                     setMultiTouchControls(true)
 
                     minZoomLevel = 3.0
@@ -128,11 +135,13 @@ fun OpenStreetMapsView(
         IconButton(
             onClick = {
                 scope.launch {
-                    mapView?.controller?.animateTo(
-                        GeoPoint(location.latitude, location.longitude),
-                        19.0,
-                        1000
-                    )
+                    if (location != null) {
+                        mapView?.controller?.animateTo(
+                            GeoPoint(location.latitude, location.longitude),
+                            19.0,
+                            1000
+                        )
+                    }
                 }
             },
             modifier = Modifier
@@ -153,8 +162,10 @@ fun OpenStreetMapsView(
     }
 
     LaunchedEffect(location) {
-        mapView?.let { map ->
-            map.controller?.setCenter(GeoPoint(location.latitude, location.longitude))
+        if (location != null) {
+            mapView?.let { map ->
+                map.controller?.setCenter(GeoPoint(location.latitude, location.longitude))
+            }
         }
     }
 
@@ -165,10 +176,10 @@ fun OpenStreetMapsView(
                 toilets[toiletId]?.let { toilet ->
                     Marker(map).apply {
                         position = GeoPoint(toilet.latitude, toilet.longitude)
-                        title = toilet.id.toString()
+                        title = toilet.publicId
                         icon = map.context.getDrawable(R.drawable.pin)
                         setOnMarkerClickListener { marker, _ ->
-                            onClickMarker(marker.title.toInt())
+                            onClickMarker(marker.title)
                             false
                         }
                         map.overlays.add(this)

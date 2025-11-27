@@ -15,13 +15,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.worldoftoilets.app.models.enums.TypeExtra
+import com.worldoftoilets.app.models.TypeExtra as TypeExtraData
+import com.worldoftoilets.app.models.enums.TypeExtra as TypeExtraEnum
 import com.worldoftoilets.app.ui.theme.AppTheme
 import com.worldoftoilets.app.ui.util.NoRippleInteractionSource
 
 @Composable
 fun ChipsToilet(
-    extras: List<TypeExtra>
+    extras: List<TypeExtraData>
 ) {
     val context = LocalContext.current
 
@@ -30,27 +31,34 @@ fun ChipsToilet(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         items(extras) { extra ->
-            AssistChip(
-                label = {
-                    Text(
-                        text = context.getString(extra.value),
-                        style = MaterialTheme.typography.labelSmall
-                    )
-                },
-                leadingIcon = {
-                    Icon(
-                        painter = painterResource(extra.icon),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurface
-                    )
-                },
-                onClick = {},
-                shape = MaterialTheme.shapes.extraLarge,
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
-                interactionSource = NoRippleInteractionSource()
-            )
+            val enumExtra = getTypeExtraEnum(extra.apiName)
+            if (enumExtra != null) {
+                AssistChip(
+                    label = {
+                        Text(
+                            text = context.getString(enumExtra.value),
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(enumExtra.icon),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    },
+                    onClick = {},
+                    shape = MaterialTheme.shapes.extraLarge,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
+                    interactionSource = NoRippleInteractionSource()
+                )
+            }
         }
     }
+}
+
+private fun getTypeExtraEnum(apiName: String): TypeExtraEnum? {
+    return TypeExtraEnum.values().find { it.technicalValue == apiName }
 }
 
 @Preview(showBackground = true)
@@ -59,10 +67,10 @@ fun ChipsToiletPreview() {
     AppTheme {
         ChipsToilet(
             extras = listOf(
-                TypeExtra.WHEELCHAIR_ACCESSIBLE,
-                TypeExtra.BABY_CHANGING_STATION,
-                TypeExtra.DISABLED_PARKING,
-                TypeExtra.ACCESSIBLE_FOR_VISUAL_IMPAIRMENT
+                TypeExtraData("Wheelchair Accessible", "wheelchair_accessible"),
+                TypeExtraData("Baby Changing Station", "baby_changing_station"),
+                TypeExtraData("Disabled Parking", "disabled_parking"),
+                TypeExtraData("Accessible for Visual Impairment", "accessible-for-visually-impaired")
             )
         )
     }

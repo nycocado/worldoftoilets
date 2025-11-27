@@ -16,8 +16,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.worldoftoilets.app.models.Comment
 import com.worldoftoilets.app.models.Toilet
-import com.worldoftoilets.app.tests.generateComment
-import com.worldoftoilets.app.tests.generateRandomToilet
 import com.worldoftoilets.app.ui.theme.AppTheme
 
 @Composable
@@ -41,7 +39,7 @@ fun ToiletReview(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Stars(
-                rating = toilet.getAverageRating(),
+                rating = toilet.getAverageRating().toFloat(),
                 size = 20.dp
             )
             Text(
@@ -51,7 +49,7 @@ fun ToiletReview(
             )
         }
         Text(
-            text = comment.text,
+            text = comment.text ?: "",
             fontWeight = FontWeight.Normal,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
@@ -60,6 +58,7 @@ fun ToiletReview(
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
 private fun PreviewToiletReviews() {
@@ -70,3 +69,4 @@ private fun PreviewToiletReviews() {
         )
     }
 }
+*/

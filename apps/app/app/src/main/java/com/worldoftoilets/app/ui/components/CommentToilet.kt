@@ -25,22 +25,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.worldoftoilets.app.models.Comment
-import com.worldoftoilets.app.models.Reaction
 import com.worldoftoilets.app.models.User
-import com.worldoftoilets.app.models.enums.TypeReaction
-import com.worldoftoilets.app.tests.generateComment
-import com.worldoftoilets.app.tests.generateUser
 import com.worldoftoilets.app.ui.theme.AppTheme
 import com.worldoftoilets.app.R
 
 @Composable
 fun CommentToilet(
     comment: Comment,
-    reaction: Reaction,
-    user: User,
-    userMain: User,
-    navigateToReport: (id: Int) -> Unit = { _ -> },
-    onReaction: (id: Int, typeReaction: TypeReaction) -> Unit = { _, _ -> },
+    userMain: User?,
+    navigateToReport: (id: String) -> Unit = { _ -> },
+    onReaction: (publicId: String, react: String) -> Unit = { _, _ -> },
 ) {
     val context = LocalContext.current
 
@@ -69,27 +63,27 @@ fun CommentToilet(
                             color = Color.Gray,
                             shape = CircleShape
                         ),
-                    painter = user.getIcon(),
+                    painter = comment.user.getIcon(),
                     contentDescription = context.getString(R.string.content_description_profile_picture)
                 )
                 Column {
                     Text(
-                        text = user.name,
+                        text = comment.user.name,
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                     )
                     Text(
-                        text = user.numComments.toString() + " " + context.getString(R.string.ratings),
+                        text = comment.user.commentsCount.toString() + " " + context.getString(R.string.ratings),
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.SemiBold,
                     )
                 }
             }
-            if (userMain.id != user.id) {
+            if (userMain != null && userMain.publicId != comment.user.publicId) {
                 IconButton(
-                    onClick = { navigateToReport(comment.id) }
+                    onClick = { navigateToReport(comment.publicId) }
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.flag_24px),
@@ -104,7 +98,7 @@ fun CommentToilet(
         ) {
             Row {
                 Stars(
-                    rating = comment.average(),
+                    rating = comment.score.toFloat(),
                     size = 20.dp
                 )
             }
@@ -116,7 +110,7 @@ fun CommentToilet(
         }
         Column {
             Text(
-                text = comment.text,
+                text = comment.text ?: "",
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Normal,
             )
@@ -125,25 +119,17 @@ fun CommentToilet(
                 horizontalArrangement = Arrangement.spacedBy(60.dp)
             ) {
                 ThumbUp(
-                    count = comment.like,
-                    isPressed = reaction.typeReaction == TypeReaction.LIKE,
+                    count = comment.reactCounts.likeCount,
+                    isPressed = comment.myReact == "like",
                     onClick = {
-                        if (reaction.typeReaction == TypeReaction.LIKE) {
-                            onReaction(comment.id, TypeReaction.NONE)
-                        } else {
-                            onReaction(comment.id, TypeReaction.LIKE)
-                        }
+                        onReaction(comment.publicId, "like")
                     }
                 )
                 ThumbDown(
-                    count = comment.dislike,
-                    isPressed = reaction.typeReaction == TypeReaction.DISLIKE,
+                    count = comment.reactCounts.dislikeCount,
+                    isPressed = comment.myReact == "dislike",
                     onClick = {
-                        if (reaction.typeReaction == TypeReaction.DISLIKE) {
-                            onReaction(comment.id, TypeReaction.NONE)
-                        } else {
-                            onReaction(comment.id, TypeReaction.DISLIKE)
-                        }
+                        onReaction(comment.publicId, "dislike")
                     }
                 )
             }
@@ -151,23 +137,18 @@ fun CommentToilet(
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
 private fun CommentPreview() {
     val comment = generateComment()
-    val reaction = Reaction(
-        commentId = comment.id,
-        typeReaction = TypeReaction.LIKE
-    )
-    val user = generateUser()
     val userMain = generateUser()
 
     AppTheme {
         CommentToilet(
             comment = comment,
-            reaction = reaction,
-            user = user,
             userMain = userMain
         )
     }
 }
+*/

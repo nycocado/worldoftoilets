@@ -16,8 +16,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -27,47 +25,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.worldoftoilets.app.models.enums.ConfirmationType
 import com.worldoftoilets.app.models.enums.ReportType
-import com.worldoftoilets.app.models.enums.TypeReaction
 import com.worldoftoilets.app.models.enums.TypeReport
-import com.worldoftoilets.app.models.responses.ApiResponse
 import com.worldoftoilets.app.ui.components.ReportButton
 import com.worldoftoilets.app.ui.theme.AppTheme
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import com.worldoftoilets.app.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReportScreen(
-    reportStateFlow: StateFlow<Result<ApiResponse>?>,
     type: String,
-    id: Int,
+    id: String,
     navigateToBack: () -> Unit = {},
-    onToiletReport: (Int, TypeReport) -> Unit = { _, _ -> },
-    onCommentReport: (Int, TypeReaction) -> Unit = { _, _ -> },
-    onReportConfirmation: (ConfirmationType) -> Unit = { }
+    onToiletReport: (toiletPublicId: String, typeReport: TypeReport) -> Unit = { _, _ -> },
+    onCommentReport: (commentPublicId: String, typeReport: TypeReport) -> Unit = { _, _ -> },
+    onReportConfirmation: (ConfirmationType) -> Unit = {}
 ) {
     val context = LocalContext.current
-    val reportState = reportStateFlow.collectAsState().value
     val reportType = ReportType.entries.find { it.value == type }!!
-    val invalidReactions = listOf(TypeReaction.LIKE, TypeReaction.DISLIKE, TypeReaction.NONE)
-
-    LaunchedEffect(reportState){
-        reportState?.onSuccess {
-            if (reportType == ReportType.TOILET) {
-                onReportConfirmation(ConfirmationType.REPORT_TOILET_SUCCESS)
-            } else {
-                onReportConfirmation(ConfirmationType.REPORT_COMMENT_SUCCESS)
-            }
-        }
-        reportState?.onFailure {
-            if (reportType == ReportType.TOILET) {
-                onReportConfirmation(ConfirmationType.REPORT_TOILET_FAILURE)
-            } else {
-                onReportConfirmation(ConfirmationType.REPORT_COMMENT_FAILURE)
-            }
-        }
-    }
 
     Scaffold(
         topBar = {
@@ -134,15 +108,13 @@ fun ReportScreen(
                 }
 
                 ReportType.COMMENT -> {
-                    items(TypeReaction.entries) { typeReaction ->
-                        if (!invalidReactions.contains(typeReaction)) {
-                            ReportButton(
-                                title = context.getString(typeReaction.value),
-                                onClick = {
-                                    onCommentReport(id, typeReaction)
-                                }
-                            )
-                        }
+                    items(TypeReport.entries) { typeReport ->
+                        ReportButton(
+                            title = context.getString(typeReport.value),
+                            onClick = {
+                                onCommentReport(id, typeReport)
+                            }
+                        )
                     }
                 }
             }
@@ -150,15 +122,15 @@ fun ReportScreen(
     }
 }
 
-
+/*
 @Composable
 @Preview(showBackground = true)
 fun PreviewReportScreen() {
     AppTheme {
         ReportScreen(
-            reportStateFlow = MutableStateFlow(null),
             type = "toilet",
-            id = 1
+            id = "1"
         )
     }
 }
+*/

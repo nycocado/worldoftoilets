@@ -41,9 +41,6 @@ import androidx.compose.ui.unit.dp
 import com.worldoftoilets.app.models.Comment
 import com.worldoftoilets.app.models.Toilet
 import com.worldoftoilets.app.models.User
-import com.worldoftoilets.app.tests.generateCommentsList
-import com.worldoftoilets.app.tests.generateRandomToilet
-import com.worldoftoilets.app.tests.generateUserMain
 import com.worldoftoilets.app.ui.components.ToiletReview
 import com.worldoftoilets.app.ui.theme.AppTheme
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -53,7 +50,7 @@ import com.worldoftoilets.app.R
 
 @Composable
 fun ProfileScreen(
-    toiletsStateFlow: StateFlow<Map<Int, Toilet>>,
+    toiletsStateFlow: StateFlow<Map<String, Toilet>>,
     userStateFlow: StateFlow<User?>,
     commentsStateFlow: StateFlow<List<Comment>>,
     isLoadingCommentsUserStateFlow: StateFlow<Boolean>,
@@ -194,27 +191,31 @@ fun ProfileScreen(
             }
 
             false -> {
+                /*
                 items(comments) { comment ->
-                    val toilet = toiletsStateFlow.collectAsState().value[comment.toiletId]
-                    if (toilet != null) {
-                        ToiletReview(
-                            comment = comment,
-                            toilet = toilet
-                        )
-                    }
+                    // TODO: Comment model needs toiletId or embedded Toilet to display review context
+                    // val toilet = toiletsStateFlow.collectAsState().value[comment.toiletId]
+                    // if (toilet != null) {
+                    //    ToiletReview(
+                    //        comment = comment,
+                    //        toilet = toilet
+                    //    )
+                    // }
                 }
+                */
             }
         }
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
 fun ProfileScreenPreview() {
     val userStateFlow = MutableStateFlow(generateUserMain())
     val toiletsStateFlow = MutableStateFlow(
         mapOf(
-            1 to generateRandomToilet(1),
+            "1" to generateRandomToilet(1),
         )
     )
     val commentsStateFlow = MutableStateFlow(generateCommentsList())
@@ -228,3 +229,4 @@ fun ProfileScreenPreview() {
         )
     }
 }
+*/

@@ -15,7 +15,6 @@ import com.worldoftoilets.app.models.enums.ChangeSettingType
 import com.worldoftoilets.app.models.enums.ConfirmationType
 import com.worldoftoilets.app.ui.screens.ChangeSettingsScreen
 import com.worldoftoilets.app.ui.screens.ConfirmationScreen
-import com.worldoftoilets.app.ui.screens.HistoryScreen
 import com.worldoftoilets.app.ui.screens.HomeScreen
 import com.worldoftoilets.app.ui.screens.LoginScreen
 import com.worldoftoilets.app.ui.screens.ProfileScreen
@@ -35,12 +34,13 @@ fun RootNavigationGraph(
     navController: NavHostController,
     localViewModel: LocalViewModel,
     userViewModel: UserViewModel,
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel,
+    startDestination: String
 ) {
     NavHost(
         navController = navController,
         route = AppGraph.initial.ROOT,
-        startDestination = AppGraph.main.ROOT
+        startDestination = startDestination
     ) {
         composable(AppGraph.main.ROOT) {
             MainView(navController, localViewModel, userViewModel)
@@ -68,46 +68,21 @@ fun MainNavigationGraph(
             route = AppGraph.main.HOME_WITH_ARGUMENTS,
             arguments = AppGraph.main.HOME_ARGUMENTS
         ) { backStackEntry ->
-            val toiletId = backStackEntry.arguments?.getString("toiletId")?.toInt()
+            val toiletId = backStackEntry.arguments?.getString("toiletId")
             HomeScreen(rootNavController, localViewModel, userViewModel, toiletId)
-        }
-        composable(AppGraph.main.HISTORY) {
-            val toilets = localViewModel.toiletsCache
-            val toiletIds = localViewModel.toiletsHistoryIds
-            val userId = userViewModel.user.collectAsState().value?.id!!
-            LaunchedEffect(Unit) {
-                localViewModel.loadToiletsHistory(userId)
-            }
-            HistoryScreen(
-                toilets, toiletIds,
-                navigateToHomeScreen = { selectedToiletId ->
-                    navController.navigate(AppGraph.main.homeToiletDetail(selectedToiletId!!)) {
-                        popUpTo(navController.graph.startDestinationRoute!!) {
-                            inclusive = true
-                        }
-                        launchSingleTop = true
-                    }
-                },
-                onClickLoadMore = { pageResponse ->
-                    localViewModel.loadMoreToiletsHistory(userId, pageResponse)
-                }
-            )
         }
         composable(AppGraph.main.PROFILE) {
             val toilets = localViewModel.toiletsCache
             val user = userViewModel.user
-            val userId = user.collectAsState().value?.id
-            val comments = localViewModel.commentsUser
+            val comments = localViewModel.myComments
             val isLoadingCommentsUser = localViewModel.isLoadingCommentsUser
             LaunchedEffect(Unit) {
-                if (userId != null) {
-                    localViewModel.loadUserComments(userId)
-                }
+                localViewModel.loadMyComments()
             }
             ProfileScreen(
                 toilets, user, comments, isLoadingCommentsUser,
                 onClickLogout = {
-                    userViewModel.clearUser().also {
+                    userViewModel.logout().also {
                         navController.navigate(AppGraph.main.HOME) {
                             popUpTo(rootNavController.graph.startDestinationRoute!!) {
                                 inclusive = true
@@ -146,26 +121,29 @@ fun BottomSheetNavigationGraph(
             val toilets = localViewModel.toiletsCache
             val toiletIds = localViewModel.toiletsNearbyIds
             val location = localViewModel.location
-            val user = userViewModel.user.collectAsState().value
+            val isLoggedIn = userViewModel.isLoggedIn.collectAsState().value
             ToiletListScreen(
-                toilets, toiletIds, location,
+                toiletsStateFlow = toilets,
+                toiletsNearbyIdsStateFlow = toiletIds,
+                locationStateFlow = location,
                 navigateToToiletDetail = { toiletId ->
-                    val isUserLoggedIn = userViewModel.isUserLoggedIn.value
-                    if (!isUserLoggedIn) {
-                        rootNavController.navigate(AppGraph.auth.LOGIN) {
-                            launchSingleTop = true
+                    isLoggedIn?.let { it1 ->
+                        if (!it1) {
+                            rootNavController.navigate(AppGraph.auth.LOGIN) {
+                                launchSingleTop = true
+                            }
+                        } else {
+                            navController.navigate(AppGraph.bottomSheet.toiletDetail(toiletId))
                         }
-                    } else {
-                        navController.navigate(AppGraph.bottomSheet.toiletDetail(toiletId))
                     }
                 },
-                onClickLoadMore = { pageResponse ->
-                    localViewModel.loadMoreToiletsNearby(
-                        location.value.latitude,
-                        location.value.longitude,
-                        user?.id,
-                        pageResponse
-                    )
+                onClickLoadMore = {
+                    location.value?.let { loc ->
+                        localViewModel.loadMoreToiletsNearby(
+                            loc.latitude,
+                            loc.longitude
+                        )
+                    }
                 }
             )
         }
@@ -173,19 +151,20 @@ fun BottomSheetNavigationGraph(
             route = AppGraph.bottomSheet.TOILET_DETAILS,
             arguments = AppGraph.bottomSheet.TOILET_DETAILS_ARGUMENTS
         ) { backStackEntry ->
-            val toiletId = backStackEntry.arguments?.getInt("toiletId")!!
-            val userId = userViewModel.user.collectAsState().value?.id
+            val toiletId = backStackEntry.arguments?.getString("toiletId")!!
             val toilets = localViewModel.toiletsCache
-            val comments = localViewModel.commentsToilet
+            val commentsCache = localViewModel.commentsCache
             val isLoadingCommentsToilet = localViewModel.isLoadingCommentsToilet
-            val reactions = localViewModel.reactions
-            val users = localViewModel.users
             val user = userViewModel.user
             LaunchedEffect(Unit) {
-                localViewModel.loadToiletComments(toiletId, userId!!)
+                localViewModel.loadToiletComments(toiletId)
             }
             ToiletDetailScreen(
-                toiletId, toilets, comments, isLoadingCommentsToilet, reactions, users, user,
+                toiletId = toiletId,
+                toiletsStateFlow = toilets,
+                commentsCacheStateFlow = commentsCache,
+                isLoadingCommentsToiletStateFlow = isLoadingCommentsToilet,
+                userMainStateFlow = user,
                 navigateToRating = {
                     rootNavController.navigate(AppGraph.rating.rating(it)) {
                         launchSingleTop = true
@@ -204,8 +183,8 @@ fun BottomSheetNavigationGraph(
                 navigateToBack = {
                     navController.popBackStack()
                 },
-                onReaction = { commentId, typeReaction ->
-                    localViewModel.updateReaction(commentId, userId!!, typeReaction)
+                onReaction = { tId, commentId, react ->
+                    localViewModel.reactToComment(tId, commentId, react)
                 }
             )
         }
@@ -226,10 +205,9 @@ private fun NavGraphBuilder.authNavGraph(
             LoginScreen(
                 loginStateFlow = login,
                 onLogin = { email, password ->
-                    authViewModel.requestLogin(email, password)
+                    authViewModel.login(email, password)
                 },
-                onLoginSuccess = { user ->
-                    userViewModel.saveUser(user)
+                onLoginSuccess = {
                     authViewModel.clearLoginState()
                     navController.navigate(AppGraph.main.ROOT) {
                         popUpTo(navController.graph.startDestinationRoute!!) {
@@ -247,8 +225,8 @@ private fun NavGraphBuilder.authNavGraph(
             val register = authViewModel.registerState
             RegisterScreen(
                 registerStateFlow = register,
-                onRegister = { name, email, password, iconId, birthDate ->
-                    authViewModel.requestRegister(name, email, password, iconId, birthDate)
+                onRegister = { name, email, password, icon, birthDate ->
+                    authViewModel.register(name, email, password, icon, birthDate)
                 },
                 onRegisterSuccess = {
                     authViewModel.clearRegisterState()
@@ -271,18 +249,16 @@ private fun NavGraphBuilder.ratingNavGraph(
         route = AppGraph.rating.RATING,
         arguments = AppGraph.rating.RATING_ARGUMENTS
     ) { backStackEntry ->
-        val toiletIdArg = backStackEntry.arguments?.getInt("toiletId")!!
-        val toilet = localViewModel.toiletsCache.collectAsState().value[toiletIdArg]
+        val toiletId = backStackEntry.arguments?.getString("toiletId")!!
+        val toilet = localViewModel.toiletsCache.collectAsState().value[toiletId]
         val user = userViewModel.user.collectAsState().value
         val rating = localViewModel.ratingState
         RatingScreen(
             toilet = toilet!!,
-            user = user!!,
             ratingStateFlow = rating,
-            onRating = { toiletId, userId, text, ratingClean, ratingPaper, ratingStructure, ratingAccessibility ->
-                localViewModel.requestComment(
-                    toiletId,
-                    userId,
+            onRating = { pubId, text, ratingClean, ratingPaper, ratingStructure, ratingAccessibility ->
+                localViewModel.submitRating(
+                    pubId,
                     text,
                     ratingClean,
                     ratingPaper,
@@ -314,25 +290,21 @@ private fun NavGraphBuilder.reportNavGraph(
             route = AppGraph.report.REPORT,
             arguments = AppGraph.report.REPORT_ARGUMENTS
         ) { backStackEntry ->
-            val report = localViewModel.reportState
             val typeId = backStackEntry.arguments?.getString("typeId")!!
-            val user = userViewModel.user.collectAsState().value!!
-            val id = backStackEntry.arguments?.getInt("id")!!
+            val id = backStackEntry.arguments?.getString("id")!!
             ReportScreen(
-                reportStateFlow = report,
                 type = typeId,
                 id = id,
                 navigateToBack = {
                     navController.popBackStack()
                 },
-                onToiletReport = { toiletId, typeReport ->
-                    localViewModel.updateReport(toiletId, user.id!!, typeReport)
+                onToiletReport = { toiletPublicId, typeReport ->
+                    // TODO: Implement report endpoint call
                 },
-                onCommentReport = { commentId, typeReaction ->
-                    localViewModel.updateReaction(commentId, user.id!!, typeReaction)
+                onCommentReport = { commentPublicId, typeReport ->
+                    // TODO: Implement comment report endpoint call
                 },
                 onReportConfirmation = { confirmationType ->
-                    localViewModel.clearReportState()
                     navController.navigate(
                         AppGraph.report.reportConfirmation(
                             confirmationType.type,
@@ -384,25 +356,21 @@ private fun NavGraphBuilder.settingsNavGraph(
         startDestination = AppGraph.settings.SETTINGS_START
     ) {
         composable(AppGraph.settings.SETTINGS_START) {
-            val editUser = userViewModel.editUser
+            val updateUserState = userViewModel.updateUserState
             val user = userViewModel.user.collectAsState().value!!
-            val userId = user.id!!
             SettingsScreen(
-                editUserStateFlow = editUser,
+                updateUserStateFlow = updateUserState,
                 user = user,
                 navigateToBack = {
                     navController.popBackStack()
                 },
                 onChange = { type ->
-                    navController.navigate(AppGraph.settings.changeSetting(type.value)) {
+                    navController.navigate(AppGraph.settings.changeSetting(type.value ?: "")) {
                         launchSingleTop = true
                     }
                 },
-                onChangeIcon = { iconId ->
-                    userViewModel.editIcon(userId, iconId)
-                },
-                onChangeIconSuccess = { newUser ->
-                    userViewModel.saveUser(newUser)
+                onChangeIcon = { icon ->
+                    userViewModel.updateUser(name = null, icon = icon, birthDate = null)
                 }
             )
         }
@@ -412,26 +380,23 @@ private fun NavGraphBuilder.settingsNavGraph(
         ) { backStackEntry ->
             val type = backStackEntry.arguments?.getString("type")!!
             val changeSettingType = ChangeSettingType.entries.find { it.value == type }!!
-            val userId = userViewModel.user.collectAsState().value?.id!!
-            val editUser = userViewModel.editUser
+            val updateUserState = userViewModel.updateUserState
             ChangeSettingsScreen(
-                editUserStateFlow = editUser,
+                updateUserStateFlow = updateUserState,
                 changeSettingType = changeSettingType,
                 navigateToBack = {
                     navController.popBackStack()
                 },
-                onChangeName = { name, password ->
-                    userViewModel.editName(userId, name, password)
+                onChangeName = { name ->
+                    userViewModel.updateUser(name = name, icon = null, birthDate = null)
                 },
-                onChangeEmail = { email, password ->
-                    userViewModel.editEmail(userId, email, password)
+                onChangeEmail = { email ->
+                    // TODO: Email change requires password verification
                 },
-                onChangePassword = { password, newPassword ->
-                    userViewModel.editPassword(userId, password, newPassword)
+                onChangePassword = { password ->
+                    // TODO: Password change requires password verification
                 },
-                onChangeSuccess = { user ->
-                    userViewModel.clearEditUser()
-                    userViewModel.saveUser(user)
+                onChangeSuccess = {
                     navController.popBackStack()
                 }
             )

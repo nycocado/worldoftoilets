@@ -25,14 +25,14 @@ import kotlinx.coroutines.flow.StateFlow
 fun BottomNavigationBar(
     navController: NavController = rememberNavController(),
     rootController: NavController = rememberNavController(),
-    isUserLoggedInStateFlow: StateFlow<Boolean>
+    isLoggedInStateFlow: StateFlow<Boolean?>
 ) {
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     val bottomRoutes = getBottomRoutes()
     var selectedItemIndex = bottomRoutes.indexOfFirst {
         currentRoute?.startsWith(it.route) == true
     }
-    val isUserLoggedIn = isUserLoggedInStateFlow.collectAsState().value
+    val isLoggedIn = isLoggedInStateFlow.collectAsState().value == true
 
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -51,7 +51,7 @@ fun BottomNavigationBar(
                 selected = currentRoute?.startsWith(item.route) == true,
                 onClick = {
                     selectedItemIndex = index
-                    if (item.route != AppGraph.main.HOME && !isUserLoggedIn) {
+                    if (item.route != AppGraph.main.HOME && !isLoggedIn) {
                         rootController.navigate(AppGraph.auth.LOGIN)
                         return@NavigationBarItem
                     }
@@ -110,6 +110,6 @@ fun BottomNavigationBar(
 @Composable
 fun BottomNavigationBarPreview() {
     AppTheme {
-        BottomNavigationBar(isUserLoggedInStateFlow = MutableStateFlow(true))
+        BottomNavigationBar(isLoggedInStateFlow = MutableStateFlow(true))
     }
 }

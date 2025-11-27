@@ -45,7 +45,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import com.worldoftoilets.app.R
 import com.worldoftoilets.app.models.enums.UserIcon
-import com.worldoftoilets.app.tests.generateUserMain
 import com.worldoftoilets.app.ui.components.ClickableTextField
 import com.worldoftoilets.app.ui.components.IconCarousel
 import com.worldoftoilets.app.ui.theme.AppTheme
@@ -53,19 +52,18 @@ import com.worldoftoilets.app.ui.theme.AppTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    editUserStateFlow: StateFlow<Result<User>?>,
+    updateUserStateFlow: StateFlow<Result<User>?>,
     user: User,
     navigateToBack: () -> Unit = {},
     onChange: (ChangeSettingType) -> Unit = {},
-    onChangeIcon: (String) -> Unit = {},
-    onChangeIconSuccess: (User) -> Unit = {}
+    onChangeIcon: (String) -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
-    val editUser = editUserStateFlow.collectAsState().value
+    val updateUserState = updateUserStateFlow.collectAsState().value
     var isLoading by remember { mutableStateOf(false) }
 
     val imageList = UserIcon.entries.map { it.icon }
-    val initialPage = UserIcon.entries.indexOfFirst { it.id == user.iconId }
+    val initialPage = UserIcon.entries.indexOfFirst { it.id == user.icon }.takeIf { it != -1 } ?: 0
 
     val pagerState = rememberPagerState(initialPage = initialPage) {
         imageList.size
@@ -76,13 +74,12 @@ fun SettingsScreen(
 
     val context = LocalContext.current
 
-    LaunchedEffect(editUser) {
-        editUser?.onSuccess {
+    LaunchedEffect(updateUserState) {
+        updateUserState?.onSuccess {
             isLoading = false
-            onChangeIconSuccess(it)
         }
 
-        editUser?.onFailure {
+        updateUserState?.onFailure {
             isLoading = false
         }
     }
@@ -226,13 +223,15 @@ fun SettingsScreen(
     }
 }
 
+/*
 @Composable
 @Preview(showBackground = true)
 fun SettingsPreview() {
     AppTheme {
         SettingsScreen(
-            editUserStateFlow = MutableStateFlow(null),
+            updateUserStateFlow = MutableStateFlow(null),
             user = generateUserMain()
         )
     }
 }
+*/

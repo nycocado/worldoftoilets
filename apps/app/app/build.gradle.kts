@@ -29,11 +29,6 @@ android {
 
         buildConfigField(
             "String",
-            "API_KEY",
-            gradleLocalProperties(rootDir, providers).getProperty("API_KEY")
-        )
-        buildConfigField(
-            "String",
             "API_URL",
             gradleLocalProperties(rootDir, providers).getProperty("API_URL")
         )
@@ -65,6 +60,7 @@ kotlin {
 dependencies {
     // Core
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
     // Compose
@@ -89,6 +85,14 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
+
+    // JWT Token Decode
+    implementation(libs.jwt.decode)
+
+    // Encrypted Shared Preferences
+    implementation(libs.androidx.security.crypto)
+    implementation(libs.tink.android)
+    implementation("androidx.preference:preference-ktx:1.2.1")
 
     // LiveData
     implementation(libs.androidx.runtime.livedata)

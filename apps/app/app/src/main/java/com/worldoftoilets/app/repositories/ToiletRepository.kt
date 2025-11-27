@@ -1,90 +1,88 @@
 package com.worldoftoilets.app.repositories
 
-import com.worldoftoilets.app.models.SearchToilet
 import com.worldoftoilets.app.models.Toilet
-import com.worldoftoilets.app.models.requests.ReportRequest
-import com.worldoftoilets.app.models.responses.ApiResponse
-import com.worldoftoilets.app.network.RetrofitClient
 import com.worldoftoilets.app.network.ToiletService
 import javax.inject.Inject
 
-class ToiletRepository @Inject constructor() {
-    private val toiletService = RetrofitClient.retrofit.create(ToiletService::class.java)
-
-    suspend fun getToilets(
-        ids: List<Int>? = null,
-        userId: Int? = null,
-        pageable: Boolean = false,
-        page: Int = 0,
-        size: Int = 20
-    ): List<Toilet> {
-        return toiletService.getToilets(ids, userId, pageable, page, size)
-    }
-
-    suspend fun getToiletById(id: Int): Result<Toilet> {
-        return try {
-            val response = toiletService.getToiletById(id)
-            if (response.isSuccessful) {
-                response.body()?.let {
-                    Result.success(it)
-                } ?: Result.failure(Exception("No response found"))
-            } else {
-                Result.failure(Exception("Error getting toilet"))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    suspend fun getToiletsNearby(
+class ToiletRepository @Inject constructor(
+    private val toiletService: ToiletService
+) {
+    suspend fun getToiletsByProximity(
         lat: Double,
-        lon: Double,
-        userId: Int? = null,
-        pageable: Boolean = false,
+        lng: Double,
         page: Int = 0,
-        size: Int = 20
-    ): List<Toilet> {
-        return toiletService.getNearbyToilets(lat, lon, userId, pageable, page, size)
-    }
-
-    suspend fun getToiletsByUserId(
-        userId: Int,
-        pageable: Boolean = false,
-        page: Int = 0,
-        size: Int = 20
-    ): List<Toilet> {
-        return toiletService.getToiletsByUserId(userId, pageable, page, size)
-    }
-
-    suspend fun postReport(
-        toiletId: Int,
-        userId: Int,
-        typeReport: String
-    ): Result<ApiResponse> {
+        size: Int = 20,
+        timestamp: String? = null
+    ): Result<List<Toilet>> {
         return try {
-            val response = toiletService.reportToilet(ReportRequest(toiletId, userId, typeReport))
-            if (response.isSuccessful) {
-                response.body()?.let {
-                    Result.success(it)
-                } ?: Result.failure(Exception("No response found"))
+            val response = toiletService.getToiletsByProximity(
+                lat, lng, true, page, size, null, null, timestamp
+            )
+            val apiResponse = response.body()
+
+            if (response.isSuccessful && apiResponse?.data != null) {
+                Result.success(apiResponse.data)
             } else {
-                Result.failure(Exception("Error reporting toilet"))
+                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Error getting nearby toilets"
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    suspend fun searchToilets(query: String): List<SearchToilet> {
-        return toiletService.searchToilets(query)
+    suspend fun getToiletsByBoundingBox(
+        minLat: Double,
+        minLng: Double,
+        maxLat: Double,
+        maxLng: Double
+    ): Result<List<Toilet>> {
+        return try {
+            val response = toiletService.getToiletsByBoundingBox(
+                minLat, minLng, maxLat, maxLng, null, null, null
+            )
+            val apiResponse = response.body()
+
+            if (response.isSuccessful && apiResponse?.data != null) {
+                Result.success(apiResponse.data)
+            } else {
+                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Error getting toilets in bounding box"
+                Result.failure(Exception(errorMsg))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
-    suspend fun getToiletsInBoundingBox(
-        minLat: Double,
-        maxLat: Double,
-        minLon: Double,
-        maxLon: Double
-    ): List<Toilet> {
-        return toiletService.getToiletsInBoundingBox(minLat, maxLat, minLon, maxLon)
+    suspend fun getToilet(publicId: String): Result<Toilet> {
+        return try {
+            val response = toiletService.getToilet(publicId)
+            val apiResponse = response.body()
+
+            if (response.isSuccessful && apiResponse?.data != null) {
+                Result.success(apiResponse.data)
+            } else {
+                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Error getting toilet"
+                Result.failure(Exception(errorMsg))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun viewToilet(publicId: String): Result<Unit> {
+        return try {
+            val response = toiletService.viewToilet(publicId)
+            val apiResponse = response.body()
+
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Error registering view"
+                Result.failure(Exception(errorMsg))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }

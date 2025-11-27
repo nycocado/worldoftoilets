@@ -4,100 +4,103 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.worldoftoilets.app.models.User
+import com.worldoftoilets.app.repositories.AuthRepository
 import com.worldoftoilets.app.repositories.UserPreferencesRepository
 import com.worldoftoilets.app.repositories.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
     private val userRepository: UserRepository,
+    private val authRepository: AuthRepository,
     private val userPreferencesRepository: UserPreferencesRepository
-): ViewModel() {
-    val user: StateFlow<User?> = userPreferencesRepository.userStateFlow
+) : ViewModel() {
+    private val _user = MutableStateFlow<User?>(null)
+    val user: StateFlow<User?> = _user.asStateFlow()
 
-    private val _editUser = MutableStateFlow<Result<User>?>(null)
-    val editUser: StateFlow<Result<User>?> get() = _editUser
+    private val _updateUserState = MutableStateFlow<Result<User>?>(null)
+    val updateUserState: StateFlow<Result<User>?> = _updateUserState.asStateFlow()
 
-    val isUserLoggedIn: StateFlow<Boolean> = userPreferencesRepository.isUserLoggedIn()
+    val isLoggedIn: StateFlow<Boolean?> = userPreferencesRepository.isLoggedIn
+        .map { it as Boolean? }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     private val _error = MutableStateFlow("")
-    val error: StateFlow<String> get() = _error
+    val error: StateFlow<String> = _error.asStateFlow()
 
-    fun saveUser(user: User) {
+    init {
+        // Carregar user se estiver logado
         viewModelScope.launch {
-            try {
-                userPreferencesRepository.saveUser(user)
-            } catch (e: Exception) {
-                _error.value = "Erro ao salvar usuário: ${e.message}"
-                Log.e("ToiletViewModel", "Erro ao salvar usuário", e)
+            isLoggedIn.collect { loggedIn ->
+                if (loggedIn == true) {
+                    loadUser()
+                } else {
+                    _user.value = null
+                }
             }
         }
     }
 
-    fun editName(id: Int, name: String, password: String) {
+    fun loadUser() {
         viewModelScope.launch {
             try {
-                val result = userRepository.editName(id, name, password)
-                _editUser.value = result
+                userRepository.getSelf().onSuccess { data ->
+                    _user.value = data
+                }.onFailure { e ->
+                    _error.value = "Erro ao carregar usuário: ${e.message}"
+                    logout()
+                }
             } catch (e: Exception) {
-                _error.value = "Erro ao editar nome: ${e.message}"
-                Log.e("ToiletViewModel", "Erro ao editar nome", e)
+                _error.value = "Erro ao carregar usuário: ${e.message}"
+                Log.e("UserViewModel", "Erro ao carregar usuário", e)
             }
         }
     }
 
-    fun editEmail(id: Int, email: String, password: String) {
+    fun updateUser(name: String?, icon: String?, birthDate: String?) {
         viewModelScope.launch {
             try {
-                val result = userRepository.editEmail(id, email, password)
-                _editUser.value = result
+                val result = userRepository.updateSelf(name, icon, birthDate)
+                _updateUserState.value = result
+
+                // Se sucesso, atualizar user state
+                result.onSuccess { data ->
+                    _user.value = data
+                }.onFailure { e ->
+                    _error.value = "Erro ao atualizar usuário: ${e.message}"
+                }
             } catch (e: Exception) {
-                _error.value = "Erro ao editar email: ${e.message}"
-                Log.e("ToiletViewModel", "Erro ao editar email", e)
+                _error.value = "Erro ao atualizar usuário: ${e.message}"
+                Log.e("UserViewModel", "Erro ao atualizar usuário", e)
             }
         }
     }
 
-    fun editPassword(id: Int, password: String, newPassword: String) {
+    fun logout() {
         viewModelScope.launch {
             try {
-                val result = userRepository.editPassword(id, password, newPassword)
-                _editUser.value = result
+                authRepository.logout()
+                _user.value = null
             } catch (e: Exception) {
-                _error.value = "Erro ao editar senha: ${e.message}"
-                Log.e("ToiletViewModel", "Erro ao editar senha", e)
+                _error.value = "Erro ao fazer logout: ${e.message}"
+                Log.e("UserViewModel", "Erro ao fazer logout", e)
             }
         }
     }
 
-    fun editIcon(id: Int, iconId: String) {
-        viewModelScope.launch {
-            try {
-                val result = userRepository.editIcon(id, iconId)
-                _editUser.value = result
-            } catch (e: Exception) {
-                _error.value = "Erro ao editar ícone: ${e.message}"
-                Log.e("ToiletViewModel", "Erro ao editar ícone", e)
-            }
-        }
+    fun clearUpdateState() {
+        _updateUserState.value = null
     }
 
-    fun clearUser() {
-        viewModelScope.launch {
-            try {
-                userPreferencesRepository.clearUser()
-            } catch (e: Exception) {
-                _error.value = "Erro ao limpar usuário: ${e.message}"
-                Log.e("ToiletViewModel", "Erro ao limpar usuário", e)
-            }
-        }
-    }
-
-    fun clearEditUser() {
-        _editUser.value = null
+    fun clearError() {
+        _error.value = ""
     }
 }

@@ -6,11 +6,11 @@ enum class UserIcon(
     val id: String?,
     val icon: Int
 ) {
-    ICON_DEFAULT("icon_default", R.drawable.icon_default),
-    ICON_1("icon_1", R.drawable.icon1),
-    ICON_2("icon_2", R.drawable.icon2),
-    ICON_3("icon_3", R.drawable.icon3),
-    ICON_4("icon_4", R.drawable.icon4),
-    ICON_5("icon_5", R.drawable.icon5),
-    ICON_6("icon_6", R.drawable.icon6)
+    ICON_DEFAULT("icon-default", R.drawable.icon_default),
+    ICON_1("icon-1", R.drawable.icon1),
+    ICON_2("icon-2", R.drawable.icon2),
+    ICON_3("icon-3", R.drawable.icon3),
+    ICON_4("icon-4", R.drawable.icon4),
+    ICON_5("icon-5", R.drawable.icon5),
+    ICON_6("icon-6", R.drawable.icon6)
 }

@@ -7,7 +7,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.runtime.collectAsState
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
+import com.worldoftoilets.app.ui.navegation.AppGraph
 import com.worldoftoilets.app.ui.navegation.RootNavigationGraph
 import com.worldoftoilets.app.ui.theme.AppTheme
 import com.worldoftoilets.app.viewmodel.AuthViewModel
@@ -22,6 +25,7 @@ class MainActivity : ComponentActivity() {
     private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
 
         val isTablet = (resources.configuration.screenLayout
@@ -34,14 +38,25 @@ class MainActivity : ComponentActivity() {
         }
 
         enableEdgeToEdge()
+        
+        splashScreen.setKeepOnScreenCondition {
+            userViewModel.isLoggedIn.value == null
+        }
+
         setContent {
-            AppTheme {
-                RootNavigationGraph(
-                    navController = rememberNavController(),
-                    localViewModel,
-                    userViewModel,
-                    authViewModel
-                )
+            val isLoggedIn = userViewModel.isLoggedIn.collectAsState().value
+            
+            if (isLoggedIn != null) {
+                val startDestination = if (isLoggedIn) AppGraph.main.ROOT else AppGraph.auth.ROOT
+                AppTheme {
+                    RootNavigationGraph(
+                        navController = rememberNavController(),
+                        localViewModel,
+                        userViewModel,
+                        authViewModel,
+                        startDestination
+                    )
+                }
             }
         }
     }

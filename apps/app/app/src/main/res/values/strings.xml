@@ -106,6 +106,7 @@
     <string name="error_required_email">Required</string>
     <string name="error_required_password">Required</string>
     <string name="error_required_confirm_password">Required</string>
+    <string name="error_required_date">Required</string>
     <string name="error_too_long_name">Maximum 50 characters</string>
     <string name="error_too_long_email">Maximum 100 characters</string>
     <string name="error_too_short_name">Must be at least 6 characters long</string>

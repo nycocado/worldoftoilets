@@ -39,6 +39,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.worldoftoilets.app.models.Toilet
 import com.worldoftoilets.app.ui.components.CustomDragHandle
 import com.worldoftoilets.app.ui.components.OpenStreetMapsView
 import com.worldoftoilets.app.ui.navegation.AppGraph
@@ -56,7 +57,7 @@ fun HomeScreen(
     rootNavController: NavController,
     localViewModel: LocalViewModel,
     userViewModel: UserViewModel,
-    selectedToiletId: Int? = null,
+    selectedToiletId: String? = null,
     navController: NavHostController = rememberNavController()
 ) {
     val context = LocalContext.current
@@ -75,30 +76,20 @@ fun HomeScreen(
 
     var query by remember { mutableStateOf("") }
     var isSearching by remember { mutableStateOf(false) }
-    val toiletsSearch = localViewModel.toiletsSearch.collectAsState().value
-    val toiletSearchSelected = localViewModel.toiletSearchSelected.collectAsState().value
+    // TODO: Implement search functionality in LocalViewModel
+    // val toiletsSearch = localViewModel.toiletsSearch.collectAsState().value
+    // val toiletSearchSelected = localViewModel.toiletSearchSelected.collectAsState().value
+    val toiletsSearch = emptyList<Toilet>()
 
-    val user = userViewModel.user.collectAsState().value
-    val isUserLoggedIn = userViewModel.isUserLoggedIn.collectAsState().value
+    val isLoggedIn = userViewModel.isLoggedIn.collectAsState().value
     val toiletsStateFlow = localViewModel.toiletsCache
     val toiletsBoundingBoxIdsStateFlow = localViewModel.toiletsBoundingBoxIds
 
-    val locationStateFlow: StateFlow<Location> = localViewModel.location
+    val locationStateFlow: StateFlow<Location?> = localViewModel.location
     val location = locationStateFlow.collectAsState().value
 
-    LaunchedEffect(toiletSearchSelected) {
-        toiletSearchSelected?.onSuccess {
-            isSearching = false
-            localViewModel.clearSearchToilets()
-            localViewModel.clearToiletSearchSelected()
-            navController.navigate(AppGraph.bottomSheet.toiletDetail(it.id)) {
-                launchSingleTop = true
-            }
-        }
-    }
-
     LaunchedEffect(Unit, location) {
-        scope.launch { localViewModel.loadLocation(userId = user?.id) }
+        scope.launch { localViewModel.loadLocation() }
     }
 
     LaunchedEffect(selectedToiletId) {
@@ -158,13 +149,13 @@ fun HomeScreen(
                 onRequestToiletsBoundingBox = { boundingBox ->
                     localViewModel.loadToiletsBoundingBox(
                         boundingBox.latSouth,
-                        boundingBox.latNorth,
                         boundingBox.lonWest,
+                        boundingBox.latNorth,
                         boundingBox.lonEast
                     )
                 },
                 onClickMarker = { toiletId ->
-                    if (isUserLoggedIn) {
+                    if (isLoggedIn == true) {
                         navController.navigate(AppGraph.bottomSheet.toiletDetail(toiletId)) {
                             launchSingleTop = true
                         }
@@ -201,7 +192,8 @@ fun HomeScreen(
                         },
                         onQueryChange = {
                             query = it
-                            localViewModel.loadToiletsSearch(it)
+                            // TODO: Implement search in LocalViewModel
+                            // localViewModel.loadToiletsSearch(it)
                         },
                         onSearch = { }
                     )
@@ -220,8 +212,9 @@ fun HomeScreen(
                         }
                         Surface(
                             onClick = {
-                                if (isUserLoggedIn) {
-                                    localViewModel.loadToiletSearchSelected(toilet.id)
+                                if (isLoggedIn == true) {
+                                    // TODO: Implement loadToiletSearchSelected
+                                    navController.navigate(AppGraph.bottomSheet.toiletDetail(toilet.publicId))
                                 } else {
                                     rootNavController.navigate(AppGraph.auth.LOGIN)
                                 }

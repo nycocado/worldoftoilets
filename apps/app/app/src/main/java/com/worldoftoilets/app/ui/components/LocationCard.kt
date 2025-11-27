@@ -20,14 +20,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.worldoftoilets.app.models.Toilet
-import com.worldoftoilets.app.tests.generateRandomToilet
 import com.worldoftoilets.app.ui.theme.AppTheme
 
 @Composable
 fun LocationCard(
     toilet: Toilet,
     location: Location?,
-    onClick: (Int) -> Unit
+    onClick: (String) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -46,7 +45,7 @@ fun LocationCard(
         ),
         elevation = CardDefaults.cardElevation(2.dp),
         onClick = {
-            onClick(toilet.id)
+            onClick(toilet.publicId)
         }
     ) {
         Row(
@@ -68,10 +67,10 @@ fun LocationCard(
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Stars(toilet.getAverageRating(), size = 14.dp)
+                    Stars(toilet.getAverageRating().toFloat(), size = 14.dp)
                     Text(
                         modifier = Modifier.padding(horizontal = 2.dp),
-                        text = "(${toilet.numComments})",
+                        text = "(${toilet.rating.totalRatings})",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.SemiBold,
                         lineHeight = 1.sp
@@ -98,6 +97,7 @@ fun LocationCard(
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
 private fun LocationCardPreview() {
@@ -109,3 +109,4 @@ private fun LocationCardPreview() {
         )
     }
 }
+*/

@@ -14,6 +14,7 @@ import com.worldoftoilets.app.ui.theme.AppTheme
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.util.Date
+import java.util.TimeZone
 
 @ExperimentalMaterial3Api
 @Composable
@@ -65,13 +66,15 @@ fun CustomDatePickerDialog(
 
 @SuppressLint("SimpleDateFormat")
 private fun convertMillisToDate(millis: Long): String {
-    val formatter = SimpleDateFormat("dd/MM/yyyy")
+    val formatter = SimpleDateFormat("yyyy-MM-dd")
+    formatter.timeZone = TimeZone.getTimeZone("UTC")
     return formatter.format(Date(millis))
 }
 
 @SuppressLint("SimpleDateFormat")
 private fun convertDateToMillis(date: String): Long {
-    val formatter = SimpleDateFormat("dd/MM/yyyy")
+    val formatter = SimpleDateFormat("yyyy-MM-dd")
+    formatter.timeZone = TimeZone.getTimeZone("UTC")
     return formatter.parse(date)?.time ?: 0
 }
 
