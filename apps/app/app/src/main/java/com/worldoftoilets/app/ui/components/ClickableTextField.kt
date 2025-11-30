@@ -3,6 +3,7 @@ package com.worldoftoilets.app.ui.components
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,6 +17,7 @@ import com.worldoftoilets.app.ui.theme.AppTheme
 fun ClickableTextField(
     label: String,
     value: String = "",
+    supportText: String? = null,
     trailingIcon: @Composable () -> Unit = {},
     onValueChange: (String) -> Unit = {},
     onClick: () -> Unit = {}
@@ -32,6 +34,11 @@ fun ClickableTextField(
         placeholder = {
             Text(label)
         },
+        isError = !supportText.isNullOrEmpty(),
+        supportingText = if (!supportText.isNullOrEmpty()) {
+            { Text(supportText) }
+        } else null,
+        shape = MaterialTheme.shapes.medium,
         singleLine = true,
         readOnly = true,
         trailingIcon = trailingIcon,

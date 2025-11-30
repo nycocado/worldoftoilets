@@ -1,6 +1,5 @@
 package com.worldoftoilets.app.repositories
 
-import com.google.gson.Gson
 import com.worldoftoilets.app.models.User
 import com.worldoftoilets.app.models.requests.LoginRequest
 import com.worldoftoilets.app.models.requests.RegisterRequest

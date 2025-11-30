@@ -26,6 +26,8 @@
 
     <!-- Login -->
     <string name="login_action">Log In</string>
+    <string name="login_subtitle_welcome">Welcome back!</string>
+    <string name="no_account">Don\'t have an account?</string>
     <string name="email">E-mail</string>
     <string name="password">Password</string>
 
@@ -83,6 +85,10 @@
     <string name="comments">Comments</string>
     <string name="comment">Comment</string>
     <string name="insert_comment">Insert comment…</string>
+    <string name="reply">Reply</string>
+    <string name="write_reply">Write a reply…</string>
+    <string name="view_replies">View %d replies</string>
+    <string name="hide_replies">Hide replies</string>
 
     <!-- Content Descriptions -->
     <string name="content_description_toilet_image">Image toilet</string>
@@ -164,4 +170,5 @@
     <!-- Links -->
     <string name="maps_uri" translatable="false">android-app://com.google.android.apps.maps</string>
     <string name="content_description_new_password_button">Change password button</string>
+    <string name="my_location">My Location</string>
 </resources>

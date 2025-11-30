@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.worldoftoilets.app.models.Toilet
 import com.worldoftoilets.app.ui.theme.AppTheme
+import com.worldoftoilets.app.ui.util.generateLocation
+import com.worldoftoilets.app.ui.util.generateRandomToilet
 
 @Composable
 fun LocationCard(
@@ -97,16 +99,14 @@ fun LocationCard(
     }
 }
 
-/*
 @Preview(showBackground = true)
 @Composable
 private fun LocationCardPreview() {
     AppTheme {
         LocationCard(
             toilet = generateRandomToilet(),
-            location = Location("mockprovider"),
+            location = generateLocation(),
             onClick = {}
         )
     }
 }
-*/

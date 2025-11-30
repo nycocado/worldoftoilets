@@ -2,30 +2,31 @@ package com.worldoftoilets.app.models
 
 import android.net.Uri
 import androidx.compose.runtime.Composable
-import com.google.gson.annotations.SerializedName
-import java.io.Serializable
+import androidx.core.net.toUri
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
-import androidx.core.net.toUri
 
+@Serializable
 data class Toilet(
-    @SerializedName("publicId") val publicId: String,
-    @SerializedName("name") val name: String,
-    @SerializedName("address") val address: String,
-    @SerializedName("city") val city: String,
-    @SerializedName("state") val state: String?,
-    @SerializedName("country") val country: String,
-    @SerializedName("countryCode") val countryCode: String,
-    @SerializedName("latitude") val latitude: Double,
-    @SerializedName("longitude") val longitude: Double,
-    @SerializedName("access") val access: Access,
-    @SerializedName("extras") val extras: List<TypeExtra>,
-    @SerializedName("photoUrl") val photoUrl: String?,
-    @SerializedName("placeId") val placeId: String?,
-    @SerializedName("rating") val rating: ToiletRating
-) : Serializable {
+    @SerialName("publicId") val publicId: String = "",
+    @SerialName("name") val name: String = "",
+    @SerialName("address") val address: String = "",
+    @SerialName("city") val city: String = "",
+    @SerialName("state") val state: String? = null,
+    @SerialName("country") val country: String = "",
+    @SerialName("countryCode") val countryCode: String = "",
+    @SerialName("latitude") val latitude: Double = 0.0,
+    @SerialName("longitude") val longitude: Double = 0.0,
+    @SerialName("access") val access: Access = Access(),
+    @SerialName("extras") val extras: List<TypeExtra> = emptyList(),
+    @SerialName("photoUrl") val photoUrl: String? = null,
+    @SerialName("placeId") val placeId: String? = null,
+    @SerialName("rating") val rating: ToiletRating = ToiletRating()
+) : java.io.Serializable {
     fun getAverageRating(): Double {
         return (rating.avgClean + rating.avgStructure + rating.avgAccessibility) / 3f
     }
@@ -64,21 +65,3 @@ data class Toilet(
         return photoUrl?.replace("localhost", "10.0.2.2")?.toUri() ?: Uri.EMPTY
     }
 }
-
-data class Access(
-    @SerializedName("name") val name: String,
-    @SerializedName("apiName") val apiName: String
-) : Serializable
-
-data class TypeExtra(
-    @SerializedName("name") val name: String,
-    @SerializedName("apiName") val apiName: String
-) : Serializable
-
-data class ToiletRating(
-    @SerializedName("totalRatings") val totalRatings: Int,
-    @SerializedName("avgClean") val avgClean: Double,
-    @SerializedName("avgStructure") val avgStructure: Double,
-    @SerializedName("avgAccessibility") val avgAccessibility: Double,
-    @SerializedName("paperAvailability") val paperAvailability: Double
-) : Serializable

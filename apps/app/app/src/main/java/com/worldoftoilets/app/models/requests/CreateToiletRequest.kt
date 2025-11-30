@@ -1,17 +1,19 @@
 package com.worldoftoilets.app.models.requests
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class CreateToiletRequest(
-    @SerializedName("name") val name: String,
-    @SerializedName("address") val address: String,
-    @SerializedName("city") val city: String,
-    @SerializedName("state") val state: String?,
-    @SerializedName("country") val country: String,
-    @SerializedName("countryCode") val countryCode: String,
-    @SerializedName("latitude") val latitude: Double,
-    @SerializedName("longitude") val longitude: Double,
-    @SerializedName("accessApiName") val accessApiName: String,
-    @SerializedName("extrasApiNames") val extrasApiNames: List<String>?,
-    @SerializedName("placeId") val placeId: String?
+    @SerialName("name") val name: String,
+    @SerialName("address") val address: String,
+    @SerialName("city") val city: String,
+    @SerialName("state") val state: String?,
+    @SerialName("country") val country: String,
+    @SerialName("countryCode") val countryCode: String,
+    @SerialName("latitude") val latitude: Double,
+    @SerialName("longitude") val longitude: Double,
+    @SerialName("accessApiName") val accessApiName: String,
+    @SerialName("extrasApiNames") val extrasApiNames: List<String>?,
+    @SerialName("placeId") val placeId: String?
 )

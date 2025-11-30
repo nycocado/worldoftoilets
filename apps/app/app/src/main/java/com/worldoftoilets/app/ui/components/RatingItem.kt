@@ -27,11 +27,11 @@ fun RatingItem(
             modifier = Modifier.weight(1f),
             text = title,
             style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Normal,
+            fontWeight = FontWeight.Medium,
         )
         Stars(
             rating = rating.toFloat(),
-            size = 40.dp,
+            size = 32.dp,
             horizontalPadding = 3.dp,
             onClick = {
                 if (onClick != null) {

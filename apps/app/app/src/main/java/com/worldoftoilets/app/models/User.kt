@@ -3,22 +3,23 @@ package com.worldoftoilets.app.models
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import com.worldoftoilets.app.R
-import java.io.Serializable
 
+@Serializable
 data class User(
-    @SerializedName("publicId") val publicId: String,
-    @SerializedName("name") val name: String,
-    @SerializedName("icon") val icon: String,
-    @SerializedName("email") val email: String?,
-    @SerializedName("commentsCount") val commentsCount: Int,
-    @SerializedName("points") val points: Int,
-    @SerializedName("birthDate") val birthDate: String?,
-    @SerializedName("isPartner") val isPartner: Boolean,
-    @SerializedName("roles") val roles: List<Role>?,
-    @SerializedName("createdAt") val createdAt: String
-) : Serializable {
+    @SerialName("publicId") val publicId: String,
+    @SerialName("name") val name: String,
+    @SerialName("icon") val icon: String,
+    @SerialName("email") val email: String? = null,
+    @SerialName("commentsCount") val commentsCount: Int = 0,
+    @SerialName("points") val points: Int = 0,
+    @SerialName("birthDate") val birthDate: String? = null,
+    @SerialName("isPartner") val isPartner: Boolean = false,
+    @SerialName("roles") val roles: List<Role>? = null,
+    @SerialName("createdAt") val createdAt: String = ""
+) : java.io.Serializable {
     @Composable
     fun getIcon(): Painter {
         return when (icon) {
@@ -28,13 +29,8 @@ data class User(
             "icon-4" -> painterResource(R.drawable.icon4)
             "icon-5" -> painterResource(R.drawable.icon5)
             "icon-6" -> painterResource(R.drawable.icon6)
-            "icon-default" -> painterResource(R.drawable.icon_default)
-            else -> painterResource(R.drawable.icon_default)
+            "icon-default" -> painterResource(R.drawable.icon1)
+            else -> painterResource(R.drawable.icon1)
         }
     }
 }
-
-data class Role(
-    @SerializedName("name") val name: String,
-    @SerializedName("apiName") val apiName: String
-) : Serializable

@@ -1,10 +1,12 @@
 package com.worldoftoilets.app.models.responses
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import com.worldoftoilets.app.models.User
 
+@Serializable
 data class LoginResponse(
-    @SerializedName("accessToken") val accessToken: String,
-    @SerializedName("refreshToken") val refreshToken: String,
-    @SerializedName("user") val user: User
+    @SerialName("accessToken") val accessToken: String,
+    @SerialName("refreshToken") val refreshToken: String,
+    @SerialName("user") val user: User
 )

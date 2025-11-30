@@ -31,20 +31,15 @@ interface AuthService {
     @POST("auth/logout")
     suspend fun logout(
         @Header("Authorization") bearerToken: String
-    ): Response<Unit>
+    ): Response<ApiResponse<Unit>>
 
     @POST("auth/logout-all")
     suspend fun logoutAll(
         @Header("Authorization") bearerToken: String
-    ): Response<Unit>
-
-    @POST("auth/verify-email")
-    suspend fun verifyEmail(
-        @Header("Authorization") bearerToken: String
-    ): Response<Unit>
+    ): Response<ApiResponse<Unit>>
 
     @POST("auth/resend-verification")
     suspend fun resendVerification(
         @Query("email") email: String
-    ): Response<Unit>
+    ): Response<ApiResponse<Unit>>
 }

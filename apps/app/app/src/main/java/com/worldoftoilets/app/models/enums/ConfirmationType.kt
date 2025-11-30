@@ -41,6 +41,20 @@ enum class ConfirmationType(
         R.string.confirmation_report_failure_text,
         Icons.Default.Close
     ),
+    REPORT_REPLY_SUCCESS(
+        true,
+        "report-reply",
+        R.string.confirmation_report_success,
+        R.string.confirmation_report_success_text,
+        Icons.Default.Done
+    ),
+    REPORT_REPLY_FAILURE(
+        false,
+        "report-reply",
+        R.string.confirmation_report_failure,
+        R.string.confirmation_report_failure_text,
+        Icons.Default.Close
+    ),
     SUGGEST_TOILET_SUCCESS(
         true,
         "suggest-toilet",

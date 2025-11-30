@@ -13,19 +13,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -42,30 +41,36 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.worldoftoilets.app.R
 import com.worldoftoilets.app.models.Comment
 import com.worldoftoilets.app.models.Toilet
 import com.worldoftoilets.app.ui.components.RatingItem
 import com.worldoftoilets.app.ui.components.Stars
+import com.worldoftoilets.app.ui.theme.AppTheme
+import com.worldoftoilets.app.ui.util.generateRandomToilet
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import com.worldoftoilets.app.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RatingScreen(
     toilet: Toilet,
+    comment: Comment? = null,
     ratingStateFlow: StateFlow<Result<Comment>?> = MutableStateFlow(null),
     onRating: (toiletPublicId: String, text: String?, ratingClean: Int, ratingPaper: Boolean, ratingStructure: Int, ratingAccessibility: Int) -> Unit = { _, _, _, _, _, _ -> },
+    onUpdate: (commentId: String, toiletPublicId: String, text: String?, ratingClean: Int, ratingPaper: Boolean, ratingStructure: Int, ratingAccessibility: Int) -> Unit = { _, _, _, _, _, _, _ -> },
     onRatingSuccess: () -> Unit = {},
     navigateToBack: () -> Unit = {}
 ) {
-    val ratingState = ratingStateFlow.collectAsState().value
-    var ratingClean by remember { mutableIntStateOf(1) }
-    var ratingPaper by remember { mutableStateOf(false) }
-    var ratingStructure by remember { mutableIntStateOf(1) }
-    var ratingAccessibility by remember { mutableIntStateOf(1) }
+    val ratingState by ratingStateFlow.collectAsStateWithLifecycle()
+    var ratingClean by remember { mutableIntStateOf(comment?.rate?.clean ?: 1) }
+    var ratingPaper by remember { mutableStateOf(comment?.rate?.paper ?: false) }
+    var ratingStructure by remember { mutableIntStateOf(comment?.rate?.structure ?: 1) }
+    var ratingAccessibility by remember { mutableIntStateOf(comment?.rate?.accessibility ?: 1) }
     var averageRating by remember { mutableFloatStateOf(1f) }
 
     var avgPaper = 0f
@@ -76,23 +81,20 @@ fun RatingScreen(
     averageRating =
         ((ratingClean * 0.2f) + avgPaper + (ratingStructure * 0.2f) + (ratingAccessibility * 0.2f))
 
-    var comment by remember { mutableStateOf("") }
+    var commentText by remember { mutableStateOf(comment?.text ?: "") }
     var commentSupportText by remember { mutableStateOf("") }
     var commentError by remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    LaunchedEffect(comment) {
-        commentSupportText = if (comment.isEmpty()) {
-            commentError = true
-            context.getString(R.string.comment_required)
-        } else if (comment.length > 260) {
+    LaunchedEffect(commentText) {
+        commentSupportText = if (commentText.length > 260) {
             commentError = true
             context.getString(R.string.comment_too_long)
         } else {
             commentError = false
-            "${comment.length}/260"
+            "${commentText.length}/260"
         }
     }
 
@@ -112,7 +114,7 @@ fun RatingScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = context.getString(R.string.rate),
+                        text = if (comment == null) context.getString(R.string.rate) else context.getString(R.string.edit_profile), // Reusing "Edit" string or add "Edit Review"
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
@@ -126,7 +128,10 @@ fun RatingScreen(
                             contentDescription = "Back"
                         )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
             )
         }
     ) { innerPadding ->
@@ -180,20 +185,19 @@ fun RatingScreen(
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Normal,
                     )
-                    TextField(
-                        value = comment,
+                    OutlinedTextField(
+                        value = commentText,
                         modifier = Modifier
                             .fillMaxWidth()
                             .heightIn(min = 150.dp),
-                        shape = RoundedCornerShape(topEnd = 10.dp, topStart = 10.dp),
+                        shape = RoundedCornerShape(12.dp),
                         onValueChange = { newText ->
-                            comment = newText
+                            commentText = newText
                         },
                         label = {
                             Text(
                                 text = context.getString(R.string.insert_comment),
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Normal,
+                                style = MaterialTheme.typography.bodyLarge
                             )
                         },
                         isError = commentError,
@@ -204,7 +208,7 @@ fun RatingScreen(
                                 color = if (commentError) {
                                     MaterialTheme.colorScheme.error
                                 } else {
-                                    MaterialTheme.colorScheme.onSurface
+                                    MaterialTheme.colorScheme.onSurfaceVariant
                                 }
                             )
                         }
@@ -215,16 +219,16 @@ fun RatingScreen(
             item {
                 HorizontalDivider(
                     modifier = Modifier
-                        .padding(vertical = 30.dp)
-                        .fillMaxWidth(1f),
-                    thickness = 2.dp,
-                    color = Color.LightGray
+                        .padding(vertical = 24.dp)
+                        .fillMaxWidth(),
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant
                 )
             }
 
             item {
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     RatingItem(title = context.getString(R.string.clean), rating = ratingClean) {
                         ratingClean = it
@@ -250,7 +254,7 @@ fun RatingScreen(
                             modifier = Modifier.weight(1f),
                             text = context.getString(R.string.paper),
                             style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Normal,
+                            fontWeight = FontWeight.Medium,
                         )
                         Switch(
                             checked = ratingPaper,
@@ -275,54 +279,51 @@ fun RatingScreen(
             }
 
             item {
-                Button(
+                com.worldoftoilets.app.ui.components.SanitaryButton(
+                    text = if (comment == null) context.getString(R.string.rate) else context.getString(R.string.save),
                     onClick = {
-                        if (!commentError)
+                        if (!commentError) {
                             scope.launch {
-                                onRating(
-                                    toilet.publicId,
-                                    comment.ifEmpty { null },
-                                    ratingClean,
-                                    ratingPaper,
-                                    ratingStructure,
-                                    ratingAccessibility
-                                )
+                                if (comment == null) {
+                                    onRating(
+                                        toilet.publicId,
+                                        commentText.ifEmpty { null },
+                                        ratingClean,
+                                        ratingPaper,
+                                        ratingStructure,
+                                        ratingAccessibility
+                                    )
+                                } else {
+                                    onUpdate(
+                                        comment.publicId,
+                                        toilet.publicId,
+                                        commentText.ifEmpty { null },
+                                        ratingClean,
+                                        ratingPaper,
+                                        ratingStructure,
+                                        ratingAccessibility
+                                    )
+                                }
                             }
+                        }
                     },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 20.dp),
-                    colors = ButtonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(
-                            alpha = 0.5f
-                        ),
-                        disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(
-                            alpha = 0.5f
-                        )
-                    )
-                ) {
-                    Text(
-                        text = context.getString(R.string.rate),
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
+                    enabled = !commentError
+                )
             }
         }
     }
 }
 
-/*
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     AppTheme {
         RatingScreen(
             toilet = generateRandomToilet(),
-            user = generateUser()
+            ratingStateFlow = MutableStateFlow(null)
         )
     }
 }
-*/

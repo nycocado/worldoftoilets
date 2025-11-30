@@ -4,14 +4,9 @@ import com.worldoftoilets.app.models.Toilet
 import com.worldoftoilets.app.models.responses.ApiResponse
 import retrofit2.Response
 import retrofit2.http.GET
-import retrofit2.http.Multipart
-import retrofit2.http.POST
 import retrofit2.http.PUT
-import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
-import okhttp3.MultipartBody
-import retrofit2.http.Body
 
 interface ToiletService {
     @GET("toilet")
@@ -56,13 +51,11 @@ interface ToiletService {
     @PUT("toilet/{publicId}/view")
     suspend fun viewToilet(@Path("publicId") publicId: String): Response<ApiResponse<Unit>>
 
-    @POST("toilet/manage")
-    suspend fun createToilet(@Body request: com.worldoftoilets.app.models.requests.CreateToiletRequest): Response<ApiResponse<Toilet>>
-
-    @POST("toilet/{publicId}/manage/image")
-    @Multipart
-    suspend fun uploadImage(
-        @Path("publicId") publicId: String,
-        @Part image: MultipartBody.Part
-    ): Response<ApiResponse<Toilet>>
+    @GET("search-toilet")
+    suspend fun searchToilets(
+        @Query("query") query: String,
+        @Query("pageable") pageable: Boolean = true,
+        @Query("page") page: Int = 0,
+        @Query("size") size: Int = 20
+    ): Response<ApiResponse<List<Toilet>>>
 }

@@ -2,6 +2,7 @@ package com.worldoftoilets.app.ui.navegation
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -11,6 +12,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.toRoute
 import com.worldoftoilets.app.models.enums.ChangeSettingType
 import com.worldoftoilets.app.models.enums.ConfirmationType
 import com.worldoftoilets.app.ui.screens.ChangeSettingsScreen
@@ -28,6 +30,7 @@ import com.worldoftoilets.app.view.MainView
 import com.worldoftoilets.app.viewmodel.AuthViewModel
 import com.worldoftoilets.app.viewmodel.LocalViewModel
 import com.worldoftoilets.app.viewmodel.UserViewModel
+import com.worldoftoilets.app.ui.navegation.AppDestinations
 
 @Composable
 fun RootNavigationGraph(
@@ -35,19 +38,19 @@ fun RootNavigationGraph(
     localViewModel: LocalViewModel,
     userViewModel: UserViewModel,
     authViewModel: AuthViewModel,
-    startDestination: String
+    startDestination: Any
 ) {
     NavHost(
         navController = navController,
-        route = AppGraph.initial.ROOT,
-        startDestination = startDestination
+        startDestination = startDestination,
+        route = AppDestinations.RootGraph::class
     ) {
-        composable(AppGraph.main.ROOT) {
+        composable<AppDestinations.MainGraph> {
             MainView(navController, localViewModel, userViewModel)
         }
-        ratingNavGraph(localViewModel, userViewModel, navController)
-        authNavGraph(navController, userViewModel, authViewModel)
-        reportNavGraph(navController, userViewModel, localViewModel)
+        ratingNavGraph(localViewModel, navController)
+        authNavGraph(navController, authViewModel)
+        reportNavGraph(navController, localViewModel)
         settingsNavGraph(navController, userViewModel)
     }
 }
@@ -61,18 +64,14 @@ fun MainNavigationGraph(
 ) {
     NavHost(
         navController = navController,
-        route = AppGraph.main.ROOT,
-        startDestination = AppGraph.main.HOME
+        startDestination = AppDestinations.Home(),
+        route = AppDestinations.MainGraph::class
     ) {
-        composable(
-            route = AppGraph.main.HOME_WITH_ARGUMENTS,
-            arguments = AppGraph.main.HOME_ARGUMENTS
-        ) { backStackEntry ->
-            val toiletId = backStackEntry.arguments?.getString("toiletId")
-            HomeScreen(rootNavController, localViewModel, userViewModel, toiletId)
+        composable<AppDestinations.Home> { backStackEntry ->
+            val args = backStackEntry.toRoute<AppDestinations.Home>()
+            HomeScreen(rootNavController, localViewModel, userViewModel, args.toiletId)
         }
-        composable(AppGraph.main.PROFILE) {
-            val toilets = localViewModel.toiletsCache
+        composable<AppDestinations.Profile> {
             val user = userViewModel.user
             val comments = localViewModel.myComments
             val isLoadingCommentsUser = localViewModel.isLoadingCommentsUser
@@ -80,24 +79,27 @@ fun MainNavigationGraph(
                 localViewModel.loadMyComments()
             }
             ProfileScreen(
-                toilets, user, comments, isLoadingCommentsUser,
+                user, comments, isLoadingCommentsUser,
                 onClickLogout = {
                     userViewModel.logout().also {
-                        navController.navigate(AppGraph.main.HOME) {
-                            popUpTo(rootNavController.graph.startDestinationRoute!!) {
+                        navController.navigate(AppDestinations.Home()) {
+                            popUpTo(rootNavController.graph.startDestinationId) {
                                 inclusive = true
                             }
                             launchSingleTop = true
                         }
-                        rootNavController.navigate(AppGraph.auth.LOGIN) {
+                        rootNavController.navigate(AppDestinations.Login) {
                             launchSingleTop = true
                         }
                     }
                 },
                 navigateToSettings = {
-                    rootNavController.navigate(AppGraph.settings.SETTINGS_START) {
+                    rootNavController.navigate(AppDestinations.SettingsStart) {
                         launchSingleTop = true
                     }
+                },
+                onLoadMoreComments = {
+                    localViewModel.loadMoreMyComments()
                 }
             )
         }
@@ -113,11 +115,12 @@ fun BottomSheetNavigationGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = AppGraph.bottomSheet.TOILET_LIST,
+        startDestination = AppDestinations.ToiletList,
+        route = AppDestinations.BottomSheetGraph::class,
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None },
     ) {
-        composable(AppGraph.bottomSheet.TOILET_LIST) {
+        composable<AppDestinations.ToiletList> {
             val toilets = localViewModel.toiletsCache
             val toiletIds = localViewModel.toiletsNearbyIds
             val location = localViewModel.location
@@ -127,13 +130,13 @@ fun BottomSheetNavigationGraph(
                 toiletsNearbyIdsStateFlow = toiletIds,
                 locationStateFlow = location,
                 navigateToToiletDetail = { toiletId ->
-                    isLoggedIn?.let { it1 ->
-                        if (!it1) {
-                            rootNavController.navigate(AppGraph.auth.LOGIN) {
+                    isLoggedIn?.let { logged ->
+                        if (!logged) {
+                            rootNavController.navigate(AppDestinations.Login) {
                                 launchSingleTop = true
                             }
                         } else {
-                            navController.navigate(AppGraph.bottomSheet.toiletDetail(toiletId))
+                            navController.navigate(AppDestinations.ToiletDetails(toiletId))
                         }
                     }
                 },
@@ -147,15 +150,15 @@ fun BottomSheetNavigationGraph(
                 }
             )
         }
-        composable(
-            route = AppGraph.bottomSheet.TOILET_DETAILS,
-            arguments = AppGraph.bottomSheet.TOILET_DETAILS_ARGUMENTS
-        ) { backStackEntry ->
-            val toiletId = backStackEntry.arguments?.getString("toiletId")!!
+        composable<AppDestinations.ToiletDetails> { backStackEntry ->
+            val args = backStackEntry.toRoute<AppDestinations.ToiletDetails>()
+            val toiletId = args.toiletId
             val toilets = localViewModel.toiletsCache
             val commentsCache = localViewModel.commentsCache
             val isLoadingCommentsToilet = localViewModel.isLoadingCommentsToilet
             val user = userViewModel.user
+            val repliesCache = localViewModel.repliesCache
+            val loadingReplies = localViewModel.loadingReplies
             LaunchedEffect(Unit) {
                 localViewModel.loadToiletComments(toiletId)
             }
@@ -165,18 +168,30 @@ fun BottomSheetNavigationGraph(
                 commentsCacheStateFlow = commentsCache,
                 isLoadingCommentsToiletStateFlow = isLoadingCommentsToilet,
                 userMainStateFlow = user,
+                repliesCacheStateFlow = repliesCache,
+                loadingRepliesStateFlow = loadingReplies,
                 navigateToRating = {
-                    rootNavController.navigate(AppGraph.rating.rating(it)) {
+                    rootNavController.navigate(AppDestinations.Rating(it)) {
                         launchSingleTop = true
                     }
                 },
                 navigateToToiletReport = { id ->
-                    rootNavController.navigate(AppGraph.report.reportToilet(id)) {
+                    rootNavController.navigate(AppDestinations.Report(typeId = "toilet", id = id)) {
                         launchSingleTop = true
                     }
                 },
                 navigateToCommentReport = { id ->
-                    rootNavController.navigate(AppGraph.report.reportComment(id)) {
+                    rootNavController.navigate(
+                        AppDestinations.Report(
+                            typeId = "comment",
+                            id = id
+                        )
+                    ) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToReplyReport = { id ->
+                    rootNavController.navigate(AppDestinations.Report(typeId = "reply", id = id)) {
                         launchSingleTop = true
                     }
                 },
@@ -185,6 +200,29 @@ fun BottomSheetNavigationGraph(
                 },
                 onReaction = { tId, commentId, react ->
                     localViewModel.reactToComment(tId, commentId, react)
+                },
+                onLoadMoreComments = {
+                    localViewModel.loadMoreToiletComments(toiletId)
+                },
+                onLoadReplies = { commentId ->
+                    localViewModel.loadReplies(commentId)
+                },
+                onReply = { commentId, text ->
+                    localViewModel.createReply(commentId, text)
+                },
+                onEditComment = { commentId ->
+                    rootNavController.navigate(AppDestinations.Rating(toiletId, commentId)) {
+                        launchSingleTop = true
+                    }
+                },
+                onDeleteComment = { commentId ->
+                    localViewModel.deleteComment(commentId, toiletId)
+                },
+                onEditReply = { replyId, commentId, text ->
+                    localViewModel.updateReply(replyId, commentId, text)
+                },
+                onDeleteReply = { replyId, commentId ->
+                    localViewModel.deleteReply(replyId, commentId)
                 }
             )
         }
@@ -193,14 +231,12 @@ fun BottomSheetNavigationGraph(
 
 private fun NavGraphBuilder.authNavGraph(
     navController: NavHostController,
-    userViewModel: UserViewModel,
     authViewModel: AuthViewModel
 ) {
-    navigation(
-        route = AppGraph.auth.ROOT,
-        startDestination = AppGraph.auth.LOGIN,
+    navigation<AppDestinations.AuthGraph>(
+        startDestination = AppDestinations.Login
     ) {
-        composable(AppGraph.auth.LOGIN) {
+        composable<AppDestinations.Login> {
             val login = authViewModel.loginState
             LoginScreen(
                 loginStateFlow = login,
@@ -209,19 +245,19 @@ private fun NavGraphBuilder.authNavGraph(
                 },
                 onLoginSuccess = {
                     authViewModel.clearLoginState()
-                    navController.navigate(AppGraph.main.ROOT) {
-                        popUpTo(navController.graph.startDestinationRoute!!) {
+                    navController.navigate(AppDestinations.MainGraph) {
+                        popUpTo(navController.graph.startDestinationId) {
                             inclusive = true
                         }
                         launchSingleTop = true
                     }
                 },
                 navigateToRegister = {
-                    navController.navigate(AppGraph.auth.REGISTER)
+                    navController.navigate(AppDestinations.Register)
                 }
             )
         }
-        composable(AppGraph.auth.REGISTER) {
+        composable<AppDestinations.Register> {
             val register = authViewModel.registerState
             RegisterScreen(
                 registerStateFlow = register,
@@ -242,33 +278,117 @@ private fun NavGraphBuilder.authNavGraph(
 
 private fun NavGraphBuilder.ratingNavGraph(
     localViewModel: LocalViewModel,
-    userViewModel: UserViewModel,
     navController: NavHostController
 ) {
-    composable(
-        route = AppGraph.rating.RATING,
-        arguments = AppGraph.rating.RATING_ARGUMENTS
-    ) { backStackEntry ->
-        val toiletId = backStackEntry.arguments?.getString("toiletId")!!
+    composable<AppDestinations.Rating> { backStackEntry ->
+        val args = backStackEntry.toRoute<AppDestinations.Rating>()
+        val toiletId = args.toiletId
+        val commentId = args.commentId
         val toilet = localViewModel.toiletsCache.collectAsState().value[toiletId]
-        val user = userViewModel.user.collectAsState().value
         val rating = localViewModel.ratingState
-        RatingScreen(
-            toilet = toilet!!,
-            ratingStateFlow = rating,
-            onRating = { pubId, text, ratingClean, ratingPaper, ratingStructure, ratingAccessibility ->
-                localViewModel.submitRating(
-                    pubId,
-                    text,
-                    ratingClean,
-                    ratingPaper,
-                    ratingStructure,
-                    ratingAccessibility
-                )
-            },
-            onRatingSuccess = {
-                localViewModel.clearRatingState()
+
+        val comment = commentId?.let { localViewModel.getCommentById(it) }
+
+        if (toilet != null) {
+            RatingScreen(
+                toilet = toilet,
+                comment = comment,
+                ratingStateFlow = rating,
+                onRating = { pubId, text, ratingClean, ratingPaper, ratingStructure, ratingAccessibility ->
+                    localViewModel.submitRating(
+                        pubId,
+                        text,
+                        ratingClean,
+                        ratingPaper,
+                        ratingStructure,
+                        ratingAccessibility
+                    )
+                },
+                onUpdate = { commentIdParam, toiletPublicId, text, ratingClean, ratingPaper, ratingStructure, ratingAccessibility ->
+                    localViewModel.updateComment(
+                        commentIdParam,
+                        toiletPublicId,
+                        text,
+                        ratingClean,
+                        ratingPaper,
+                        ratingStructure,
+                        ratingAccessibility
+                    )
+                },
+                onRatingSuccess = {
+                    localViewModel.clearRatingState()
+                    navController.popBackStack()
+                },
+                navigateToBack = {
+                    navController.popBackStack()
+                }
+            )
+        } else {
+            // Handle error: Toilet not found
+            navController.popBackStack()
+        }
+    }
+}
+
+private fun NavGraphBuilder.reportNavGraph(
+    navController: NavHostController,
+    localViewModel: LocalViewModel
+) {
+    // We are not using 'navigation' wrapper here because startDestination with args is tricky.
+    // Just exposing the composables directly to the root graph.
+
+    composable<AppDestinations.Report> { backStackEntry ->
+        val args = backStackEntry.toRoute<AppDestinations.Report>()
+        val reportState = localViewModel.reportState
+        ReportScreen(
+            type = args.typeId,
+            id = args.id,
+            reportStateFlow = reportState,
+            navigateToBack = {
                 navController.popBackStack()
+            },
+            onToiletReport = { toiletPublicId, typeReport ->
+                localViewModel.reportToilet(toiletPublicId, typeReport)
+            },
+            onCommentReport = { commentPublicId, typeReport ->
+                localViewModel.reportComment(commentPublicId, typeReport)
+            },
+            onReplyReport = { replyPublicId, typeReport ->
+                localViewModel.reportReply(replyPublicId, typeReport)
+            },
+            onReportConfirmation = { confirmationType ->
+                localViewModel.clearReportState()
+                navController.navigate(
+                    AppDestinations.ReportConfirmation(
+                        type = confirmationType.type,
+                        confirmation = confirmationType.confirmation
+                    )
+                ) {
+                    launchSingleTop = true
+                }
+            }
+        )
+    }
+    composable<AppDestinations.ReportConfirmation> { backStackEntry ->
+        val args = backStackEntry.toRoute<AppDestinations.ReportConfirmation>()
+        val confirmationType =
+            ConfirmationType.entries.find { it.type == args.type && it.confirmation == args.confirmation }!!
+        ConfirmationScreen(
+            confirmation = confirmationType,
+            onClickConfirm = {
+                if (it == ConfirmationType.REPORT_COMMENT_SUCCESS || it == ConfirmationType.REPORT_COMMENT_FAILURE ||
+                    it == ConfirmationType.REPORT_REPLY_SUCCESS || it == ConfirmationType.REPORT_REPLY_FAILURE
+                ) {
+                    navController.popBackStack()
+                    navController.popBackStack()
+                } else {
+                    navController.navigate(AppDestinations.MainGraph) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
+                }
             },
             navigateToBack = {
                 navController.popBackStack()
@@ -277,85 +397,14 @@ private fun NavGraphBuilder.ratingNavGraph(
     }
 }
 
-private fun NavGraphBuilder.reportNavGraph(
-    navController: NavHostController,
-    userViewModel: UserViewModel,
-    localViewModel: LocalViewModel
-) {
-    navigation(
-        route = AppGraph.report.ROOT,
-        startDestination = AppGraph.report.REPORT
-    ) {
-        composable(
-            route = AppGraph.report.REPORT,
-            arguments = AppGraph.report.REPORT_ARGUMENTS
-        ) { backStackEntry ->
-            val typeId = backStackEntry.arguments?.getString("typeId")!!
-            val id = backStackEntry.arguments?.getString("id")!!
-            ReportScreen(
-                type = typeId,
-                id = id,
-                navigateToBack = {
-                    navController.popBackStack()
-                },
-                onToiletReport = { toiletPublicId, typeReport ->
-                    // TODO: Implement report endpoint call
-                },
-                onCommentReport = { commentPublicId, typeReport ->
-                    // TODO: Implement comment report endpoint call
-                },
-                onReportConfirmation = { confirmationType ->
-                    navController.navigate(
-                        AppGraph.report.reportConfirmation(
-                            confirmationType.type,
-                            confirmationType.confirmation
-                        )
-                    ) {
-                        launchSingleTop = true
-                    }
-                }
-            )
-        }
-        composable(
-            route = AppGraph.report.REPORT_CONFIRMATION,
-            arguments = AppGraph.report.REPORT_CONFIRMATION_ARGUMENTS
-        ) { backStackEntry ->
-            val type = backStackEntry.arguments?.getString("type")!!
-            val confirmation = backStackEntry.arguments?.getBoolean("confirmation")!!
-            val confirmationType =
-                ConfirmationType.entries.find { it.type == type && it.confirmation == confirmation }!!
-            ConfirmationScreen(
-                confirmation = confirmationType,
-                onClickConfirm = {
-                    if (it == ConfirmationType.REPORT_COMMENT_SUCCESS || it == ConfirmationType.REPORT_COMMENT_FAILURE) {
-                        navController.popBackStack()
-                        navController.popBackStack()
-                    } else {
-                        navController.navigate(AppGraph.main.ROOT) {
-                            popUpTo(navController.graph.startDestinationRoute!!) {
-                                inclusive = true
-                            }
-                            launchSingleTop = true
-                        }
-                    }
-                },
-                navigateToBack = {
-                    navController.popBackStack()
-                }
-            )
-        }
-    }
-}
-
 private fun NavGraphBuilder.settingsNavGraph(
     navController: NavHostController,
     userViewModel: UserViewModel
 ) {
-    navigation(
-        route = AppGraph.settings.ROOT,
-        startDestination = AppGraph.settings.SETTINGS_START
+    navigation<AppDestinations.SettingsGraph>(
+        startDestination = AppDestinations.SettingsStart
     ) {
-        composable(AppGraph.settings.SETTINGS_START) {
+        composable<AppDestinations.SettingsStart> {
             val updateUserState = userViewModel.updateUserState
             val user = userViewModel.user.collectAsState().value!!
             SettingsScreen(
@@ -365,7 +414,7 @@ private fun NavGraphBuilder.settingsNavGraph(
                     navController.popBackStack()
                 },
                 onChange = { type ->
-                    navController.navigate(AppGraph.settings.changeSetting(type.value ?: "")) {
+                    navController.navigate(AppDestinations.SettingsChange(type.value)) {
                         launchSingleTop = true
                     }
                 },
@@ -374,12 +423,9 @@ private fun NavGraphBuilder.settingsNavGraph(
                 }
             )
         }
-        composable(
-            route = AppGraph.settings.SETTINGS_CHANGE,
-            arguments = AppGraph.settings.SETTINGS_CHANGE_ARGUMENTS
-        ) { backStackEntry ->
-            val type = backStackEntry.arguments?.getString("type")!!
-            val changeSettingType = ChangeSettingType.entries.find { it.value == type }!!
+        composable<AppDestinations.SettingsChange> { backStackEntry ->
+            val args = backStackEntry.toRoute<AppDestinations.SettingsChange>()
+            val changeSettingType = ChangeSettingType.entries.find { it.value == args.type }!!
             val updateUserState = userViewModel.updateUserState
             ChangeSettingsScreen(
                 updateUserStateFlow = updateUserState,
@@ -389,12 +435,6 @@ private fun NavGraphBuilder.settingsNavGraph(
                 },
                 onChangeName = { name ->
                     userViewModel.updateUser(name = name, icon = null, birthDate = null)
-                },
-                onChangeEmail = { email ->
-                    // TODO: Email change requires password verification
-                },
-                onChangePassword = { password ->
-                    // TODO: Password change requires password verification
                 },
                 onChangeSuccess = {
                     navController.popBackStack()

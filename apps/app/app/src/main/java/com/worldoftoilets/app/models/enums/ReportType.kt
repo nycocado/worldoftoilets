@@ -4,5 +4,6 @@ enum class ReportType(
     val value: String
 ) {
     TOILET("toilet"),
-    COMMENT("comment")
+    COMMENT("comment"),
+    REPLY("reply")
 }

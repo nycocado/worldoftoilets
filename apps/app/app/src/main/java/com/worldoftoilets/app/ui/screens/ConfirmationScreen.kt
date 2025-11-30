@@ -34,6 +34,8 @@ import com.worldoftoilets.app.models.enums.ConfirmationType
 import com.worldoftoilets.app.ui.theme.AppTheme
 import com.worldoftoilets.app.R
 
+import androidx.compose.material3.TopAppBarDefaults
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConfirmationScreen(
@@ -41,19 +43,13 @@ fun ConfirmationScreen(
     onClickConfirm: (ConfirmationType) -> Unit = {},
     navigateToBack: () -> Unit = {}
 ) {
-    val iconSize = 120.dp
+    val iconSize = 140.dp // Slightly larger
     val context = LocalContext.current
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = context.getString(R.string.report),
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                },
+                title = {}, // No title in confirmation screen for cleaner look
                 navigationIcon = {
                     if (!confirmation.confirmation) {
                         IconButton(
@@ -67,33 +63,20 @@ fun ConfirmationScreen(
                             )
                         }
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
             )
         },
         bottomBar = {
-            Button(
+            com.worldoftoilets.app.ui.components.SanitaryButton(
+                text = context.getString(R.string.confirm),
                 onClick = { onClickConfirm(confirmation) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 50.dp)
-                    .padding(top = 30.dp),
-                colors = ButtonColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                    disabledContainerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(
-                        alpha = 0.5f
-                    ),
-                    disabledContentColor = MaterialTheme.colorScheme.onTertiaryContainer.copy(
-                        alpha = 0.5f
-                    )
-                )
-            ) {
-                Text(
-                    text = context.getString(R.string.confirm),
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold,
-                )
-            }
+                    .padding(horizontal = 24.dp, vertical = 32.dp)
+            )
         }
     ) { innerPadding ->
         LazyColumn(
@@ -104,40 +87,48 @@ fun ConfirmationScreen(
             verticalArrangement = Arrangement.Center
         ) {
             item {
+                // Icon Container
                 Box(
                     modifier = Modifier
-                        .padding(bottom = 50.dp)
+                        .padding(bottom = 32.dp)
                         .size(iconSize)
                         .background(
                             color = when (confirmation.confirmation) {
-                                true -> MaterialTheme.colorScheme.primaryContainer
-                                false -> MaterialTheme.colorScheme.error
+                                true -> MaterialTheme.colorScheme.secondaryContainer // Softer green container
+                                false -> MaterialTheme.colorScheme.errorContainer // Softer red container
                             },
                             shape = CircleShape
-                        ), contentAlignment = Alignment.Center
+                        ),
+                    contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = confirmation.icon,
                         contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(iconSize * 0.85f)
+                        tint = when (confirmation.confirmation) {
+                            true -> MaterialTheme.colorScheme.onSecondaryContainer // Darker green icon
+                            false -> MaterialTheme.colorScheme.onErrorContainer // Darker red icon
+                        },
+                        modifier = Modifier.size(iconSize * 0.6f)
                     )
                 }
             }
             item {
                 Column(
-                    modifier = Modifier.padding(horizontal = 30.dp),
-                    verticalArrangement = Arrangement.spacedBy(18.dp),
+                    modifier = Modifier.padding(horizontal = 32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     Text(
                         text = context.getString(confirmation.title),
                         style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
                     )
                     Text(
                         text = context.getString(confirmation.text),
                         style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant // Muted text color
                     )
                 }
             }

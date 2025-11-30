@@ -1,137 +1,45 @@
 package com.worldoftoilets.app.ui.navegation
 
 import android.content.Context
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavType
-import androidx.navigation.navArgument
 import com.worldoftoilets.app.R
+import kotlin.reflect.KClass
 
-object AppGraph {
-    val initial = RootGraph
-    val main = MainGraph
-    val bottomSheet = BottomSheetGraph
-    val auth = AuthGraph
-    val rating = RatingGraph
-    val settings = SettingsGraph
-    val report = ReportGraph
-}
-
-object RootGraph {
-    const val ROOT = "root_graph"
-}
-
-object MainGraph {
-    const val ROOT = "main_graph"
-    const val HOME = "main/home"
-    const val HOME_WITH_ARGUMENTS = "main/home?toiletId={toiletId}"
-    const val PROFILE = "main/profile"
-    val HOME_ARGUMENTS = listOf(
-        navArgument("toiletId") {
-            type = NavType.StringType
-            defaultValue = null
-            nullable = true
-        }
-    )
-
-    fun homeToiletDetail(toiletId: String) = "main/home?toiletId=$toiletId"
-}
-
-object BottomSheetGraph {
-    const val ROOT = "bottom_sheet_graph"
-    const val TOILET_LIST = "bottom_sheet/toilet/list"
-    const val TOILET_DETAILS = "bottom_sheet/toilet/details/{toiletId}"
-    val TOILET_DETAILS_ARGUMENTS = listOf (
-        navArgument("toiletId") {
-            type = NavType.StringType
-        }
-    )
-
-    fun toiletDetail(toiletId: String) = "bottom_sheet/toilet/details/$toiletId"
-}
-
-object AuthGraph {
-    const val ROOT = "auth_graph"
-    const val LOGIN = "auth_login"
-    const val REGISTER = "auth_register"
-}
-
-object RatingGraph {
-    const val ROOT = "rating_graph"
-    const val RATING = "rating/{toiletId}"
-    val RATING_ARGUMENTS = listOf (
-        navArgument("toiletId") {
-            type = NavType.StringType
-        }
-    )
-
-    fun rating(toiletId: String) = "rating/$toiletId"
-}
-
-object SettingsGraph {
-    const val ROOT = "settings_graph"
-    const val SETTINGS_START = "settings/start"
-    const val SETTINGS_CHANGE = "settings/change/{type}"
-    val SETTINGS_CHANGE_ARGUMENTS = listOf (
-        navArgument("type") {
-            type = NavType.StringType
-        }
-    )
-
-    fun changeSetting(type: String) = "settings/change/$type"
-}
-
-object ReportGraph {
-    const val ROOT = "report_graph"
-    const val REPORT = "report/{typeId}/{id}"
-    const val REPORT_CONFIRMATION = "report/confirmation/{type}/{confirmation}"
-    val REPORT_ARGUMENTS = listOf (
-        navArgument("typeId") {
-            type = NavType.StringType
-        },
-        navArgument("id") {
-            type = NavType.StringType
-        }
-    )
-    val REPORT_CONFIRMATION_ARGUMENTS = listOf (
-        navArgument("type") {
-            type = NavType.StringType
-        },
-        navArgument("confirmation") {
-            type = NavType.BoolType
-        }
-    )
-
-    fun reportToilet(toiletId: String) = "report/toilet/$toiletId"
-    fun reportComment(commentId: String) = "report/comment/$commentId"
-    fun reportConfirmation(type: String, confirmation: Boolean) = "report/confirmation/$type/$confirmation"
-}
-
-sealed class NavRoute(
-    val selectedIcon: Int,
-    val unselectedIcon: Int,
+sealed class NavRoute<T : Any>(
+    val selectedIcon: ImageVector,
+    val unselectedIcon: ImageVector,
     val hasNews: Boolean,
     val badgeCount: Int? = null,
-    val route: String
+    val destination: T,
+    val routeClass: KClass<T>
 ) {
     abstract fun getTitle(): String
 
-    data class Home(private val context: Context) : NavRoute(
-        selectedIcon = R.drawable.location_on_filled_24px,
-        unselectedIcon = R.drawable.location_on_24px,
+    data class Home(private val context: Context) : NavRoute<AppDestinations.Home>(
+        selectedIcon = Icons.Rounded.LocationOn,
+        unselectedIcon = Icons.Outlined.LocationOn,
         hasNews = false,
-        route = AppGraph.main.HOME
+        destination = AppDestinations.Home(),
+        routeClass = AppDestinations.Home::class
     ) {
         override fun getTitle(): String {
             return context.getString(R.string.home)
         }
     }
 
-    data class Profile(private val context: Context) : NavRoute(
-        selectedIcon = R.drawable.account_circle_filled_24px,
-        unselectedIcon = R.drawable.account_circle_24px,
+    data class Profile(private val context: Context) : NavRoute<AppDestinations.Profile>(
+        selectedIcon = Icons.Rounded.AccountCircle,
+        unselectedIcon = Icons.Outlined.AccountCircle,
         hasNews = false,
-        route = AppGraph.main.PROFILE
+        destination = AppDestinations.Profile,
+        routeClass = AppDestinations.Profile::class
     ) {
         override fun getTitle(): String {
             return context.getString(R.string.profile)
@@ -140,7 +48,7 @@ sealed class NavRoute(
 }
 
 @Composable
-fun getBottomRoutes(): List<NavRoute> {
+fun getBottomRoutes(): List<NavRoute<*>> {
     val context: Context = LocalContext.current
     return listOf(
         NavRoute.Home(context),
