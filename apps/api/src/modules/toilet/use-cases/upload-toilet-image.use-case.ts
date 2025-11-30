@@ -64,20 +64,12 @@ export class UploadToiletImageUseCase {
     );
 
     if (toilet.photoUrl) {
-      const oldFileName = this.minioService.extractFileNameFromUrl(
-        toilet.photoUrl,
-        'toilets',
-      );
-      if (oldFileName) {
-        await this.minioService.deleteFile(oldFileName).catch(() => {});
-      }
+      await this.minioService.deleteFile(toilet.photoUrl).catch(() => {});
     }
 
     await this.minioService.uploadFile(sanitizedBuffer, fileName, mimeType);
 
-    const publicUrl = this.minioService.getPublicFileUrl(fileName);
-
-    await this.repository.updatePhotoUrl(toilet, publicUrl);
+    await this.repository.updatePhotoUrl(toilet, fileName);
 
     return plainToInstance(ToiletResponseDto, toilet, {
       excludeExtraneousValues: true,

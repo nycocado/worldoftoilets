@@ -75,20 +75,12 @@ export class UploadSuggestionImageUseCase {
     );
 
     if (suggestion.photoUrl) {
-      const oldFileName = this.minioService.extractFileNameFromUrl(
-        suggestion.photoUrl,
-        'suggestions',
-      );
-      if (oldFileName) {
-        await this.minioService.deleteFile(oldFileName).catch(() => {});
-      }
+      await this.minioService.deleteFile(suggestion.photoUrl).catch(() => {});
     }
 
     await this.minioService.uploadFile(sanitizedBuffer, fileName, mimeType);
 
-    const publicUrl = this.minioService.getPublicFileUrl(fileName);
-
-    await this.repository.updatePhotoUrl(suggestion, publicUrl);
+    await this.repository.updatePhotoUrl(suggestion, fileName);
 
     return plainToInstance(SuggestionResponseDto, suggestion, {
       excludeExtraneousValues: true,

@@ -1,8 +1,9 @@
-import { Expose, Type } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { SuggestionStatus } from '@database/entities';
 import { UserSuggestionResponseDto } from '@modules/user/dto';
 import { ToiletResponseDto } from '@modules/toilet/dto';
+import { buildMinioFileUrl } from '@common/utils';
 
 /**
  * DTO para a resposta de uma sugestão.
@@ -25,6 +26,7 @@ export class SuggestionResponseDto {
     required: false,
   })
   @Expose()
+  @Transform(({ obj }) => buildMinioFileUrl(obj.photoUrl))
   photoUrl?: string;
 
   @ApiProperty({ description: 'O estado da sugestão.', enum: SuggestionStatus })

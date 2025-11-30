@@ -56,20 +56,12 @@ export class UploadPartnerCertificateUseCase {
     );
 
     if (partner.certificate) {
-      const oldFileName = this.minioService.extractFileNameFromUrl(
-        partner.certificate,
-        'partner-certificates',
-      );
-      if (oldFileName) {
-        await this.minioService.deleteFile(oldFileName).catch(() => {});
-      }
+      await this.minioService.deleteFile(partner.certificate).catch(() => {});
     }
 
     await this.minioService.uploadFile(file.buffer, fileName, file.mimetype);
 
-    const publicUrl = this.minioService.getPublicFileUrl(fileName);
-
-    await this.repository.updateCertificate(partner, publicUrl);
+    await this.repository.updateCertificate(partner, fileName);
 
     return plainToInstance(PartnerApplicationResponseDto, partner, {
       excludeExtraneousValues: true,

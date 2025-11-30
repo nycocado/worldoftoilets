@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose, Type } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
 import { PartnerStatus } from '@database/entities';
 import { ToiletResponseDto } from '@modules/toilet/dto';
 import { UserAdminResponseDto } from '@modules/user/dto';
+import { buildMinioFileUrl } from '@common/utils';
 
 /**
  * DTO para a resposta administrativa com informações completas da parceria.
@@ -39,6 +40,7 @@ export class PartnerAdminResponseDto {
     nullable: true,
   })
   @Expose()
+  @Transform(({ obj }) => buildMinioFileUrl(obj.certificate))
   certificate?: string;
 
   @ApiProperty({

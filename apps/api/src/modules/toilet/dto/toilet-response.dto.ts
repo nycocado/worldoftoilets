@@ -3,6 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { AccessResponseDto } from '@modules/toilet/dto/access-response.dto';
 import { TypeExtraResponseDto } from '@modules/toilet/dto/type-extra-response.dto';
 import { CommentRateToiletResponseDto } from '@modules/comment-rate/dto';
+import { buildMinioFileUrl } from '@common/utils';
 
 /**
  * DTO para a resposta com os dados de uma casa de banho.
@@ -100,6 +101,7 @@ export class ToiletResponseDto {
     example: 'https://api.example.com/files/toilets/uuid.jpg',
   })
   @Expose()
+  @Transform(({ obj }) => buildMinioFileUrl(obj.photoUrl))
   photoUrl!: string;
 
   @ApiProperty({
