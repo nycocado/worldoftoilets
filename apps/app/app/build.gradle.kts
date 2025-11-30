@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.ksp)
 }
@@ -54,7 +55,13 @@ android {
 }
 
 kotlin {
-    compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11) }
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+        freeCompilerArgs = freeCompilerArgs.get().toMutableList().apply {
+            add("-Xannotation-default-target=param-property")
+            add("-opt-in=androidx.compose.material3.ExperimentalMaterial3Api")
+        }
+    }
 }
 
 dependencies {
@@ -62,6 +69,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.runtime.compose)
 
     // Compose
     implementation(libs.androidx.activity.compose)
@@ -83,19 +91,16 @@ dependencies {
 
     // Retrofit, Gson and Interceptor
     implementation(libs.retrofit)
-    implementation(libs.converter.gson)
+    implementation(libs.retrofit.converter.kotlinx.serialization)
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.logging.interceptor)
 
     // JWT Token Decode
     implementation(libs.jwt.decode)
 
-    // Encrypted Shared Preferences
     implementation(libs.androidx.security.crypto)
     implementation(libs.tink.android)
-    implementation("androidx.preference:preference-ktx:1.2.1")
-
-    // LiveData
-    implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.preference.ktx)
 
     // Dagger Hilt
     implementation(libs.hilt.android)
@@ -112,8 +117,10 @@ dependencies {
     // DataStore
     implementation(libs.androidx.datastore.preferences)
 
-    // OSMDroid
-    implementation(libs.osmdroid.android)
+    // MapLibre
+    implementation(libs.maplibre.android.sdk)
+    implementation(libs.maplibre.android.plugin.annotation)
+    implementation(libs.gson)
 
     // Testing
     testImplementation(libs.junit)

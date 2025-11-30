@@ -1,22 +1,17 @@
 package com.worldoftoilets.app.ui.screens
 
-import android.annotation.SuppressLint
 import android.util.Patterns
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -39,15 +34,19 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.worldoftoilets.app.R
 import com.worldoftoilets.app.models.enums.UserIcon
 import com.worldoftoilets.app.ui.components.ClickableTextField
 import com.worldoftoilets.app.ui.components.CustomDatePickerDialog
 import com.worldoftoilets.app.ui.components.IconCarousel
 import com.worldoftoilets.app.ui.components.NextTextField
+import com.worldoftoilets.app.ui.components.SanitaryButton
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+
+import androidx.compose.material3.TopAppBarDefaults
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,7 +56,7 @@ fun RegisterScreen(
     onRegisterSuccess: () -> Unit = {},
     navigateToBack: () -> Unit = {}
 ) {
-    val registerState = registerStateFlow.collectAsState().value
+    val registerState by registerStateFlow.collectAsStateWithLifecycle()
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -170,11 +169,14 @@ fun RegisterScreen(
                         navigateToBack()
                     }) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                             contentDescription = "Back"
                         )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
             )
         }
     ) { innerPadding ->
@@ -233,9 +235,10 @@ fun RegisterScreen(
                     ClickableTextField(
                         label = context.getString(R.string.birthdate),
                         value = birthDate,
+                        supportText = birthDateSupportText,
                         trailingIcon = {
                             Icon(
-                                imageVector = Icons.Default.DateRange,
+                                imageVector = Icons.Rounded.DateRange,
                                 contentDescription = "Calendar"
                             )
                         },
@@ -245,7 +248,8 @@ fun RegisterScreen(
             }
 
             item {
-                Button(
+                SanitaryButton(
+                    text = context.getString(R.string.register_action),
                     onClick = {
                         if (isAllowedToRegister) {
                             scope.launch {
@@ -256,7 +260,6 @@ fun RegisterScreen(
                                     currentIcon,
                                     birthDate
                                 )
-                                isLoading = true
                             }
                         }
                     },
@@ -264,37 +267,16 @@ fun RegisterScreen(
                         .fillMaxWidth()
                         .padding(top = 20.dp)
                         .padding(horizontal = 100.dp),
-                    colors = ButtonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(
-                            alpha = 0.5f
-                        ),
-                        disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(
-                            alpha = 0.5f
-                        )
-                    )
-                ) {
-                    when (isLoading) {
-                        true -> CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp)
-                        )
-                        false -> {
-                            Text(
-                                text = context.getString(R.string.register_action),
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-                }
+                    isLoading = isLoading,
+                    enabled = isAllowedToRegister
+                )
             }
         }
 
         if (showDatePicker) {
             CustomDatePickerDialog(
                 onDateSelected = { birthDate = it },
-                onDismiss = { showDatePicker = false }
+                onDismiss = { }
             )
         }
     }

@@ -37,6 +37,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.worldoftoilets.app.models.User
 import com.worldoftoilets.app.models.enums.ChangeSettingType
 import com.worldoftoilets.app.ui.components.ClickableTextField
@@ -48,6 +49,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import com.worldoftoilets.app.R
 
+import androidx.compose.material3.TopAppBarDefaults
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChangeSettingsScreen(
@@ -55,60 +58,21 @@ fun ChangeSettingsScreen(
     changeSettingType: ChangeSettingType,
     navigateToBack: () -> Unit = {},
     onChangeName: (String) -> Unit = {},
-    onChangeEmail: (String) -> Unit = {},
-    onChangePassword: (String) -> Unit = {},
     onChangeSuccess: () -> Unit = {}
 ) {
-    val updateUserState = updateUserStateFlow.collectAsState().value
+    val updateUserState by updateUserStateFlow.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var newPassword by remember { mutableStateOf("") }
-    var confirmNewPassword by remember { mutableStateOf("") }
     var nameSupportText by remember { mutableStateOf("") }
-    var emailSupportText by remember { mutableStateOf("") }
-    var passwordSupportText by remember { mutableStateOf("") }
-    var newPasswordSupportText by remember { mutableStateOf("") }
-    var confirmNewPasswordSupportText by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
-    val isAllowedToChangeName = nameSupportText.isEmpty() && passwordSupportText.isEmpty()
-    val isAllowedToChangeEmail = emailSupportText.isEmpty() && passwordSupportText.isEmpty()
-    val isAllowedToChangePassword =
-        passwordSupportText.isEmpty() && newPasswordSupportText.isEmpty() && confirmNewPasswordSupportText.isEmpty()
+    val isAllowedToChangeName = nameSupportText.isEmpty() && name.isNotEmpty()
 
-    LaunchedEffect(name, email, password, newPassword, confirmNewPassword) {
+    LaunchedEffect(name) {
         nameSupportText = when {
             name.isEmpty() -> context.getString(R.string.error_required_name)
             name.length > 50 -> context.getString(R.string.error_too_long_name)
             name.length < 6 -> context.getString(R.string.error_too_short_name)
-            else -> ""
-        }
-
-        emailSupportText = when {
-            email.isEmpty() -> context.getString(R.string.error_required_email)
-            email.length > 100 -> context.getString(R.string.error_too_long_email)
-            !Patterns.EMAIL_ADDRESS.matcher(email)
-                .matches() -> context.getString(R.string.error_invalid_email)
-
-            else -> ""
-        }
-
-        passwordSupportText = when {
-            password.isEmpty() -> context.getString(R.string.error_required_password)
-            else -> ""
-        }
-
-        newPasswordSupportText = when {
-            password.isEmpty() -> context.getString(R.string.error_required_password)
-            password.length < 6 -> context.getString(R.string.error_too_short_password)
-            else -> ""
-        }
-
-        confirmNewPasswordSupportText = when {
-            confirmNewPassword.isEmpty() -> context.getString(R.string.error_required_password)
-            confirmNewPassword != newPassword -> context.getString(R.string.error_passwords_do_not_match)
             else -> ""
         }
     }
@@ -116,10 +80,6 @@ fun ChangeSettingsScreen(
     LaunchedEffect(updateUserState) {
         updateUserState?.onSuccess {
             nameSupportText = ""
-            emailSupportText = ""
-            passwordSupportText = ""
-            newPasswordSupportText = ""
-            confirmNewPasswordSupportText = ""
             isLoading = false
 
             scope.launch {
@@ -128,34 +88,8 @@ fun ChangeSettingsScreen(
         }
 
         updateUserState?.onFailure {
-            when {
-                it.message?.contains("Email") == true -> {
-                    emailSupportText = context.getString(R.string.error_in_use_email)
-                    nameSupportText = ""
-                    passwordSupportText = ""
-                    newPasswordSupportText = ""
-                    confirmNewPasswordSupportText = ""
-                    isLoading = false
-                }
-
-                it.message?.contains("password") == true -> {
-                    passwordSupportText = context.getString(R.string.error_invalid_password)
-                    nameSupportText = ""
-                    emailSupportText = ""
-                    newPasswordSupportText = ""
-                    confirmNewPasswordSupportText = ""
-                    isLoading = false
-                }
-
-                else -> {
-                    nameSupportText = ""
-                    emailSupportText = ""
-                    passwordSupportText = ""
-                    newPasswordSupportText = ""
-                    confirmNewPasswordSupportText = ""
-                    isLoading = false
-                }
-            }
+            nameSupportText = ""
+            isLoading = false
         }
     }
 
@@ -178,7 +112,10 @@ fun ChangeSettingsScreen(
                             contentDescription = "Back"
                         )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
             )
         }
     ) { innerPadding ->
@@ -194,87 +131,13 @@ fun ChangeSettingsScreen(
                     modifier = Modifier.padding(horizontal = 42.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    when (changeSettingType) {
-                        ChangeSettingType.NAME -> {
-                            NextTextField(
-                                label = context.getString(R.string.name),
-                                value = name,
-                                supportText = nameSupportText,
-                                onValueChange = { name = it }
-                            )
-                            GoTextField(
-                                label = context.getString(R.string.password),
-                                value = password,
-                                supportText = passwordSupportText,
-                                onValueChange = { password = it },
-                                onGo = {
-                                    if (isAllowedToChangeName) {
-                                        scope.launch {
-                                            onChangeName(name)
-                                            isLoading = true
-                                        }
-                                    }
-                                },
-                                keyboardType = KeyboardType.Password,
-                                visualTransformation = PasswordVisualTransformation()
-                            )
-                        }
-
-                        ChangeSettingType.EMAIL -> {
-                            NextTextField(
-                                label = context.getString(R.string.email),
-                                value = email,
-                                supportText = emailSupportText,
-                                onValueChange = { email = it }
-                            )
-                            GoTextField(
-                                label = context.getString(R.string.password),
-                                value = password,
-                                supportText = passwordSupportText,
-                                onValueChange = { password = it },
-                                onGo = {
-                                    if (isAllowedToChangeEmail) {
-                                        scope.launch {
-                                            onChangeEmail(email)
-                                            isLoading = true
-                                        }
-                                    }
-                                },
-                                keyboardType = KeyboardType.Password,
-                                visualTransformation = PasswordVisualTransformation()
-                            )
-                        }
-
-                        ChangeSettingType.PASSWORD -> {
-                            NextTextField(
-                                label = context.getString(R.string.password),
-                                value = password,
-                                supportText = passwordSupportText,
-                                onValueChange = { password = it }
-                            )
-                            NextTextField(
-                                label = context.getString(R.string.new_password),
-                                value = newPassword,
-                                supportText = newPasswordSupportText,
-                                onValueChange = { newPassword = it }
-                            )
-                            GoTextField(
-                                label = context.getString(R.string.confirm_new_password),
-                                value = confirmNewPassword,
-                                supportText = confirmNewPasswordSupportText,
-                                onValueChange = { confirmNewPassword = it },
-                                onGo = {
-                                    if (isAllowedToChangePassword) {
-                                        scope.launch {
-                                            onChangePassword(newPassword)
-                                            isLoading = true
-                                        }
-                                    }
-                                },
-                                keyboardType = KeyboardType.Password,
-                                visualTransformation = PasswordVisualTransformation()
-                            )
-                        }
+                    if (changeSettingType == ChangeSettingType.NAME) {
+                        NextTextField(
+                            label = context.getString(R.string.name),
+                            value = name,
+                            supportText = nameSupportText,
+                            onValueChange = { name = it }
+                        )
                     }
                 }
             }
@@ -282,31 +145,11 @@ fun ChangeSettingsScreen(
             item {
                 Button(
                     onClick = {
-                        when (changeSettingType) {
-                            ChangeSettingType.NAME -> {
-                                if (isAllowedToChangeName) {
-                                    scope.launch {
-                                        onChangeName(name)
-                                        isLoading = true
-                                    }
-                                }
-                            }
-
-                            ChangeSettingType.EMAIL -> {
-                                if (isAllowedToChangeEmail) {
-                                    scope.launch {
-                                        onChangeEmail(email)
-                                        isLoading = true
-                                    }
-                                }
-                            }
-
-                            ChangeSettingType.PASSWORD -> {
-                                if (isAllowedToChangePassword) {
-                                    scope.launch {
-                                        onChangePassword(newPassword)
-                                        isLoading = true
-                                    }
+                        if (changeSettingType == ChangeSettingType.NAME) {
+                            if (isAllowedToChangeName) {
+                                scope.launch {
+                                    onChangeName(name)
+                                    isLoading = true
                                 }
                             }
                         }
@@ -345,7 +188,6 @@ fun ChangeSettingsScreen(
     }
 }
 
-/*
 @Preview(showBackground = true)
 @Composable
 fun ChangeSettingsPreview() {
@@ -356,4 +198,3 @@ fun ChangeSettingsPreview() {
         )
     }
 }
-*/

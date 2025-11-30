@@ -1,11 +1,13 @@
 package com.worldoftoilets.app.models.responses
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ApiResponse<T>(
-    @SerializedName("statusCode") val statusCode: Int?,
-    @SerializedName("status") val status: Int?,
-    @SerializedName("message") val message: String?,
-    @SerializedName("data") val data: T?,
-    @SerializedName("timestamp") val timestamp: String?
+    @SerialName("statusCode") val statusCode: Int? = null,
+    @SerialName("status") val status: Int? = null,
+    @SerialName("message") val message: String? = null,
+    @SerialName("data") val data: T? = null,
+    @SerialName("timestamp") val timestamp: String? = null
 )

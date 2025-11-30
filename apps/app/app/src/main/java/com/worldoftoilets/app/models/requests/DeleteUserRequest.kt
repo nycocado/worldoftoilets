@@ -1,7 +1,9 @@
 package com.worldoftoilets.app.models.requests
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class DeleteUserRequest(
-    @SerializedName("password") val password: String
+    @SerialName("password") val password: String
 )

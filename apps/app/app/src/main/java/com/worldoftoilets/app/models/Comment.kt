@@ -1,27 +1,27 @@
 package com.worldoftoilets.app.models
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import com.worldoftoilets.app.R
-import java.io.Serializable
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import kotlin.math.floor
 
+@Serializable
 data class Comment(
-    @SerializedName("publicId") val publicId: String,
-    @SerializedName("text") val text: String?,
-    @SerializedName("score") val score: Double,
-    @SerializedName("rate") val rate: CommentRate,
-    @SerializedName("reactCounts") val reactCounts: ReactCounts,
-    @SerializedName("replyCount") val replyCount: Int,
-    @SerializedName("user") val user: UserCommentResponse,
-    @SerializedName("createdAt") val createdAt: String,
-    @SerializedName("myReact") val myReact: String?
-) : Serializable {
+    @SerialName("publicId") val publicId: String,
+    @SerialName("text") val text: String? = null,
+    @SerialName("score") val score: Double,
+    @SerialName("rate") val rate: CommentRate,
+    @SerialName("reactCounts") val reactCounts: ReactCounts,
+    @SerialName("replyCount") val replyCount: Int,
+    @SerialName("user") val user: UserCommentResponse,
+    @SerialName("toilet") val toilet: Toilet? = null,
+    @SerialName("createdAt") val createdAt: String,
+    @SerialName("myReact") val myReact: String? = null
+) : java.io.Serializable {
     fun average(): Float {
         var avgPaper = 0f
         if (rate.paper) {
@@ -81,46 +81,6 @@ data class Comment(
             else -> {
                 context.getString(R.string.time_hour_less)
             }
-        }
-    }
-}
-
-data class CommentRate(
-    @SerializedName("clean") val clean: Int,
-    @SerializedName("paper") val paper: Boolean,
-    @SerializedName("structure") val structure: Int,
-    @SerializedName("accessibility") val accessibility: Int
-) : Serializable
-
-data class ReactCounts(
-    @SerializedName("likes") val likes: Int,
-    @SerializedName("dislikes") val dislikes: Int
-) : Serializable {
-    val likeCount: Int
-        get() = likes
-    val dislikeCount: Int
-        get() = dislikes
-}
-
-data class UserCommentResponse(
-    @SerializedName("publicId") val publicId: String,
-    @SerializedName("name") val name: String,
-    @SerializedName("icon") val icon: String,
-    @SerializedName("commentsCount") val commentsCount: Int,
-    @SerializedName("points") val points: Int,
-    @SerializedName("isPartner") val isPartner: Boolean
-) : Serializable {
-    @Composable
-    fun getIcon(): Painter {
-        return when (icon) {
-            "icon-1" -> painterResource(R.drawable.icon1)
-            "icon-2" -> painterResource(R.drawable.icon2)
-            "icon-3" -> painterResource(R.drawable.icon3)
-            "icon-4" -> painterResource(R.drawable.icon4)
-            "icon-5" -> painterResource(R.drawable.icon5)
-            "icon-6" -> painterResource(R.drawable.icon6)
-            "icon-default" -> painterResource(R.drawable.icon_default)
-            else -> painterResource(R.drawable.icon_default)
         }
     }
 }

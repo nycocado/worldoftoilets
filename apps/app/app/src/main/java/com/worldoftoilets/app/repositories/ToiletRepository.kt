@@ -85,4 +85,20 @@ class ToiletRepository @Inject constructor(
             Result.failure(e)
         }
     }
+
+    suspend fun searchToilets(query: String): Result<List<Toilet>> {
+        return try {
+            val response = toiletService.searchToilets(query)
+            val apiResponse = response.body()
+
+            if (response.isSuccessful && apiResponse?.data != null) {
+                Result.success(apiResponse.data)
+            } else {
+                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Error searching toilets"
+                Result.failure(Exception(errorMsg))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

@@ -21,7 +21,7 @@ import javax.inject.Inject
 class UserViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository,
-    private val userPreferencesRepository: UserPreferencesRepository
+    userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
     private val _user = MutableStateFlow<User?>(null)
     val user: StateFlow<User?> = _user.asStateFlow()
@@ -66,6 +66,9 @@ class UserViewModel @Inject constructor(
     }
 
     fun updateUser(name: String?, icon: String?, birthDate: String?) {
+        // Reset state to ensure UI reacts to new events
+        _updateUserState.value = null
+        
         viewModelScope.launch {
             try {
                 val result = userRepository.updateSelf(name, icon, birthDate)

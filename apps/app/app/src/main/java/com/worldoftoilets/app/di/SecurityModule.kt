@@ -6,10 +6,12 @@ import com.worldoftoilets.app.BuildConfig
 import com.worldoftoilets.app.network.AuthInterceptor
 import com.worldoftoilets.app.network.AuthService
 import com.worldoftoilets.app.network.CommentService
+import com.worldoftoilets.app.network.ReportService
 import com.worldoftoilets.app.network.ToiletService
 import com.worldoftoilets.app.network.TokenRefreshInterceptor
 import com.worldoftoilets.app.network.UserService
-import com.worldoftoilets.app.security.EncryptedTokenStorage
+import com.worldoftoilets.app.security.AuthEventBus
+import com.worldoftoilets.app.security.DataStoreTokenStorage
 import com.worldoftoilets.app.security.TokenManager
 import com.worldoftoilets.app.security.TokenRepository
 import dagger.Module
@@ -17,10 +19,12 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import javax.inject.Provider
 import javax.inject.Singleton
 
@@ -39,9 +43,8 @@ object SecurityModule {
     @Provides
     @Singleton
     fun provideTokenRepository(
-        @ApplicationContext context: Context,
-        sharedPreferences: SharedPreferences
-    ): TokenRepository = EncryptedTokenStorage(context, sharedPreferences)
+        @ApplicationContext context: Context
+    ): TokenRepository = DataStoreTokenStorage(context)
 
     @Provides
     @Singleton
@@ -57,11 +60,18 @@ object SecurityModule {
 
     @Provides
     @Singleton
+    fun provideAuthEventBus(): AuthEventBus {
+        return AuthEventBus()
+    }
+
+    @Provides
+    @Singleton
     fun provideTokenRefreshInterceptor(
         tokenManager: TokenManager,
-        authServiceProvider: Provider<AuthService>
+        authServiceProvider: Provider<AuthService>,
+        authEventBus: AuthEventBus
     ): TokenRefreshInterceptor {
-        return TokenRefreshInterceptor(tokenManager, authServiceProvider)
+        return TokenRefreshInterceptor(tokenManager, authServiceProvider, authEventBus)
     }
 
     @Provides
@@ -82,9 +92,13 @@ object SecurityModule {
     @Provides
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        val networkJson = Json { 
+            ignoreUnknownKeys = true
+            explicitNulls = false
+        }
         return Retrofit.Builder()
             .baseUrl(BuildConfig.API_URL)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(networkJson.asConverterFactory("application/json".toMediaType()))
             .client(okHttpClient)
             .build()
     }
@@ -111,5 +125,17 @@ object SecurityModule {
     @Singleton
     fun provideCommentService(retrofit: Retrofit): CommentService {
         return retrofit.create(CommentService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideReportService(retrofit: Retrofit): ReportService {
+        return retrofit.create(ReportService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideReplyService(retrofit: Retrofit): com.worldoftoilets.app.network.ReplyService {
+        return retrofit.create(com.worldoftoilets.app.network.ReplyService::class.java)
     }
 }

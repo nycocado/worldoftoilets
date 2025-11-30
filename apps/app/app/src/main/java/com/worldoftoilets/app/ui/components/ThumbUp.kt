@@ -1,9 +1,13 @@
 package com.worldoftoilets.app.ui.components
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.material3.Icon
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ThumbUp
+import androidx.compose.material.icons.rounded.ThumbUp
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -12,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -24,36 +27,33 @@ import com.worldoftoilets.app.R
 @Composable
 fun ThumbUp(
     count: Int = 0,
-    size: Dp = 28.dp,
+    size: Dp = 24.dp, // Slightly smaller default
     isPressed: Boolean = false,
     onClick: (Boolean) -> Unit = {},
 ) {
     val context = LocalContext.current
+    val contentColor = if (isPressed) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurfaceVariant
 
     Surface(
-        onClick = {
-            onClick(isPressed)
-        },
+        onClick = { onClick(isPressed) },
         interactionSource = NoRippleInteractionSource(),
         color = Color.Transparent
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Image(
-                painter = painterResource(
-                    if (!isPressed) R.drawable.thumb_up_24px
-                    else R.drawable.thumb_up_filled_24px
-                ),
+            Icon(
+                imageVector = if (isPressed) Icons.Rounded.ThumbUp else Icons.Outlined.ThumbUp,
                 contentDescription = context.getString(R.string.content_description_like_button),
-                modifier = Modifier
-                    .size(size)
-                    .padding(end = 4.dp)
+                modifier = Modifier.size(size),
+                tint = contentColor
             )
             Text(
                 text = count.toString(),
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.SemiBold
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Medium,
+                color = contentColor
             )
         }
     }

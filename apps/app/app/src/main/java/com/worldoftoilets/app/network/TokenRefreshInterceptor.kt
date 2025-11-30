@@ -1,7 +1,10 @@
 package com.worldoftoilets.app.network
 
 import android.util.Log
+import com.worldoftoilets.app.security.AuthEvent
+import com.worldoftoilets.app.security.AuthEventBus
 import com.worldoftoilets.app.security.TokenManager
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Provider
@@ -13,7 +16,8 @@ import javax.inject.Provider
  */
 class TokenRefreshInterceptor(
     private val tokenManager: TokenManager,
-    private val authServiceProvider: Provider<AuthService>
+    private val authServiceProvider: Provider<AuthService>,
+    private val authEventBus: AuthEventBus
 ) : Interceptor {
 
     companion object {
@@ -83,10 +87,12 @@ class TokenRefreshInterceptor(
                         Log.d(TAG, "Failed to refresh token: ${refreshResponse.code()}")
                         // Se falhar no refresh, limpar tokens e retornar 401
                         tokenManager.clearTokens()
+                        runBlocking { authEventBus.emit(AuthEvent.SESSION_EXPIRED) }
                     }
                 } catch (e: Exception) {
                     Log.e(TAG, "Error refreshing token", e)
                     tokenManager.clearTokens()
+                    runBlocking { authEventBus.emit(AuthEvent.SESSION_EXPIRED) }
                 }
             }
         }

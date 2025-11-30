@@ -9,12 +9,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.worldoftoilets.app.models.User
 import com.worldoftoilets.app.models.enums.ChangeSettingType
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,6 +49,9 @@ import com.worldoftoilets.app.models.enums.UserIcon
 import com.worldoftoilets.app.ui.components.ClickableTextField
 import com.worldoftoilets.app.ui.components.IconCarousel
 import com.worldoftoilets.app.ui.theme.AppTheme
+import com.worldoftoilets.app.ui.util.generateUserMain
+
+import androidx.compose.material3.TopAppBarDefaults
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,7 +63,7 @@ fun SettingsScreen(
     onChangeIcon: (String) -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
-    val updateUserState = updateUserStateFlow.collectAsState().value
+    val updateUserState by updateUserStateFlow.collectAsStateWithLifecycle()
     var isLoading by remember { mutableStateOf(false) }
 
     val imageList = UserIcon.entries.map { it.icon }
@@ -99,11 +103,14 @@ fun SettingsScreen(
                         onClick = { navigateToBack() }
                     ) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                             contentDescription = "Back"
                         )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
             )
         }
     ) { innerPadding ->
@@ -118,56 +125,45 @@ fun SettingsScreen(
                     imageList = imageList,
                     pagerState = pagerState
                 )
+                
                 Button(
                     onClick = {
                         scope.launch {
                             onChangeIcon(currentIcon!!)
-                            isLoading = true
                         }
                     },
                     modifier = Modifier
-                        .padding(vertical = 20.dp),
-                    colors = ButtonColors(
+                        .padding(vertical = 24.dp)
+                        .fillMaxWidth(0.6f),
+                    colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                        disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(
-                            alpha = 0.5f
-                        ),
-                        disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(
-                            alpha = 0.5f
-                        )
+                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer
                     )
                 ) {
-                    when (isLoading) {
-                        true -> {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-
-                        false -> {
-                            Text(
-                                text = context.getString(R.string.save),
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.SemiBold,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = MaterialTheme.colorScheme.onTertiaryContainer
+                        )
+                    } else {
+                        Text(
+                            text = context.getString(R.string.save),
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.SemiBold
+                        )
                     }
                 }
 
-
                 Text(
                     text = user.name,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
                 )
                 Text(
-                    modifier = Modifier.padding(top = 3.dp, bottom = 20.dp),
+                    modifier = Modifier.padding(top = 4.dp, bottom = 32.dp),
                     text = user.email!!,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primaryContainer
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
@@ -184,37 +180,12 @@ fun SettingsScreen(
                         value = user.name,
                         trailingIcon = {
                             Icon(
-                                imageVector = Icons.Filled.Person,
+                                imageVector = Icons.Rounded.Person,
                                 contentDescription = "Change Name"
                             )
                         },
                         onClick = {
                             onChange(ChangeSettingType.NAME)
-                        }
-                    )
-                    ClickableTextField(
-                        label = context.getString(R.string.change_email),
-                        value = user.email!!,
-                        trailingIcon = {
-                            Icon(
-                                imageVector = Icons.Filled.Email,
-                                contentDescription = "Change Email"
-                            )
-                        },
-                        onClick = {
-                            onChange(ChangeSettingType.EMAIL)
-                        }
-                    )
-                    ClickableTextField(
-                        label = context.getString(R.string.change_password),
-                        trailingIcon = {
-                            Icon(
-                                imageVector = Icons.Filled.Lock,
-                                contentDescription = "Change Password"
-                            )
-                        },
-                        onClick = {
-                            onChange(ChangeSettingType.PASSWORD)
                         }
                     )
                 }
@@ -223,7 +194,6 @@ fun SettingsScreen(
     }
 }
 
-/*
 @Composable
 @Preview(showBackground = true)
 fun SettingsPreview() {
@@ -234,4 +204,3 @@ fun SettingsPreview() {
         )
     }
 }
-*/

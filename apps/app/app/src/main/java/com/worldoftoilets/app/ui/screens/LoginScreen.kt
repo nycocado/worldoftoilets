@@ -1,18 +1,20 @@
 package com.worldoftoilets.app.ui.screens
 
-
 import android.util.Patterns
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -30,21 +32,24 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.worldoftoilets.app.R
 import com.worldoftoilets.app.models.User
 import com.worldoftoilets.app.ui.components.GoTextField
 import com.worldoftoilets.app.ui.components.NextTextField
+import com.worldoftoilets.app.ui.components.SanitaryButton
+import com.worldoftoilets.app.ui.theme.AppTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import com.worldoftoilets.app.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,44 +59,30 @@ fun LoginScreen(
     onLoginSuccess: () -> Unit = { },
     navigateToRegister: () -> Unit = { }
 ) {
-    val loginState = loginStateFlow.collectAsState().value
+    val loginState by loginStateFlow.collectAsStateWithLifecycle()
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var emailSupportText by remember { mutableStateOf("") }
     var passwordSupportText by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
-    val isAllowedToLogin = emailSupportText.isEmpty() && passwordSupportText.isEmpty()
+    val isAllowedToLogin = emailSupportText.isEmpty() && passwordSupportText.isEmpty() && email.isNotEmpty() && password.isNotEmpty()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
     LaunchedEffect(email, password) {
         emailSupportText = when {
-            email.isEmpty() -> context.getString(R.string.error_required_email)
-            email.length > 100 -> context.getString(R.string.error_too_long_email)
-            !Patterns.EMAIL_ADDRESS.matcher(email)
-                .matches() -> context.getString(R.string.error_invalid_email)
-
-            else -> ""
-        }
-
-        passwordSupportText = when {
-            password.isEmpty() -> context.getString(R.string.error_required_password)
+            email.isEmpty() -> ""
+            !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> context.getString(R.string.error_invalid_email)
             else -> ""
         }
     }
 
     LaunchedEffect(loginState) {
         loginState?.onSuccess {
-            emailSupportText = ""
-            passwordSupportText = ""
             isLoading = false
-
-            scope.launch {
-                onLoginSuccess()
-            }
+            scope.launch { onLoginSuccess() }
         }
-
         loginState?.onFailure { error ->
             isLoading = false
             scope.launch {
@@ -101,145 +92,109 @@ fun LoginScreen(
     }
 
     Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = context.getString(R.string.login),
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            )
-        },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        containerColor = MaterialTheme.colorScheme.background
     ) { innerPadding ->
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
+                .padding(innerPadding)
+                .padding(horizontal = 32.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            item {
-                Image(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 100.dp)
-                        .padding(bottom = 20.dp),
-                    painter = painterResource(R.drawable.logo),
-                    contentDescription = context.getString(R.string.logo),
+            // Logo Section
+            Image(
+                modifier = Modifier.size(150.dp),
+                painter = painterResource(R.drawable.logo),
+                contentDescription = null,
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            
+            Text(
+                text = "World of Toilets",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+            
+            Text(
+                text = context.getString(R.string.login_subtitle_welcome),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 48.dp)
+            )
+
+            // Inputs
+            NextTextField(
+                label = context.getString(R.string.email),
+                value = email,
+                supportText = emailSupportText,
+                onValueChange = { email = it },
+                keyboardType = KeyboardType.Email
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            GoTextField(
+                label = context.getString(R.string.password),
+                value = password,
+                supportText = passwordSupportText,
+                onValueChange = { password = it },
+                onGo = {
+                    if (isAllowedToLogin) {
+                        isLoading = true
+                        onLogin(email, password)
+                    }
+                },
+                keyboardType = KeyboardType.Password,
+                visualTransformation = PasswordVisualTransformation()
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            SanitaryButton(
+                text = context.getString(R.string.login_action),
+                onClick = {
+                    if (isAllowedToLogin) {
+                        isLoading = true
+                        onLogin(email, password)
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                isLoading = isLoading,
+                enabled = isAllowedToLogin
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Secondary Action (Register)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = context.getString(R.string.no_account),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-            }
-
-            item {
-                Column(
-                    modifier = Modifier.padding(horizontal = 68.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ){
-                    NextTextField(
-                        label = context.getString(R.string.email),
-                        value = email,
-                        supportText = emailSupportText,
-                        onValueChange = { email = it },
-                        keyboardType = KeyboardType.Email
-                    )
-                    GoTextField(
-                        label = context.getString(R.string.password),
-                        value = password,
-                        supportText = passwordSupportText,
-                        onValueChange = { password = it },
-                        onGo = {
-                            if (isAllowedToLogin)
-                                scope.launch {
-                                    onLogin(email, password)
-                                    isLoading = true
-                                }
-                        },
-                        keyboardType = KeyboardType.Password,
-                        visualTransformation = PasswordVisualTransformation()
-                    )
-                }
-            }
-
-            item {
-                Column(
-                    modifier = Modifier
-                        .padding(top = 20.dp)
-                        .padding(horizontal = 100.dp),
-                    verticalArrangement = Arrangement.spacedBy(30.dp)
-                ){
-                    Button(
-                        onClick = {
-                            if (isAllowedToLogin)
-                                scope.launch {
-                                    onLogin(email, password)
-                                    isLoading = true
-                                }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        colors = ButtonColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(
-                                alpha = 0.5f
-                            ),
-                            disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(
-                                alpha = 0.5f
-                            )
-                        )
-                    ) {
-                        when (isLoading) {
-                            true -> CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp)
-                            )
-
-                            false -> Text(
-                                text = context.getString(R.string.login_action),
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.SemiBold,
-                                maxLines = 1,
-                                minLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
-                    }
-                    Button(
-                        onClick = { navigateToRegister() },
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        colors = ButtonColors(
-                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(
-                                alpha = 0.5f
-                            ),
-                            disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(
-                                alpha = 0.5f
-                            )
-                        )
-                    ) {
-                        Text(
-                            text = context.getString(R.string.register_action),
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.SemiBold,
-                            maxLines = 1,
-                            minLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                }
+                Text(
+                    text = " " + context.getString(R.string.register_action),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable { navigateToRegister() }
+                )
             }
         }
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen(
-        loginStateFlow = MutableStateFlow(null)
-    )
+    AppTheme {
+        LoginScreen(
+            loginStateFlow = MutableStateFlow(null)
+        )
+    }
 }
