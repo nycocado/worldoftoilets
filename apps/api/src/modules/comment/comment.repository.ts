@@ -37,7 +37,7 @@ export class CommentRepository {
       { publicId: publicId },
       {
         populate: [
-          'interaction.toilet',
+          'interaction.toilet.extras',
           'interaction.user.commentsCount',
           'interaction.user.partner',
           'rate',
@@ -64,7 +64,7 @@ export class CommentRepository {
       { publicId: publicId },
       {
         populate: [
-          'interaction.toilet',
+          'interaction.toilet.extras',
           'interaction.user.commentsCount',
           'interaction.user.partner',
           'rate',

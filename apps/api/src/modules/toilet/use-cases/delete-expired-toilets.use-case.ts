@@ -53,13 +53,7 @@ export class DeleteExpiredToiletsUseCase {
     for (const toilet of toilets) {
       // Remove a imagem do toilet se existir
       if (toilet.photoUrl) {
-        const fileName = this.minioService.extractFileNameFromUrl(
-          toilet.photoUrl,
-          'toilets',
-        );
-        if (fileName) {
-          await this.minioService.deleteFile(fileName).catch(() => {});
-        }
+        await this.minioService.deleteFile(toilet.photoUrl).catch(() => {});
       }
 
       // Busca suggestions associadas a este toilet que serão deletadas em cascade
@@ -70,13 +64,7 @@ export class DeleteExpiredToiletsUseCase {
       // Remove as imagens das suggestions
       for (const suggestion of suggestions) {
         if (suggestion.photoUrl) {
-          const fileName = this.minioService.extractFileNameFromUrl(
-            suggestion.photoUrl,
-            'suggestions',
-          );
-          if (fileName) {
-            await this.minioService.deleteFile(fileName).catch(() => {});
-          }
+          await this.minioService.deleteFile(suggestion.photoUrl).catch(() => {});
         }
       }
     }

@@ -55,23 +55,12 @@ export class PublishSuggestionImageUseCase {
       );
     }
 
-    const oldFileName = this.minioService.extractFileNameFromUrl(
-      suggestion.photoUrl,
-      'suggestions',
-    );
-    if (!oldFileName) {
-      throw new ConflictException(
-        SUGGESTION_EXCEPTIONS.INVALID_IMAGE_URL_FORMAT,
-      );
-    }
-
-    const extension = oldFileName.split('.').pop();
+    const extension = suggestion.photoUrl.split('.').pop();
     const newFileName = `toilets/${uuidv4()}.${extension}`;
 
-    await this.minioService.copyFile(oldFileName, newFileName);
+    await this.minioService.copyFile(suggestion.photoUrl, newFileName);
 
-    const publicUrl = this.minioService.getPublicFileUrl(newFileName);
-    await this.toiletService.updatePhotoUrl(toilet, publicUrl);
+    await this.toiletService.updatePhotoUrl(toilet, newFileName);
 
     return plainToInstance(SuggestionResponseDto, suggestion, {
       excludeExtraneousValues: true,

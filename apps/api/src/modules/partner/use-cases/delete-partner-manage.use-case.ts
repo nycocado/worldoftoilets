@@ -37,24 +37,12 @@ export class DeletePartnerManageUseCase {
 
     // Remove o certificado do Partner
     if (partner.certificate) {
-      const fileName = this.minioService.extractFileNameFromUrl(
-        partner.certificate,
-        'partner-certificates',
-      );
-      if (fileName) {
-        await this.minioService.deleteFile(fileName).catch(() => {});
-      }
+      await this.minioService.deleteFile(partner.certificate).catch(() => {});
     }
 
     // Remove a imagem do Toilet que será deletado em cascade
     if (partner.toilet?.photoUrl) {
-      const fileName = this.minioService.extractFileNameFromUrl(
-        partner.toilet.photoUrl,
-        'toilets',
-      );
-      if (fileName) {
-        await this.minioService.deleteFile(fileName).catch(() => {});
-      }
+      await this.minioService.deleteFile(partner.toilet.photoUrl).catch(() => {});
     }
 
     // Remove as imagens das Suggestions que serão deletadas em cascade
@@ -65,13 +53,7 @@ export class DeletePartnerManageUseCase {
 
       for (const suggestion of suggestions) {
         if (suggestion.photoUrl) {
-          const fileName = this.minioService.extractFileNameFromUrl(
-            suggestion.photoUrl,
-            'suggestions',
-          );
-          if (fileName) {
-            await this.minioService.deleteFile(fileName).catch(() => {});
-          }
+          await this.minioService.deleteFile(suggestion.photoUrl).catch(() => {});
         }
       }
     }
