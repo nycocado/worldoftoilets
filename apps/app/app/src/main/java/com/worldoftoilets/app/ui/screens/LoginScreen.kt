@@ -4,6 +4,7 @@ import android.util.Patterns
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,10 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -24,7 +21,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,7 +28,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -57,7 +52,8 @@ fun LoginScreen(
     loginStateFlow: StateFlow<Result<User>?>,
     onLogin: (email: String, password: String) -> Unit = { _, _ -> },
     onLoginSuccess: () -> Unit = { },
-    navigateToRegister: () -> Unit = { }
+    navigateToRegister: () -> Unit = { },
+    navigateToForgotPassword: () -> Unit = { }
 ) {
     val loginState by loginStateFlow.collectAsStateWithLifecycle()
     var email by remember { mutableStateOf("") }
@@ -65,7 +61,8 @@ fun LoginScreen(
     var emailSupportText by remember { mutableStateOf("") }
     var passwordSupportText by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
-    val isAllowedToLogin = emailSupportText.isEmpty() && passwordSupportText.isEmpty() && email.isNotEmpty() && password.isNotEmpty()
+    val isAllowedToLogin =
+        emailSupportText.isEmpty() && passwordSupportText.isEmpty() && email.isNotEmpty() && password.isNotEmpty()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -73,7 +70,9 @@ fun LoginScreen(
     LaunchedEffect(email, password) {
         emailSupportText = when {
             email.isEmpty() -> ""
-            !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> context.getString(R.string.error_invalid_email)
+            !Patterns.EMAIL_ADDRESS.matcher(email)
+                .matches() -> context.getString(R.string.error_invalid_email)
+
             else -> ""
         }
     }
@@ -86,7 +85,9 @@ fun LoginScreen(
         loginState?.onFailure { error ->
             isLoading = false
             scope.launch {
-                snackbarHostState.showSnackbar(error.message ?: context.getString(R.string.error_login))
+                snackbarHostState.showSnackbar(
+                    error.message ?: context.getString(R.string.error_login)
+                )
             }
         }
     }
@@ -107,17 +108,17 @@ fun LoginScreen(
             Image(
                 modifier = Modifier.size(150.dp),
                 painter = painterResource(R.drawable.logo),
-                contentDescription = null,
+                contentDescription = context.getString(R.string.image_description_null),
             )
             Spacer(modifier = Modifier.height(24.dp))
-            
+
             Text(
-                text = "World of Toilets",
+                text = context.getString(R.string.app_name),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
             )
-            
+
             Text(
                 text = context.getString(R.string.login_subtitle_welcome),
                 style = MaterialTheme.typography.bodyMedium,
@@ -165,6 +166,22 @@ fun LoginScreen(
             )
 
             Spacer(modifier = Modifier.height(24.dp))
+
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = context.getString(R.string.forgot_password),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .clickable { navigateToForgotPassword() }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
 
             // Secondary Action (Register)
             Row(

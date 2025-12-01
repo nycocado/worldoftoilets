@@ -17,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -62,7 +61,7 @@ fun ToiletActions(
         ) {
             Icon(
                 imageVector = Icons.Rounded.LocationOn,
-                contentDescription = null,
+                contentDescription = context.getString(R.string.image_description_null),
                 modifier = Modifier
                     .size(18.dp)
                     .padding(end = 4.dp)
@@ -90,7 +89,7 @@ fun ToiletActions(
         ) {
             Icon(
                 imageVector = Icons.Rounded.Star,
-                contentDescription = null,
+                contentDescription = context.getString(R.string.image_description_null),
                 modifier = Modifier
                     .size(18.dp)
                     .padding(end = 4.dp),

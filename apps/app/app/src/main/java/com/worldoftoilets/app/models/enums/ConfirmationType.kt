@@ -3,6 +3,7 @@ package com.worldoftoilets.app.models.enums
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.worldoftoilets.app.R
 
@@ -68,5 +69,19 @@ enum class ConfirmationType(
         R.string.confirmation_suggest_failure,
         R.string.confirmation_suggest_failure_text,
         Icons.Default.Close
+    ),
+    REGISTER_SUCCESS(
+        true,
+        "register",
+        R.string.confirmation_register_success,
+        R.string.confirmation_register_success_text,
+        Icons.Default.Email
+    ),
+    FORGOT_PASSWORD_SUCCESS(
+        true,
+        "forgot-password",
+        R.string.forgot_password_success,
+        R.string.forgot_password_success_text,
+        Icons.Default.Email
     )
 }

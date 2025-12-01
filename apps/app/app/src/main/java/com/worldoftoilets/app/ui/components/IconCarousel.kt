@@ -29,10 +29,28 @@ import com.worldoftoilets.app.R
 import com.worldoftoilets.app.models.enums.UserIcon
 import com.worldoftoilets.app.ui.theme.AppTheme
 import kotlin.math.absoluteValue
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+
+@Composable
+fun resolveUserIconPainter(userIconId: String): Painter {
+    return when (userIconId) {
+        "icon-1" -> painterResource(R.drawable.icon1)
+        "icon-2" -> painterResource(R.drawable.icon2)
+        "icon-3" -> painterResource(R.drawable.icon3)
+        "icon-4" -> painterResource(R.drawable.icon4)
+        "icon-5" -> painterResource(R.drawable.icon5)
+        "icon-6" -> painterResource(R.drawable.icon6)
+        "icon-default" -> rememberVectorPainter(image = Icons.Rounded.AccountCircle)
+        else -> rememberVectorPainter(image = Icons.Rounded.AccountCircle) // Fallback
+    }
+}
 
 @Composable
 fun IconCarousel(
-    imageList: List<Int>,
+    imageList: List<String>,
     pagerState: PagerState
 ) {
     val context = LocalContext.current
@@ -43,7 +61,7 @@ fun IconCarousel(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Text(
-            text = context.getString(R.string.roll_to_change),
+            text = context.getString(R.string.swipe_to_change),
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.secondary
         )
@@ -63,7 +81,7 @@ fun IconCarousel(
 fun IconContent(
     index: Int,
     pagerState: PagerState,
-    imageList: List<Int>
+    imageList: List<String>
 ) {
     val context = LocalContext.current
     val pageOffset = (pagerState.currentPage - index) + pagerState.currentPageOffsetFraction
@@ -93,7 +111,7 @@ fun IconContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f),
-            painter = painterResource(imageList[index]),
+            painter = resolveUserIconPainter(imageList[index]),
             contentDescription = context.getString(R.string.icon) + index,
             contentScale = ContentScale.Crop
         )
@@ -103,7 +121,7 @@ fun IconContent(
 @Preview(showBackground = true)
 @Composable
 fun CardContentPreview() {
-    val imageList = UserIcon.entries.map { it.icon }
+    val imageList = UserIcon.entries.map { it.id }
     val pagerState = rememberPagerState(initialPage = 0) {
         imageList.size
     }
@@ -115,7 +133,7 @@ fun CardContentPreview() {
 @Preview(showBackground = true)
 @Composable
 fun SettingsCarouselPreview() {
-    val imageList = UserIcon.entries.map { it.icon }
+    val imageList = UserIcon.entries.map { it.id }
     val pagerState = rememberPagerState(initialPage = 0) {
         imageList.size
     }

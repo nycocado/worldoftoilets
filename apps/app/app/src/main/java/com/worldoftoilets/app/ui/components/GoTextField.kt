@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.worldoftoilets.app.ui.theme.AppTheme
 
 @Composable
-fun GoTextField (
+fun GoTextField(
     label: String,
     value: String,
     supportText: String,

@@ -5,6 +5,7 @@ import com.worldoftoilets.app.models.requests.DeleteUserRequest
 import com.worldoftoilets.app.models.requests.UpdateUserRequest
 import com.worldoftoilets.app.network.UserService
 import javax.inject.Inject
+import com.worldoftoilets.app.ui.util.parseApiError
 
 class UserRepository @Inject constructor(
     private val userService: UserService
@@ -17,7 +18,7 @@ class UserRepository @Inject constructor(
             if (response.isSuccessful && apiResponse?.data != null) {
                 Result.success(apiResponse.data)
             } else {
-                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Failed to get user"
+                val errorMsg = apiResponse?.message ?: parseApiError(response.errorBody()?.string())
                 Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
@@ -39,7 +40,7 @@ class UserRepository @Inject constructor(
             if (response.isSuccessful && apiResponse?.data != null) {
                 Result.success(apiResponse.data)
             } else {
-                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Failed to update user"
+                val errorMsg = apiResponse?.message ?: parseApiError(response.errorBody()?.string())
                 Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
@@ -55,7 +56,7 @@ class UserRepository @Inject constructor(
             if (response.isSuccessful) {
                 Result.success(Unit)
             } else {
-                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Failed to delete user"
+                val errorMsg = apiResponse?.message ?: parseApiError(response.errorBody()?.string())
                 Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {

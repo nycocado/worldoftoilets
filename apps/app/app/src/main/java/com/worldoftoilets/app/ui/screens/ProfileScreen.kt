@@ -111,7 +111,7 @@ fun ProfileScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.MoreVert,
-                            contentDescription = "Menu"
+                            contentDescription = context.getString(R.string.content_description_options_menu)
                         )
                         DropdownMenu(
                             expanded = menuExpanded,
@@ -119,11 +119,10 @@ fun ProfileScreen(
                         ) {
                             DropdownMenuItem(
                                 text = {
-                                    Text(
-                                        text = "Logout",
-                                        style = MaterialTheme.typography.bodyLarge,
-                                    )
-                                },
+                                                                    Text(
+                                                                        text = context.getString(R.string.logout_action),
+                                                                        style = MaterialTheme.typography.bodyLarge,
+                                                                    )                                },
                                 onClick = { scope.launch { onClickLogout() } }
                             )
                         }
@@ -160,7 +159,7 @@ fun ProfileScreen(
                             if (user!!.isPartner) {
                                 Icon(
                                     imageVector = Icons.Rounded.Verified,
-                                    contentDescription = "Verified",
+                                    contentDescription = context.getString(R.string.content_description_verified),
                                     tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(24.dp)
                                 )

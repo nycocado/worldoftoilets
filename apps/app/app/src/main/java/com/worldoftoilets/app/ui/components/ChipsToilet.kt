@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.worldoftoilets.app.R
 import com.worldoftoilets.app.ui.theme.AppTheme
 import com.worldoftoilets.app.ui.util.NoRippleInteractionSource
 import com.worldoftoilets.app.models.TypeExtra as TypeExtraData
@@ -44,7 +45,7 @@ fun ChipsToilet(
                     leadingIcon = {
                         Icon(
                             imageVector = enumExtra.icon,
-                            contentDescription = null
+                            contentDescription = context.getString(R.string.image_description_null)
                         )
                     },
                     onClick = {},

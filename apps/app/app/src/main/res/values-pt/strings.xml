@@ -1,87 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- App -->
+    <string name="logo">Logo da aplicação</string>
+
+    <!-- Rotas -->
+    <string name="home">Início</string>
     <string name="history">Histórico</string>
     <string name="profile">Perfil</string>
     <string name="rate">Avaliar</string>
     <string name="login">Login</string>
     <string name="register">Registo</string>
+    <string name="settings">Configurações</string>
     <string name="suggest">Sugestão - Casa de Banho</string>
     <string name="report">Denúncia</string>
+
+    <!-- Botões -->
     <string name="go_to_maps">Ir para o Maps</string>
     <string name="edit_profile">Editar Perfil</string>
+    <string name="checked">Confirmado</string>
+    <string name="suggest_toilet">Sugerir</string>
+    <string name="load_more">Carregar Mais</string>
+    <string name="confirm">Confirmar</string>
+    <string name="save">Salvar</string>
+    <string name="ok_button">OK</string>
+    <string name="cancel_button">Cancelar</string>
+    <string name="edit_action">Editar</string>
+    <string name="delete_action">Eliminar</string>
+    <string name="send_button">Enviar</string>
+    <string name="logout_action">Terminar Sessão</string>
+    <string name="back">Voltar</string>
+
+    <!-- Login -->
+    <string name="login_action">Iniciar Sessão</string>
+    <string name="login_subtitle_welcome">Bem-vindo de volta!</string>
+    <string name="no_account">Não tem uma conta?</string>
+    <string name="email">Email</string>
+    <string name="password">Palavra-passe</string>
+
+    <!-- Registo -->
+    <string name="register_action">Registar</string>
+    <string name="register_check_email">Verifique o seu email para completar o registo.</string>
+    <string name="name">Nome</string>
+    <string name="confirm_password">Confirmar palavra-passe</string>
+    <string name="birthdate">Data de Nascimento</string>
+
+    <!-- Avaliação -->
     <string name="clean">Limpeza</string>
     <string name="paper">Papel</string>
     <string name="structure">Estrutura</string>
     <string name="accessibility">Acessibilidade</string>
+    <string name="ratings">Avaliações</string>
+    <string name="edit_review_title">Editar Avaliação</string>
+
+    <!-- Perfil -->
     <string name="level">Nível</string>
     <string name="points">Pontos</string>
     <string name="progress">Progresso</string>
-    <string name="your_critics">Suas Críticas</string>
+    <string name="your_critics">Suas Avaliações</string>
+    <string name="swipe_to_change">Deslize para mudar</string>
+
+    <!-- Configurações -->
+    <string name="change_name">Alterar Nome</string>
+    <string name="change_email">Alterar Email</string>
+    <string name="change_password">Alterar Palavra-Passe</string>
     <string name="new_password">Nova Palavra-Passe</string>
     <string name="confirm_new_password">Confirmar Nova Palavra-Passe</string>
+
+    <!-- Denúncia -->
     <string name="report_why_toilet">Porque estás a denunciar esta casa de banho?</string>
     <string name="report_why_comment">Porque estás a denunciar este comentário?</string>
-    <string name="report_anonymous">A tua denúncia é anônima.</string>
+    <string name="report_anonymous">A sua denúncia será anónima.</string>
     <string name="report_fake_information">Informação Falsa</string>
     <string name="report_unsanitary_conditions">Condições Insalubres</string>
-    <string name="report_privacy_violation">Invasão de Privacidade</string>
+    <string name="report_privacy_violation">Violação de Privacidade</string>
     <string name="report_maintenance_needed">Manutenção Necessária</string>
-    <string name="report_damaged_equipment">Instalações Quebradas</string>
+    <string name="report_damaged_equipment">Equipamento Danificado</string>
     <string name="report_others">Outros</string>
+
+    <!-- Reação -->
     <string name="reaction_not_useful">Não é Útil</string>
     <string name="reaction_fake_information">Informação Falsa</string>
-    <string name="reaction_inappropriate_content">Conteúdo Inapropriado</string>
-    <string name="reaction_offensive_content">Conteúdo Ofensivo</string>
+    <string name="reaction_inappropriate_content">Inapropriado</string>
+    <string name="reaction_offensive_content">Ofensivo</string>
     <string name="reaction_spam">Spam</string>
     <string name="reaction_others">Outros</string>
+
+    <!-- Comentário -->
     <string name="comments">Comentários</string>
-    <string name="content_description_toilet_image">Imagem da casa de banho</string>
-    <string name="content_description_profile_picture">Imagem do perfil</string>
-    <string name="clear_search">Limpar busca</string>
-    <string name="icon">Ícone</string>
-    <string name="content_description_new_password_button">Botão para alterar senha</string>
-    <string name="error_image">Erro ao carregar imagem</string>
-    <string name="home">Início</string>
-    <string name="ratings">Avaliações</string>
-    <string name="content_description_like_button">Botão de like</string>
-    <string name="content_description_dislike_button">Botão de dislike</string>
-    <string name="name">Nome</string>
-    <string name="email">E-mail</string>
-    <string name="password">Palavra-passe</string>
-    <string name="confirm_password">Confirmar palavra-passe</string>
-    <string name="birthdate">Data de Nascimento</string>
-    <string name="roll_to_change">Rolar para mudar</string>
-    <string name="settings">Configurações</string>
-    <string name="content_description_date_button">Botão para selecionar a data</string>
-    <string name="change_name">Alterar Nome</string>
-    <string name="change_email">Alterar E-mail</string>
-    <string name="change_password">Alterar Palavra-Passe</string>
-    <string name="content_description_change_name_button">Botão para alterar palavra passe</string>
-    <string name="content_description_change_email_button">Botão para alterar e-mail</string>
+    <string name="comment">Comentário</string>
+    <string name="insert_comment">Introduza o seu comentário…</string>
+    <string name="reply">Responder</string>
+    <string name="write_reply">Escreva uma resposta…</string>
+    <string name="view_replies">Ver %d respostas</string>
+    <string name="hide_replies">Esconder respostas</string>
+
+    <!-- Content Descriptions -->
+    <string name="content_description_toilet_image">Imagem de casa de banho</string>
+    <string name="content_description_profile_picture">Foto de perfil</string>
+    <string name="content_description_like_button">Botão de gostar</string>
+    <string name="content_description_dislike_button">Botão de não gostar</string>
+    <string name="content_description_date_button">Botão para selecionar data</string>
+    <string name="content_description_change_name_button">Botão para alterar nome</string>
+    <string name="content_description_change_email_button">Botão para alterar email</string>
     <string name="content_description_change_password_button">Botão para alterar palavra-passe</string>
-    <string name="logo">Logo da aplicação</string>
-    <string name="suggest_toilet">Sugerir</string>
-    <string name="load_more">Carregar Mais</string>
-    <string name="save">Salvar</string>
-    <string name="login_action">Iniciar Sessão</string>
-    <string name="register_action">Registar</string>
+    <string name="content_description_verified">Selo de verificado</string>
+    <string name="content_description_send_button">Botão de enviar</string>
+    <string name="content_description_save_button">Botão de guardar</string>
+    <string name="content_description_options_menu">Menu de opções</string>
+    <string name="content_description_loading_indicator">Indicador de carregamento</string>
+    <string name="content_description_star_rating">Classificação por estrelas: %d</string>
+    <string name="content_description_back_button">Botão de voltar</string>
+    <string name="content_description_calendar_icon">Ícone de calendário</string>
+    <string name="content_description_change_name_icon">Ícone de alterar nome</string>
+    <string name="image_description_null">Imagem</string>
+
+    <!-- Erros -->
+    <string name="error_image">Erro ao carregar imagem</string>
     <string name="error_login">Erro ao iniciar sessão</string>
     <string name="error_register">Erro ao registar</string>
+    <string name="error_comment">Erro ao enviar comentário</string>
+    <string name="error_unexpected">Ocorreu um erro inesperado, tente novamente mais tarde.</string>
+
+    <!-- Erros de autenticação -->
     <string name="error_required_name">Obrigatório</string>
     <string name="error_required_email">Obrigatório</string>
-    <string name="error_required_password">Obrigatória</string>
-    <string name="error_required_confirm_password">Obrigatória</string>
+    <string name="error_required_password">Obrigatório</string>
+    <string name="error_required_confirm_password">Obrigatório</string>
+    <string name="error_required_date">Obrigatório</string>
     <string name="error_too_long_name">Máximo de 50 caracteres</string>
     <string name="error_too_long_email">Máximo de 100 caracteres</string>
     <string name="error_too_short_name">Requer no mínimo 6 caracteres</string>
     <string name="error_too_short_password">Requer no mínimo 6 caracteres</string>
-    <string name="error_invalid_email">E-mail inválido</string>
+    <string name="error_invalid_email">Email inválido</string>
     <string name="error_invalid_password">Palavra-passe inválida</string>
     <string name="error_passwords_do_not_match">As palavras-passe não coincidem</string>
-    <string name="error_in_use_email">E-mail em uso</string>
-    <string name="comment">Comentar</string>
-    <string name="insert_comment">Insira o comentário…</string>
-    <string name="checked">Confirmado</string>
+    <string name="error_in_use_email">Email já em uso</string>
+
+    <!-- Tempo -->
     <string name="time_year_single">Há um ano</string>
     <string name="time_year_plural">Há %d anos</string>
     <string name="time_month_single">Há um mês</string>
@@ -93,26 +148,48 @@
     <string name="time_hour_single">Há uma hora</string>
     <string name="time_hour_plural">Há %d horas</string>
     <string name="time_hour_less">Há menos de uma hora</string>
-    <string name="confirm">Confirmar</string>
-    <string name="confirmation_report_success">Obrigado por denúnciar</string>
-    <string name="confirmation_suggest_success">Obrigado por sugerir</string>
-    <string name="confirmation_report_failure">Erro ao denúnciar</string>
-    <string name="confirmation_suggest_failure">Erro ao sugerir</string>
+
+    <!-- Confirmação -->
+    <string name="confirmation_report_success">Denúncia enviada com sucesso</string>
+    <string name="confirmation_suggest_success">Sugestão enviada com sucesso</string>
+    <string name="confirmation_report_failure">Falha ao enviar denúncia</string>
+    <string name="confirmation_suggest_failure">Falha ao enviar sugestão</string>
     <string name="confirmation_report_success_text">Analisaremos o mais breve possível.</string>
     <string name="confirmation_suggest_success_text">Analisaremos o mais breve possível.</string>
-    <string name="confirmation_report_failure_text">Por favor, tente novamente mais tarde</string>
-    <string name="confirmation_suggest_failure_text">Por favor, tente novamente mais tarde</string>
+    <string name="confirmation_report_failure_text">Por favor, tente novamente mais tarde.</string>
+    <string name="confirmation_suggest_failure_text">Por favor, tente novamente mais tarde.</string>
+    <string name="confirmation_register_success">Registo bem-sucedido</string>
+    <string name="confirmation_register_success_text">Enviámos um link de verificação para o seu email.</string>
+    <string name="forgot_password">Esqueci a Palavra-passe</string>
+    <string name="forgot_password_instructions">Introduza o seu email e enviaremos instruções para redefinir a sua palavra-passe.</string>
+    <string name="send_email">Enviar Email</string>
+    <string name="forgot_password_success">Email de redefinição de palavra-passe enviado</string>
+    <string name="forgot_password_success_text">Verifique o seu email para instruções de redefinição de palavra-passe.</string>
+    <string name="resend_verification">Reenviar Verificação</string>
+
+    <!-- Extras -->
     <string name="extra_wheelchair_accessible">Acessível para Cadeirantes</string>
-    <string name="extra_baby_changing_station">Fraudário</string>
+    <string name="extra_baby_changing_station">Fraldário</string>
     <string name="extra_disabled_parking">Estacionamento para Deficientes</string>
     <string name="extra_accessible_for_visual_impairment">Acessível para Deficientes Visuais</string>
-    <string name="back">Voltar</string>
+
+    <!-- Acesso -->
     <string name="access_public">Público</string>
     <string name="access_private">Privado</string>
     <string name="access_consumers_only">Consumidores</string>
+
+    <!-- Comentários -->
     <string name="comment_required">O comentário é obrigatório</string>
     <string name="comment_too_long">O comentário é muito longo</string>
-    <string name="error_comment">Erro ao enviar comentário</string>
+
+    <!-- Busca -->
     <string name="search">Procurar</string>
-    <string name="error_unexpected">Ocorreu um erro inesperado, tente novamente mais tarde.</string>
+    <string name="clear_search">Limpar busca</string>
+
+    <!-- Carrossel -->
+    <string name="icon">Ícone</string>
+
+    <!-- Links -->
+    <string name="content_description_new_password_button">Botão para alterar palavra-passe</string>
+    <string name="my_location">Minha Localização</string>
 </resources>

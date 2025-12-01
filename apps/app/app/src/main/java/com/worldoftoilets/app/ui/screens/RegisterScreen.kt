@@ -17,10 +17,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,14 +48,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-import androidx.compose.material3.TopAppBarDefaults
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
     registerStateFlow: StateFlow<Result<Unit>?> = MutableStateFlow(null),
     onRegister: (name: String, email: String, password: String, icon: String?, birthDate: String) -> Unit = { _, _, _, _, _ -> },
-    onRegisterSuccess: () -> Unit = {},
+    onRegisterSuccess: (String) -> Unit = {},
     navigateToBack: () -> Unit = {}
 ) {
     val registerState by registerStateFlow.collectAsStateWithLifecycle()
@@ -69,13 +69,14 @@ fun RegisterScreen(
     var birthDateSupportText by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
     val isAllowedToRegister =
         nameSupportText.isEmpty() && emailSupportText.isEmpty() && passwordSupportText.isEmpty() && confirmPasswordSupportText.isEmpty() && birthDateSupportText.isEmpty() && birthDate.isNotEmpty()
 
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    val imageList = UserIcon.entries.map { it.icon }
+    val imageList = UserIcon.entries.map { it.id }
     val pagerState = rememberPagerState(initialPage = 0) {
         imageList.size
     }
@@ -127,7 +128,7 @@ fun RegisterScreen(
             isLoading = false
 
             scope.launch {
-                onRegisterSuccess()
+                onRegisterSuccess(email)
             }
         }
 
@@ -149,12 +150,18 @@ fun RegisterScreen(
                     confirmPasswordSupportText = ""
                     birthDateSupportText = ""
                     isLoading = false
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            error.message ?: context.getString(R.string.error_register)
+                        )
+                    }
                 }
             }
         }
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -168,11 +175,10 @@ fun RegisterScreen(
                     IconButton(onClick = {
                         navigateToBack()
                     }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
+                                                    Icon(
+                                                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                                                        contentDescription = context.getString(R.string.content_description_back_button)
+                                                    )                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background
@@ -239,7 +245,7 @@ fun RegisterScreen(
                         trailingIcon = {
                             Icon(
                                 imageVector = Icons.Rounded.DateRange,
-                                contentDescription = "Calendar"
+                                contentDescription = context.getString(R.string.content_description_calendar_icon)
                             )
                         },
                         onClick = { showDatePicker = true }
@@ -275,8 +281,11 @@ fun RegisterScreen(
 
         if (showDatePicker) {
             CustomDatePickerDialog(
-                onDateSelected = { birthDate = it },
-                onDismiss = { }
+                onDateSelected = {
+                    birthDate = it
+                    showDatePicker = false
+                },
+                onDismiss = { showDatePicker = false }
             )
         }
     }

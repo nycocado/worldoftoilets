@@ -103,7 +103,7 @@ class LocalViewModel @Inject constructor(
 
             result.onSuccess { toilets ->
                 _toiletsCache.value += toilets.associateBy { it.publicId }
-                
+
                 _toiletsNearbyIds.value = UiState.Success(
                     PageResponse(
                         content = toilets.map { it.publicId },
@@ -111,7 +111,7 @@ class LocalViewModel @Inject constructor(
                     )
                 )
             }.onFailure { e ->
-                _error.value = "Erro ao carregar banheiros próximos: ${e.message}"
+                _error.value = e.message ?: "Erro ao carregar banheiros próximos"
                 _toiletsNearbyIds.value = UiState.Error(_error.value)
                 Log.e("LocalViewModel", "Erro ao carregar banheiros próximos", e)
             }
@@ -138,14 +138,18 @@ class LocalViewModel @Inject constructor(
                     _toiletsNearbyIds.value = UiState.Success(
                         PageResponse(
                             content = (currentIds + newIds).distinct(),
-                            page = Page(number = nextPage, size = PAGE_SIZE, isLast = toilets.size < PAGE_SIZE)
+                            page = Page(
+                                number = nextPage,
+                                size = PAGE_SIZE,
+                                isLast = toilets.size < PAGE_SIZE
+                            )
                         )
                     )
                 }.onFailure { e ->
-                    _error.value = "Erro ao carregar mais banheiros: ${e.message}"
+                    _error.value = e.message ?: "Erro ao carregar mais banheiros"
                 }
             } catch (e: Exception) {
-                _error.value = "Erro ao carregar mais banheiros: ${e.message}"
+                _error.value = e.message ?: "Erro ao carregar mais banheiros"
                 Log.e("LocalViewModel", "Erro ao carregar mais banheiros", e)
             }
         }
@@ -168,11 +172,11 @@ class LocalViewModel @Inject constructor(
                     }
                     _isLoadingCommentsToilet.value = false
                 }.onFailure { e ->
-                    _error.value = "Erro ao carregar comentários: ${e.message}"
+                    _error.value = e.message ?: "Erro ao carregar comentários"
                     _isLoadingCommentsToilet.value = false
                 }
             } catch (e: Exception) {
-                _error.value = "Erro ao carregar comentários: ${e.message}"
+                _error.value = e.message ?: "Erro ao carregar comentários"
                 _isLoadingCommentsToilet.value = false
                 Log.e("LocalViewModel", "Erro ao carregar comentários", e)
             }
@@ -228,11 +232,11 @@ class LocalViewModel @Inject constructor(
                     }
                     _isLoadingCommentsUser.value = false
                 }.onFailure { e ->
-                    _error.value = "Erro ao carregar meus comentários: ${e.message}"
+                    _error.value = e.message ?: "Erro ao carregar meus comentários"
                     _isLoadingCommentsUser.value = false
                 }
             } catch (e: Exception) {
-                _error.value = "Erro ao carregar meus comentários: ${e.message}"
+                _error.value = e.message ?: "Erro ao carregar meus comentários"
                 _isLoadingCommentsUser.value = false
                 Log.e("LocalViewModel", "Erro ao carregar meus comentários", e)
             }
@@ -255,7 +259,8 @@ class LocalViewModel @Inject constructor(
 
                 result.onSuccess { newComments ->
                     if (newComments.isNotEmpty()) {
-                        _myComments.value = (currentComments + newComments).distinctBy { it.publicId }
+                        _myComments.value =
+                            (currentComments + newComments).distinctBy { it.publicId }
                     }
                     if (newComments.size < PAGE_SIZE) {
                         _isMyCommentsExhausted = true
@@ -265,6 +270,7 @@ class LocalViewModel @Inject constructor(
                     _isLoadingCommentsUser.value = false
                 }
             } catch (e: Exception) {
+                _error.value = e.message ?: "Erro ao carregar mais comentários meus"
                 _isLoadingCommentsUser.value = false
                 Log.e("LocalViewModel", "Erro ao carregar mais comentários meus", e)
             }
@@ -274,16 +280,17 @@ class LocalViewModel @Inject constructor(
     fun loadToiletsBoundingBox(minLat: Double, minLng: Double, maxLat: Double, maxLng: Double) {
         viewModelScope.launch {
             try {
-                val result = toiletRepository.getToiletsByBoundingBox(minLat, minLng, maxLat, maxLng)
+                val result =
+                    toiletRepository.getToiletsByBoundingBox(minLat, minLng, maxLat, maxLng)
 
                 result.onSuccess { toilets ->
                     _toiletsCache.value += toilets.associateBy { it.publicId }
                     _toiletsBoundingBoxIds.value = toilets.map { it.publicId }
                 }.onFailure { e ->
-                    _error.value = "Erro ao carregar banheiros: ${e.message}"
+                    _error.value = e.message ?: "Erro ao carregar banheiros"
                 }
             } catch (e: Exception) {
-                _error.value = "Erro ao carregar banheiros: ${e.message}"
+                _error.value = e.message ?: "Erro ao carregar banheiros"
                 Log.e("LocalViewModel", "Erro ao carregar banheiros", e)
             }
         }
@@ -301,10 +308,10 @@ class LocalViewModel @Inject constructor(
                     }
                     _commentsCache.value += (toiletId to updatedList)
                 }.onFailure { e ->
-                    _error.value = "Erro ao reagir ao comentário: ${e.message}"
+                    _error.value = e.message ?: "Erro ao reagir ao comentário"
                 }
             } catch (e: Exception) {
-                _error.value = "Erro ao reagir ao comentário: ${e.message}"
+                _error.value = e.message ?: "Erro ao reagir ao comentário"
                 Log.e("LocalViewModel", "Erro ao reagir", e)
             }
         }
@@ -324,7 +331,7 @@ class LocalViewModel @Inject constructor(
                     toiletPublicId, text, clean, paper, structure, accessibility
                 )
             } catch (e: Exception) {
-                _error.value = "Erro ao fazer comentário: ${e.message}"
+                _error.value = e.message ?: "Erro ao fazer comentário"
                 Log.e("LocalViewModel", "Erro ao fazer comentário", e)
             }
         }
@@ -369,7 +376,7 @@ class LocalViewModel @Inject constructor(
     fun removeToiletFromCache(toiletId: String) {
         // Remove from main cache
         _toiletsCache.value = _toiletsCache.value.filterKeys { it != toiletId }
-        
+
         // Remove from nearby list if present
         val currentNearby = _toiletsNearbyIds.value
         if (currentNearby is UiState.Success) {
@@ -378,10 +385,10 @@ class LocalViewModel @Inject constructor(
                 currentNearby.data.copy(content = newContent)
             )
         }
-        
+
         // Remove from bounding box list
         _toiletsBoundingBoxIds.value = _toiletsBoundingBoxIds.value.filter { it != toiletId }
-        
+
         // Remove from search results
         _toiletsSearch.value = _toiletsSearch.value.filter { it.publicId != toiletId }
     }
@@ -393,7 +400,7 @@ class LocalViewModel @Inject constructor(
             result.onSuccess {
                 removeToiletFromCache(toiletPublicId)
             }.onFailure { e ->
-                _error.value = "Erro ao denunciar: ${e.message}"
+                _error.value = e.message ?: "Erro ao denunciar"
             }
         }
     }
@@ -403,7 +410,7 @@ class LocalViewModel @Inject constructor(
             val result = reportRepository.reportComment(commentPublicId, typeReport)
             _reportState.value = result
             result.onFailure { e ->
-                _error.value = "Erro ao denunciar: ${e.message}"
+                _error.value = e.message ?: "Erro ao denunciar"
             }
         }
     }
@@ -413,20 +420,20 @@ class LocalViewModel @Inject constructor(
             val result = reportRepository.reportReply(replyPublicId, typeReport)
             _reportState.value = result
             result.onFailure { e ->
-                _error.value = "Erro ao denunciar: ${e.message}"
+                _error.value = e.message ?: "Erro ao denunciar"
             }
         }
     }
 
     fun loadReplies(commentPublicId: String) {
         if (_loadingReplies.value.contains(commentPublicId)) return
-        
+
         _loadingReplies.value += commentPublicId
-        
+
         // Calculate next page
         val currentReplies = _repliesCache.value[commentPublicId] ?: emptyList()
         val page = currentReplies.size / PAGE_SIZE
-        
+
         viewModelScope.launch {
             val result = replyRepository.getRepliesByComment(commentPublicId, page = page)
             result.onSuccess { replies ->
@@ -437,13 +444,13 @@ class LocalViewModel @Inject constructor(
                     // But if we re-click "View Replies" (toggle), we might just want to fetch missing?
                     // The UI logic calls this when expanding.
                     // Let's assume we append if distinct.
-                    
+
                     val combined = (currentReplies + replies).distinctBy { it.publicId }
                     _repliesCache.value += (commentPublicId to combined)
                 }
                 _loadingReplies.value -= commentPublicId
             }.onFailure { e ->
-                _error.value = "Erro ao carregar respostas: ${e.message}"
+                _error.value = e.message ?: "Erro ao carregar respostas"
                 _loadingReplies.value -= commentPublicId
             }
         }
@@ -455,7 +462,7 @@ class LocalViewModel @Inject constructor(
             result.onSuccess { reply ->
                 val currentReplies = _repliesCache.value[commentPublicId] ?: emptyList()
                 _repliesCache.value += (commentPublicId to (currentReplies + reply))
-                
+
                 val updatedCommentsCache = _commentsCache.value.mapValues { entry ->
                     entry.value.map { comment ->
                         if (comment.publicId == commentPublicId) {
@@ -466,9 +473,9 @@ class LocalViewModel @Inject constructor(
                     }
                 }
                 _commentsCache.value = updatedCommentsCache
-                
+
             }.onFailure { e ->
-                _error.value = "Erro ao criar resposta: ${e.message}"
+                _error.value = e.message ?: "Erro ao criar resposta"
             }
         }
     }
@@ -482,7 +489,7 @@ class LocalViewModel @Inject constructor(
                 }
                 _repliesCache.value += (commentId to updatedList)
             }.onFailure { e ->
-                _error.value = "Erro ao atualizar resposta: ${e.message}"
+                _error.value = e.message ?: "Erro ao atualizar resposta"
             }
         }
     }
@@ -493,7 +500,7 @@ class LocalViewModel @Inject constructor(
                 val currentReplies = _repliesCache.value[commentId] ?: emptyList()
                 val updatedList = currentReplies.filter { it.publicId != replyId }
                 _repliesCache.value += (commentId to updatedList)
-                
+
                 // Decrement reply count
                 val updatedCommentsCache = _commentsCache.value.mapValues { entry ->
                     entry.value.map { comment ->
@@ -506,7 +513,7 @@ class LocalViewModel @Inject constructor(
                 }
                 _commentsCache.value = updatedCommentsCache
             }.onFailure { e ->
-                _error.value = "Erro ao deletar resposta: ${e.message}"
+                _error.value = e.message ?: "Erro ao deletar resposta"
             }
         }
     }
@@ -526,26 +533,27 @@ class LocalViewModel @Inject constructor(
         accessibility: Int?
     ) {
         viewModelScope.launch {
-            commentRepository.updateComment(commentId, text, clean, paper, structure, accessibility).onSuccess { updatedComment ->
-                val currentList = _commentsCache.value[toiletId] ?: emptyList()
-                val updatedList = currentList.map {
-                    if (it.publicId == commentId) updatedComment else it
-                }
-                _commentsCache.value += (toiletId to updatedList)
-                
-                // Also update myComments if present
-                val myCurrentList = _myComments.value
-                if (myCurrentList.any { it.publicId == commentId }) {
-                    _myComments.value = myCurrentList.map {
+            commentRepository.updateComment(commentId, text, clean, paper, structure, accessibility)
+                .onSuccess { updatedComment ->
+                    val currentList = _commentsCache.value[toiletId] ?: emptyList()
+                    val updatedList = currentList.map {
                         if (it.publicId == commentId) updatedComment else it
                     }
-                }
-                
-                // Clear rating state to trigger success callback if observing
-                _ratingState.value = Result.success(updatedComment)
-                
-            }.onFailure { e ->
-                _error.value = "Erro ao atualizar comentário: ${e.message}"
+                    _commentsCache.value += (toiletId to updatedList)
+
+                    // Also update myComments if present
+                    val myCurrentList = _myComments.value
+                    if (myCurrentList.any { it.publicId == commentId }) {
+                        _myComments.value = myCurrentList.map {
+                            if (it.publicId == commentId) updatedComment else it
+                        }
+                    }
+
+                    // Clear rating state to trigger success callback if observing
+                    _ratingState.value = Result.success(updatedComment)
+
+                }.onFailure { e ->
+                _error.value = e.message ?: "Erro ao atualizar comentário"
                 _ratingState.value = Result.failure(e)
             }
         }
@@ -558,7 +566,7 @@ class LocalViewModel @Inject constructor(
                 val updatedList = currentList.filter { it.publicId != commentId }
                 _commentsCache.value += (toiletId to updatedList)
             }.onFailure { e ->
-                _error.value = "Erro ao deletar comentário: ${e.message}"
+                _error.value = e.message ?: "Erro ao deletar comentário"
             }
         }
     }

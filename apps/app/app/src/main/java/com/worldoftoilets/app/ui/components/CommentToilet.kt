@@ -132,7 +132,7 @@ fun CommentToilet(
                             if (comment.user.isPartner) {
                                 Icon(
                                     imageVector = Icons.Rounded.Verified,
-                                    contentDescription = "Verified",
+                                    contentDescription = context.getString(R.string.content_description_verified),
                                     tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(16.dp)
                                 )
@@ -151,7 +151,7 @@ fun CommentToilet(
                         }
                     }
                 }
-                
+
                 Box {
                     IconButton(
                         modifier = Modifier.size(24.dp),
@@ -159,7 +159,7 @@ fun CommentToilet(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.MoreVert,
-                            contentDescription = "Options",
+                            contentDescription = context.getString(R.string.content_description_options_menu),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -169,14 +169,14 @@ fun CommentToilet(
                     ) {
                         if (userMain != null && userMain.publicId == comment.user.publicId) {
                             DropdownMenuItem(
-                                text = { Text("Edit") },
+                                text = { Text(context.getString(R.string.edit_action)) },
                                 onClick = {
                                     onEditComment(comment.publicId)
                                     showCommentMenu = false
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Delete") },
+                                text = { Text(context.getString(R.string.delete_action)) },
                                 onClick = {
                                     onDeleteComment()
                                     showCommentMenu = false
@@ -192,7 +192,7 @@ fun CommentToilet(
                                 leadingIcon = {
                                     Icon(
                                         imageVector = Icons.Rounded.Flag,
-                                        contentDescription = null,
+                                        contentDescription = context.getString(R.string.image_description_null),
                                         modifier = Modifier.size(20.dp)
                                     )
                                 }
@@ -205,7 +205,7 @@ fun CommentToilet(
             // Content: Comment Text
             if (!comment.text.isNullOrBlank()) {
                 Text(
-                    text = comment.text ?: "",
+                    text = comment.text,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -283,7 +283,7 @@ fun CommentToilet(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Rounded.Send,
-                            contentDescription = "Send"
+                            contentDescription = context.getString(R.string.content_description_send_button)
                         )
                     }
                 }
@@ -292,7 +292,7 @@ fun CommentToilet(
             // View Replies Button & List
             if (comment.replyCount > 0 || replies.isNotEmpty()) {
                 val allRepliesLoaded = replies.size >= comment.replyCount
-                
+
                 Column {
                     // Toggle Button
                     TextButton(
@@ -304,7 +304,11 @@ fun CommentToilet(
                         },
                         modifier = Modifier.align(Alignment.Start)
                     ) {
-                        val text = if (showReplies) context.getString(R.string.hide_replies) else context.getString(R.string.view_replies, comment.replyCount)
+                        val text =
+                            if (showReplies) context.getString(R.string.hide_replies) else context.getString(
+                                R.string.view_replies,
+                                comment.replyCount
+                            )
                         Text(
                             text = text,
                             style = MaterialTheme.typography.labelMedium,
@@ -335,7 +339,7 @@ fun CommentToilet(
                                         onDelete = { onDeleteReply(reply.publicId) }
                                     )
                                 }
-                                
+
                                 // Load More Button for Replies
                                 if (!allRepliesLoaded && replies.isNotEmpty()) {
                                     TextButton(

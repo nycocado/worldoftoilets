@@ -4,8 +4,8 @@ import com.worldoftoilets.app.models.Comment
 import com.worldoftoilets.app.models.requests.CreateCommentRateRequest
 import com.worldoftoilets.app.models.requests.CreateCommentRequest
 import com.worldoftoilets.app.models.requests.UpdateCommentRequest
-import com.worldoftoilets.app.models.responses.ApiResponse
 import com.worldoftoilets.app.network.CommentService
+import com.worldoftoilets.app.ui.util.parseApiError
 import javax.inject.Inject
 
 class CommentRepository @Inject constructor(
@@ -26,7 +26,7 @@ class CommentRepository @Inject constructor(
             if (response.isSuccessful && apiResponse?.data != null) {
                 Result.success(apiResponse.data)
             } else {
-                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Error getting comments"
+                val errorMsg = apiResponse?.message ?: parseApiError(response.errorBody()?.string())
                 Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
@@ -46,7 +46,7 @@ class CommentRepository @Inject constructor(
             if (response.isSuccessful && apiResponse?.data != null) {
                 Result.success(apiResponse.data)
             } else {
-                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Error getting my comments"
+                val errorMsg = apiResponse?.message ?: parseApiError(response.errorBody()?.string())
                 Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
@@ -75,7 +75,7 @@ class CommentRepository @Inject constructor(
             if (response.isSuccessful && apiResponse?.data != null) {
                 Result.success(apiResponse.data)
             } else {
-                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Error creating comment"
+                val errorMsg = apiResponse?.message ?: parseApiError(response.errorBody()?.string())
                 Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
@@ -91,19 +91,22 @@ class CommentRepository @Inject constructor(
         structure: Int? = null,
         accessibility: Int? = null
     ): Result<Comment> {
-        val rate = if (clean != null && paper != null && structure != null && accessibility != null) {
-            CreateCommentRateRequest(clean, paper, structure, accessibility)
-        } else {
-            null
-        }
-        
+        val rate =
+            if (clean != null && paper != null && structure != null && accessibility != null) {
+                CreateCommentRateRequest(clean, paper, structure, accessibility)
+            } else {
+                null
+            }
+
         val request = UpdateCommentRequest(text = text, rate = rate)
         return try {
             val response = commentService.updateComment(commentId, request)
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.success(response.body()!!.data!!)
             } else {
-                Result.failure(Exception("Error updating comment"))
+                val errorMsg =
+                    response.body()?.message ?: parseApiError(response.errorBody()?.string())
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -116,7 +119,9 @@ class CommentRepository @Inject constructor(
             if (response.isSuccessful) {
                 Result.success(Unit)
             } else {
-                Result.failure(Exception("Error deleting comment"))
+                val errorMsg =
+                    response.body()?.message ?: parseApiError(response.errorBody()?.string())
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -134,7 +139,7 @@ class CommentRepository @Inject constructor(
             if (response.isSuccessful && apiResponse?.data != null) {
                 Result.success(apiResponse.data)
             } else {
-                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Error reacting to comment"
+                val errorMsg = apiResponse?.message ?: parseApiError(response.errorBody()?.string())
                 Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {

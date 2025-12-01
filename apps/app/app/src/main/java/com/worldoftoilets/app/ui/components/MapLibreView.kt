@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.MyLocation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -23,14 +25,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.MyLocation
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.google.gson.JsonPrimitive
 import com.worldoftoilets.app.R
 import com.worldoftoilets.app.models.GeoBox
 import com.worldoftoilets.app.models.Toilet
@@ -43,14 +46,9 @@ import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.maps.MapLibreMap
 import org.maplibre.android.maps.MapView
-import org.maplibre.android.maps.Style
-import com.google.gson.JsonPrimitive
 import org.maplibre.android.plugins.annotation.Symbol
 import org.maplibre.android.plugins.annotation.SymbolManager
 import org.maplibre.android.plugins.annotation.SymbolOptions
-
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.viewinterop.AndroidView
 
 @Composable
 fun MapLibreView(
@@ -129,7 +127,7 @@ fun MapLibreView(
                             "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
                         }
 
-                        map.setStyle(Style.Builder().fromUrl(styleUrl)) { style ->
+                        map.setStyle(styleUrl) { style ->
                             // Setup Symbol Manager
                             val manager = SymbolManager(this, map, style)
                             manager.iconAllowOverlap = true
@@ -166,8 +164,8 @@ fun MapLibreView(
                                 }
                             ContextCompat.getDrawable(context, R.drawable.user_location_marker)
                                 ?.toBitmap()?.let {
-                                style.addImage("user-icon", it)
-                            }
+                                    style.addImage("user-icon", it)
+                                }
                         }
 
                         var interactionTimer: Job? = null

@@ -55,11 +55,11 @@ class UserViewModel @Inject constructor(
                 userRepository.getSelf().onSuccess { data ->
                     _user.value = data
                 }.onFailure { e ->
-                    _error.value = "Erro ao carregar usuário: ${e.message}"
+                    _error.value = e.message ?: "Erro ao carregar usuário"
                     logout()
                 }
             } catch (e: Exception) {
-                _error.value = "Erro ao carregar usuário: ${e.message}"
+                _error.value = e.message ?: "Erro ao carregar usuário"
                 Log.e("UserViewModel", "Erro ao carregar usuário", e)
             }
         }
@@ -68,7 +68,7 @@ class UserViewModel @Inject constructor(
     fun updateUser(name: String?, icon: String?, birthDate: String?) {
         // Reset state to ensure UI reacts to new events
         _updateUserState.value = null
-        
+
         viewModelScope.launch {
             try {
                 val result = userRepository.updateSelf(name, icon, birthDate)
@@ -78,10 +78,10 @@ class UserViewModel @Inject constructor(
                 result.onSuccess { data ->
                     _user.value = data
                 }.onFailure { e ->
-                    _error.value = "Erro ao atualizar usuário: ${e.message}"
+                    _error.value = e.message ?: "Erro ao atualizar usuário"
                 }
             } catch (e: Exception) {
-                _error.value = "Erro ao atualizar usuário: ${e.message}"
+                _error.value = e.message ?: "Erro ao atualizar usuário"
                 Log.e("UserViewModel", "Erro ao atualizar usuário", e)
             }
         }
@@ -93,7 +93,7 @@ class UserViewModel @Inject constructor(
                 authRepository.logout()
                 _user.value = null
             } catch (e: Exception) {
-                _error.value = "Erro ao fazer logout: ${e.message}"
+                _error.value = e.message ?: "Erro ao fazer logout"
                 Log.e("UserViewModel", "Erro ao fazer logout", e)
             }
         }

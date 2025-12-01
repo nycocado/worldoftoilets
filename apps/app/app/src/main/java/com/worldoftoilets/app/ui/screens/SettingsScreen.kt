@@ -10,10 +10,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
@@ -23,9 +21,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,23 +33,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.worldoftoilets.app.R
 import com.worldoftoilets.app.models.User
 import com.worldoftoilets.app.models.enums.ChangeSettingType
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import com.worldoftoilets.app.R
 import com.worldoftoilets.app.models.enums.UserIcon
 import com.worldoftoilets.app.ui.components.ClickableTextField
 import com.worldoftoilets.app.ui.components.IconCarousel
 import com.worldoftoilets.app.ui.theme.AppTheme
 import com.worldoftoilets.app.ui.util.generateUserMain
-
-import androidx.compose.material3.TopAppBarDefaults
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,7 +61,7 @@ fun SettingsScreen(
     val updateUserState by updateUserStateFlow.collectAsStateWithLifecycle()
     var isLoading by remember { mutableStateOf(false) }
 
-    val imageList = UserIcon.entries.map { it.icon }
+    val imageList = UserIcon.entries.map { it.id }
     val initialPage = UserIcon.entries.indexOfFirst { it.id == user.icon }.takeIf { it != -1 } ?: 0
 
     val pagerState = rememberPagerState(initialPage = initialPage) {
@@ -104,7 +99,7 @@ fun SettingsScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = context.getString(R.string.content_description_back_button)
                         )
                     }
                 },
@@ -125,11 +120,11 @@ fun SettingsScreen(
                     imageList = imageList,
                     pagerState = pagerState
                 )
-                
+
                 Button(
                     onClick = {
                         scope.launch {
-                            onChangeIcon(currentIcon!!)
+                            onChangeIcon(currentIcon)
                         }
                     },
                     modifier = Modifier
@@ -181,7 +176,7 @@ fun SettingsScreen(
                         trailingIcon = {
                             Icon(
                                 imageVector = Icons.Rounded.Person,
-                                contentDescription = "Change Name"
+                                contentDescription = context.getString(R.string.content_description_change_name_icon)
                             )
                         },
                         onClick = {

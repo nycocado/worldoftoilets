@@ -1,7 +1,10 @@
 package com.worldoftoilets.app.models
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -25,8 +28,8 @@ data class UserCommentResponse(
             "icon-4" -> painterResource(R.drawable.icon4)
             "icon-5" -> painterResource(R.drawable.icon5)
             "icon-6" -> painterResource(R.drawable.icon6)
-            "icon-default" -> painterResource(R.drawable.icon1)
-            else -> painterResource(R.drawable.icon1)
+            "icon-default" -> rememberVectorPainter(image = Icons.Rounded.AccountCircle)
+            else -> rememberVectorPainter(image = Icons.Rounded.AccountCircle)
         }
     }
 }

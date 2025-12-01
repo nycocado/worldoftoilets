@@ -31,7 +31,7 @@ class AuthViewModel @Inject constructor(
                 val result = authRepository.login(email, password)
                 _loginState.value = result
             } catch (e: Exception) {
-                _error.value = "Erro ao fazer login: ${e.message}"
+                _error.value = e.message ?: "Erro ao fazer login"
                 Log.e("AuthViewModel", "Erro ao fazer login", e)
             }
         }
@@ -49,10 +49,48 @@ class AuthViewModel @Inject constructor(
                 val result = authRepository.register(name, email, password, icon, birthDate)
                 _registerState.value = result
             } catch (e: Exception) {
-                _error.value = "Erro ao fazer registro: ${e.message}"
+                _error.value = e.message ?: "Erro ao fazer registro"
                 Log.e("AuthViewModel", "Erro ao fazer registro", e)
             }
         }
+    }
+
+    private val _resendVerificationState = MutableStateFlow<Result<Unit>?>(null)
+    val resendVerificationState: StateFlow<Result<Unit>?> = _resendVerificationState.asStateFlow()
+
+    fun resendVerification(email: String) {
+        viewModelScope.launch {
+            try {
+                val result = authRepository.resendVerification(email)
+                _resendVerificationState.value = result
+            } catch (e: Exception) {
+                _error.value = e.message ?: "Erro ao reenviar verificação"
+                Log.e("AuthViewModel", "Erro ao reenviar verificação", e)
+            }
+        }
+    }
+
+    private val _forgotPasswordState = MutableStateFlow<Result<Unit>?>(null)
+    val forgotPasswordState: StateFlow<Result<Unit>?> = _forgotPasswordState.asStateFlow()
+
+    fun forgotPassword(email: String) {
+        viewModelScope.launch {
+            try {
+                val result = authRepository.forgotPassword(email)
+                _forgotPasswordState.value = result
+            } catch (e: Exception) {
+                _error.value = e.message ?: "Erro ao recuperar senha"
+                Log.e("AuthViewModel", "Erro ao recuperar senha", e)
+            }
+        }
+    }
+
+    fun clearForgotPasswordState() {
+        _forgotPasswordState.value = null
+    }
+
+    fun clearResendVerificationState() {
+        _resendVerificationState.value = null
     }
 
     fun clearLoginState() {

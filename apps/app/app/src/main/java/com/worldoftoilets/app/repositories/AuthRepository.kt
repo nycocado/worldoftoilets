@@ -3,9 +3,9 @@ package com.worldoftoilets.app.repositories
 import com.worldoftoilets.app.models.User
 import com.worldoftoilets.app.models.requests.LoginRequest
 import com.worldoftoilets.app.models.requests.RegisterRequest
-import com.worldoftoilets.app.models.responses.ApiResponse
 import com.worldoftoilets.app.network.AuthService
 import com.worldoftoilets.app.security.TokenManager
+import com.worldoftoilets.app.ui.util.parseApiError
 import javax.inject.Inject
 
 class AuthRepository @Inject constructor(
@@ -35,7 +35,7 @@ class AuthRepository @Inject constructor(
 
                 Result.success(loginResponse.user)
             } else {
-                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Login failed"
+                val errorMsg = apiResponse?.message ?: parseApiError(response.errorBody()?.string())
                 Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
@@ -55,12 +55,12 @@ class AuthRepository @Inject constructor(
                 RegisterRequest(name, email, password, icon, birthDate)
             )
             val apiResponse = response.body()
-            
+
             if (response.isSuccessful) {
                 // API might return 200/201 with data or message
                 Result.success(Unit)
             } else {
-                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Registration failed"
+                val errorMsg = apiResponse?.message ?: parseApiError(response.errorBody()?.string())
                 Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
@@ -92,6 +92,36 @@ class AuthRepository @Inject constructor(
                 // Ignorar erro ao limpar preferences
             }
             Result.success(Unit)
+        }
+    }
+
+    suspend fun resendVerification(email: String): Result<Unit> {
+        return try {
+            val response = authService.resendVerification(email)
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                val errorMsg =
+                    response.body()?.message ?: parseApiError(response.errorBody()?.string())
+                Result.failure(Exception(errorMsg))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun forgotPassword(email: String): Result<Unit> {
+        return try {
+            val response = authService.forgotPassword(email)
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                val errorMsg =
+                    response.body()?.message ?: parseApiError(response.errorBody()?.string())
+                Result.failure(Exception(errorMsg))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 }

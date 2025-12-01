@@ -1,6 +1,5 @@
 package com.worldoftoilets.app.ui.screens
 
-import android.util.Patterns
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,10 +18,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,24 +33,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.worldoftoilets.app.R
 import com.worldoftoilets.app.models.User
 import com.worldoftoilets.app.models.enums.ChangeSettingType
-import com.worldoftoilets.app.ui.components.ClickableTextField
-import com.worldoftoilets.app.ui.components.GoTextField
 import com.worldoftoilets.app.ui.components.NextTextField
 import com.worldoftoilets.app.ui.theme.AppTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import com.worldoftoilets.app.R
-
-import androidx.compose.material3.TopAppBarDefaults
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,6 +58,7 @@ fun ChangeSettingsScreen(
     val updateUserState by updateUserStateFlow.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
     var name by remember { mutableStateOf("") }
     var nameSupportText by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
@@ -87,13 +83,19 @@ fun ChangeSettingsScreen(
             }
         }
 
-        updateUserState?.onFailure {
+        updateUserState?.onFailure { error ->
             nameSupportText = ""
             isLoading = false
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    error.message ?: context.getString(R.string.error_unexpected)
+                )
+            }
         }
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -109,7 +111,7 @@ fun ChangeSettingsScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = context.getString(R.string.content_description_back_button)
                         )
                     }
                 },

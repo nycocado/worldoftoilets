@@ -42,4 +42,9 @@ interface AuthService {
     suspend fun resendVerification(
         @Query("email") email: String
     ): Response<ApiResponse<Unit>>
+
+    @POST("auth/forgot-password")
+    suspend fun forgotPassword(
+        @Query("email") email: String
+    ): Response<ApiResponse<Unit>>
 }
