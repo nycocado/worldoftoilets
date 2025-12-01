@@ -21,13 +21,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -37,7 +38,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -84,6 +84,7 @@ fun RatingScreen(
     var commentText by remember { mutableStateOf(comment?.text ?: "") }
     var commentSupportText by remember { mutableStateOf("") }
     var commentError by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
 
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -106,15 +107,23 @@ fun RatingScreen(
         ratingState?.onFailure {
             commentError = true
             commentSupportText = context.getString(R.string.error_comment)
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    it.message ?: context.getString(R.string.error_comment)
+                )
+            }
         }
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = if (comment == null) context.getString(R.string.rate) else context.getString(R.string.edit_profile), // Reusing "Edit" string or add "Edit Review"
+                        text = if (comment == null) context.getString(R.string.rate) else context.getString(
+                            R.string.edit_review_title
+                        ),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
@@ -125,7 +134,7 @@ fun RatingScreen(
                     }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = context.getString(R.string.content_description_back_button)
                         )
                     }
                 },
@@ -280,7 +289,9 @@ fun RatingScreen(
 
             item {
                 com.worldoftoilets.app.ui.components.SanitaryButton(
-                    text = if (comment == null) context.getString(R.string.rate) else context.getString(R.string.save),
+                    text = if (comment == null) context.getString(R.string.rate) else context.getString(
+                        R.string.save
+                    ),
                     onClick = {
                         if (!commentError) {
                             scope.launch {

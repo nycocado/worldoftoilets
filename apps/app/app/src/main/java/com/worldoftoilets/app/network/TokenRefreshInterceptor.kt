@@ -28,7 +28,7 @@ class TokenRefreshInterceptor(
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
-        
+
         // Se a requisição já for de refresh, não interceptar para evitar loop infinito
         if (originalRequest.url.encodedPath.contains("/auth/refresh")) {
             return chain.proceed(originalRequest)
@@ -66,7 +66,7 @@ class TokenRefreshInterceptor(
                     if (refreshResponse.isSuccessful) {
                         val apiResponse = refreshResponse.body()
                         val newTokens = apiResponse?.data
-                        
+
                         if (newTokens != null) {
                             Log.d(TAG, "Token refreshed successfully")
                             tokenManager.saveTokens(

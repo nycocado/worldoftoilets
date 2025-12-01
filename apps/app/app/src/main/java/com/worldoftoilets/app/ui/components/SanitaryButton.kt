@@ -17,12 +17,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.worldoftoilets.app.R
 import com.worldoftoilets.app.ui.theme.AppTheme
 import com.worldoftoilets.app.ui.theme.ElectricBlue
 import com.worldoftoilets.app.ui.theme.FreshGreen
+
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.contentDescription
 
 @Composable
 fun SanitaryButton(
@@ -32,6 +37,7 @@ fun SanitaryButton(
     isLoading: Boolean = false,
     enabled: Boolean = true
 ) {
+    val context = LocalContext.current
     // Define the gradient brush
     val gradient = Brush.horizontalGradient(
         colors = listOf(ElectricBlue, FreshGreen)
@@ -55,14 +61,16 @@ fun SanitaryButton(
                         listOf(Color.LightGray, Color.Gray)
                     ),
                     shape = MaterialTheme.shapes.medium // Match button shape
-                ),
+                )
+                .semantics { contentDescription = context.getString(R.string.content_description_loading_indicator) }, // Moved contentDescription here
             contentAlignment = Alignment.Center
         ) {
             if (isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(24.dp),
                     color = Color.White,
-                    strokeWidth = 3.dp
+                    strokeWidth = 3.dp,
+                    // contentDescription removed from here
                 )
             } else {
                 Text(

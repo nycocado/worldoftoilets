@@ -11,7 +11,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,7 +22,6 @@ import androidx.navigation.compose.rememberNavController
 import com.worldoftoilets.app.ui.theme.AppTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import com.worldoftoilets.app.ui.navegation.AppDestinations
 
 @Composable
 fun BottomNavigationBar(
@@ -33,7 +31,7 @@ fun BottomNavigationBar(
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-    
+
     val bottomRoutes = getBottomRoutes()
     val isLoggedIn = isLoggedInStateFlow.collectAsState().value == true
 
@@ -42,7 +40,7 @@ fun BottomNavigationBar(
     ) {
         bottomRoutes.forEach { item ->
             val isSelected = currentDestination?.hasRoute(item.routeClass) == true
-            
+
             NavigationBarItem(
                 colors = NavigationBarItemColors(
                     selectedIconColor = MaterialTheme.colorScheme.onTertiaryContainer,
@@ -64,7 +62,7 @@ fun BottomNavigationBar(
                         rootController.navigate(AppDestinations.Login)
                         return@NavigationBarItem
                     }
-                    
+
                     navController.navigate(item.destination) {
                         // Pop up to the start destination of the graph to
                         // avoid building up a large stack of destinations

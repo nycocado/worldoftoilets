@@ -1,13 +1,12 @@
 package com.worldoftoilets.app.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.material3.Icon
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ThumbUp
 import androidx.compose.material.icons.rounded.ThumbUp
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -20,9 +19,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.worldoftoilets.app.R
 import com.worldoftoilets.app.ui.theme.AppTheme
 import com.worldoftoilets.app.ui.util.NoRippleInteractionSource
-import com.worldoftoilets.app.R
 
 @Composable
 fun ThumbUp(
@@ -32,7 +31,8 @@ fun ThumbUp(
     onClick: (Boolean) -> Unit = {},
 ) {
     val context = LocalContext.current
-    val contentColor = if (isPressed) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurfaceVariant
+    val contentColor =
+        if (isPressed) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurfaceVariant
 
     Surface(
         onClick = { onClick(isPressed) },

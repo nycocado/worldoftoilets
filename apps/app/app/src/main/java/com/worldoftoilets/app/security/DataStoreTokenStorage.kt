@@ -34,7 +34,7 @@ class DataStoreTokenStorage @Inject constructor(
 
     private val aead: Aead by lazy {
         AeadConfig.register()
-        
+
         @Suppress("DEPRECATION") // getPrimitive is deprecated in Java but still the recommended way for Tink in Kotlin
         AndroidKeysetManager.Builder()
             .withSharedPref(context, KEYSET_NAME, PREF_FILE_NAME)

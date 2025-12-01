@@ -13,11 +13,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -28,7 +30,6 @@ import com.worldoftoilets.app.ui.components.LocationCard
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import com.worldoftoilets.app.R
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -44,6 +45,7 @@ fun ToiletListScreen(
     toiletsStateFlow: StateFlow<Map<String, Toilet>>,
     toiletsNearbyIdsStateFlow: StateFlow<UiState<PageResponse<String>>>,
     locationStateFlow: StateFlow<Location?>,
+    lazyListState: LazyListState,
     navigateToToiletDetail: (String) -> Unit = {},
     onClickLoadMore: (PageResponse<String>) -> Unit = {}
 ) {
@@ -51,15 +53,14 @@ fun ToiletListScreen(
     val toilets by toiletsStateFlow.collectAsStateWithLifecycle()
     val toiletIds by toiletsNearbyIdsStateFlow.collectAsStateWithLifecycle()
     val location by locationStateFlow.collectAsStateWithLifecycle()
-    
+
     val scope = rememberCoroutineScope()
-    val listState = rememberLazyListState()
-    
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surfaceContainerLow)
-    ) {            
+    ) {
         when (val state = toiletIds) {
             UiState.Loading -> {
                 Column(
@@ -80,10 +81,11 @@ fun ToiletListScreen(
 
                 val isAtBottom by remember {
                     derivedStateOf {
-                        val layoutInfo = listState.layoutInfo
+                        val layoutInfo = lazyListState.layoutInfo
                         val totalItems = layoutInfo.totalItemsCount
                         if (totalItems == 0) return@derivedStateOf false
-                        val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+                        val lastVisibleItemIndex =
+                            layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
                         lastVisibleItemIndex >= totalItems - 1
                     }
                 }
@@ -94,7 +96,7 @@ fun ToiletListScreen(
                     }
                 }
 
-                LazyColumn(state = listState) {
+                LazyColumn(state = lazyListState) {
                     items(toiletList) { toilet ->
                         LocationCard(
                             toilet = toilet,
@@ -147,7 +149,8 @@ fun ToiletListPreview() {
             toiletsNearbyIdsStateFlow = generateToiletsNearbyIdsStateFlow(
                 generateToiletsStateFlow().collectAsState().value
             ),
-            locationStateFlow = generateLocationStateFlow()
+            locationStateFlow = generateLocationStateFlow(),
+            lazyListState = rememberLazyListState()
         )
     }
 }

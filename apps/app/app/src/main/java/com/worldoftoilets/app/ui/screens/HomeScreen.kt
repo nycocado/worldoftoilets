@@ -55,6 +55,8 @@ import com.worldoftoilets.app.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.runtime.derivedStateOf
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -76,6 +78,13 @@ fun HomeScreen(
 
     val isDetails = currentDestination?.hasRoute(AppDestinations.ToiletDetails::class) == true
     val isList = currentDestination?.hasRoute(AppDestinations.ToiletList::class) == true
+
+    val bottomSheetLazyListState = rememberLazyListState()
+    val isBottomSheetAtTop by remember {
+        derivedStateOf {
+            bottomSheetLazyListState.firstVisibleItemIndex == 0 && bottomSheetLazyListState.firstVisibleItemScrollOffset == 0
+        }
+    }
 
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState(
@@ -230,11 +239,14 @@ fun HomeScreen(
                             }) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = "Back"
+                                    contentDescription = context.getString(R.string.content_description_back_button)
                                 )
                             }
                         } else {
-                            Icon(Icons.Default.Search, contentDescription = null)
+                            Icon(
+                                Icons.Default.Search,
+                                contentDescription = context.getString(R.string.image_description_null)
+                            )
                         }
                     },
                     trailingIcon = {
@@ -326,6 +338,7 @@ fun HomeScreen(
                     toggleSheetState()
                 }
             },
+            sheetSwipeEnabled = isBottomSheetAtTop,
             sheetContent = {
                 Box(
                     modifier = Modifier.fillMaxHeight(0.99f)
@@ -334,7 +347,8 @@ fun HomeScreen(
                         navController,
                         rootNavController,
                         localViewModel,
-                        userViewModel
+                        userViewModel,
+                        lazyListState = bottomSheetLazyListState
                     )
                 }
             },

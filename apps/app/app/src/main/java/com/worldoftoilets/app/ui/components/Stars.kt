@@ -11,9 +11,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.worldoftoilets.app.R
 import com.worldoftoilets.app.ui.theme.AppTheme
 import com.worldoftoilets.app.ui.util.NoRippleInteractionSource
 import kotlin.math.round
@@ -25,10 +27,13 @@ fun Stars(
     horizontalPadding: Dp = 0.dp,
     onClick: ((Int) -> Unit)? = null
 ) {
+    val context = LocalContext.current
+
     Row {
         for (i in 1..5) {
-            val icon = if (i <= (if (onClick != null) rating else round(rating))) Icons.Rounded.Star else Icons.Rounded.StarBorder
-            
+            val icon =
+                if (i <= (if (onClick != null) rating else round(rating))) Icons.Rounded.Star else Icons.Rounded.StarBorder
+
             if (onClick != null) {
                 Surface(
                     modifier = Modifier
@@ -40,7 +45,7 @@ fun Stars(
                 ) {
                     Icon(
                         imageVector = icon,
-                        contentDescription = "$i star",
+                        contentDescription = context.getString(R.string.content_description_star_rating, i),
                         modifier = Modifier.size(size),
                         tint = MaterialTheme.colorScheme.primary // Or Secondary/Gold depending on design
                     )
@@ -48,7 +53,7 @@ fun Stars(
             } else {
                 Icon(
                     imageVector = icon,
-                    contentDescription = "$i star",
+                    contentDescription = context.getString(R.string.content_description_star_rating, i),
                     modifier = Modifier.size(size),
                     tint = MaterialTheme.colorScheme.primary // Or Secondary/Gold depending on design
                 )

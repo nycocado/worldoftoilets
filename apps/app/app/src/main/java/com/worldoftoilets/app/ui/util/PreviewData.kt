@@ -24,7 +24,7 @@ import kotlin.random.Random
 fun generateUserMain(
     publicId: String = UUID.randomUUID().toString(),
     name: String = "John Doe",
-    icon: String = UserIcon.ICON_DEFAULT.id!!,
+    icon: String = UserIcon.ICON_DEFAULT.id,
     commentsCount: Int = 10,
     email: String = "john.doe@example.com",
     points: Int = 150,
@@ -50,7 +50,7 @@ fun generateUserMain(
 fun generateUserCommentResponse(
     publicId: String = UUID.randomUUID().toString(),
     name: String = "Commenter Name",
-    icon: String = UserIcon.ICON_1.id!!,
+    icon: String = UserIcon.ICON_1.id,
     commentsCount: Int = 5,
     points: Int = 50,
     isPartner: Boolean = false
@@ -151,7 +151,7 @@ fun generateLoginResponse(): LoginResponse {
 fun generateUserLoginResponse() = User(
     publicId = UUID.randomUUID().toString(),
     name = "Preview User",
-    icon = UserIcon.ICON_DEFAULT.id!!,
+    icon = UserIcon.ICON_DEFAULT.id,
     commentsCount = 0,
     email = "preview@example.com",
     points = 0,

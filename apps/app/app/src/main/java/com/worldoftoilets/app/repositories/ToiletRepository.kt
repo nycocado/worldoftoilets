@@ -3,6 +3,7 @@ package com.worldoftoilets.app.repositories
 import com.worldoftoilets.app.models.Toilet
 import com.worldoftoilets.app.network.ToiletService
 import javax.inject.Inject
+import com.worldoftoilets.app.ui.util.parseApiError
 
 class ToiletRepository @Inject constructor(
     private val toiletService: ToiletService
@@ -23,7 +24,7 @@ class ToiletRepository @Inject constructor(
             if (response.isSuccessful && apiResponse?.data != null) {
                 Result.success(apiResponse.data)
             } else {
-                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Error getting nearby toilets"
+                val errorMsg = apiResponse?.message ?: parseApiError(response.errorBody()?.string())
                 Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
@@ -46,7 +47,7 @@ class ToiletRepository @Inject constructor(
             if (response.isSuccessful && apiResponse?.data != null) {
                 Result.success(apiResponse.data)
             } else {
-                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Error getting toilets in bounding box"
+                val errorMsg = apiResponse?.message ?: parseApiError(response.errorBody()?.string())
                 Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
@@ -62,7 +63,7 @@ class ToiletRepository @Inject constructor(
             if (response.isSuccessful && apiResponse?.data != null) {
                 Result.success(apiResponse.data)
             } else {
-                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Error getting toilet"
+                val errorMsg = apiResponse?.message ?: parseApiError(response.errorBody()?.string())
                 Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
@@ -78,7 +79,7 @@ class ToiletRepository @Inject constructor(
             if (response.isSuccessful) {
                 Result.success(Unit)
             } else {
-                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Error registering view"
+                val errorMsg = apiResponse?.message ?: parseApiError(response.errorBody()?.string())
                 Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
@@ -94,7 +95,7 @@ class ToiletRepository @Inject constructor(
             if (response.isSuccessful && apiResponse?.data != null) {
                 Result.success(apiResponse.data)
             } else {
-                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Error searching toilets"
+                val errorMsg = apiResponse?.message ?: parseApiError(response.errorBody()?.string())
                 Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {

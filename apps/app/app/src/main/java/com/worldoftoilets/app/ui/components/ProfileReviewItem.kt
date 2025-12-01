@@ -19,11 +19,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.worldoftoilets.app.R
 import com.worldoftoilets.app.models.Comment
 import com.worldoftoilets.app.models.Toilet
 import com.worldoftoilets.app.ui.theme.AppTheme
@@ -36,6 +37,7 @@ fun ProfileReviewItem(
     toilet: Toilet,
     onClick: () -> Unit = {}
 ) {
+    val context = LocalContext.current
     Card(
         onClick = onClick,
         modifier = Modifier
@@ -74,7 +76,7 @@ fun ProfileReviewItem(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.LocationOn,
-                            contentDescription = null,
+                            contentDescription = context.getString(R.string.image_description_null),
                             modifier = Modifier.size(14.dp),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -88,7 +90,7 @@ fun ProfileReviewItem(
                         )
                     }
                 }
-                
+
                 Stars(
                     rating = comment.average(),
                     size = 16.dp

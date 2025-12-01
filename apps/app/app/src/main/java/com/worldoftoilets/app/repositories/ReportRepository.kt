@@ -5,6 +5,7 @@ import com.worldoftoilets.app.models.requests.CreateReportReplyRequest
 import com.worldoftoilets.app.models.requests.CreateReportToiletRequest
 import com.worldoftoilets.app.network.ReportService
 import javax.inject.Inject
+import com.worldoftoilets.app.ui.util.parseApiError
 
 class ReportRepository @Inject constructor(
     private val reportService: ReportService
@@ -22,7 +23,7 @@ class ReportRepository @Inject constructor(
             if (response.isSuccessful) {
                 Result.success(Unit)
             } else {
-                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Error reporting toilet"
+                val errorMsg = apiResponse?.message ?: parseApiError(response.errorBody()?.string())
                 Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
@@ -43,7 +44,7 @@ class ReportRepository @Inject constructor(
             if (response.isSuccessful) {
                 Result.success(Unit)
             } else {
-                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Error reporting comment"
+                val errorMsg = apiResponse?.message ?: parseApiError(response.errorBody()?.string())
                 Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
@@ -64,7 +65,7 @@ class ReportRepository @Inject constructor(
             if (response.isSuccessful) {
                 Result.success(Unit)
             } else {
-                val errorMsg = apiResponse?.message ?: response.errorBody()?.string() ?: "Error reporting reply"
+                val errorMsg = apiResponse?.message ?: parseApiError(response.errorBody()?.string())
                 Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {

@@ -25,7 +25,8 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @Inject lateinit var authEventBus: AuthEventBus
+    @Inject
+    lateinit var authEventBus: AuthEventBus
     private val userViewModel: UserViewModel by viewModels()
     private val localViewModel: LocalViewModel by viewModels()
     private val authViewModel: AuthViewModel by viewModels()
@@ -44,7 +45,7 @@ class MainActivity : ComponentActivity() {
         }
 
         enableEdgeToEdge()
-        
+
         splashScreen.setKeepOnScreenCondition {
             userViewModel.isLoggedIn.value == null
         }
@@ -64,9 +65,10 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
-            
+
             if (isLoggedIn != null) {
-                val startDestination: Any = if (isLoggedIn) AppDestinations.MainGraph else AppDestinations.AuthGraph
+                val startDestination: Any =
+                    if (isLoggedIn) AppDestinations.MainGraph else AppDestinations.AuthGraph
                 AppTheme {
                     RootNavigationGraph(
                         navController = navController,

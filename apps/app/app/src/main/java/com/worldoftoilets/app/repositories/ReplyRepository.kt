@@ -5,6 +5,7 @@ import com.worldoftoilets.app.models.requests.CreateReplyRequest
 import com.worldoftoilets.app.models.requests.UpdateReplyRequest
 import com.worldoftoilets.app.network.ReplyService
 import javax.inject.Inject
+import com.worldoftoilets.app.ui.util.parseApiError
 
 class ReplyRepository @Inject constructor(
     private val replyService: ReplyService
@@ -15,11 +16,14 @@ class ReplyRepository @Inject constructor(
         size: Int = 20
     ): Result<List<Reply>> {
         return try {
-            val response = replyService.getRepliesByComment(commentPublicId, page = page, size = size)
+            val response =
+                replyService.getRepliesByComment(commentPublicId, page = page, size = size)
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.success(response.body()!!.data!!)
             } else {
-                Result.failure(Exception("Error fetching replies"))
+                val errorMsg =
+                    response.body()?.message ?: parseApiError(response.errorBody()?.string())
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -32,7 +36,9 @@ class ReplyRepository @Inject constructor(
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.success(response.body()!!.data!!)
             } else {
-                Result.failure(Exception("Error creating reply"))
+                val errorMsg =
+                    response.body()?.message ?: parseApiError(response.errorBody()?.string())
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -45,7 +51,9 @@ class ReplyRepository @Inject constructor(
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.success(response.body()!!.data!!)
             } else {
-                Result.failure(Exception("Error updating reply"))
+                val errorMsg =
+                    response.body()?.message ?: parseApiError(response.errorBody()?.string())
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -58,7 +66,9 @@ class ReplyRepository @Inject constructor(
             if (response.isSuccessful) {
                 Result.success(Unit)
             } else {
-                Result.failure(Exception("Error deleting reply"))
+                val errorMsg =
+                    response.body()?.message ?: parseApiError(response.errorBody()?.string())
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
             Result.failure(e)

@@ -100,7 +100,7 @@ fun ReplyItem(
                         if (reply.user.isPartner) {
                             Icon(
                                 imageVector = Icons.Rounded.Verified,
-                                contentDescription = "Verified",
+                                contentDescription = context.getString(R.string.content_description_verified),
                                 tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(14.dp)
                             )
@@ -112,7 +112,7 @@ fun ReplyItem(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                
+
                 // Actions Menu
                 Box {
                     IconButton(
@@ -121,25 +121,25 @@ fun ReplyItem(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.MoreVert,
-                            contentDescription = "Options",
+                            contentDescription = context.getString(R.string.content_description_options_menu),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                    
+
                     DropdownMenu(
                         expanded = showMenu,
                         onDismissRequest = { showMenu = false }
                     ) {
                         if (userMain != null && userMain.publicId == reply.user.publicId) {
                             DropdownMenuItem(
-                                text = { Text("Edit") },
+                                text = { Text(context.getString(R.string.edit_action)) },
                                 onClick = {
                                     isEditing = true
                                     showMenu = false
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Delete") },
+                                text = { Text(context.getString(R.string.delete_action)) },
                                 onClick = {
                                     onDelete()
                                     showMenu = false
@@ -155,7 +155,7 @@ fun ReplyItem(
                                 leadingIcon = {
                                     Icon(
                                         imageVector = Icons.Rounded.Flag,
-                                        contentDescription = null,
+                                        contentDescription = context.getString(R.string.image_description_null),
                                         modifier = Modifier.size(20.dp)
                                     )
                                 }
@@ -164,7 +164,7 @@ fun ReplyItem(
                     }
                 }
             }
-            
+
             if (isEditing) {
                 OutlinedTextField(
                     value = editText,
@@ -187,7 +187,7 @@ fun ReplyItem(
                         }) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Rounded.Send,
-                                contentDescription = "Save"
+                                contentDescription = context.getString(R.string.content_description_save_button)
                             )
                         }
                     }

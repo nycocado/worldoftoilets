@@ -3,7 +3,7 @@
     <string name="app_name" translatable="false">World of Toilets</string>
     <string name="logo">App logo</string>
 
-    <!-- Rotas -->
+    <!-- Routes -->
     <string name="home">Home</string>
     <string name="history">History</string>
     <string name="profile">Profile</string>
@@ -14,7 +14,7 @@
     <string name="suggest">Suggest - Toilet</string>
     <string name="report">Report</string>
 
-    <!-- Botões -->
+    <!-- Buttons -->
     <string name="go_to_maps">Go to Maps</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="checked">Checked</string>
@@ -22,43 +22,51 @@
     <string name="load_more">Load More</string>
     <string name="confirm">Confirm</string>
     <string name="save">Save</string>
+    <string name="ok_button">OK</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="edit_action">Edit</string>
+    <string name="delete_action">Delete</string>
+    <string name="send_button">Send</string>
+    <string name="logout_action">Logout</string>
     <string name="back">Back</string>
 
     <!-- Login -->
     <string name="login_action">Log In</string>
     <string name="login_subtitle_welcome">Welcome back!</string>
     <string name="no_account">Don\'t have an account?</string>
-    <string name="email">E-mail</string>
+    <string name="email">Email</string>
     <string name="password">Password</string>
 
-    <!-- Registo -->
+    <!-- Registration -->
     <string name="register_action">Register</string>
+    <string name="register_check_email">Verify your email to complete registration.</string>
     <string name="name">Name</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="birthdate">Birthdate</string>
 
-    <!-- Avaliação -->
+    <!-- Rating -->
     <string name="clean">Clean</string>
     <string name="paper">Paper</string>
     <string name="structure">Structure</string>
     <string name="accessibility">Accessibility</string>
     <string name="ratings">Ratings</string>
+    <string name="edit_review_title">Edit Review</string>
 
-    <!-- Perfil -->
+    <!-- Profile -->
     <string name="level">Level</string>
     <string name="points">Points</string>
     <string name="progress">Progress</string>
     <string name="your_critics">Your Reviews</string>
-    <string name="roll_to_change">Roll to change</string>
+    <string name="swipe_to_change">Swipe to change</string>
 
-    <!-- Configurações -->
+    <!-- Settings -->
     <string name="change_name">Change Name</string>
-    <string name="change_email">Change E-mail</string>
+    <string name="change_email">Change Email</string>
     <string name="change_password">Change Password</string>
     <string name="new_password">New Password</string>
     <string name="confirm_new_password">Confirm New Password</string>
 
-    <!-- Denúncia -->
+    <!-- Report -->
     <string name="report_why_toilet">Why are you reporting this toilet?</string>
     <string name="report_why_comment">Why are you reporting this comment?</string>
     <string name="report_anonymous">Your report will be anonymous</string>
@@ -70,7 +78,7 @@
     <string name="report_damaged_equipment">Damaged equipment</string>
     <string name="report_others">Others</string>
 
-    <!-- Reação -->
+    <!-- Reaction -->
     <string name="reaction_none" translatable="false">None</string>
     <string name="reaction_like" translatable="false">Like</string>
     <string name="reaction_dislike" translatable="false">Dislike</string>
@@ -81,33 +89,43 @@
     <string name="reaction_spam">Spam</string>
     <string name="reaction_others">Others</string>
 
-    <!-- Comentário -->
+    <!-- Comment -->
     <string name="comments">Comments</string>
     <string name="comment">Comment</string>
-    <string name="insert_comment">Insert comment…</string>
+    <string name="insert_comment">Enter your comment…</string>
     <string name="reply">Reply</string>
     <string name="write_reply">Write a reply…</string>
     <string name="view_replies">View %d replies</string>
     <string name="hide_replies">Hide replies</string>
 
     <!-- Content Descriptions -->
-    <string name="content_description_toilet_image">Image toilet</string>
-    <string name="content_description_profile_picture">Image profile</string>
+    <string name="content_description_toilet_image">Toilet image</string>
+    <string name="content_description_profile_picture">Profile picture</string>
     <string name="content_description_like_button">Like button</string>
     <string name="content_description_dislike_button">Dislike button</string>
     <string name="content_description_date_button">Select date button</string>
     <string name="content_description_change_name_button">Change name button</string>
     <string name="content_description_change_email_button">Change email button</string>
     <string name="content_description_change_password_button">Change password button</string>
+    <string name="content_description_verified">Verified badge</string>
+    <string name="content_description_send_button">Send button</string>
+    <string name="content_description_save_button">Save button</string>
+    <string name="content_description_options_menu">Options menu</string>
+    <string name="content_description_loading_indicator">Loading indicator</string>
+    <string name="content_description_star_rating">Star rating: %d</string>
+    <string name="content_description_back_button">Back button</string>
+    <string name="content_description_calendar_icon">Calendar icon</string>
+    <string name="content_description_change_name_icon">Change name icon</string>
+    <string name="image_description_null">Image</string>
 
-    <!-- Erros -->
+    <!-- Errors -->
     <string name="error_image">Error loading image</string>
     <string name="error_login">Error logging in</string>
     <string name="error_register">Error registering</string>
     <string name="error_comment">Error sending comment</string>
     <string name="error_unexpected">An unexpected error occurred, please try again later.</string>
 
-    <!-- Erros de autenticação -->
+    <!-- Authentication Errors -->
     <string name="error_required_name">Required</string>
     <string name="error_required_email">Required</string>
     <string name="error_required_password">Required</string>
@@ -117,12 +135,12 @@
     <string name="error_too_long_email">Maximum 100 characters</string>
     <string name="error_too_short_name">Must be at least 6 characters long</string>
     <string name="error_too_short_password">Must be at least 6 characters long</string>
-    <string name="error_invalid_email">Invalid e-mail</string>
+    <string name="error_invalid_email">Invalid email address</string>
     <string name="error_invalid_password">Invalid password</string>
     <string name="error_passwords_do_not_match">Passwords do not match</string>
-    <string name="error_in_use_email">E-mail already in use</string>
+    <string name="error_in_use_email">Email already in use</string>
 
-    <!-- Tempo -->
+    <!-- Time -->
     <string name="time_year_single">A year ago</string>
     <string name="time_year_plural">%d years ago</string>
     <string name="time_month_single">A month ago</string>
@@ -136,14 +154,22 @@
     <string name="time_hour_less">Less than an hour ago</string>
 
     <!-- Confirmation -->
-    <string name="confirmation_report_success">Thanks for your report</string>
-    <string name="confirmation_suggest_success">Thanks for your suggestion</string>
-    <string name="confirmation_report_failure">Error reporting</string>
-    <string name="confirmation_suggest_failure">Error suggesting</string>
+    <string name="confirmation_report_success">Report sent successfully</string>
+    <string name="confirmation_suggest_success">Suggestion sent successfully</string>
+    <string name="confirmation_report_failure">Failed to send report</string>
+    <string name="confirmation_suggest_failure">Failed to send suggestion</string>
     <string name="confirmation_report_success_text">We will analyze it as soon as possible.</string>
     <string name="confirmation_suggest_success_text">We will analyze it as soon as possible.</string>
     <string name="confirmation_report_failure_text">Please try again later.</string>
     <string name="confirmation_suggest_failure_text">Please try again later.</string>
+    <string name="confirmation_register_success">Registration successful</string>
+    <string name="confirmation_register_success_text">We sent a verification link to your email.</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="forgot_password_instructions">Enter your email address and we\'ll send you instructions to reset your password.</string>
+    <string name="send_email">Send Email</string>
+    <string name="forgot_password_success">Password reset email sent</string>
+    <string name="forgot_password_success_text">Check your email for instructions to reset your password.</string>
+    <string name="resend_verification">Resend Verification</string>
 
     <!-- Extras -->
     <string name="extra_wheelchair_accessible">Wheelchair Accessible</string>
@@ -155,6 +181,7 @@
     <string name="access_public">Public</string>
     <string name="access_private">Private</string>
     <string name="access_consumers_only">Consumers</string>
+    <string name="access_separator" translatable="false">•</string>
 
     <!-- Comments -->
     <string name="comment_required">Comment required</string>
@@ -164,7 +191,7 @@
     <string name="search">Search</string>
     <string name="clear_search">Clear search</string>
 
-    <!-- Carrousel -->
+    <!-- Carousel -->
     <string name="icon">Icon</string>
 
     <!-- Links -->

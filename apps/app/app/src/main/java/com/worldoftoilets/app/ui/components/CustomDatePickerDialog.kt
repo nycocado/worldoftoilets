@@ -9,7 +9,9 @@ import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import com.worldoftoilets.app.R
 import com.worldoftoilets.app.ui.theme.AppTheme
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -22,13 +24,14 @@ fun CustomDatePickerDialog(
     onDateSelected: (String) -> Unit = { },
     onDismiss: () -> Unit = { }
 ) {
+    val context = LocalContext.current
     val datePickerState = rememberDatePickerState(
         selectableDates = object : SelectableDates {
             override fun isSelectableDate(utcTimeMillis: Long): Boolean {
                 return utcTimeMillis <= System.currentTimeMillis()
             }
         },
-        initialSelectedDateMillis = convertDateToMillis("01/01/2000"),
+        initialSelectedDateMillis = convertDateToMillis("2000-01-01"),
         yearRange = 1900..LocalDate.now().year
     )
 
@@ -45,7 +48,7 @@ fun CustomDatePickerDialog(
                     onDismiss()
                 }
             ) {
-                Text(text = "OK")
+                Text(text = context.getString(R.string.ok_button))
             }
         },
         dismissButton = {
@@ -54,7 +57,7 @@ fun CustomDatePickerDialog(
                     onDismiss()
                 }
             ) {
-                Text(text = "Cancel")
+                Text(text = context.getString(R.string.cancel_button))
             }
         }
     ) {

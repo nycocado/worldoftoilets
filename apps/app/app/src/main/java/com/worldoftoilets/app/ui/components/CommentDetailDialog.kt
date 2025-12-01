@@ -5,9 +5,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -64,7 +61,7 @@ fun CommentDetailDialog(
                             shape = CircleShape
                         ),
                     painter = comment.user.getIcon(),
-                    contentDescription = null
+                    contentDescription = context.getString(R.string.content_description_profile_picture)
                 )
                 Column {
                     Row(
@@ -82,7 +79,7 @@ fun CommentDetailDialog(
                         if (comment.user.isPartner) {
                             Icon(
                                 imageVector = Icons.Rounded.Verified,
-                                contentDescription = "Verified",
+                                contentDescription = context.getString(R.string.content_description_verified),
                                 tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(16.dp)
                             )
@@ -106,7 +103,7 @@ fun CommentDetailDialog(
                         text = comment.text,
                         style = MaterialTheme.typography.bodyMedium
                     )
-                    
+
                     HorizontalDivider(
                         modifier = Modifier.padding(vertical = 8.dp),
                         color = MaterialTheme.colorScheme.outlineVariant
@@ -151,7 +148,11 @@ fun CommentDetailDialog(
                         ProgressBar(
                             progress = paperValue,
                             maxValue = 100f,
-                            text = if (comment.rate.paper) "100% ${context.getString(R.string.paper)}" else "0% ${context.getString(R.string.paper)}"
+                            text = if (comment.rate.paper) "100% ${context.getString(R.string.paper)}" else "0% ${
+                                context.getString(
+                                    R.string.paper
+                                )
+                            }"
                         )
                     }
                 }

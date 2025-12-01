@@ -92,7 +92,7 @@ object SecurityModule {
     @Provides
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
-        val networkJson = Json { 
+        val networkJson = Json {
             ignoreUnknownKeys = true
             explicitNulls = false
         }

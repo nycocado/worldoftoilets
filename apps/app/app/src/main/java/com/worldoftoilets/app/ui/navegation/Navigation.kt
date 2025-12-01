@@ -2,7 +2,7 @@ package com.worldoftoilets.app.ui.navegation
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -17,6 +17,7 @@ import com.worldoftoilets.app.models.enums.ChangeSettingType
 import com.worldoftoilets.app.models.enums.ConfirmationType
 import com.worldoftoilets.app.ui.screens.ChangeSettingsScreen
 import com.worldoftoilets.app.ui.screens.ConfirmationScreen
+import com.worldoftoilets.app.ui.screens.ForgotPasswordScreen
 import com.worldoftoilets.app.ui.screens.HomeScreen
 import com.worldoftoilets.app.ui.screens.LoginScreen
 import com.worldoftoilets.app.ui.screens.ProfileScreen
@@ -30,7 +31,6 @@ import com.worldoftoilets.app.view.MainView
 import com.worldoftoilets.app.viewmodel.AuthViewModel
 import com.worldoftoilets.app.viewmodel.LocalViewModel
 import com.worldoftoilets.app.viewmodel.UserViewModel
-import com.worldoftoilets.app.ui.navegation.AppDestinations
 
 @Composable
 fun RootNavigationGraph(
@@ -50,7 +50,7 @@ fun RootNavigationGraph(
         }
         ratingNavGraph(localViewModel, navController)
         authNavGraph(navController, authViewModel)
-        reportNavGraph(navController, localViewModel)
+        reportNavGraph(navController, localViewModel, authViewModel)
         settingsNavGraph(navController, userViewModel)
     }
 }
@@ -111,7 +111,8 @@ fun BottomSheetNavigationGraph(
     navController: NavHostController,
     rootNavController: NavController,
     localViewModel: LocalViewModel,
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel,
+    lazyListState: LazyListState
 ) {
     NavHost(
         navController = navController,
@@ -129,6 +130,7 @@ fun BottomSheetNavigationGraph(
                 toiletsStateFlow = toilets,
                 toiletsNearbyIdsStateFlow = toiletIds,
                 locationStateFlow = location,
+                lazyListState = lazyListState,
                 navigateToToiletDetail = { toiletId ->
                     isLoggedIn?.let { logged ->
                         if (!logged) {
@@ -157,6 +159,7 @@ fun BottomSheetNavigationGraph(
             val commentsCache = localViewModel.commentsCache
             val isLoadingCommentsToilet = localViewModel.isLoadingCommentsToilet
             val user = userViewModel.user
+            val error = localViewModel.error
             val repliesCache = localViewModel.repliesCache
             val loadingReplies = localViewModel.loadingReplies
             LaunchedEffect(Unit) {
@@ -168,8 +171,10 @@ fun BottomSheetNavigationGraph(
                 commentsCacheStateFlow = commentsCache,
                 isLoadingCommentsToiletStateFlow = isLoadingCommentsToilet,
                 userMainStateFlow = user,
+                errorStateFlow = error,
                 repliesCacheStateFlow = repliesCache,
                 loadingRepliesStateFlow = loadingReplies,
+                lazyListState = lazyListState,
                 navigateToRating = {
                     rootNavController.navigate(AppDestinations.Rating(it)) {
                         launchSingleTop = true
@@ -254,6 +259,9 @@ private fun NavGraphBuilder.authNavGraph(
                 },
                 navigateToRegister = {
                     navController.navigate(AppDestinations.Register)
+                },
+                navigateToForgotPassword = {
+                    navController.navigate(AppDestinations.ForgotPassword)
                 }
             )
         }
@@ -264,9 +272,40 @@ private fun NavGraphBuilder.authNavGraph(
                 onRegister = { name, email, password, icon, birthDate ->
                     authViewModel.register(name, email, password, icon, birthDate)
                 },
-                onRegisterSuccess = {
+                onRegisterSuccess = { email ->
                     authViewModel.clearRegisterState()
+                    navController.navigate(
+                        AppDestinations.Confirmation(
+                            type = "register",
+                            confirmation = true,
+                            email = email
+                        )
+                    ) {
+                        popUpTo(AppDestinations.Register) { inclusive = true }
+                    }
+                },
+                navigateToBack = {
                     navController.popBackStack()
+                }
+            )
+        }
+        composable<AppDestinations.ForgotPassword> {
+            val forgotPasswordState = authViewModel.forgotPasswordState
+            ForgotPasswordScreen(
+                forgotPasswordStateFlow = forgotPasswordState,
+                onForgotPassword = { email ->
+                    authViewModel.forgotPassword(email)
+                },
+                onForgotPasswordSuccess = {
+                    authViewModel.clearForgotPasswordState()
+                    navController.navigate(
+                        AppDestinations.Confirmation(
+                            type = "forgot-password",
+                            confirmation = true
+                        )
+                    ) {
+                        popUpTo(AppDestinations.ForgotPassword) { inclusive = true }
+                    }
                 },
                 navigateToBack = {
                     navController.popBackStack()
@@ -332,7 +371,8 @@ private fun NavGraphBuilder.ratingNavGraph(
 
 private fun NavGraphBuilder.reportNavGraph(
     navController: NavHostController,
-    localViewModel: LocalViewModel
+    localViewModel: LocalViewModel,
+    authViewModel: AuthViewModel
 ) {
     // We are not using 'navigation' wrapper here because startDestination with args is tricky.
     // Just exposing the composables directly to the root graph.
@@ -359,7 +399,7 @@ private fun NavGraphBuilder.reportNavGraph(
             onReportConfirmation = { confirmationType ->
                 localViewModel.clearReportState()
                 navController.navigate(
-                    AppDestinations.ReportConfirmation(
+                    AppDestinations.Confirmation(
                         type = confirmationType.type,
                         confirmation = confirmationType.confirmation
                     )
@@ -369,27 +409,41 @@ private fun NavGraphBuilder.reportNavGraph(
             }
         )
     }
-    composable<AppDestinations.ReportConfirmation> { backStackEntry ->
-        val args = backStackEntry.toRoute<AppDestinations.ReportConfirmation>()
+    composable<AppDestinations.Confirmation> { backStackEntry ->
+        val args = backStackEntry.toRoute<AppDestinations.Confirmation>()
         val confirmationType =
             ConfirmationType.entries.find { it.type == args.type && it.confirmation == args.confirmation }!!
         ConfirmationScreen(
             confirmation = confirmationType,
             onClickConfirm = {
-                if (it == ConfirmationType.REPORT_COMMENT_SUCCESS || it == ConfirmationType.REPORT_COMMENT_FAILURE ||
-                    it == ConfirmationType.REPORT_REPLY_SUCCESS || it == ConfirmationType.REPORT_REPLY_FAILURE
-                ) {
-                    navController.popBackStack()
-                    navController.popBackStack()
-                } else {
-                    navController.navigate(AppDestinations.MainGraph) {
-                        popUpTo(navController.graph.startDestinationId) {
-                            inclusive = true
+                when (it) {
+                    ConfirmationType.REGISTER_SUCCESS, ConfirmationType.FORGOT_PASSWORD_SUCCESS -> {
+                        navController.popBackStack()
+                    }
+
+                    ConfirmationType.REPORT_COMMENT_SUCCESS, ConfirmationType.REPORT_COMMENT_FAILURE, ConfirmationType.REPORT_REPLY_SUCCESS, ConfirmationType.REPORT_REPLY_FAILURE
+                        -> {
+                        navController.popBackStack()
+                        navController.popBackStack()
+                    }
+
+                    else -> {
+                        navController.navigate(AppDestinations.MainGraph) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
                         }
-                        launchSingleTop = true
                     }
                 }
             },
+            onClickResend = if (args.email != null) {
+                if (args.type == "forgot-password") {
+                    { authViewModel.forgotPassword(args.email) }
+                } else {
+                    { authViewModel.resendVerification(args.email) }
+                }
+            } else null,
             navigateToBack = {
                 navController.popBackStack()
             }
