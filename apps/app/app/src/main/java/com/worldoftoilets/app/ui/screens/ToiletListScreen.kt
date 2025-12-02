@@ -9,36 +9,36 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.worldoftoilets.app.R
 import com.worldoftoilets.app.models.Toilet
 import com.worldoftoilets.app.models.UiState
 import com.worldoftoilets.app.models.responses.PageResponse
 import com.worldoftoilets.app.ui.components.LocationCard
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import com.worldoftoilets.app.R
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.LaunchedEffect
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.worldoftoilets.app.ui.theme.AppTheme
 import com.worldoftoilets.app.ui.util.generateLocationStateFlow
 import com.worldoftoilets.app.ui.util.generateToiletsNearbyIdsStateFlow
 import com.worldoftoilets.app.ui.util.generateToiletsStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 @Composable
 fun ToiletListScreen(
@@ -46,6 +46,7 @@ fun ToiletListScreen(
     toiletsNearbyIdsStateFlow: StateFlow<UiState<PageResponse<String>>>,
     locationStateFlow: StateFlow<Location?>,
     lazyListState: LazyListState,
+    isExpanded: Boolean = true,
     navigateToToiletDetail: (String) -> Unit = {},
     onClickLoadMore: (PageResponse<String>) -> Unit = {}
 ) {
@@ -96,7 +97,10 @@ fun ToiletListScreen(
                     }
                 }
 
-                LazyColumn(state = lazyListState) {
+                LazyColumn(
+                    state = lazyListState,
+                    userScrollEnabled = isExpanded
+                ) {
                     items(toiletList) { toilet ->
                         LocationCard(
                             toilet = toilet,

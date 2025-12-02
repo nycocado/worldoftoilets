@@ -112,7 +112,8 @@ fun BottomSheetNavigationGraph(
     rootNavController: NavController,
     localViewModel: LocalViewModel,
     userViewModel: UserViewModel,
-    lazyListState: LazyListState
+    lazyListState: LazyListState,
+    isExpanded: Boolean
 ) {
     NavHost(
         navController = navController,
@@ -131,6 +132,7 @@ fun BottomSheetNavigationGraph(
                 toiletsNearbyIdsStateFlow = toiletIds,
                 locationStateFlow = location,
                 lazyListState = lazyListState,
+                isExpanded = isExpanded,
                 navigateToToiletDetail = { toiletId ->
                     isLoggedIn?.let { logged ->
                         if (!logged) {
@@ -175,6 +177,7 @@ fun BottomSheetNavigationGraph(
                 repliesCacheStateFlow = repliesCache,
                 loadingRepliesStateFlow = loadingReplies,
                 lazyListState = lazyListState,
+                isExpanded = isExpanded,
                 navigateToRating = {
                     rootNavController.navigate(AppDestinations.Rating(it)) {
                         launchSingleTop = true
@@ -228,8 +231,32 @@ fun BottomSheetNavigationGraph(
                 },
                 onDeleteReply = { replyId, commentId ->
                     localViewModel.deleteReply(replyId, commentId)
+                },
+                onRouteClick = { tId ->
+                    localViewModel.calculateRoute(tId)
+                    navController.navigate(AppDestinations.Route(tId)) {
+                        launchSingleTop = true
+                    }
                 }
             )
+        }
+        composable<AppDestinations.Route> { backStackEntry ->
+            val args = backStackEntry.toRoute<AppDestinations.Route>()
+            val toiletId = args.toiletId
+            val toilets = localViewModel.toiletsCache
+            val toilet = toilets.collectAsState().value[toiletId]
+            
+            if (toilet != null) {
+                com.worldoftoilets.app.ui.screens.RouteScreen(
+                    toilet = toilet,
+                    onClose = {
+                        localViewModel.clearRoute()
+                        navController.popBackStack()
+                    }
+                )
+            } else {
+                navController.popBackStack()
+            }
         }
     }
 }

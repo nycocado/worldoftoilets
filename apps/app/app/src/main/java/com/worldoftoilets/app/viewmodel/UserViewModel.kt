@@ -7,6 +7,7 @@ import com.worldoftoilets.app.models.User
 import com.worldoftoilets.app.repositories.AuthRepository
 import com.worldoftoilets.app.repositories.UserPreferencesRepository
 import com.worldoftoilets.app.repositories.UserRepository
+import com.worldoftoilets.app.security.TokenManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -21,6 +22,7 @@ import javax.inject.Inject
 class UserViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository,
+    private val tokenManager: TokenManager,
     userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
     private val _user = MutableStateFlow<User?>(null)
@@ -33,18 +35,35 @@ class UserViewModel @Inject constructor(
         .map { it as Boolean? }
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
+    private val _isAppReady = MutableStateFlow(false)
+    val isAppReady: StateFlow<Boolean> = _isAppReady.asStateFlow()
+
     private val _error = MutableStateFlow("")
     val error: StateFlow<String> = _error.asStateFlow()
 
     init {
-        // Carregar user se estiver logado
+        // Session verification logic
         viewModelScope.launch {
             isLoggedIn.collect { loggedIn ->
                 if (loggedIn == true) {
-                    loadUser()
-                } else {
+                    if (tokenManager.isAccessTokenExpired()) {
+                        val result = authRepository.refreshToken()
+                        if (result.isSuccess) {
+                            loadUser()
+                            _isAppReady.value = true
+                        } else {
+                            logout()
+                            _isAppReady.value = true
+                        }
+                    } else {
+                        loadUser()
+                        _isAppReady.value = true
+                    }
+                } else if (loggedIn == false) {
                     _user.value = null
+                    _isAppReady.value = true
                 }
+                // If null, do nothing (loading preference)
             }
         }
     }

@@ -1,17 +1,10 @@
 package com.worldoftoilets.app.ui.components
 
-
+import android.graphics.Color
 import android.location.Location
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.MyLocation
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -22,11 +15,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
@@ -44,24 +35,37 @@ import org.maplibre.android.MapLibre
 import org.maplibre.android.camera.CameraPosition
 import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.geometry.LatLng
+import org.maplibre.android.geometry.LatLngBounds
 import org.maplibre.android.maps.MapLibreMap
 import org.maplibre.android.maps.MapView
 import org.maplibre.android.plugins.annotation.Symbol
 import org.maplibre.android.plugins.annotation.SymbolManager
 import org.maplibre.android.plugins.annotation.SymbolOptions
+import org.maplibre.android.style.layers.LineLayer
+import org.maplibre.android.style.layers.PropertyFactory
+import org.maplibre.android.style.sources.GeoJsonSource
+import org.maplibre.geojson.Feature
+import org.maplibre.geojson.FeatureCollection
+import org.maplibre.geojson.LineString
+import org.maplibre.geojson.Point
+import androidx.core.graphics.toColorInt
 
 @Composable
 fun MapLibreView(
     location: Location?,
     toilets: Map<String, Toilet>,
     toiletsBoundingBoxIds: List<String>,
-    bottomControlsPadding: Dp = 0.dp,
+    centerCameraTrigger: Int = 0,
+    routePoints: List<List<Double>>? = null,
+    destinationToiletId: String? = null,
+    sheetPeekHeightPx: Int = 0,
     onRequestToiletsBoundingBox: (GeoBox) -> Unit,
     onClickMarker: (String) -> Unit
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val scope = rememberCoroutineScope()
+    val routeColor = MaterialTheme.colorScheme.primary.toArgb()
 
     remember {
         MapLibre.getInstance(context)
@@ -77,10 +81,9 @@ fun MapLibreView(
     var symbolManager: SymbolManager? by remember { mutableStateOf(null) }
     var userLocationSymbol: Symbol? by remember { mutableStateOf(null) }
     var hasCentered by remember { mutableStateOf(false) }
+    var isStyleLoaded by remember { mutableStateOf(false) }
 
     val toiletSymbols = remember { mutableMapOf<String, Symbol>() }
-
-    val iconSize = 52.dp
 
     // Manage MapView Lifecycle
     DisposableEffect(lifecycleOwner) {
@@ -128,6 +131,8 @@ fun MapLibreView(
                         }
 
                         map.setStyle(styleUrl) { style ->
+                            isStyleLoaded = true // Signal that style is ready
+
                             // Setup Symbol Manager
                             val manager = SymbolManager(this, map, style)
                             manager.iconAllowOverlap = true
@@ -191,37 +196,6 @@ fun MapLibreView(
             update = {
             }
         )
-
-        IconButton(
-            onClick = {
-                scope.launch {
-                    if (location != null && mapLibreMap != null) {
-                        mapLibreMap?.animateCamera(
-                            CameraUpdateFactory.newCameraPosition(
-                                CameraPosition.Builder()
-                                    .target(LatLng(location.latitude, location.longitude))
-                                    .zoom(15.0)
-                                    .build()
-                            )
-                        )
-                    }
-                }
-            },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(end = 16.dp, bottom = 16.dp + bottomControlsPadding)
-                .size(iconSize),
-            colors = IconButtonDefaults.iconButtonColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                contentColor = MaterialTheme.colorScheme.primary
-            )
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.MyLocation,
-                contentDescription = context.getString(R.string.my_location),
-                modifier = Modifier.size(iconSize * 0.75f)
-            )
-        }
     }
 
     // Handle User Location Update
@@ -258,18 +232,39 @@ fun MapLibreView(
         }
     }
 
+    // Handle Manual Camera Center Trigger
+    LaunchedEffect(centerCameraTrigger) {
+        if (centerCameraTrigger > 0 && location != null && mapLibreMap != null) {
+            mapLibreMap?.animateCamera(
+                CameraUpdateFactory.newCameraPosition(
+                    CameraPosition.Builder()
+                        .target(LatLng(location.latitude, location.longitude))
+                        .zoom(15.0)
+                        .build()
+                )
+            )
+        }
+    }
+
     // Handle Toilets Update
-    LaunchedEffect(toiletsBoundingBoxIds, symbolManager) {
+    LaunchedEffect(toiletsBoundingBoxIds, symbolManager, routePoints, destinationToiletId) {
         if (symbolManager != null) {
-            val idsToKeep = toiletsBoundingBoxIds.toSet()
-            val symbolsToRemove = toiletSymbols.filterKeys { !idsToKeep.contains(it) }
+            val isRouteActive = routePoints != null && routePoints.isNotEmpty()
+
+            val idsToDisplay = if (isRouteActive && destinationToiletId != null) {
+                setOf(destinationToiletId)
+            } else {
+                toiletsBoundingBoxIds.toSet()
+            }
+
+            val symbolsToRemove = toiletSymbols.filterKeys { !idsToDisplay.contains(it) }
 
             symbolsToRemove.forEach { (id, symbol) ->
                 symbolManager?.delete(symbol)
                 toiletSymbols.remove(id)
             }
 
-            toiletsBoundingBoxIds.forEach { toiletId ->
+            idsToDisplay.forEach { toiletId ->
                 if (!toiletSymbols.containsKey(toiletId)) {
                     toilets[toiletId]?.let { toilet ->
                         val avgRating = toilet.getAverageRating()
@@ -290,6 +285,73 @@ fun MapLibreView(
                             toiletSymbols[toiletId] = symbol
                         }
                     }
+                }
+            }
+        }
+    }
+
+    // Handle Route Drawing
+    LaunchedEffect(routePoints, mapLibreMap, isStyleLoaded) {
+        val map = mapLibreMap ?: return@LaunchedEffect
+        if (!isStyleLoaded) return@LaunchedEffect
+
+        map.getStyle { style ->
+            val layerId = "route-layer"
+            val sourceId = "route-source"
+
+            // Always clean up old route first
+            if (style.getLayer(layerId) != null) {
+                style.removeLayer(layerId)
+            }
+            if (style.getSource(sourceId) != null) {
+                style.removeSource(sourceId)
+            }
+
+            if (routePoints != null && routePoints.isNotEmpty()) {
+                val points = routePoints.map { Point.fromLngLat(it[0], it[1]) }
+                val lineString = LineString.fromLngLats(points)
+                val feature = Feature.fromGeometry(lineString)
+                val featureCollection = FeatureCollection.fromFeature(feature)
+
+                val source = GeoJsonSource(sourceId, featureCollection)
+                style.addSource(source)
+
+                val lineLayer = LineLayer(layerId, sourceId).apply {
+                    setProperties(
+                        PropertyFactory.lineCap(org.maplibre.android.style.layers.Property.LINE_CAP_ROUND),
+                        PropertyFactory.lineJoin(org.maplibre.android.style.layers.Property.LINE_JOIN_ROUND),
+                        PropertyFactory.lineWidth(4f),
+                        PropertyFactory.lineColor(routeColor)
+                    )
+                }
+                style.addLayer(lineLayer)
+
+                // Fit Camera to Route + User Location
+                try {
+                    val bounds = LatLngBounds.Builder()
+                    points.forEach { bounds.include(LatLng(it.latitude(), it.longitude())) }
+                    location?.let { bounds.include(LatLng(it.latitude, it.longitude)) }
+
+                    // Smart padding: consider bottom sheet peek height + 16dp margin + top search bar + 16dp margin
+                    val horizontalPadding =
+                        (48 * context.resources.displayMetrics.density).toInt() // 48dp sides
+                    val topPadding =
+                        (72 * context.resources.displayMetrics.density).toInt() // 72dp for search bar + margin
+                    val bottomPadding =
+                        sheetPeekHeightPx + (72 * context.resources.displayMetrics.density).toInt() // peek height + 72dp margin
+
+                    map.animateCamera(
+                        CameraUpdateFactory.newLatLngBounds(
+                            bounds.build(),
+                            horizontalPadding, // Left
+                            topPadding, // Top
+                            horizontalPadding, // Right
+                            bottomPadding  // Bottom (sheet peek + margin)
+                        ),
+                        1500
+                    )
+                } catch (e: Exception) {
+
                 }
             }
         }

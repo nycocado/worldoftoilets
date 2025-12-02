@@ -1,6 +1,10 @@
 <resources>
     <!-- App -->
     <string name="app_name" translatable="false">World of Toilets</string>
+
+    <!-- Route -->
+    <string name="route_title">Route to Toilet</string>
+    <string name="close">Close</string>
     <string name="logo">App logo</string>
 
     <!-- Routes -->
@@ -190,6 +194,13 @@
     <!-- Search -->
     <string name="search">Search</string>
     <string name="clear_search">Clear search</string>
+
+    <!-- Filter -->
+    <string name="filter_title">Filter</string>
+    <string name="filter_access_type">Access Type</string>
+    <string name="filter_extras">Extras</string>
+    <string name="apply">Apply</string>
+    <string name="cancel">Cancel</string>
 
     <!-- Carousel -->
     <string name="icon">Icon</string>

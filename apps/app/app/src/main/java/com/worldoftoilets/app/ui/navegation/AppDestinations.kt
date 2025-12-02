@@ -19,6 +19,14 @@ object AppDestinations {
     @Serializable
     object ReportGraph
 
+    // Auth Screens
+    @Serializable
+    object Login
+    @Serializable
+    object Register
+    @Serializable
+    object ForgotPassword
+
     // Main Screens
     @Serializable
     data class Home(val toiletId: String? = null)
@@ -31,15 +39,9 @@ object AppDestinations {
     @Serializable
     data class ToiletDetails(val toiletId: String)
 
-    // Auth Screens
     @Serializable
-    object Login
-    @Serializable
-    object Register
-    @Serializable
-    object ForgotPassword
+    data class Route(val toiletId: String)
 
-    // Rating Screens
     @Serializable
     data class Rating(val toiletId: String, val commentId: String? = null)
 

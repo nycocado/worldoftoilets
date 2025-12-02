@@ -18,7 +18,7 @@ interface ToiletService {
         @Query("country") country: String? = null,
         @Query("countryCode") countryCode: String? = null,
         @Query("access") access: String? = null,
-        @Query("extras") extras: List<String>? = null,
+        @Query("extras") extras: String? = null,
         @Query("timestamp") timestamp: String? = null
     ): Response<ApiResponse<List<Toilet>>>
 
@@ -30,7 +30,7 @@ interface ToiletService {
         @Query("page") page: Int = 0,
         @Query("size") size: Int = 20,
         @Query("access") access: String? = null,
-        @Query("extras") extras: List<String>? = null,
+        @Query("extras") extras: String? = null,
         @Query("timestamp") timestamp: String? = null
     ): Response<ApiResponse<List<Toilet>>>
 
@@ -41,7 +41,7 @@ interface ToiletService {
         @Query("maxLat") maxLat: Double,
         @Query("maxLng") maxLng: Double,
         @Query("access") access: String? = null,
-        @Query("extras") extras: List<String>? = null,
+        @Query("extras") extras: String? = null,
         @Query("timestamp") timestamp: String? = null
     ): Response<ApiResponse<List<Toilet>>>
 

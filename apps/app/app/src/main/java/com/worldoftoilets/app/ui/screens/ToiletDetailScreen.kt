@@ -77,6 +77,7 @@ fun ToiletDetailScreen(
     repliesCacheStateFlow: StateFlow<Map<String, List<Reply>>> = MutableStateFlow(emptyMap()),
     loadingRepliesStateFlow: StateFlow<Set<String>> = MutableStateFlow(emptySet()),
     lazyListState: LazyListState,
+    isExpanded: Boolean = true,
     navigateToRating: (toiletId: String) -> Unit = {},
     navigateToToiletReport: (toiletId: String) -> Unit = {},
     navigateToCommentReport: (commentId: String) -> Unit = {},
@@ -89,7 +90,8 @@ fun ToiletDetailScreen(
     onEditComment: (String) -> Unit = { _ -> },
     onDeleteComment: (String) -> Unit = {},
     onEditReply: (String, String, String) -> Unit = { _, _, _ -> },
-    onDeleteReply: (String, String) -> Unit = { _, _ -> }
+    onDeleteReply: (String, String) -> Unit = { _, _ -> },
+    onRouteClick: (String) -> Unit = {}
 ) {
     val toilets by toiletsStateFlow.collectAsStateWithLifecycle()
     val commentsCache by commentsCacheStateFlow.collectAsStateWithLifecycle()
@@ -141,12 +143,14 @@ fun ToiletDetailScreen(
             // Header Section: Title, Address, Top Actions
             ToiletHeader(
                 toilet = toilet,
+                onRouteClick = { onRouteClick(toilet.publicId) },
                 onReportClick = { navigateToToiletReport(toilet.publicId) },
                 onBackClick = { navigateToBack() }
             )
 
             LazyColumn(
                 state = lazyListState,
+                userScrollEnabled = isExpanded,
                 modifier = Modifier
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -190,15 +194,13 @@ fun ToiletDetailScreen(
                     )
                 }
 
-                // Main Action Buttons Row (Maps, Rate)
-                item {
-                    ToiletActions(
-                        toilet = toilet,
-                        onRateClick = { scope.launch { navigateToRating(toilet.publicId) } }
-                    )
-                }
-
-                // Address Item
+                                                // Main Action Buttons Row (Maps, Rate)
+                                                    item {
+                                                        ToiletActions(
+                                                            toilet = toilet,
+                                                            onRateClick = { scope.launch { navigateToRating(toilet.publicId) } }
+                                                        )
+                                                    }                // Address Item
                 item {
                     Row(
                         modifier = Modifier
