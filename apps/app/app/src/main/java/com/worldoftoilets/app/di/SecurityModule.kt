@@ -138,4 +138,10 @@ object SecurityModule {
     fun provideReplyService(retrofit: Retrofit): com.worldoftoilets.app.network.ReplyService {
         return retrofit.create(com.worldoftoilets.app.network.ReplyService::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideRouteService(retrofit: Retrofit): com.worldoftoilets.app.network.RouteService {
+        return retrofit.create(com.worldoftoilets.app.network.RouteService::class.java)
+    }
 }

@@ -30,6 +30,17 @@ class AuthRepository @Inject constructor(
                     loginResponse.refreshToken
                 )
 
+                // Verificar persistência do token
+                var attempts = 0
+                while (tokenManager.getAccessToken() != loginResponse.accessToken && attempts < 10) {
+                    kotlinx.coroutines.delay(50)
+                    attempts++
+                }
+
+                if (tokenManager.getAccessToken() != loginResponse.accessToken) {
+                    return Result.failure(Exception("Falha ao persistir tokens. Tente novamente."))
+                }
+
                 // Marcar como logado
                 userPreferencesRepository.setLoggedIn(true)
 
@@ -119,6 +130,27 @@ class AuthRepository @Inject constructor(
                 val errorMsg =
                     response.body()?.message ?: parseApiError(response.errorBody()?.string())
                 Result.failure(Exception(errorMsg))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun refreshToken(): Result<Unit> {
+        return try {
+            val refreshToken = tokenManager.getRefreshToken()
+                ?: return Result.failure(Exception("No refresh token"))
+            val response = authService.refresh("Bearer $refreshToken")
+            val apiResponse = response.body()
+
+            if (response.isSuccessful && apiResponse?.data != null) {
+                val data = apiResponse.data
+                tokenManager.saveTokens(data.accessToken, data.refreshToken)
+                Result.success(Unit)
+            } else {
+                tokenManager.clearTokens()
+                userPreferencesRepository.clear()
+                Result.failure(Exception("Failed to refresh token"))
             }
         } catch (e: Exception) {
             Result.failure(e)

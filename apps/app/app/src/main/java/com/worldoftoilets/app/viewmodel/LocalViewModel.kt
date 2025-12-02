@@ -8,12 +8,15 @@ import com.worldoftoilets.app.models.Comment
 import com.worldoftoilets.app.models.Page
 import com.worldoftoilets.app.models.Reply
 import com.worldoftoilets.app.models.Toilet
+import com.worldoftoilets.app.models.ToiletFilter
 import com.worldoftoilets.app.models.UiState
 import com.worldoftoilets.app.models.responses.PageResponse
+import com.worldoftoilets.app.models.responses.RouteResponse
 import com.worldoftoilets.app.repositories.CommentRepository
 import com.worldoftoilets.app.repositories.LocationRepository
 import com.worldoftoilets.app.repositories.ReplyRepository
 import com.worldoftoilets.app.repositories.ReportRepository
+import com.worldoftoilets.app.repositories.RouteRepository
 import com.worldoftoilets.app.repositories.ToiletRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +31,8 @@ class LocalViewModel @Inject constructor(
     private val commentRepository: CommentRepository,
     private val locationRepository: LocationRepository,
     private val reportRepository: ReportRepository,
-    private val replyRepository: ReplyRepository
+    private val replyRepository: ReplyRepository,
+    private val routeRepository: RouteRepository
 ) : ViewModel() {
     private val _toiletsCache = MutableStateFlow<Map<String, Toilet>>(emptyMap())
     val toiletsCache: StateFlow<Map<String, Toilet>> = _toiletsCache.asStateFlow()
@@ -41,6 +45,9 @@ class LocalViewModel @Inject constructor(
 
     private val _toiletsBoundingBoxIds = MutableStateFlow<List<String>>(emptyList())
     val toiletsBoundingBoxIds: StateFlow<List<String>> = _toiletsBoundingBoxIds.asStateFlow()
+
+    private val _toiletFilter = MutableStateFlow(ToiletFilter())
+    val toiletFilter: StateFlow<ToiletFilter> = _toiletFilter.asStateFlow()
 
     private val _commentsCache = MutableStateFlow<Map<String, List<Comment>>>(emptyMap())
     val commentsCache: StateFlow<Map<String, List<Comment>>> = _commentsCache.asStateFlow()
@@ -65,6 +72,9 @@ class LocalViewModel @Inject constructor(
 
     private val _reportState = MutableStateFlow<Result<Unit>?>(null)
     val reportState: StateFlow<Result<Unit>?> = _reportState.asStateFlow()
+
+    private val _routeState = MutableStateFlow<UiState<RouteResponse>>(UiState.Idle)
+    val routeState: StateFlow<UiState<RouteResponse>> = _routeState.asStateFlow()
 
     private val _location = MutableStateFlow<Location?>(null)
     val location: StateFlow<Location?> = _location.asStateFlow()
@@ -97,8 +107,11 @@ class LocalViewModel @Inject constructor(
     fun loadToiletsNearby(latitude: Double, longitude: Double) {
         viewModelScope.launch {
             _toiletsNearbyIds.value = UiState.Loading
+            val currentFilter = _toiletFilter.value
             val result = toiletRepository.getToiletsByProximity(
-                latitude, longitude, 0, PAGE_SIZE, null
+                latitude, longitude, 0, PAGE_SIZE, null,
+                currentFilter.access?.technicalValue,
+                currentFilter.extras.map { it.technicalValue }.takeIf { it.isNotEmpty() }
             )
 
             result.onSuccess { toilets ->
@@ -126,8 +139,11 @@ class LocalViewModel @Inject constructor(
                 if (currentState.data.page?.isLast == true) return@launch
 
                 val nextPage = (currentState.data.page?.number ?: 0) + 1
+                val currentFilter = _toiletFilter.value
                 val result = toiletRepository.getToiletsByProximity(
-                    latitude, longitude, nextPage, PAGE_SIZE, nearbyLastTimestamp
+                    latitude, longitude, nextPage, PAGE_SIZE, nearbyLastTimestamp,
+                    currentFilter.access?.technicalValue,
+                    currentFilter.extras.map { it.technicalValue }.takeIf { it.isNotEmpty() }
                 )
 
                 result.onSuccess { toilets ->
@@ -280,8 +296,13 @@ class LocalViewModel @Inject constructor(
     fun loadToiletsBoundingBox(minLat: Double, minLng: Double, maxLat: Double, maxLng: Double) {
         viewModelScope.launch {
             try {
+                val currentFilter = _toiletFilter.value
                 val result =
-                    toiletRepository.getToiletsByBoundingBox(minLat, minLng, maxLat, maxLng)
+                    toiletRepository.getToiletsByBoundingBox(
+                        minLat, minLng, maxLat, maxLng,
+                        currentFilter.access?.technicalValue,
+                        currentFilter.extras.map { it.technicalValue }.takeIf { it.isNotEmpty() }
+                    )
 
                 result.onSuccess { toilets ->
                     _toiletsCache.value += toilets.associateBy { it.publicId }
@@ -293,6 +314,21 @@ class LocalViewModel @Inject constructor(
                 _error.value = e.message ?: "Erro ao carregar banheiros"
                 Log.e("LocalViewModel", "Erro ao carregar banheiros", e)
             }
+        }
+    }
+
+    fun updateFilter(filter: ToiletFilter) {
+        _toiletFilter.value = filter
+        // Reload data with new filter
+        // Limpar cache de listagens que dependem do filtro
+        _toiletsNearbyIds.value = UiState.Idle
+        _toiletsBoundingBoxIds.value = emptyList()
+        
+        // Reload location-based data if location is available
+        _location.value?.let { loc ->
+            loadToiletsNearby(loc.latitude, loc.longitude)
+            // Note: Bounding box reload usually happens via Map movement callback, 
+            // but we clear the current list to force map to request again if needed or just rely on map movement
         }
     }
 
@@ -569,5 +605,28 @@ class LocalViewModel @Inject constructor(
                 _error.value = e.message ?: "Erro ao deletar comentário"
             }
         }
+    }
+
+    fun calculateRoute(toiletId: String) {
+        val loc = _location.value
+        if (loc == null) {
+            _error.value = "Localização não disponível"
+            return
+        }
+
+        viewModelScope.launch {
+            _routeState.value = UiState.Loading
+            val result = routeRepository.calculateRouteToToilet(toiletId, loc.latitude, loc.longitude)
+            result.onSuccess { route ->
+                _routeState.value = UiState.Success(route)
+            }.onFailure { e ->
+                _routeState.value = UiState.Error(e.message ?: "Erro ao calcular rota")
+                _error.value = e.message ?: "Erro ao calcular rota"
+            }
+        }
+    }
+
+    fun clearRoute() {
+        _routeState.value = UiState.Idle
     }
 }

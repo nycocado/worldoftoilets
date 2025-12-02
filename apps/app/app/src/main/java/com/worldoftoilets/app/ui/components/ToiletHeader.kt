@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.DirectionsRun
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Flag
 import androidx.compose.material3.FilledIconButton
@@ -16,7 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.worldoftoilets.app.R
 import com.worldoftoilets.app.models.Toilet
@@ -25,8 +28,10 @@ import com.worldoftoilets.app.models.enums.TypeAccess
 @Composable
 fun ToiletHeader(
     toilet: Toilet,
-    onReportClick: () -> Unit,
-    onBackClick: () -> Unit
+    onRouteClick: (() -> Unit)? = null,
+    onReportClick: (() -> Unit)? = null,
+    onBackClick: () -> Unit,
+    maxLinesForName: Int? = null
 ) {
     val context = LocalContext.current
 
@@ -41,7 +46,9 @@ fun ToiletHeader(
             Text(
                 text = toilet.name,
                 style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                maxLines = maxLinesForName ?: Int.MAX_VALUE,
+                overflow = if (maxLinesForName != null) TextOverflow.Ellipsis else TextOverflow.Clip
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -78,22 +85,47 @@ fun ToiletHeader(
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            FilledIconButton(
-                onClick = onReportClick,
-                modifier = Modifier.size(38.dp),
-                colors = IconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                    contentColor = MaterialTheme.colorScheme.onSurface,
-                    disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(
-                        alpha = 0.5f
-                    ),
-                    disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                )
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Flag,
-                    contentDescription = context.getString(R.string.report)
-                )
+            if (onRouteClick != null) {
+                FilledIconButton(
+                    onClick = onRouteClick,
+                    modifier = Modifier.size(38.dp),
+                    colors = IconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        contentColor = MaterialTheme.colorScheme.onSurface,
+                        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(
+                            alpha = 0.5f
+                        ),
+                        disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(
+                            alpha = 0.5f
+                        )
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Rounded.DirectionsRun,
+                        contentDescription = stringResource(R.string.route_title)
+                    )
+                }
+            }
+            if (onReportClick != null) {
+                FilledIconButton(
+                    onClick = onReportClick,
+                    modifier = Modifier.size(38.dp),
+                    colors = IconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        contentColor = MaterialTheme.colorScheme.onSurface,
+                        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(
+                            alpha = 0.5f
+                        ),
+                        disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(
+                            alpha = 0.5f
+                        )
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Flag,
+                        contentDescription = context.getString(R.string.report)
+                    )
+                }
             }
             FilledIconButton(
                 onClick = onBackClick,

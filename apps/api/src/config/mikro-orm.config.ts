@@ -29,5 +29,21 @@ export const createMikroOrmConfig = (config: ConfigService): Options => {
       config.getOrThrow('NODE_ENV') !== 'production'
         ? new SqlHighlighter()
         : undefined,
+    pool: {
+      min: 2,
+      max: 10,
+      acquireTimeoutMillis: 30000,
+      idleTimeoutMillis: 30000,
+    },
+    driverOptions: {
+      connection: {
+        connectTimeout: 10000,
+        connectionLimit: 10,
+        waitForConnections: true,
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 30000,
+      },
+    },
   };
 };

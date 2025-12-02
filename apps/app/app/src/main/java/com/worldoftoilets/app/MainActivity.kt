@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         splashScreen.setKeepOnScreenCondition {
-            userViewModel.isLoggedIn.value == null
+            !userViewModel.isAppReady.value
         }
 
         setContent {

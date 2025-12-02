@@ -13,11 +13,14 @@ class ToiletRepository @Inject constructor(
         lng: Double,
         page: Int = 0,
         size: Int = 20,
-        timestamp: String? = null
+        timestamp: String? = null,
+        access: String? = null,
+        extras: List<String>? = null
     ): Result<List<Toilet>> {
         return try {
+            val extrasString = extras?.joinToString(",")
             val response = toiletService.getToiletsByProximity(
-                lat, lng, true, page, size, null, null, timestamp
+                lat, lng, true, page, size, access, extrasString, timestamp
             )
             val apiResponse = response.body()
 
@@ -36,11 +39,14 @@ class ToiletRepository @Inject constructor(
         minLat: Double,
         minLng: Double,
         maxLat: Double,
-        maxLng: Double
+        maxLng: Double,
+        access: String? = null,
+        extras: List<String>? = null
     ): Result<List<Toilet>> {
         return try {
+            val extrasString = extras?.joinToString(",")
             val response = toiletService.getToiletsByBoundingBox(
-                minLat, minLng, maxLat, maxLng, null, null, null
+                minLat, minLng, maxLat, maxLng, access, extrasString, null
             )
             val apiResponse = response.body()
 
