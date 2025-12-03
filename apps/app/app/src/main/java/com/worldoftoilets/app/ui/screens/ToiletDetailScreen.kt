@@ -82,6 +82,7 @@ fun ToiletDetailScreen(
     navigateToToiletReport: (toiletId: String) -> Unit = {},
     navigateToCommentReport: (commentId: String) -> Unit = {},
     navigateToReplyReport: (replyId: String) -> Unit = {},
+    navigateToUserReport: (userId: String) -> Unit = {},
     navigateToBack: () -> Unit = {},
     onReaction: (toiletId: String, commentPublicId: String, react: String) -> Unit = { _, _, _ -> },
     onLoadMoreComments: () -> Unit = {},
@@ -269,6 +270,9 @@ fun ToiletDetailScreen(
                         },
                         navigateToReplyReport = { replyId ->
                             navigateToReplyReport(replyId)
+                        },
+                        navigateToUserReport = { userId ->
+                            navigateToUserReport(userId)
                         },
                         onReaction = { commentId, typeReaction ->
                             onReaction(toiletId, commentId, typeReaction)

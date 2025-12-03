@@ -3,6 +3,7 @@ package com.worldoftoilets.app.ui.components
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -60,6 +61,7 @@ fun CommentToilet(
     isLoadingReplies: Boolean = false,
     navigateToReport: (id: String) -> Unit = { _ -> },
     navigateToReplyReport: (id: String) -> Unit = { _ -> },
+    navigateToUserReport: (id: String) -> Unit = { _ -> },
     onReaction: (publicId: String, react: String) -> Unit = { _, _ -> },
     onReply: (String) -> Unit = {},
     onLoadReplies: () -> Unit = {},
@@ -74,6 +76,7 @@ fun CommentToilet(
     var replyText by remember { mutableStateOf("") }
     var showReplies by remember { mutableStateOf(false) }
     var showCommentMenu by remember { mutableStateOf(false) }
+    var showUserMenu by remember { mutableStateOf(false) }
 
     Card(
         onClick = onClick,
@@ -103,6 +106,7 @@ fun CommentToilet(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
+                Box {
                     Image(
                         modifier = Modifier
                             .size(48.dp) // Slightly smaller for card context
@@ -111,10 +115,40 @@ fun CommentToilet(
                                 width = 2.dp,
                                 color = MaterialTheme.colorScheme.primary, // Primary color border
                                 shape = CircleShape
+                            )
+                            .then(
+                                if (userMain?.publicId != comment.user.publicId) {
+                                    Modifier.clickable { showUserMenu = true }
+                                } else {
+                                    Modifier
+                                }
                             ),
                         painter = comment.user.getIcon(),
                         contentDescription = context.getString(R.string.content_description_profile_picture)
                     )
+
+                    if (userMain?.publicId != comment.user.publicId) {
+                        DropdownMenu(
+                            expanded = showUserMenu,
+                            onDismissRequest = { showUserMenu = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text(context.getString(R.string.report)) },
+                                onClick = {
+                                    showUserMenu = false
+                                    navigateToUserReport(comment.user.publicId)
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Rounded.Flag,
+                                        contentDescription = context.getString(R.string.image_description_null),
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                            )
+                        }
+                    }
+                }
 
                     Column {
                         Row(
@@ -335,6 +369,7 @@ fun CommentToilet(
                                         reply = reply,
                                         userMain = userMain,
                                         navigateToReport = navigateToReplyReport,
+                                        navigateToUserReport = navigateToUserReport,
                                         onEdit = { text -> onEditReply(reply.publicId, text) },
                                         onDelete = { onDeleteReply(reply.publicId) }
                                     )

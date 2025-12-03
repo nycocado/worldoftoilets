@@ -56,18 +56,18 @@ enum class ConfirmationType(
         R.string.confirmation_report_failure_text,
         Icons.Default.Close
     ),
-    SUGGEST_TOILET_SUCCESS(
+    REPORT_USER_SUCCESS(
         true,
-        "suggest-toilet",
-        R.string.confirmation_suggest_success,
-        R.string.confirmation_suggest_success_text,
+        "report-user",
+        R.string.confirmation_report_success,
+        R.string.confirmation_report_success_text,
         Icons.Default.Done
     ),
-    SUGGEST_TOILET_FAILURE(
+    REPORT_USER_FAILURE(
         false,
-        "suggest-toilet",
-        R.string.confirmation_suggest_failure,
-        R.string.confirmation_suggest_failure_text,
+        "report-user",
+        R.string.confirmation_report_failure,
+        R.string.confirmation_report_failure_text,
         Icons.Default.Close
     ),
     REGISTER_SUCCESS(

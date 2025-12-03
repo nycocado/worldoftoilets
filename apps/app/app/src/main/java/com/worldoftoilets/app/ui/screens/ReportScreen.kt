@@ -36,6 +36,7 @@ import com.worldoftoilets.app.models.enums.ConfirmationType
 import com.worldoftoilets.app.models.enums.ReportReasonComment
 import com.worldoftoilets.app.models.enums.ReportReasonReply
 import com.worldoftoilets.app.models.enums.ReportReasonToilet
+import com.worldoftoilets.app.models.enums.ReportReasonUser
 import com.worldoftoilets.app.models.enums.ReportType
 import com.worldoftoilets.app.ui.components.ReportButton
 import com.worldoftoilets.app.ui.theme.AppTheme
@@ -53,6 +54,7 @@ fun ReportScreen(
     onToiletReport: (toiletPublicId: String, typeReport: String) -> Unit = { _, _ -> },
     onCommentReport: (commentPublicId: String, typeReport: String) -> Unit = { _, _ -> },
     onReplyReport: (replyPublicId: String, typeReport: String) -> Unit = { _, _ -> },
+    onUserReport: (userPublicId: String, typeReport: String) -> Unit = { _, _ -> },
     onReportConfirmation: (ConfirmationType) -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -67,6 +69,7 @@ fun ReportScreen(
                 ReportType.TOILET -> ConfirmationType.REPORT_TOILET_SUCCESS
                 ReportType.COMMENT -> ConfirmationType.REPORT_COMMENT_SUCCESS
                 ReportType.REPLY -> ConfirmationType.REPORT_REPLY_SUCCESS
+                ReportType.USER -> ConfirmationType.REPORT_USER_SUCCESS
             }
             onReportConfirmation(confirmationType)
         }
@@ -126,6 +129,7 @@ fun ReportScreen(
                             ReportType.TOILET -> context.getString(R.string.report_why_toilet)
                             ReportType.COMMENT -> context.getString(R.string.report_why_comment)
                             ReportType.REPLY -> context.getString(R.string.report_why_comment) // Reuse comment string for now
+                            ReportType.USER -> context.getString(R.string.report_why_user)
                         },
                         style = MaterialTheme.typography.titleLarge,
                         textAlign = TextAlign.Center,
@@ -165,6 +169,17 @@ fun ReportScreen(
                             title = context.getString(reason.labelRes),
                             onClick = {
                                 onReplyReport(id, reason.apiValue)
+                            }
+                        )
+                    }
+                }
+
+                ReportType.USER -> {
+                    items(ReportReasonUser.entries) { reason ->
+                        ReportButton(
+                            title = context.getString(reason.labelRes),
+                            onClick = {
+                                onUserReport(id, reason.apiValue)
                             }
                         )
                     }
