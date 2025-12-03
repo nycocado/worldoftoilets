@@ -3,6 +3,7 @@ package com.worldoftoilets.app.repositories
 import com.worldoftoilets.app.models.requests.CreateReportCommentRequest
 import com.worldoftoilets.app.models.requests.CreateReportReplyRequest
 import com.worldoftoilets.app.models.requests.CreateReportToiletRequest
+import com.worldoftoilets.app.models.requests.CreateReportUserRequest
 import com.worldoftoilets.app.network.ReportService
 import javax.inject.Inject
 import com.worldoftoilets.app.ui.util.parseApiError
@@ -59,6 +60,27 @@ class ReportRepository @Inject constructor(
         return try {
             val response = reportService.reportReply(
                 CreateReportReplyRequest(replyPublicId, typeReport)
+            )
+            val apiResponse = response.body()
+
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                val errorMsg = apiResponse?.message ?: parseApiError(response.errorBody()?.string())
+                Result.failure(Exception(errorMsg))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun reportUser(
+        userPublicId: String,
+        typeReport: String
+    ): Result<Unit> {
+        return try {
+            val response = reportService.reportUser(
+                CreateReportUserRequest(userPublicId, typeReport)
             )
             val apiResponse = response.body()
 

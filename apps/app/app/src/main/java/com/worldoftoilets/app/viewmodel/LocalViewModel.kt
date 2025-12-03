@@ -461,6 +461,16 @@ class LocalViewModel @Inject constructor(
         }
     }
 
+    fun reportUser(userPublicId: String, typeReport: String) {
+        viewModelScope.launch {
+            val result = reportRepository.reportUser(userPublicId, typeReport)
+            _reportState.value = result
+            result.onFailure { e ->
+                _error.value = e.message ?: "Erro ao denunciar"
+            }
+        }
+    }
+
     fun loadReplies(commentPublicId: String) {
         if (_loadingReplies.value.contains(commentPublicId)) return
 

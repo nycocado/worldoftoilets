@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- App -->
+    <string name="close">Fechar</string>
     <string name="logo">Logo da aplicação</string>
 
     <!-- Rotas -->
@@ -76,6 +77,15 @@
     <string name="report_maintenance_needed">Manutenção Necessária</string>
     <string name="report_damaged_equipment">Equipamento Danificado</string>
     <string name="report_others">Outros</string>
+
+    <string name="report_why_user">Porque estás a denunciar este utilizador?</string>
+    <string name="report_user_harassment_abuse">Assédio ou abuso</string>
+    <string name="report_user_fake_account">Conta falsa</string>
+    <string name="report_user_impersonation">Falsificação de identidade</string>
+    <string name="report_user_hate_speech">Discurso de ódio</string>
+    <string name="report_user_privacy_violation">Violação de privacidade</string>
+    <string name="report_user_spam">Spam</string>
+    <string name="report_user_others">Outros</string>
 
     <!-- Reação -->
     <string name="reaction_not_useful">Não é Útil</string>
@@ -187,9 +197,15 @@
     <string name="clear_search">Limpar busca</string>
 
     <!-- Carrossel -->
+    <string name="cancel">Cancelar</string>
     <string name="icon">Ícone</string>
 
     <!-- Links -->
     <string name="content_description_new_password_button">Botão para alterar palavra-passe</string>
     <string name="my_location">Minha Localização</string>
+    <string name="filter_title">Filtro</string>
+    <string name="filter_access_type">Tipo de Acesso</string>
+    <string name="filter_extras">Extras</string>
+    <string name="apply">Aplicar</string>
+    <string name="route_title">Rota para casa de banho</string>
 </resources>

@@ -5,5 +5,6 @@ enum class ReportType(
 ) {
     TOILET("toilet"),
     COMMENT("comment"),
-    REPLY("reply")
+    REPLY("reply"),
+    USER("user")
 }

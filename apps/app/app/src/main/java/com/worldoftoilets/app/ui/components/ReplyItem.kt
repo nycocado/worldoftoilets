@@ -2,6 +2,7 @@ package com.worldoftoilets.app.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,6 +47,7 @@ fun ReplyItem(
     reply: Reply,
     userMain: User?,
     navigateToReport: (id: String) -> Unit = {},
+    navigateToUserReport: (id: String) -> Unit = {},
     onEdit: (String) -> Unit = {},
     onDelete: () -> Unit = {}
 ) {
@@ -53,6 +55,7 @@ fun ReplyItem(
     var isEditing by remember { mutableStateOf(false) }
     var editText by remember { mutableStateOf(reply.text) }
     var showMenu by remember { mutableStateOf(false) }
+    var showUserMenu by remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier
@@ -60,18 +63,49 @@ fun ReplyItem(
             .padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Image(
-            modifier = Modifier
-                .size(32.dp)
-                .clip(CircleShape)
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = CircleShape
-                ),
-            painter = reply.user.getIcon(),
-            contentDescription = context.getString(R.string.content_description_profile_picture)
-        )
+        Box {
+            Image(
+                modifier = Modifier
+                    .size(32.dp)
+                    .clip(CircleShape)
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = CircleShape
+                    )
+                    .then(
+                        if (userMain?.publicId != reply.user.publicId) {
+                            Modifier.clickable { showUserMenu = true }
+                        } else {
+                            Modifier
+                        }
+                    ),
+                painter = reply.user.getIcon(),
+                contentDescription = context.getString(R.string.content_description_profile_picture)
+            )
+
+            if (userMain?.publicId != reply.user.publicId) {
+                DropdownMenu(
+                    expanded = showUserMenu,
+                    onDismissRequest = { showUserMenu = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text(context.getString(R.string.report)) },
+                        onClick = {
+                            showUserMenu = false
+                            navigateToUserReport(reply.user.publicId)
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Rounded.Flag,
+                                contentDescription = context.getString(R.string.image_description_null),
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    )
+                }
+            }
+        }
         Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(4.dp)

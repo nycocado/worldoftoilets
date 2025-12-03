@@ -81,6 +81,15 @@
     <string name="report_maintenance_needed">Maintenance needed</string>
     <string name="report_damaged_equipment">Damaged equipment</string>
     <string name="report_others">Others</string>
+    <string name="report_why_user">Why are you reporting this user?</string>
+
+    <string name="report_user_harassment_abuse">Harassment or abuse</string>
+    <string name="report_user_fake_account">Fake account</string>
+    <string name="report_user_impersonation">Impersonation</string>
+    <string name="report_user_hate_speech">Hate speech</string>
+    <string name="report_user_privacy_violation">Privacy violation</string>
+    <string name="report_user_spam">Spam</string>
+    <string name="report_user_others">Others</string>
 
     <!-- Reaction -->
     <string name="reaction_none" translatable="false">None</string>
