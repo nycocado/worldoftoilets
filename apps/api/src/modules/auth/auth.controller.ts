@@ -54,6 +54,7 @@ import { JwtAuthGuard, PermissionsGuard } from '@common/guards';
 import { RequiresPermissions } from '@common/decorators';
 import { PermissionApiName, RoleApiName } from '@database/entities';
 import { RegisterAdminRequestDto } from '@modules/auth/dto/register-admin-request.dto';
+import { generateCsrfToken } from '@config/csrf.config';
 
 /**
  * Gerencia as requisições HTTP para operações de autenticação.
@@ -363,7 +364,6 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ): ApiResponseDto<CsrfTokenResponseDto> {
-    const { generateCsrfToken } = require('@config/csrf.config');
     const csrfToken = generateCsrfToken(req, res);
     return new ApiResponseDto<CsrfTokenResponseDto>(
       AUTH_MESSAGES.CSRF_TOKEN_SUCCESS,

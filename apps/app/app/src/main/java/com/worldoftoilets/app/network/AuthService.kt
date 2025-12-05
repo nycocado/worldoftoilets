@@ -3,15 +3,20 @@ package com.worldoftoilets.app.network
 import com.worldoftoilets.app.models.requests.LoginRequest
 import com.worldoftoilets.app.models.requests.RegisterRequest
 import com.worldoftoilets.app.models.responses.ApiResponse
+import com.worldoftoilets.app.models.responses.CsrfData
 import com.worldoftoilets.app.models.responses.LoginResponse
 import com.worldoftoilets.app.models.responses.RefreshTokenResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface AuthService {
+    @GET("auth/csrf-token")
+    suspend fun getCsrfToken(): Response<ApiResponse<CsrfData>>
+
     @POST("auth/login")
     suspend fun login(@Body loginRequest: LoginRequest): Response<ApiResponse<LoginResponse>>
 
