@@ -1,7 +1,8 @@
-import type { Request } from 'express';
+import type { Request, Response } from 'express';
 import {
   Body,
   Controller,
+  Get,
   Headers,
   Post,
   Query,
@@ -11,6 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
+  CsrfTokenResponseDto,
   ForgotPasswordRequestDto,
   LoginRequestDto,
   LoginResponseDto,
@@ -24,6 +26,7 @@ import { textTimeToMilliseconds } from '@common/utils/jwt-time.util';
 import { ApiResponseDto } from '@common/dto/api-response.dto';
 import { AUTH_EXCEPTIONS, AUTH_MESSAGES } from '@modules/auth/constants';
 import {
+  ApiSwaggerCsrfToken,
   ApiSwaggerForgotPassword,
   ApiSwaggerLogin,
   ApiSwaggerLogout,
@@ -344,5 +347,27 @@ export class AuthController {
       resetPasswordDto.newPassword,
     );
     return new ApiResponseDto(AUTH_MESSAGES.RESET_PASSWORD_SUCCESS);
+  }
+
+  /**
+   * Obtém um token CSRF para proteção contra ataques CSRF.
+   * Define um cookie httpOnly seguro e retorna o token para o cliente incluir nas requisições.
+   *
+   * @param {Request} req Objeto de requisição Express.
+   * @param {Response} res Objeto de resposta Express.
+   * @returns {ApiResponseDto<CsrfTokenResponseDto>} Token CSRF.
+   */
+  @ApiSwaggerCsrfToken()
+  @Get('csrf-token')
+  getCsrfToken(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ): ApiResponseDto<CsrfTokenResponseDto> {
+    const { generateCsrfToken } = require('@config/csrf.config');
+    const csrfToken = generateCsrfToken(req, res);
+    return new ApiResponseDto<CsrfTokenResponseDto>(
+      AUTH_MESSAGES.CSRF_TOKEN_SUCCESS,
+      { csrfToken },
+    );
   }
 }

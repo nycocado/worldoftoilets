@@ -15,4 +15,5 @@ export const AUTH_MESSAGES = {
   FORGOT_PASSWORD_SUCCESS:
     'If the email exists, you will receive instructions to reset your password.',
   RESET_PASSWORD_SUCCESS: 'Password reset successfully. You can now login.',
+  CSRF_TOKEN_SUCCESS: 'CSRF token generated successfully.',
 };
