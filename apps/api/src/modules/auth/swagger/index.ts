@@ -1,3 +1,4 @@
+export * from './csrf-token.swagger';
 export * from './login.swagger';
 export * from './logout.swagger';
 export * from './logout-all.swagger';

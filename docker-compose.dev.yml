@@ -112,10 +112,11 @@ services:
             PASSWORD_RESET_TOKEN_EXPIRATION: ${PASSWORD_RESET_TOKEN_EXPIRATION}
             COMMENT_SOFT_DELETE_RETENTION: ${COMMENT_SOFT_DELETE_RETENTION}
             REPLY_SOFT_DELETE_RETENTION: ${REPLY_SOFT_DELETE_RETENTION}
-            FRONTEND_URL: ${FRONTEND_URL}
+            CSRF_SECRET: ${CSRF_SECRET}
             MAIL_HOST: "mailhog"
             MAIL_PORT: 1025
             MAIL_FROM: ${MAIL_FROM}
+            FRONTEND_URL: ${FRONTEND_URL}
             MINIO_ENDPOINT: ${MINIO_ENDPOINT}
             MINIO_PORT: 9000
             MINIO_USE_SSL: ${MINIO_USE_SSL}
@@ -123,10 +124,11 @@ services:
             MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
             MINIO_BUCKET: ${MINIO_BUCKET}
             MINIO_PUBLIC_URL: ${MINIO_PUBLIC_URL}
-            AI_SERVICE_URL: ${AI_SERVICE_URL}
+            AI_SERVICE_URL: "http://ai:5000"
             AI_SERVICE_TIMEOUT: ${AI_SERVICE_TIMEOUT}
             NODE_ENV: "development"
             PORT: 3101
+            CORS_ORIGINS: ${CORS_ORIGINS}
             WATCHPACK_POLLING: "true"
             CHOKIDAR_USEPOLLING: "true"
         ports:
@@ -229,9 +231,9 @@ services:
         healthcheck:
             test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
             interval: 30s
-            timeout: 10s
-            retries: 3
-            start_period: 60s
+            timeout: 60s
+            retries: 20
+            start_period: 120s
         networks:
             - wot-network
     

@@ -1,3 +1,4 @@
+export * from './csrf-token-response.dto';
 export * from './forgot-password-request.dto';
 export * from './login-request.dto';
 export * from './login-response.dto';
