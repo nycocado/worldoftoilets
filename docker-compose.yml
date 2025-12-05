@@ -5,10 +5,15 @@ services:
         restart: on-failure
         ports:
             - "80:80"
+            - "443:443"
         volumes:
             - type: bind
               source: ./nginx/nginx.conf
               target: /etc/nginx/nginx.conf
+              read_only: true
+            - type: bind
+              source: ./nginx/ssl
+              target: /etc/nginx/ssl
               read_only: true
         depends_on:
             api-1:
@@ -262,6 +267,7 @@ services:
         container_name: wot-web-1
         restart: on-failure
         environment:
+            NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
             PORT: 3001
         ports:
             - "3001:3001"
@@ -296,6 +302,7 @@ services:
         container_name: wot-web-2
         restart: on-failure
         environment:
+            NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
             PORT: 3002
         ports:
             - "3002:3002"

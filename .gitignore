@@ -5,3 +5,6 @@
 .env.*.local
 
 mariadb_*_data/
+
+# SSL certificates (local development)
+nginx/ssl/
