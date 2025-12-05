@@ -1,42 +1,90 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@import "tailwindcss";
 
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Cores do Design System - Light Mode (OKLCH format) */
+    --background: oklch(0.97 0.01 180);            /* Crisp White #F4F7F6 - Fundo das telas */
+    --foreground: oklch(0.21 0 0);                 /* Deep Black #1F1F1F - Texto principal */
+
+    --card: oklch(1 0 0);                          /* Pure White #FFFFFF - Cards e Containers */
+    --card-foreground: oklch(0.21 0 0);            /* Deep Black #1F1F1F */
+
+    --popover: oklch(1 0 0);                       /* Pure White #FFFFFF */
+    --popover-foreground: oklch(0.21 0 0);
+
+    --primary: oklch(0.63 0.22 240);               /* Electric Blue #00A3FF - Ações principais, Links, Marca */
+    --primary-foreground: oklch(1 0 0);
+
+    --secondary: oklch(0.74 0.20 165);             /* Fresh Green #00D084 - Sucesso, Confirmações */
+    --secondary-foreground: oklch(1 0 0);
+
+    --muted: oklch(0.98 0.005 180);                /* Soft Gray #F8FAFB - Surface Low */
+    --muted-foreground: oklch(0.55 0 0);
+
+    --accent: oklch(0.78 0.15 75);                 /* Golden Sun #FFB020 - Alertas, Destaques */
+    --accent-foreground: oklch(0.21 0 0);
+
+    --destructive: oklch(0.66 0.25 25);            /* Alert Red #FF4D4F - Erros e Denúncias */
+    --destructive-foreground: oklch(1 0 0);
+
+    --border: oklch(0.76 0 0);                     /* Gray Medium #BDBDBD - Bordas de inputs e cards */
+    --input: oklch(0.76 0 0);                      /* Gray Medium #BDBDBD */
+    --ring: oklch(0.63 0.22 240);                  /* Electric Blue #00A3FF - Focus ring */
+
+    --radius: 1rem;                                /* 16dp conforme Design System */
+  }
+
+  .dark {
+    /* Cores do Design System - Dark Mode (OKLCH format) */
+    --background: oklch(0.15 0.01 216);            /* Deep dark background */
+    --foreground: oklch(0.97 0.01 180);            /* Light text */
+
+    --card: oklch(0.18 0.01 215);                  /* Dark cards */
+    --card-foreground: oklch(0.97 0.01 180);
+
+    --popover: oklch(0.18 0.01 215);
+    --popover-foreground: oklch(0.97 0.01 180);
+
+    --primary: oklch(0.63 0.22 240);               /* Electric Blue #00A3FF */
+    --primary-foreground: oklch(1 0 0);
+
+    --secondary: oklch(0.74 0.20 165);             /* Fresh Green #00D084 */
+    --secondary-foreground: oklch(1 0 0);
+
+    --muted: oklch(0.22 0.01 215);
+    --muted-foreground: oklch(0.70 0 0);
+
+    --accent: oklch(0.78 0.15 75);                 /* Golden Sun #FFB020 */
+    --accent-foreground: oklch(0.21 0 0);
+
+    --destructive: oklch(0.70 0.20 25);            /* Lighter red for dark mode */
+    --destructive-foreground: oklch(1 0 0);
+
+    --border: oklch(0.35 0 0);                     /* Lighter gray for dark mode borders */
+    --input: oklch(0.35 0 0);
+    --ring: oklch(0.63 0.22 240);
   }
 }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+/* Register colors with Tailwind CSS v4 */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 }
