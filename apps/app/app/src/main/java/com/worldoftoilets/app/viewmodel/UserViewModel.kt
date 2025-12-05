@@ -42,6 +42,11 @@ class UserViewModel @Inject constructor(
     val error: StateFlow<String> = _error.asStateFlow()
 
     init {
+        // Initial fetch of CSRF token
+        viewModelScope.launch {
+            authRepository.fetchCsrfToken()
+        }
+
         // Session verification logic
         viewModelScope.launch {
             isLoggedIn.collect { loggedIn ->

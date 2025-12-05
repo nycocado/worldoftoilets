@@ -94,6 +94,7 @@ dependencies {
     implementation(libs.retrofit.converter.kotlinx.serialization)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.logging.interceptor)
+    implementation(libs.okhttp.urlconnection)
 
     // JWT Token Decode
     implementation(libs.jwt.decode)

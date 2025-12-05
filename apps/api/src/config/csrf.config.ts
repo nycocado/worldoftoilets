@@ -5,7 +5,7 @@ const csrfSecret =
 
 export const { doubleCsrfProtection, generateCsrfToken } = doubleCsrf({
   getSecret: () => csrfSecret,
-  cookieName: '__Host-psifi.x-csrf-token',
+  cookieName: 'x-csrf-token',
   cookieOptions: {
     httpOnly: true,
     sameSite: 'strict',
