@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { RouteController } from './route.controller';
 import { RouteService } from './route.service';
+import { RouteGrpcService } from './route.grpc.service';
 import {
   CalculateRouteUseCase,
   CalculateRouteToToiletUseCase,
@@ -17,9 +18,10 @@ import { UserModule } from '@modules/user';
   controllers: [RouteController],
   providers: [
     RouteService,
+    RouteGrpcService,
     CalculateRouteUseCase,
     CalculateRouteToToiletUseCase,
   ],
-  exports: [RouteService],
+  exports: [RouteService, RouteGrpcService],
 })
 export class RouteModule {}

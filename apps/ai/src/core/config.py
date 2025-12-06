@@ -14,6 +14,7 @@ class Config:
     # Servidor
     HOST: str = os.getenv("HOST", "0.0.0.0")
     PORT: int = int(os.getenv("PORT", "5000"))
+    GRPC_PORT: int = int(os.getenv("GRPC_PORT", "50051"))
     DEBUG: bool = os.getenv("DEBUG", "False").lower() == "true"
     WORKERS: int = int(os.getenv("WORKERS", "4"))
     
@@ -44,7 +45,8 @@ class Config:
 ║           ROUTE CALCULATOR SERVICE CONFIG              ║
 ╠════════════════════════════════════════════════════════╣
 ║ Host:              {cls.HOST:30} ║
-║ Port:              {cls.PORT:<30} ║
+║ HTTP Port:         {cls.PORT:<30} ║
+║ gRPC Port:         {cls.GRPC_PORT:<30} ║
 ║ Debug:             {cls.DEBUG!s:<30} ║
 ║ Workers:           {cls.WORKERS:<30} ║
 ║ Service Area:      {cls.SERVICE_AREA:30} ║
@@ -61,6 +63,8 @@ class Config:
         """Valida as configurações críticas."""
         if cls.PORT < 1 or cls.PORT > 65535:
             raise ValueError(f"PORT inválida: {cls.PORT}")
+        if cls.GRPC_PORT < 1 or cls.GRPC_PORT > 65535:
+            raise ValueError(f"GRPC_PORT inválida: {cls.GRPC_PORT}")
         if cls.WORKERS < 1:
             raise ValueError(f"WORKERS deve ser >= 1: {cls.WORKERS}")
         if cls.WALKING_SPEED_MPS <= 0:

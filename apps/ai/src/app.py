@@ -10,6 +10,8 @@ from src.api.routes import api_bp
 from src.core import route_engine
 from src.core.config import Config
 from src.utils.logger import setup_logging, get_logger
+from src.grpc_server import start_grpc_server_in_thread, stop_grpc_server
+import atexit
 
 # Configura logging
 setup_logging()
@@ -33,14 +35,14 @@ def create_app() -> Flask:
 
     # Registra blueprints
     app.register_blueprint(api_bp)
-    
+
     # Valida configurações
     try:
         Config.validate()
     except ValueError as e:
         logger.error(f"Erro na configuração: {e}")
         raise
-    
+
     return app
 
 
@@ -48,6 +50,13 @@ def create_app() -> Flask:
 logger.info("Iniciando o servidor de rotas...")
 if not route_engine.initialize():
     logger.warning("AVISO: O servidor iniciou, mas o mapa não foi carregado corretamente.")
+
+# Inicia o servidor gRPC em uma thread separada
+logger.info("Iniciando servidor gRPC...")
+grpc_thread = start_grpc_server_in_thread()
+
+# Registra função para parar o servidor gRPC ao encerrar a aplicação
+atexit.register(stop_grpc_server)
 
 app = create_app()
 

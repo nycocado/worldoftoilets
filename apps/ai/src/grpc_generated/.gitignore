@@ -1,0 +1,6 @@
+# Ignorar arquivos gerados automaticamente
+*.py
+*.pyi
+
+# Manter apenas o __init__.py
+!__init__.py

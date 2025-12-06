@@ -1,5 +1,4 @@
-# Python
-__pycache__/
+__pycache__
 *.py[cod]
 *$py.class
 *.so
@@ -20,68 +19,38 @@ wheels/
 .installed.cfg
 *.egg
 
-# Virtual environments
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+.env
+.env.local
+.venv
+env/
 venv/
 ENV/
-env/
-.venv
-.poetry/
 
-# IDEs
-.vscode/
-.idea/
+cache/
+data/
+*.osm.pbf
+
+.vscode
+.idea
 *.swp
 *.swo
 *~
 
-# OS
 .DS_Store
 Thumbs.db
 
-# Git
-.git/
+.git
 .gitignore
-.gitattributes
 
-# Docker
-Dockerfile*
-.dockerignore
-
-# Documentation
-README*.md
-docs/
-
-# Env files
-.env
-.env.local
-
-# Logs
-*.log
-
-# Cache (keep structure, not content)
-cache/*
-!cache/.gitkeep
-
-# Data
-data/*
-!data/.gitkeep
-
-# Tests
 tests/
-test_*.py
-*_test.py
-pytest.ini
-.pytest_cache/
-.coverage
-htmlcov/
-
-# Build files
-Makefile
-
-# Legacy
-requirements.txt
-
-# CI/CD
-.github/
-.gitlab-ci.yml
-.travis.yml
+*.md
+!README.md

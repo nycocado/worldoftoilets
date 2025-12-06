@@ -128,18 +128,11 @@ services:
             MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
             MINIO_BUCKET: ${MINIO_BUCKET}
             MINIO_PUBLIC_URL: ${MINIO_PUBLIC_URL}
-            AI_SERVICE_URL: "http://ai:5000"
+            AI_GRPC_URL: "ai:50051"
             AI_SERVICE_TIMEOUT: ${AI_SERVICE_TIMEOUT}
             NODE_ENV: "production"
             PORT: 3101
             CORS_ORIGINS: ${CORS_ORIGINS}
-        volumes:
-            - type: bind
-              source: ./apps/api
-              target: /app
-            - type: volume
-              source: api_1_node_modules
-              target: /app/node_modules
         depends_on:
             haproxy:
                 condition: service_healthy
@@ -190,18 +183,11 @@ services:
             MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
             MINIO_BUCKET: ${MINIO_BUCKET}
             MINIO_PUBLIC_URL: ${MINIO_PUBLIC_URL}
-            AI_SERVICE_URL: "http://ai:5000"
+            AI_GRPC_URL: "ai:50051"
             AI_SERVICE_TIMEOUT: ${AI_SERVICE_TIMEOUT}
             NODE_ENV: "production"
-            PORT: 3101
+            PORT: 3102
             CORS_ORIGINS: ${CORS_ORIGINS}
-        volumes:
-            - type: bind
-              source: ./apps/api
-              target: /app
-            - type: volume
-              source: api_2_node_modules
-              target: /app/node_modules
         depends_on:
             haproxy:
                 condition: service_healthy
@@ -236,6 +222,7 @@ services:
         environment:
             HOST: 0.0.0.0
             PORT: 5000
+            GRPC_PORT: 50051
             DEBUG: "False"
             WORKERS: ${AI_WORKERS}
             SERVICE_AREA: ${AI_SERVICE_AREA}
@@ -248,6 +235,7 @@ services:
             GRAPH_LOAD_TIMEOUT: ${AI_GRAPH_LOAD_TIMEOUT}
         ports:
             - "5000:5000"
+            - "50051:50051"
         volumes:
             - type: volume
               source: ai_cache
@@ -273,18 +261,9 @@ services:
         environment:
             NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
             PORT: 3001
+            NODE_ENV: "production"
         ports:
             - "3001:3001"
-        volumes:
-            - type: bind
-              source: ./apps/web
-              target: /app
-            - type: volume
-              source: web_1_node_modules
-              target: /app/node_modules
-            - type: volume
-              source: web_1_next      
-              target: /app/.next
         depends_on:
             api-1:
                 condition: service_healthy
@@ -308,18 +287,9 @@ services:
         environment:
             NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
             PORT: 3002
+            NODE_ENV: "production"
         ports:
             - "3002:3002"
-        volumes:
-            - type: bind
-              source: ./apps/web
-              target: /app
-            - type: volume
-              source: web_2_node_modules
-              target: /app/node_modules
-            - type: volume
-              source: web_2_next
-              target: /app/.next
         depends_on:
             api-1:
                 condition: service_healthy
@@ -456,18 +426,6 @@ services:
             - wot-network
 
 volumes:
-    api_1_node_modules:
-        driver: local
-    api_2_node_modules:
-        driver: local
-    web_1_node_modules:
-        driver: local
-    web_2_node_modules:
-        driver: local
-    web_1_next:
-        driver: local
-    web_2_next:
-        driver: local
     minio_data:
         driver: local
     ai_cache:
@@ -479,8 +437,6 @@ volumes:
     mariadb_db_2_data:
         driver: local
     mariadb_db_3_data:
-        driver: local
-    mariadb_db_old:
         driver: local
 
 networks:

@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package route;
+
+// Serviço de cálculo de rotas
+service RouteService {
+  // Calcula uma rota entre dois pontos geográficos
+  rpc CalculateRoute(RouteRequest) returns (RouteResponse);
+
+  // Verifica o status de saúde do serviço
+  rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse);
+}
+
+// Requisição para cálculo de rota
+message RouteRequest {
+  // Coordenadas do ponto de origem
+  double origin_lat = 1;
+  double origin_lon = 2;
+
+  // Coordenadas do ponto de destino
+  double dest_lat = 3;
+  double dest_lon = 4;
+}
+
+// Resposta com a rota calculada
+message RouteResponse {
+  // Status da operação
+  bool success = 1;
+
+  // Algoritmo utilizado (ex: "A*")
+  string algorithm = 2;
+
+  // Caminho como lista de pontos [lon, lat]
+  repeated Point path = 3;
+
+  // Estatísticas da rota
+  RouteStats stats = 4;
+
+  // Mensagem de erro (se success = false)
+  string error_message = 5;
+
+  // Código de erro (se success = false)
+  string error_code = 6;
+}
+
+// Ponto geográfico [longitude, latitude]
+message Point {
+  double lon = 1;
+  double lat = 2;
+}
+
+// Estatísticas da rota calculada
+message RouteStats {
+  // Distância total em metros
+  double distance_meters = 1;
+
+  // Tempo estimado em segundos
+  double time_seconds = 2;
+
+  // Número de nós no caminho
+  int32 nodes_in_path = 3;
+
+  // Número de nós expandidos pelo algoritmo
+  int32 nodes_expanded = 4;
+}
+
+// Requisição de health check
+message HealthCheckRequest {}
+
+// Resposta de health check
+message HealthCheckResponse {
+  // Se o serviço está saudável
+  bool healthy = 1;
+
+  // Status do serviço
+  string status = 2;
+
+  // Se o grafo foi carregado
+  bool graph_loaded = 3;
+
+  // Número de nós no grafo
+  int32 graph_nodes = 4;
+
+  // Número de arestas no grafo
+  int32 graph_edges = 5;
+}
