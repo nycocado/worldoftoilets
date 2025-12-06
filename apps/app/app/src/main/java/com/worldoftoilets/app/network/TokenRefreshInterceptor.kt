@@ -34,66 +34,82 @@ class TokenRefreshInterceptor(
             return chain.proceed(originalRequest)
         }
 
-        var response = chain.proceed(originalRequest)
+        val response = chain.proceed(originalRequest)
 
         // Se resposta não for 401, retornar normalmente
         if (response.code != 401) {
             return response
         }
 
-        Log.d(TAG, "Received 401 response, attempting to refresh token")
+        Log.d(TAG, "Received 401 response for ${originalRequest.url}, attempting to refresh token")
+
+        val failedToken = originalRequest.header(AUTHORIZATION_HEADER)?.removePrefix(BEARER_PREFIX)
 
         // Se não houver refresh token, retornar 401 original
         if (!tokenManager.hasRefreshToken()) {
-            Log.d(TAG, "No refresh token available")
+            Log.d(TAG, "No refresh token available locally")
             return response
         }
 
         // Sincronizar para evitar múltiplas requisições de refresh simultâneas
         synchronized(this) {
-            // Verificar novamente se o token ainda precisa ser refreshado
-            // (pode ter sido renovado por outra thread)
-            if (tokenManager.isAccessTokenExpired()) {
-                Log.d(TAG, "Token is expired, refreshing...")
+            val currentAccessToken = tokenManager.getAccessToken()
 
-                try {
-                    val refreshToken = tokenManager.getRefreshToken() ?: return response
+            // Cenário 1: O token mudou enquanto esperávamos o lock (outra thread renovou)
+            // Ou o token armazenado já é diferente do que falhou.
+            if (currentAccessToken != null && failedToken != null && currentAccessToken != failedToken) {
+                Log.d(TAG, "Token changed by another thread. Retrying with new token.")
+                response.close()
+                val newRequest = originalRequest.newBuilder()
+                    .header(AUTHORIZATION_HEADER, BEARER_PREFIX + currentAccessToken)
+                    .build()
+                return chain.proceed(newRequest)
+            }
 
-                    val refreshResponse = authServiceProvider.get().refreshSync(
-                        BEARER_PREFIX + refreshToken
-                    ).execute()
+            // Cenário 2: O token ainda é o mesmo que falhou (ou null). Precisamos renovar.
+            Log.d(TAG, "Token is stale or missing. Refreshing...")
 
-                    if (refreshResponse.isSuccessful) {
-                        val apiResponse = refreshResponse.body()
-                        val newTokens = apiResponse?.data
+            try {
+                val refreshToken = tokenManager.getRefreshToken()
+                // Se não tiver refresh token (ex: logout concorrente), retorna o 401 original
+                if (refreshToken == null) {
+                    return response
+                }
 
-                        if (newTokens != null) {
-                            Log.d(TAG, "Token refreshed successfully")
-                            tokenManager.saveTokens(
-                                newTokens.accessToken,
-                                newTokens.refreshToken
-                            )
+                val refreshResponse = authServiceProvider.get().refreshSync(
+                    BEARER_PREFIX + refreshToken
+                ).execute()
 
-                            // Retentar requisição original com novo token
-                            response.close()
+                if (refreshResponse.isSuccessful) {
+                    val apiResponse = refreshResponse.body()
+                    val newTokens = apiResponse?.data
 
-                            val newRequest = originalRequest.newBuilder()
-                                .header(AUTHORIZATION_HEADER, BEARER_PREFIX + newTokens.accessToken)
-                                .build()
+                    if (newTokens != null) {
+                        Log.d(TAG, "Token refreshed successfully")
+                        tokenManager.saveTokens(
+                            newTokens.accessToken,
+                            newTokens.refreshToken
+                        )
 
-                            return chain.proceed(newRequest)
-                        }
-                    } else {
-                        Log.d(TAG, "Failed to refresh token: ${refreshResponse.code()}")
-                        // Se falhar no refresh, limpar tokens e retornar 401
-                        tokenManager.clearTokens()
-                        runBlocking { authEventBus.emit(AuthEvent.SESSION_EXPIRED) }
+                        // Retentar requisição original com novo token
+                        response.close()
+
+                        val newRequest = originalRequest.newBuilder()
+                            .header(AUTHORIZATION_HEADER, BEARER_PREFIX + newTokens.accessToken)
+                            .build()
+
+                        return chain.proceed(newRequest)
                     }
-                } catch (e: Exception) {
-                    Log.e(TAG, "Error refreshing token", e)
+                } else {
+                    Log.d(TAG, "Failed to refresh token: ${refreshResponse.code()}")
+                    // Se falhar no refresh (ex: refresh token expirado), limpar tokens e emitir evento
                     tokenManager.clearTokens()
                     runBlocking { authEventBus.emit(AuthEvent.SESSION_EXPIRED) }
                 }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error refreshing token", e)
+                tokenManager.clearTokens()
+                runBlocking { authEventBus.emit(AuthEvent.SESSION_EXPIRED) }
             }
         }
 

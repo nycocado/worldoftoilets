@@ -10,16 +10,15 @@ class CsrfInterceptor @Inject constructor(
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
-        val method = request.method
-        if (method == "POST" || method == "PUT" || method == "PATCH" || method == "DELETE") {
-            val token = csrfTokenManager.getCsrfToken()
-            if (token != null) {
-                val newRequest = request.newBuilder()
-                    .header("x-csrf-token", token)
-                    .build()
-                return chain.proceed(newRequest)
-            }
+        val token = csrfTokenManager.getCsrfToken()
+        
+        if (token != null) {
+            val newRequest = request.newBuilder()
+                .header("x-csrf-token", token)
+                .build()
+            return chain.proceed(newRequest)
         }
+        
         return chain.proceed(request)
     }
 }

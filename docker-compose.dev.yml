@@ -124,7 +124,7 @@ services:
             MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
             MINIO_BUCKET: ${MINIO_BUCKET}
             MINIO_PUBLIC_URL: ${MINIO_PUBLIC_URL}
-            AI_SERVICE_URL: "http://ai:5000"
+            AI_GRPC_URL: "ai:50051"
             AI_SERVICE_TIMEOUT: ${AI_SERVICE_TIMEOUT}
             NODE_ENV: "development"
             PORT: 3101
@@ -147,7 +147,6 @@ services:
               source: ./apps/api
               target: /app
             - type: volume
-              source: api_1_node_modules
               target: /app/node_modules
         healthcheck:
             test: ["CMD", "curl", "-f", "http://localhost:3101/health"]
@@ -167,6 +166,9 @@ services:
         environment:
             NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
             PORT: 3001
+            NODE_ENV: "development"
+            WATCHPACK_POLLING: "true"
+            CHOKIDAR_USEPOLLING: "true"
         ports:
             - "3001:3001"
         depends_on:
@@ -177,10 +179,9 @@ services:
               source: ./apps/web
               target: /app
             - type: volume
-              source: web_1_node_modules
               target: /app/node_modules
             - type: volume
-              source: web_1_next      
+              source: web_1_next
               target: /app/.next
         healthcheck:
             test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
@@ -207,6 +208,7 @@ services:
         environment:
             HOST: 0.0.0.0
             PORT: 5000
+            GRPC_PORT: 50051
             DEBUG: "True"
             SERVICE_AREA: ${AI_SERVICE_AREA}
             NETWORK_TYPE: ${AI_NETWORK_TYPE}
@@ -218,10 +220,11 @@ services:
             GRAPH_LOAD_TIMEOUT: ${AI_GRAPH_LOAD_TIMEOUT}
         ports:
             - "5000:5000"
+            - "50051:50051"
         volumes:
             - type: bind
-              source: ./apps/ai/src
-              target: /app/src
+              source: ./apps/ai
+              target: /app
             - type: volume
               source: ai_cache_dev
               target: /app/cache
@@ -276,10 +279,6 @@ services:
             - wot-network
 
 volumes:
-    api_1_node_modules:
-        driver: local
-    web_1_node_modules:
-        driver: local
     web_1_next:
         driver: local
     minio_data:

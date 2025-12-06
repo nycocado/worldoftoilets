@@ -3,10 +3,7 @@ import {
   ServiceUnavailableException,
   BadRequestException,
 } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
-import { ConfigService } from '@nestjs/config';
-import { firstValueFrom, timeout, catchError } from 'rxjs';
-import { AxiosError } from 'axios';
+import { RouteGrpcService } from './route.grpc.service';
 import { ROUTE_EXCEPTIONS } from './constants';
 
 /**
@@ -14,21 +11,10 @@ import { ROUTE_EXCEPTIONS } from './constants';
  */
 @Injectable()
 export class RouteService {
-  private readonly aiServiceUrl: string;
-  private readonly requestTimeout: number;
-
-  constructor(
-    private readonly httpService: HttpService,
-    private readonly configService: ConfigService,
-  ) {
-    this.aiServiceUrl = this.configService.getOrThrow<string>('AI_SERVICE_URL');
-    this.requestTimeout = Number(
-      this.configService.getOrThrow<string>('AI_SERVICE_TIMEOUT'),
-    );
-  }
+  constructor(private readonly routeGrpcService: RouteGrpcService) {}
 
   /**
-   * Calcula uma rota entre dois pontos geográficos.
+   * Calcula uma rota entre dois pontos geográficos usando gRPC.
    *
    * @param {number} originLat A latitude do ponto de origem.
    * @param {number} originLon A longitude do ponto de origem.
@@ -44,19 +30,13 @@ export class RouteService {
     destLat: number,
     destLon: number,
   ): Promise<any> {
-    const url = `${this.aiServiceUrl}/${originLat},${originLon}/${destLat},${destLon}`;
-
     try {
-      const response = await firstValueFrom(
-        this.httpService.get(url).pipe(
-          timeout(this.requestTimeout),
-          catchError((error: AxiosError) => {
-            throw this.handleAiServiceError(error);
-          }),
-        ),
+      return await this.routeGrpcService.calculateRoute(
+        originLat,
+        originLon,
+        destLat,
+        destLon,
       );
-
-      return response.data;
     } catch (error) {
       if (
         error instanceof BadRequestException ||
@@ -68,62 +48,5 @@ export class RouteService {
         ROUTE_EXCEPTIONS.SERVICE_UNAVAILABLE,
       );
     }
-  }
-
-  /**
-   * Converte erros do microsserviço AI em exceções apropriadas do NestJS.
-   *
-   * @param {AxiosError} error O erro retornado pelo Axios.
-   * @returns {Error} A exceção apropriada para o tipo de erro.
-   */
-  private handleAiServiceError(error: AxiosError): Error {
-    if (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND') {
-      return new ServiceUnavailableException(
-        ROUTE_EXCEPTIONS.SERVICE_UNAVAILABLE,
-      );
-    }
-
-    if (error.code === 'ETIMEDOUT' || error.code === 'ESOCKETTIMEDOUT') {
-      return new ServiceUnavailableException(ROUTE_EXCEPTIONS.REQUEST_TIMEOUT);
-    }
-
-    const responseData = error.response?.data as
-      | { code?: string; message?: string }
-      | undefined;
-
-    if (error.response?.status === 400 && responseData) {
-      const errorCode = responseData.code;
-
-      switch (errorCode) {
-        case 'INVALID_FORMAT':
-          return new BadRequestException(
-            ROUTE_EXCEPTIONS.INVALID_COORDINATES_FORMAT,
-          );
-        case 'OUT_OF_RANGE_LATITUDE':
-          return new BadRequestException(
-            ROUTE_EXCEPTIONS.LATITUDE_OUT_OF_RANGE,
-          );
-        case 'OUT_OF_RANGE_LONGITUDE':
-          return new BadRequestException(
-            ROUTE_EXCEPTIONS.LONGITUDE_OUT_OF_RANGE,
-          );
-        case 'OUT_OF_SERVICE_AREA_ORIGIN':
-          return new BadRequestException(
-            ROUTE_EXCEPTIONS.ORIGIN_OUT_OF_SERVICE_AREA,
-          );
-        case 'OUT_OF_SERVICE_AREA_DEST':
-          return new BadRequestException(
-            ROUTE_EXCEPTIONS.DESTINATION_OUT_OF_SERVICE_AREA,
-          );
-        default:
-          return new BadRequestException(
-            ROUTE_EXCEPTIONS.ROUTE_CALCULATION_FAILED,
-          );
-      }
-    }
-
-    return new ServiceUnavailableException(
-      ROUTE_EXCEPTIONS.SERVICE_UNAVAILABLE,
-    );
   }
 }
