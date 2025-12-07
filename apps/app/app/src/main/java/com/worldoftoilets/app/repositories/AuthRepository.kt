@@ -4,7 +4,6 @@ import com.worldoftoilets.app.models.User
 import com.worldoftoilets.app.models.requests.LoginRequest
 import com.worldoftoilets.app.models.requests.RegisterRequest
 import com.worldoftoilets.app.network.AuthService
-import com.worldoftoilets.app.security.CsrfTokenManager
 import com.worldoftoilets.app.security.TokenManager
 import com.worldoftoilets.app.ui.util.parseApiError
 import javax.inject.Inject
@@ -12,25 +11,8 @@ import javax.inject.Inject
 class AuthRepository @Inject constructor(
     private val authService: AuthService,
     private val tokenManager: TokenManager,
-    private val userPreferencesRepository: UserPreferencesRepository,
-    private val csrfTokenManager: CsrfTokenManager
+    private val userPreferencesRepository: UserPreferencesRepository
 ) {
-    suspend fun fetchCsrfToken(): Result<Unit> {
-        return try {
-            val response = authService.getCsrfToken()
-            val apiResponse = response.body()
-            if (response.isSuccessful && apiResponse?.data != null) {
-                csrfTokenManager.setCsrfToken(apiResponse.data.csrfToken)
-                Result.success(Unit)
-            } else {
-                val errorMsg = apiResponse?.message ?: "Failed to fetch CSRF token"
-                Result.failure(Exception(errorMsg))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
     suspend fun login(
         email: String,
         password: String
@@ -58,9 +40,6 @@ class AuthRepository @Inject constructor(
                 if (tokenManager.getAccessToken() != loginResponse.accessToken) {
                     return Result.failure(Exception("Falha ao persistir tokens. Tente novamente."))
                 }
-
-                // Atualizar CSRF token após login
-                fetchCsrfToken()
 
                 // Marcar como logado
                 userPreferencesRepository.setLoggedIn(true)
@@ -114,10 +93,6 @@ class AuthRepository @Inject constructor(
 
             tokenManager.clearTokens()
             userPreferencesRepository.clear()
-            
-            // Clear old CSRF and fetch a new one for the anonymous session
-            csrfTokenManager.clearCsrfToken()
-            fetchCsrfToken()
 
             Result.success(Unit)
         } catch (e: Exception) {
@@ -128,11 +103,7 @@ class AuthRepository @Inject constructor(
             } catch (e: Exception) {
                 // Ignorar erro ao limpar preferences
             }
-            
-            // Try to reset CSRF for safety
-            csrfTokenManager.clearCsrfToken()
-            fetchCsrfToken()
-            
+
             Result.success(Unit)
         }
     }

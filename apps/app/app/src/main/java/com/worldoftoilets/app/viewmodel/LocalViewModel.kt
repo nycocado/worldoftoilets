@@ -620,7 +620,9 @@ class LocalViewModel @Inject constructor(
     fun calculateRoute(toiletId: String) {
         val loc = _location.value
         if (loc == null) {
-            _error.value = "Localização não disponível"
+            val errorMessage = "Localização não disponível"
+            _routeState.value = UiState.Error(errorMessage)
+            _error.value = errorMessage
             return
         }
 
@@ -630,8 +632,9 @@ class LocalViewModel @Inject constructor(
             result.onSuccess { route ->
                 _routeState.value = UiState.Success(route)
             }.onFailure { e ->
-                _routeState.value = UiState.Error(e.message ?: "Erro ao calcular rota")
-                _error.value = e.message ?: "Erro ao calcular rota"
+                val errorMessage = e.message ?: "Erro ao calcular rota"
+                _routeState.value = UiState.Error(errorMessage)
+                _error.value = errorMessage
             }
         }
     }
