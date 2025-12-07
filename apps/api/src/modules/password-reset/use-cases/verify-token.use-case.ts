@@ -34,8 +34,6 @@ export class VerifyTokenUseCase {
       );
     }
 
-    await this.passwordResetRepository.invalidate(reset);
-
     return reset;
   }
 }

@@ -29,7 +29,7 @@ export class LoginUseCase {
    * @param {string} email O email do utilizador.
    * @param {string} password A password em texto plano.
    * @returns {Promise<LoginResponseDto>} Tokens e dados do utilizador.
-   * @throws {UnauthorizedException} Se as credenciais forem inválidas ou o email não estiver verificado.
+   * @throws {UnauthorizedException} Se as credenciais forem inválidas, o email não estiver verificado ou o utilizador foi desativado.
    */
   @Transactional()
   async execute(email: string, password: string): Promise<LoginResponseDto> {
@@ -37,6 +37,10 @@ export class LoginUseCase {
 
     if (!user || !user.credential) {
       throw new UnauthorizedException(AUTH_EXCEPTIONS.INVALID_CREDENTIALS);
+    }
+
+    if (user.deactivatedAt) {
+      throw new UnauthorizedException(AUTH_EXCEPTIONS.USER_DEACTIVATED);
     }
 
     if (!user.credential.emailVerified) {

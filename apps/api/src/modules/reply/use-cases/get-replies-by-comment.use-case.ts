@@ -4,6 +4,7 @@ import { ReplyState } from '@database/entities';
 import { CommentService } from '@modules/comment';
 import { ReplyResponseDto } from '@modules/reply/dto';
 import { plainToInstance } from 'class-transformer';
+import { UserService } from '@modules/user';
 
 /**
  * Contém a lógica de negócio para a busca de respostas de um comentário.
@@ -13,6 +14,7 @@ export class GetRepliesByCommentUseCase {
   constructor(
     private readonly repository: ReplyRepository,
     private readonly commentService: CommentService,
+    private readonly userService: UserService,
   ) {}
 
   /**
@@ -24,6 +26,7 @@ export class GetRepliesByCommentUseCase {
    * @param {number} [size] O tamanho da página.
    * @param {ReplyState} [replyState] O estado da resposta para filtrar.
    * @param {Date} [timestamp] O timestamp máximo de criação.
+   * @param {string} [userPublicId] O ID público do utilizador autenticado, para filtrar respostas de usuários denunciados por ele.
    * @returns {Promise<ReplyResponseDto[]>} Uma lista de DTOs de resposta.
    * @throws {NotFoundException} Se o comentário não for encontrado.
    */
@@ -34,7 +37,11 @@ export class GetRepliesByCommentUseCase {
     size?: number,
     replyState?: ReplyState,
     timestamp?: Date,
+    userPublicId?: string,
   ): Promise<ReplyResponseDto[]> {
+    const user = userPublicId
+      ? await this.userService.getUserByPublicId(userPublicId)
+      : undefined;
     const comment =
       await this.commentService.getCommentByPublicId(commentPublicId);
     const result = await this.repository.findByComment(
@@ -44,6 +51,7 @@ export class GetRepliesByCommentUseCase {
       size,
       replyState,
       timestamp,
+      user,
     );
     return plainToInstance(ReplyResponseDto, result, {
       excludeExtraneousValues: true,

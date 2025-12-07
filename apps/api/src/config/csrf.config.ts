@@ -16,6 +16,6 @@ export const { doubleCsrfProtection, generateCsrfToken } = doubleCsrf({
   ignoredMethods: ['GET', 'HEAD', 'OPTIONS'],
   getCsrfTokenFromRequest: (req) => req.headers['x-csrf-token'] as string,
   getSessionIdentifier: (req) => {
-    return req.cookies?.['token'] || req.ip || 'anonymous';
+    return req.cookies?.['csrf_session_id'] ?? 'anonymous';
   },
 });

@@ -15,6 +15,7 @@ import {
   Transactional,
 } from '@mikro-orm/mariadb';
 import { InteractionEntity } from '@database/entities/interaction.entity';
+import { ReportUserStatus } from '@database/entities/report-user.entity';
 
 /**
  * Gerencia o acesso e a persistência de dados para a entidade CommentEntity.
@@ -132,11 +133,19 @@ export class CommentRepository {
               discriminator: ReactDiscriminator.REPORT,
             },
           },
+          interaction: {
+            user: {
+              reportsReceived: {
+                $none: {
+                  userReporter: user,
+                },
+              },
+            },
+          },
         }),
       },
       {
         populate: [
-          'interaction.toilet',
           'interaction.user.commentsCount',
           'interaction.user.partner',
           'rate',

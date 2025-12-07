@@ -72,6 +72,7 @@ export class ReplyController {
    *
    * @param {string} publicId O identificador público do comentário.
    * @param {GetRepliesRequestDto} getRepliesRequestDto DTO com parâmetros de paginação e filtros.
+   * @param {jwtTypes.RequestUser} user O utilizador autenticado.
    * @returns {Promise<ApiResponseDto<ReplyResponseDto[]>>} A lista de respostas.
    * @throws {NotFoundException} Se o comentário não for encontrado.
    */
@@ -82,6 +83,7 @@ export class ReplyController {
   async getRepliesByComment(
     @Param('publicId') publicId: string,
     @Query() getRepliesRequestDto: GetRepliesRequestDto,
+    @User() user: jwtTypes.RequestUser,
   ): Promise<ApiResponseDto<ReplyResponseDto[]>> {
     const { pageable, page, size, timestamp } = getRepliesRequestDto || {};
 
@@ -92,6 +94,7 @@ export class ReplyController {
       size,
       ReplyState.VISIBLE,
       timestamp,
+      user.publicId,
     );
 
     return new ApiResponseDto<ReplyResponseDto[]>(
