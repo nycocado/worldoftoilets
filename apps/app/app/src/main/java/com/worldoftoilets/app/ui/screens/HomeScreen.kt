@@ -35,6 +35,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
@@ -109,6 +111,7 @@ fun HomeScreen(
     val isRouteActive = isRoute && routeState is UiState.Success
 
     val bottomSheetLazyListState = rememberLazyListState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState(
@@ -215,6 +218,17 @@ fun HomeScreen(
 
     val currentFilter by localViewModel.toiletFilter.collectAsStateWithLifecycle()
     var showFilterDialog by remember { mutableStateOf(false) }
+
+    // Centralized error handling
+    val error by localViewModel.error.collectAsStateWithLifecycle()
+    LaunchedEffect(error) {
+        if (error.isNotEmpty()) {
+            scope.launch {
+                snackbarHostState.showSnackbar(error)
+                localViewModel.clearError()
+            }
+        }
+    }
 
     if (showFilterDialog) {
         FilterDialog(
@@ -467,6 +481,12 @@ fun HomeScreen(
                 }
             },
             sheetSwipeEnabled = !isDetails && !isRouteActive,
+            snackbarHost = {
+                SnackbarHost(
+                    hostState = snackbarHostState,
+                    modifier = Modifier.padding(bottom = if (scaffoldState.bottomSheetState.currentValue == SheetValue.PartiallyExpanded) sheetPeekHeight else 0.dp)
+                )
+            },
             sheetContent = {
                 Box(
                     modifier = Modifier.fillMaxHeight(0.99f)

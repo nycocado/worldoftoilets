@@ -8,11 +8,9 @@ import com.worldoftoilets.app.network.AuthService
 import com.worldoftoilets.app.network.CommentService
 import com.worldoftoilets.app.network.ReportService
 import com.worldoftoilets.app.network.ToiletService
-import com.worldoftoilets.app.network.CsrfInterceptor
 import com.worldoftoilets.app.network.TokenRefreshInterceptor
 import com.worldoftoilets.app.network.UserService
 import com.worldoftoilets.app.security.AuthEventBus
-import com.worldoftoilets.app.security.CsrfTokenManager
 import com.worldoftoilets.app.security.DataStoreTokenStorage
 import com.worldoftoilets.app.security.TokenManager
 import com.worldoftoilets.app.security.TokenRepository
@@ -42,16 +40,6 @@ object SecurityModule {
         @ApplicationContext context: Context
     ): SharedPreferences {
         return context.getSharedPreferences("secure_prefs", Context.MODE_PRIVATE)
-    }
-
-    @Provides
-    @Singleton
-    fun provideCsrfTokenManager(): CsrfTokenManager = CsrfTokenManager()
-
-    @Provides
-    @Singleton
-    fun provideCsrfInterceptor(csrfTokenManager: CsrfTokenManager): CsrfInterceptor {
-        return CsrfInterceptor(csrfTokenManager)
     }
 
     @Provides
@@ -92,13 +80,11 @@ object SecurityModule {
     @Singleton
     fun provideOkHttpClient(
         authInterceptor: AuthInterceptor,
-        tokenRefreshInterceptor: TokenRefreshInterceptor,
-        csrfInterceptor: CsrfInterceptor
+        tokenRefreshInterceptor: TokenRefreshInterceptor
     ): OkHttpClient {
         val cookieManager = CookieManager()
         return OkHttpClient.Builder()
             .cookieJar(JavaNetCookieJar(cookieManager))
-            .addInterceptor(csrfInterceptor)
             .addInterceptor(authInterceptor)
             .addInterceptor(tokenRefreshInterceptor)
             .addInterceptor(HttpLoggingInterceptor().apply {

@@ -173,7 +173,6 @@ fun BottomSheetNavigationGraph(
                 commentsCacheStateFlow = commentsCache,
                 isLoadingCommentsToiletStateFlow = isLoadingCommentsToilet,
                 userMainStateFlow = user,
-                errorStateFlow = error,
                 repliesCacheStateFlow = repliesCache,
                 loadingRepliesStateFlow = loadingReplies,
                 lazyListState = lazyListState,
@@ -200,6 +199,11 @@ fun BottomSheetNavigationGraph(
                 },
                 navigateToReplyReport = { id ->
                     rootNavController.navigate(AppDestinations.Report(typeId = "reply", id = id)) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToUserReport = { userId ->
+                    rootNavController.navigate(AppDestinations.Report(typeId = "user", id = userId)) {
                         launchSingleTop = true
                     }
                 },
@@ -244,11 +248,13 @@ fun BottomSheetNavigationGraph(
             val args = backStackEntry.toRoute<AppDestinations.Route>()
             val toiletId = args.toiletId
             val toilets = localViewModel.toiletsCache
+            val routeState = localViewModel.routeState
             val toilet = toilets.collectAsState().value[toiletId]
-            
+
             if (toilet != null) {
                 com.worldoftoilets.app.ui.screens.RouteScreen(
                     toilet = toilet,
+                    routeStateFlow = routeState,
                     onClose = {
                         localViewModel.clearRoute()
                         navController.popBackStack()
@@ -423,6 +429,9 @@ private fun NavGraphBuilder.reportNavGraph(
             onReplyReport = { replyPublicId, typeReport ->
                 localViewModel.reportReply(replyPublicId, typeReport)
             },
+            onUserReport = { userPublicId, typeReport ->
+                localViewModel.reportUser(userPublicId, typeReport)
+            },
             onReportConfirmation = { confirmationType ->
                 localViewModel.clearReportState()
                 navController.navigate(
@@ -448,7 +457,8 @@ private fun NavGraphBuilder.reportNavGraph(
                         navController.popBackStack()
                     }
 
-                    ConfirmationType.REPORT_COMMENT_SUCCESS, ConfirmationType.REPORT_COMMENT_FAILURE, ConfirmationType.REPORT_REPLY_SUCCESS, ConfirmationType.REPORT_REPLY_FAILURE
+                    ConfirmationType.REPORT_COMMENT_SUCCESS, ConfirmationType.REPORT_COMMENT_FAILURE, ConfirmationType.REPORT_REPLY_SUCCESS, ConfirmationType.REPORT_REPLY_FAILURE,
+                    ConfirmationType.REPORT_USER_SUCCESS, ConfirmationType.REPORT_USER_FAILURE
                         -> {
                         navController.popBackStack()
                         navController.popBackStack()

@@ -20,8 +20,6 @@ import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,7 +28,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,7 +60,6 @@ import com.worldoftoilets.app.ui.util.generateToiletsStateFlow
 import com.worldoftoilets.app.ui.util.generateUserMain
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 
 @SuppressLint("DefaultLocale")
 @Composable
@@ -73,7 +69,6 @@ fun ToiletDetailScreen(
     commentsCacheStateFlow: StateFlow<Map<String, List<Comment>>>,
     isLoadingCommentsToiletStateFlow: StateFlow<Boolean>,
     userMainStateFlow: StateFlow<User?>,
-    errorStateFlow: StateFlow<String> = MutableStateFlow(""),
     repliesCacheStateFlow: StateFlow<Map<String, List<Reply>>> = MutableStateFlow(emptyMap()),
     loadingRepliesStateFlow: StateFlow<Set<String>> = MutableStateFlow(emptySet()),
     lazyListState: LazyListState,
@@ -100,16 +95,13 @@ fun ToiletDetailScreen(
     val userMain by userMainStateFlow.collectAsStateWithLifecycle()
     val repliesCache by repliesCacheStateFlow.collectAsStateWithLifecycle()
     val loadingReplies by loadingRepliesStateFlow.collectAsStateWithLifecycle()
-    val error by errorStateFlow.collectAsStateWithLifecycle()
 
     val toilet = toilets[toiletId]!!
     val comments = commentsCache[toiletId] ?: emptyList()
 
-    val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val platformContext = LocalPlatformContext.current
     var selectedComment by remember { mutableStateOf<Comment?>(null) }
-    val snackbarHostState = remember { SnackbarHostState() }
 
     val isAtBottom by remember {
         derivedStateOf {
@@ -117,14 +109,6 @@ fun ToiletDetailScreen(
             val totalItems = layoutInfo.totalItemsCount
             val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
             lastVisibleItemIndex >= totalItems - 1
-        }
-    }
-
-    LaunchedEffect(error) {
-        if (error.isNotEmpty()) {
-            scope.launch {
-                snackbarHostState.showSnackbar(error)
-            }
         }
     }
 
@@ -195,13 +179,13 @@ fun ToiletDetailScreen(
                     )
                 }
 
-                                                // Main Action Buttons Row (Maps, Rate)
-                                                    item {
-                                                        ToiletActions(
-                                                            toilet = toilet,
-                                                            onRateClick = { scope.launch { navigateToRating(toilet.publicId) } }
-                                                        )
-                                                    }                // Address Item
+                // Main Action Buttons Row (Maps, Rate)
+                item {
+                    ToiletActions(
+                        toilet = toilet,
+                        onRateClick = { navigateToRating(toilet.publicId) }
+                    )
+                }                // Address Item
                 item {
                     Row(
                         modifier = Modifier
@@ -305,11 +289,6 @@ fun ToiletDetailScreen(
                 }
             }
         }
-
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
     }
 
     selectedComment?.let { comment ->
