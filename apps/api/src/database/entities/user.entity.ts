@@ -24,6 +24,7 @@ import { ReactEntity } from './react.entity';
 import { ReplyEntity } from './reply.entity';
 import { PartnerEntity } from './partner.entity';
 import { CommentState } from '@database/entities/comment.entity';
+import { ReportUserEntity } from './report-user.entity';
 
 /**
  * Ícones de perfil disponíveis para o utilizador.
@@ -164,6 +165,21 @@ export class UserEntity {
     nullable: true,
   })
   partner?: PartnerEntity;
+
+  /**
+   * Coleção de denúncias feitas por este utilizador.
+   */
+  @OneToMany(() => ReportUserEntity, (report) => report.userReporter)
+  reportsMade: Collection<ReportUserEntity> = new Collection<ReportUserEntity>(
+    this,
+  );
+
+  /**
+   * Coleção de denúncias recebidas por este utilizador.
+   */
+  @OneToMany(() => ReportUserEntity, (report) => report.userReported)
+  reportsReceived: Collection<ReportUserEntity> =
+    new Collection<ReportUserEntity>(this);
 
   /**
    * Contagem total de comentários visíveis feitos pelo utilizador (calculado).

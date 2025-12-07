@@ -63,7 +63,7 @@ export enum PermissionApiName {
   VIEW_ALL_USERS = 'view-all-users',
   SEARCH_USERS = 'search-users',
   ACTIVATE_USER = 'activate-user',
-  DEACTIVATE_USER = 'deactivate-user',
+  DEACTIVATE_USERS = 'deactivate-users',
   EDIT_USERS = 'edit-users',
   REPORT_USERS = 'report-users',
   VIEW_REPORT_USERS = 'view-report-users',

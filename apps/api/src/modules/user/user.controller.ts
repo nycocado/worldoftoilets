@@ -207,7 +207,7 @@ export class UserController {
    */
   @ApiSwaggerDeleteUserManage()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
-  @RequiresPermissions(PermissionApiName.DEACTIVATE_USER)
+  @RequiresPermissions(PermissionApiName.DEACTIVATE_USERS)
   @Delete(':publicId/manage')
   async deleteUserManage(
     @Param('publicId', ParseUUIDPipe) publicId: string,

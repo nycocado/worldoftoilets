@@ -364,6 +364,13 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ): ApiResponseDto<CsrfTokenResponseDto> {
+    if (!req.cookies['csrf_session_id']) {
+      res.cookie('csrf_session_id', crypto.randomUUID(), {
+        sameSite: 'strict',
+        secure: process.env.NODE_ENV === 'production',
+        path: '/',
+      });
+    }
     const csrfToken = generateCsrfToken(req, res);
     return new ApiResponseDto<CsrfTokenResponseDto>(
       AUTH_MESSAGES.CSRF_TOKEN_SUCCESS,

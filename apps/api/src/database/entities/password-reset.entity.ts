@@ -72,7 +72,7 @@ export class PasswordResetEntity {
   get isExpired(): boolean {
     return (
       this.expiresAt < new Date() ||
-      (this.invalidAt !== undefined && this.invalidAt < new Date())
+      (this.invalidAt !== undefined && this.invalidAt >= new Date())
     );
   }
 }

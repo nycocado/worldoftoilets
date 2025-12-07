@@ -11,6 +11,7 @@ import {
   QueryOrder,
   Transactional,
 } from '@mikro-orm/mariadb';
+import { ReportUserStatus } from '@database/entities/report-user.entity';
 
 /**
  * Gerencia o acesso e a persistência de dados para a entidade Reply.
@@ -44,6 +45,7 @@ export class ReplyRepository {
    * @param {number} [size] O tamanho da página.
    * @param {ReplyState} [replyState] O estado da resposta para filtrar.
    * @param {Date} [timestamp] O timestamp máximo de criação.
+   * @param {UserEntity} [requestUser] O utilizador autenticado, para filtrar respostas de usuários denunciados por ele.
    * @returns {Promise<ReplyEntity[]>} Uma lista de entidades de resposta.
    */
   async findByComment(
@@ -53,12 +55,27 @@ export class ReplyRepository {
     size?: number,
     replyState?: ReplyState,
     timestamp?: Date,
+    requestUser?: UserEntity,
   ): Promise<ReplyEntity[]> {
     return this.repository.find(
       {
         state: replyState,
         comment: comment,
         createdAt: { $lte: timestamp },
+        ...(requestUser && {
+          reports: {
+            $none: {
+              user: requestUser,
+            },
+          },
+          user: {
+            reportsReceived: {
+              $none: {
+                userReporter: requestUser,
+              },
+            },
+          },
+        }),
       },
       {
         populate: ['user.partner', 'user.commentsCount'],

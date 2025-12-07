@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser';
 import { SwaggerModule } from '@nestjs/swagger';
 import { useContainer } from 'class-validator';
 import { swaggerConfig } from '@config/swagger.config';
-import { doubleCsrfProtection } from '@config/csrf.config';
+import { CsrfConditionalMiddleware } from './middleware/csrf-conditional.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,8 +15,7 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
 
   app.use(cookieParser());
-
-  app.use(doubleCsrfProtection);
+  app.use(new CsrfConditionalMiddleware().use);
 
   app.enableCors({
     origin: process.env.CORS_ORIGIN || true,

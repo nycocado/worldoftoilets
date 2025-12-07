@@ -8,4 +8,5 @@ export const AUTH_EXCEPTIONS = {
   TOKEN_REQUIRED: 'Token is required.',
   EMAIL_ALREADY_IN_USE: 'Email already in use.',
   EMAIL_ALREADY_VERIFIED: 'Email already verified.',
+  USER_DEACTIVATED: 'User account has been deactivated.',
 };
