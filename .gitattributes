@@ -1,3 +1,11 @@
+# Força line endings LF para arquivos shell scripts
+*.sh text eol=lf
+
+# Força line endings LF para arquivos Docker
+Dockerfile* text eol=lf
+docker-entrypoint.sh text eol=lf
+# Normaliza line endings para outros arquivos de texto
+* text=auto
 *.mp4 filter=lfs diff=lfs merge=lfs -text
 *.pdf filter=lfs diff=lfs merge=lfs -text
 *.png filter=lfs diff=lfs merge=lfs -text
