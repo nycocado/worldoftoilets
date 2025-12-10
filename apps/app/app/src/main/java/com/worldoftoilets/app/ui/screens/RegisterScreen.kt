@@ -87,7 +87,7 @@ fun RegisterScreen(
         nameSupportText = when {
             name.isEmpty() -> context.getString(R.string.error_required_name)
             name.length > 50 -> context.getString(R.string.error_too_long_name)
-            name.length < 6 -> context.getString(R.string.error_too_short_name)
+            name.length < 2 -> context.getString(R.string.error_too_short_name)
             else -> ""
         }
 
@@ -102,7 +102,8 @@ fun RegisterScreen(
 
         passwordSupportText = when {
             password.isEmpty() -> context.getString(R.string.error_required_password)
-            password.length < 6 -> context.getString(R.string.error_too_short_password)
+            password.length < 8 -> context.getString(R.string.error_too_short_password)
+            password.length > 64 -> context.getString(R.string.error_too_long_password)
             else -> ""
         }
 

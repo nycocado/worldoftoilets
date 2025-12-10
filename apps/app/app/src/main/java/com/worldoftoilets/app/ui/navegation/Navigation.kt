@@ -31,6 +31,8 @@ import com.worldoftoilets.app.view.MainView
 import com.worldoftoilets.app.viewmodel.AuthViewModel
 import com.worldoftoilets.app.viewmodel.LocalViewModel
 import com.worldoftoilets.app.viewmodel.UserViewModel
+import com.worldoftoilets.app.ui.screens.SuggestionDataScreen
+import com.worldoftoilets.app.ui.screens.SuggestionStartScreen
 
 @Composable
 fun RootNavigationGraph(
@@ -49,9 +51,10 @@ fun RootNavigationGraph(
             MainView(navController, localViewModel, userViewModel)
         }
         ratingNavGraph(localViewModel, navController)
-        authNavGraph(navController, authViewModel)
+        authNavGraph(navController, authViewModel, localViewModel)
         reportNavGraph(navController, localViewModel, authViewModel)
         settingsNavGraph(navController, userViewModel)
+        suggestionNavGraph(navController, localViewModel)
     }
 }
 
@@ -70,6 +73,15 @@ fun MainNavigationGraph(
         composable<AppDestinations.Home> { backStackEntry ->
             val args = backStackEntry.toRoute<AppDestinations.Home>()
             HomeScreen(rootNavController, localViewModel, userViewModel, args.toiletId)
+        }
+        composable<AppDestinations.SuggestionStart> {
+            SuggestionStartScreen(
+                onStartSuggestion = {
+                    rootNavController.navigate(AppDestinations.SuggestionData) {
+                        launchSingleTop = true
+                    }
+                }
+            )
         }
         composable<AppDestinations.Profile> {
             val user = userViewModel.user
@@ -269,7 +281,8 @@ fun BottomSheetNavigationGraph(
 
 private fun NavGraphBuilder.authNavGraph(
     navController: NavHostController,
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel,
+    localViewModel: LocalViewModel
 ) {
     navigation<AppDestinations.AuthGraph>(
         startDestination = AppDestinations.Login
@@ -283,6 +296,7 @@ private fun NavGraphBuilder.authNavGraph(
                 },
                 onLoginSuccess = {
                     authViewModel.clearLoginState()
+                    localViewModel.refreshToilets()
                     navController.navigate(AppDestinations.MainGraph) {
                         popUpTo(navController.graph.startDestinationId) {
                             inclusive = true
@@ -464,6 +478,15 @@ private fun NavGraphBuilder.reportNavGraph(
                         navController.popBackStack()
                     }
 
+                    ConfirmationType.SUGGEST_SUCCESS, ConfirmationType.SUGGEST_FAILURE -> {
+                        navController.navigate(AppDestinations.MainGraph) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+                    }
+
                     else -> {
                         navController.navigate(AppDestinations.MainGraph) {
                             popUpTo(navController.graph.startDestinationId) {
@@ -532,5 +555,54 @@ private fun NavGraphBuilder.settingsNavGraph(
                 }
             )
         }
+    }
+}
+
+private fun NavGraphBuilder.suggestionNavGraph(
+    navController: NavHostController,
+    localViewModel: LocalViewModel
+) {
+    composable<AppDestinations.SuggestionData> {
+        val location = localViewModel.location.collectAsState().value
+        val suggestionState = localViewModel.suggestionState.collectAsState()
+
+        LaunchedEffect(suggestionState.value) {
+            suggestionState.value?.onSuccess {
+                localViewModel.clearSuggestionState()
+                navController.navigate(
+                    AppDestinations.Confirmation(
+                        type = "suggest",
+                        confirmation = true
+                    )
+                ) {
+                    popUpTo(AppDestinations.SuggestionData) { inclusive = true }
+                }
+            }
+        }
+
+        SuggestionDataScreen(
+            initialLocation = location,
+            navigateToBack = {
+                navController.popBackStack()
+            },
+            onSubmit = { name, address, city, state, country, access, extras, lat, lng, imageUri ->
+                localViewModel.submitSuggestion(
+                    name,
+                    address,
+                    city,
+                    state,
+                    country,
+                    access,
+                    extras,
+                    lat,
+                    lng,
+                    imageUri
+                )
+            },
+            error = suggestionState.value?.exceptionOrNull()?.message,
+            onErrorShown = {
+                localViewModel.clearSuggestionState()
+            }
+        )
     }
 }

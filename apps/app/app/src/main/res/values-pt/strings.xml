@@ -12,7 +12,16 @@
     <string name="login">Login</string>
     <string name="register">Registo</string>
     <string name="settings">Configurações</string>
-    <string name="suggest">Sugestão - Casa de Banho</string>
+    <string name="suggest">Sugestão</string>
+    <string name="suggest_toilet_title">Sugerir Casa de Banho</string>
+    <string name="suggest_title">Sugerir uma Casa de Banho</string>
+    <string name="suggest_intro_text">Conhece uma casa de banho que não está no mapa? Ajude a comunidade adicionando-a!</string>
+    <string name="start_suggestion">Começar</string>
+    <string name="toilet_name">Nome da Casa de Banho</string>
+    <string name="address">Morada</string>
+    <string name="city">Cidade</string>
+    <string name="state">Distrito</string>
+    <string name="country">País</string>
     <string name="report">Denúncia</string>
 
     <!-- Botões -->
@@ -139,8 +148,9 @@
     <string name="error_required_date">Obrigatório</string>
     <string name="error_too_long_name">Máximo de 50 caracteres</string>
     <string name="error_too_long_email">Máximo de 100 caracteres</string>
-    <string name="error_too_short_name">Requer no mínimo 6 caracteres</string>
-    <string name="error_too_short_password">Requer no mínimo 6 caracteres</string>
+    <string name="error_too_long_password">Máximo de 64 caracteres</string>
+    <string name="error_too_short_name">Requer no mínimo 2 caracteres</string>
+    <string name="error_too_short_password">Requer no mínimo 8 caracteres</string>
     <string name="error_invalid_email">Email inválido</string>
     <string name="error_invalid_password">Palavra-passe inválida</string>
     <string name="error_passwords_do_not_match">As palavras-passe não coincidem</string>
@@ -189,6 +199,10 @@
     <string name="access_consumers_only">Consumidores</string>
 
     <!-- Comentários -->
+    <string name="suggest_add_photo_title">Adicionar Foto</string>
+    <string name="suggest_pick_photo">Escolher Foto</string>
+    <string name="suggest_change_photo">Alterar Foto</string>
+    <string name="suggest_photo_optional">Adicionar uma foto ajuda outros a encontrar esta casa de banho (Opcional)</string>
     <string name="comment_required">O comentário é obrigatório</string>
     <string name="comment_too_long">O comentário é muito longo</string>
 

@@ -83,5 +83,19 @@ enum class ConfirmationType(
         R.string.forgot_password_success,
         R.string.forgot_password_success_text,
         Icons.Default.Email
+    ),
+    SUGGEST_SUCCESS(
+        true,
+        "suggest",
+        R.string.confirmation_suggest_success,
+        R.string.confirmation_suggest_success_text,
+        Icons.Default.Done
+    ),
+    SUGGEST_FAILURE(
+        false,
+        "suggest",
+        R.string.confirmation_suggest_failure,
+        R.string.confirmation_suggest_failure_text,
+        Icons.Default.Close
     )
 }
