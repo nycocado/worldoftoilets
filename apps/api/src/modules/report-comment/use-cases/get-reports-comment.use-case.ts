@@ -21,20 +21,25 @@ export class GetReportsCommentUseCase {
    * @returns {Promise<ReportCommentListResponseDto[]>} Lista de comentários denunciados.
    */
   async execute(
+    page: number,
+    limit: number,
     status?: ReportCommentStatus,
-    pageable?: boolean,
-    page?: number,
-    size?: number,
   ): Promise<ReportCommentListResponseDto[]> {
+    const offset = page * limit;
+
     const grouped = await this.repository.findGroupedByComment(
       status,
-      pageable,
-      page,
-      size,
+      true,
+      offset,
+      limit,
     );
 
-    return plainToInstance(ReportCommentListResponseDto, grouped, {
-      excludeExtraneousValues: true,
-    });
+    return grouped.map((item) =>
+      plainToInstance(
+        ReportCommentListResponseDto,
+        { ...item, status: item.status },
+        { excludeExtraneousValues: true },
+      ),
+    );
   }
 }

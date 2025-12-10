@@ -1,6 +1,9 @@
 import { Expose, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { TypeReportCommentApiName } from '@database/entities';
+import {
+  ReportCommentStatus,
+  TypeReportCommentApiName,
+} from '@database/entities';
 import { CommentResponseDto } from '@modules/comment/dto';
 
 /**
@@ -30,4 +33,11 @@ export class ReportCommentListResponseDto {
   @Expose()
   @Type(() => Date)
   latestReportDate: Date;
+
+  @ApiProperty({
+    description: 'Status agregado da denúncia.',
+    enum: ReportCommentStatus,
+  })
+  @Expose()
+  status: ReportCommentStatus;
 }

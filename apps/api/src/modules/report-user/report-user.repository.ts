@@ -72,6 +72,7 @@ export class ReportUserRepository {
       totalReports: number;
       mostFrequentType: string;
       latestReportDate: Date;
+      status: ReportUserStatus;
     }>
   > {
     const em = this.repository.getEntityManager();
@@ -93,44 +94,45 @@ export class ReportUserRepository {
         knex.raw('COUNT(ru.id) as total_reports'),
         knex.raw('(?) as most_frequent_type', [mostFrequentTypeSubquery]),
         knex.raw('MAX(ru.created_at) as latest_report_date'),
+        knex.raw(
+          `(CASE
+              WHEN EXISTS (SELECT 1 FROM report_user ru_s WHERE ru_s.user_reported_id = u.id AND ru_s.status = ?) THEN ?
+              WHEN EXISTS (SELECT 1 FROM report_user ru_s WHERE ru_s.user_reported_id = u.id AND ru_s.status = ?) THEN ?
+              ELSE ?
+            END) as status`,
+          [
+            ReportUserStatus.REJECTED,
+            ReportUserStatus.REJECTED,
+            ReportUserStatus.ACCEPTED,
+            ReportUserStatus.ACCEPTED,
+            ReportUserStatus.PENDING,
+          ],
+        ),
       ])
       .from('report_user as ru')
       .join('user as u', 'ru.user_reported_id', 'u.id')
       .groupBy('u.id');
 
-    // Aplicar filtro de status com lógica especial
-    if (status === ReportUserStatus.PENDING) {
-      // Mostrar apenas users que NÃO têm NENHUMA denúncia ACCEPTED
-      query = query.whereNotExists(
-        knex
-          .select(knex.raw('1'))
-          .from('report_user as ru_check')
-          .whereRaw('ru_check.user_reported_id = ??', ['u.id'])
-          .andWhere('ru_check.status', '=', ReportUserStatus.ACCEPTED),
+    // Aplicar filtro de status
+    if (status) {
+      query = query.having(
+        knex.raw(
+          `(CASE
+              WHEN EXISTS (SELECT 1 FROM report_user ru_s WHERE ru_s.user_reported_id = u.id AND ru_s.status = ?) THEN ?
+              WHEN EXISTS (SELECT 1 FROM report_user ru_s WHERE ru_s.user_reported_id = u.id AND ru_s.status = ?) THEN ?
+              ELSE ?
+            END) = ?`,
+          [
+            ReportUserStatus.REJECTED,
+            ReportUserStatus.REJECTED,
+            ReportUserStatus.ACCEPTED,
+            ReportUserStatus.ACCEPTED,
+            ReportUserStatus.PENDING,
+            status,
+          ],
+        ),
       );
-    } else if (status === ReportUserStatus.ACCEPTED) {
-      // Mostrar apenas users que TÊM pelo menos uma denúncia ACCEPTED
-      query = query.whereExists(
-        knex
-          .select(knex.raw('1'))
-          .from('report_user as ru_check')
-          .whereRaw('ru_check.user_reported_id = ??', ['u.id'])
-          .andWhere('ru_check.status', '=', ReportUserStatus.ACCEPTED),
-      );
-    } else if (status === ReportUserStatus.REJECTED) {
-      // Mostrar apenas users que TÊM denúncias REJECTED e nenhuma ACCEPTED
-      query = query
-        .where('ru.status', '=', ReportUserStatus.REJECTED)
-        .whereNotExists(
-          knex
-            .select(knex.raw('1'))
-            .from('report_user as ru_check')
-            .whereRaw('ru_check.user_reported_id = ??', ['u.id'])
-            .andWhere('ru_check.status', '=', ReportUserStatus.ACCEPTED),
-        );
     }
-
-    query = query.orderBy('latest_report_date', 'desc');
 
     // Aplicar paginação
     if (pageable && page !== undefined && size !== undefined) {
@@ -160,6 +162,7 @@ export class ReportUserRepository {
       totalReports: Number(r.total_reports),
       mostFrequentType: r.most_frequent_type,
       latestReportDate: new Date(r.latest_report_date),
+      status: r.status,
     }));
   }
 

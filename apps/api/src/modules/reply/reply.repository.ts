@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import {
   CommentEntity,
@@ -11,7 +11,7 @@ import {
   QueryOrder,
   Transactional,
 } from '@mikro-orm/mariadb';
-import { ReportUserStatus } from '@database/entities/report-user.entity';
+import { REPLY_EXCEPTIONS } from './constants';
 
 /**
  * Gerencia o acesso e a persistência de dados para a entidade Reply.
@@ -169,6 +169,9 @@ export class ReplyRepository {
     reply: ReplyEntity,
     deletedBy: UserEntity,
   ): Promise<ReplyEntity> {
+    if (reply.state === ReplyState.HIDDEN) {
+      throw new BadRequestException(REPLY_EXCEPTIONS.REPLY_ALREADY_HIDDEN);
+    }
     const em = this.repository.getEntityManager();
     reply.state = ReplyState.HIDDEN;
     reply.deletedBy = deletedBy;

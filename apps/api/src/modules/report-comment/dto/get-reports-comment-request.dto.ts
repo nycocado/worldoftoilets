@@ -1,5 +1,5 @@
-import { IsBoolean, IsEnum, IsInt, IsOptional, Min } from 'class-validator';
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { ReportCommentStatus } from '@database/entities';
 
@@ -19,41 +19,26 @@ export class GetReportsCommentRequestDto {
   })
   status?: ReportCommentStatus;
 
-  /**
-   * Ativa a paginação.
-   */
-  @IsOptional()
-  @IsBoolean()
-  @Type(() => Boolean)
-  @ApiPropertyOptional({
-    description: 'Ativa a paginação',
-    example: true,
+  @ApiProperty({
+    description: 'Número da página.',
+    default: 0,
+    required: false,
   })
-  pageable?: boolean;
-
-  /**
-   * Número da página.
-   */
-  @IsOptional()
   @IsInt()
   @Min(0)
-  @Type(() => Number)
-  @ApiPropertyOptional({
-    description: 'Número da página',
-    example: 0,
-  })
-  page?: number;
-
-  /**
-   * Tamanho da página.
-   */
   @IsOptional()
+  @Type(() => Number)
+  page?: number = 0;
+
+  @ApiProperty({
+    description: 'Tamanho da página.',
+    default: 10,
+    required: false,
+  })
   @IsInt()
   @Min(1)
+  @Max(100)
+  @IsOptional()
   @Type(() => Number)
-  @ApiPropertyOptional({
-    description: 'Tamanho da página',
-    example: 10,
-  })
-  size?: number;
+  limit?: number = 10;
 }

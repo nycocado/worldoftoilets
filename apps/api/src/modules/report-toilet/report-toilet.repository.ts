@@ -78,6 +78,7 @@ export class ReportToiletRepository {
       totalReports: number;
       mostFrequentType: string;
       latestReportDate: Date;
+      status: ReportToiletStatus;
     }>
   > {
     const em = this.repository.getEntityManager();
@@ -100,64 +101,52 @@ export class ReportToiletRepository {
         knex.raw('COUNT(rt.id) as total_reports'),
         knex.raw('(?) as most_frequent_type', [mostFrequentTypeSubquery]),
         knex.raw('MAX(rt.created_at) as latest_report_date'),
+        knex.raw(
+          `(CASE
+              WHEN EXISTS (SELECT 1 FROM report_toilet rt_s JOIN interaction i_s ON rt_s.interaction_id = i_s.id WHERE i_s.toilet_id = t.id AND rt_s.status = ?) THEN ?
+              WHEN EXISTS (SELECT 1 FROM report_toilet rt_s JOIN interaction i_s ON rt_s.interaction_id = i_s.id WHERE i_s.toilet_id = t.id AND rt_s.status = ?) THEN ?
+              ELSE ?
+            END) as status`,
+          [
+            ReportToiletStatus.REJECTED,
+            ReportToiletStatus.REJECTED,
+            ReportToiletStatus.ACCEPTED,
+            ReportToiletStatus.ACCEPTED,
+            ReportToiletStatus.PENDING,
+          ],
+        ),
       ])
       .from('report_toilet as rt')
       .join('interaction as i', 'rt.interaction_id', 'i.id')
       .join('toilet as t', 'i.toilet_id', 't.id')
       .groupBy('t.id');
 
-    // Aplicar filtro de status com lógica especial
-    if (status === ReportToiletStatus.PENDING) {
-      // Mostrar apenas toilets que NÃO têm NENHUMA denúncia ACCEPTED
-      query = query.whereNotExists(
-        knex
-          .select(knex.raw('1'))
-          .from('report_toilet as rt_check')
-          .join(
-            'interaction as i_check',
-            'rt_check.interaction_id',
-            'i_check.id',
-          )
-          .whereRaw('i_check.toilet_id = ??', ['t.id'])
-          .andWhere('rt_check.status', '=', ReportToiletStatus.ACCEPTED),
+    // Aplicar filtro de status
+    if (status) {
+      query = query.having(
+        knex.raw(
+          `(CASE
+              WHEN EXISTS (SELECT 1 FROM report_toilet rt_s JOIN interaction i_s ON rt_s.interaction_id = i_s.id WHERE i_s.toilet_id = t.id AND rt_s.status = ?) THEN ?
+              WHEN EXISTS (SELECT 1 FROM report_toilet rt_s JOIN interaction i_s ON rt_s.interaction_id = i_s.id WHERE i_s.toilet_id = t.id AND rt_s.status = ?) THEN ?
+              ELSE ?
+            END) = ?`,
+          [
+            ReportToiletStatus.REJECTED,
+            ReportToiletStatus.REJECTED,
+            ReportToiletStatus.ACCEPTED,
+            ReportToiletStatus.ACCEPTED,
+            ReportToiletStatus.PENDING,
+            status,
+          ],
+        ),
       );
-    } else if (status === ReportToiletStatus.ACCEPTED) {
-      // Mostrar apenas toilets que TÊM pelo menos uma denúncia ACCEPTED
-      query = query.whereExists(
-        knex
-          .select(knex.raw('1'))
-          .from('report_toilet as rt_check')
-          .join(
-            'interaction as i_check',
-            'rt_check.interaction_id',
-            'i_check.id',
-          )
-          .whereRaw('i_check.toilet_id = ??', ['t.id'])
-          .andWhere('rt_check.status', '=', ReportToiletStatus.ACCEPTED),
-      );
-    } else if (status === ReportToiletStatus.REJECTED) {
-      // Mostrar apenas toilets que TÊM denúncias REJECTED e nenhuma ACCEPTED
-      query = query
-        .where('rt.status', '=', ReportToiletStatus.REJECTED)
-        .whereNotExists(
-          knex
-            .select(knex.raw('1'))
-            .from('report_toilet as rt_check')
-            .join(
-              'interaction as i_check',
-              'rt_check.interaction_id',
-              'i_check.id',
-            )
-            .whereRaw('i_check.toilet_id = ??', ['t.id'])
-            .andWhere('rt_check.status', '=', ReportToiletStatus.ACCEPTED),
-        );
     }
 
     query = query.orderBy('latest_report_date', 'desc');
 
     // Aplicar paginação
     if (pageable && page !== undefined && size !== undefined) {
-      query = query.limit(size).offset(page * size);
+      query = query.limit(size).offset(page);
     }
 
     const results = await query;
@@ -191,6 +180,7 @@ export class ReportToiletRepository {
       totalReports: Number(r.total_reports),
       mostFrequentType: r.most_frequent_type,
       latestReportDate: new Date(r.latest_report_date),
+      status: r.status,
     }));
   }
 

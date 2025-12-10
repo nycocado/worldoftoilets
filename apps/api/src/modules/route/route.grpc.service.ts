@@ -55,6 +55,7 @@ interface RouteResponse {
 /**
  * Interface para a requisição de health check
  */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface HealthCheckRequest {}
 
 /**
@@ -74,7 +75,10 @@ interface HealthCheckResponse {
 interface RouteServiceClient {
   CalculateRoute(
     request: RouteRequest,
-    callback: (error: grpc.ServiceError | null, response: RouteResponse) => void,
+    callback: (
+      error: grpc.ServiceError | null,
+      response: RouteResponse,
+    ) => void,
   ): grpc.ClientUnaryCall;
 
   HealthCheck(
@@ -168,7 +172,9 @@ export class RouteGrpcService implements OnModuleInit, OnModuleDestroy {
 
       // Define um deadline para a requisição
       const deadline = new Date();
-      deadline.setMilliseconds(deadline.getMilliseconds() + this.requestDeadline);
+      deadline.setMilliseconds(
+        deadline.getMilliseconds() + this.requestDeadline,
+      );
 
       const call = this.client.CalculateRoute(request, (error, response) => {
         if (error) {
@@ -186,7 +192,10 @@ export class RouteGrpcService implements OnModuleInit, OnModuleDestroy {
         }
 
         // Converte os pontos do formato gRPC para o formato esperado
-        const path = (response.path || []).map((point) => [point.lon, point.lat]);
+        const path = (response.path || []).map((point) => [
+          point.lon,
+          point.lat,
+        ]);
 
         resolve({
           status: 'success',
@@ -277,13 +286,9 @@ export class RouteGrpcService implements OnModuleInit, OnModuleDestroy {
           ROUTE_EXCEPTIONS.INVALID_COORDINATES_FORMAT,
         );
       case 'OUT_OF_RANGE_LATITUDE':
-        return new BadRequestException(
-          ROUTE_EXCEPTIONS.LATITUDE_OUT_OF_RANGE,
-        );
+        return new BadRequestException(ROUTE_EXCEPTIONS.LATITUDE_OUT_OF_RANGE);
       case 'OUT_OF_RANGE_LONGITUDE':
-        return new BadRequestException(
-          ROUTE_EXCEPTIONS.LONGITUDE_OUT_OF_RANGE,
-        );
+        return new BadRequestException(ROUTE_EXCEPTIONS.LONGITUDE_OUT_OF_RANGE);
       case 'OUT_OF_SERVICE_AREA_ORIGIN':
         return new BadRequestException(
           ROUTE_EXCEPTIONS.ORIGIN_OUT_OF_SERVICE_AREA,

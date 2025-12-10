@@ -45,8 +45,10 @@ export class CreateSuggestionUseCase {
    * Cria e persiste uma nova sugestão de casa de banho.
    *
    * @param {string} userPublicId O ID público do utilizador.
-   * @param {number} latitude A latitude da sugestão.
-   * @param {number} longitude A longitude da sugestão.
+   * @param {number} userLatitude A latitude do utilizador que faz a sugestão.
+   * @param {number} userLongitude A longitude do utilizador que faz a sugestão.
+   * @param {number} toiletLatitude A latitude da casa de banho.
+   * @param {number} toiletLongitude A longitude da casa de banho.
    * @param {AccessApiName} accessApiName O tipo de acesso da casa de banho.
    * @param {string} name O nome da casa de banho.
    * @param {string} address A morada da casa de banho.
@@ -55,15 +57,16 @@ export class CreateSuggestionUseCase {
    * @param {string} country O país da casa de banho.
    * @param {string | undefined} placeId O ID do Google Places.
    * @param {TypeExtraApiName[]} [extrasApiNames] A lista de extras da casa de banho.
-   * @param {Express.Multer.File} [file] A imagem da casa de banho.
    * @returns {Promise<SuggestionResponseDto>} O DTO da sugestão criada.
    * @throws {BadRequestException} Se o código do país for inválido.
    */
   @Transactional()
   async execute(
     userPublicId: string,
-    latitude: number,
-    longitude: number,
+    userLatitude: number,
+    userLongitude: number,
+    toiletLatitude: number,
+    toiletLongitude: number,
     accessApiName: AccessApiName,
     name: string,
     address: string,
@@ -88,8 +91,8 @@ export class CreateSuggestionUseCase {
     const toilet = await this.toiletService.createToilet(
       access,
       name,
-      latitude,
-      longitude,
+      toiletLatitude,
+      toiletLongitude,
       address,
       city,
       state,
@@ -108,8 +111,8 @@ export class CreateSuggestionUseCase {
 
     const suggestion = await this.repository.create(
       interaction,
-      latitude,
-      longitude,
+      userLatitude,
+      userLongitude,
     );
 
     return plainToInstance(SuggestionResponseDto, suggestion, {

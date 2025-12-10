@@ -94,10 +94,9 @@ export class ReportToiletController {
     @Query() dto: GetReportsToiletRequestDto,
   ): Promise<ApiResponseDto<ReportToiletListResponseDto[]>> {
     const result = await this.getReportsUseCase.execute(
+      dto.page ?? 1,
+      dto.limit ?? 10,
       dto.status,
-      dto.pageable,
-      dto.page,
-      dto.size,
     );
     return new ApiResponseDto(
       REPORT_TOILET_MESSAGES.GET_REPORTS_SUCCESS,

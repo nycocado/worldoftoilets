@@ -24,7 +24,7 @@ export class GetReportsReplyUseCase {
     limit: number,
     status?: ReportReplyStatus,
   ): Promise<ReportReplyListResponseDto[]> {
-    const offset = (page - 1) * limit;
+    const offset = page * limit;
 
     const results = await this.repository.findGroupedByReply(
       status,
@@ -34,9 +34,13 @@ export class GetReportsReplyUseCase {
     );
 
     return results.map((result) =>
-      plainToInstance(ReportReplyListResponseDto, result, {
-        excludeExtraneousValues: true,
-      }),
+      plainToInstance(
+        ReportReplyListResponseDto,
+        { ...result, status: result.status },
+        {
+          excludeExtraneousValues: true,
+        },
+      ),
     );
   }
 }

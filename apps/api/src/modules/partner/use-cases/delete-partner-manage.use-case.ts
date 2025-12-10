@@ -42,7 +42,9 @@ export class DeletePartnerManageUseCase {
 
     // Remove a imagem do Toilet que será deletado em cascade
     if (partner.toilet?.photoUrl) {
-      await this.minioService.deleteFile(partner.toilet.photoUrl).catch(() => {});
+      await this.minioService
+        .deleteFile(partner.toilet.photoUrl)
+        .catch(() => {});
     }
 
     // Remove as imagens das Suggestions que serão deletadas em cascade
@@ -53,7 +55,9 @@ export class DeletePartnerManageUseCase {
 
       for (const suggestion of suggestions) {
         if (suggestion.photoUrl) {
-          await this.minioService.deleteFile(suggestion.photoUrl).catch(() => {});
+          await this.minioService
+            .deleteFile(suggestion.photoUrl)
+            .catch(() => {});
         }
       }
     }

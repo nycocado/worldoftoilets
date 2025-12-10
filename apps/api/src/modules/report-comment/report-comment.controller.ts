@@ -94,10 +94,9 @@ export class ReportCommentController {
     @Query() dto: GetReportsCommentRequestDto,
   ): Promise<ApiResponseDto<ReportCommentListResponseDto[]>> {
     const result = await this.getReportsUseCase.execute(
+      dto.page ?? 1,
+      dto.limit ?? 10,
       dto.status,
-      dto.pageable,
-      dto.page,
-      dto.size,
     );
     return new ApiResponseDto(
       REPORT_COMMENT_MESSAGES.GET_REPORTS_SUCCESS,

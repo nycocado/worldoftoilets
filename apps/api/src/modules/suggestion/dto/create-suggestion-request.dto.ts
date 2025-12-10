@@ -7,13 +7,15 @@ import { ToiletSuggestionRequestDto } from '@modules/suggestion/dto/toilet-sugge
  * DTO para a criação de uma nova sugestão.
  */
 export class CreateSuggestionRequestDto {
-  @ApiProperty({ description: 'A latitude da sugestão.' })
+  @ApiProperty({ description: 'A latitude do utilizador que faz a sugestão.' })
   @IsLatitude()
   @IsNotEmpty()
   @Type(() => Number)
   latitude!: number;
 
-  @ApiProperty({ description: 'A longitude da sugestão.' })
+  @ApiProperty({
+    description: 'A longitude do utilizador que faz a sugestão.',
+  })
   @IsLongitude()
   @IsNotEmpty()
   @Type(() => Number)

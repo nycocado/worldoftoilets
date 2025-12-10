@@ -141,8 +141,8 @@ export class SuggestionRepository {
    * Cria uma nova sugestão.
    *
    * @param {InteractionEntity} interaction A interação associada.
-   * @param {number} latitude A latitude da sugestão.
-   * @param {number} longitude A longitude da sugestão.
+   * @param {number} latitude A latitude do utilizador que fez a sugestão.
+   * @param {number} longitude A longitude do utilizador que fez a sugestão.
    * @returns {Promise<SuggestionEntity>} A sugestão criada.
    */
   @Transactional()
