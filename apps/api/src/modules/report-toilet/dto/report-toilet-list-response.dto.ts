@@ -1,6 +1,9 @@
 import { Expose, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { TypeReportToiletApiName } from '@database/entities';
+import {
+  ReportToiletStatus,
+  TypeReportToiletApiName,
+} from '@database/entities';
 import { ToiletResponseDto } from '@modules/toilet/dto';
 
 /**
@@ -30,4 +33,11 @@ export class ReportToiletListResponseDto {
   @Expose()
   @Type(() => Date)
   latestReportDate: Date;
+
+  @ApiProperty({
+    description: 'Status agregado da denúncia.',
+    enum: ReportToiletStatus,
+  })
+  @Expose()
+  status: ReportToiletStatus;
 }

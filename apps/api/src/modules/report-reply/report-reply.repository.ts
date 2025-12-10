@@ -73,6 +73,7 @@ export class ReportReplyRepository {
       totalReports: number;
       mostFrequentType: string;
       latestReportDate: Date;
+      status: ReportReplyStatus;
     }>
   > {
     const em = this.repository.getEntityManager();
@@ -94,48 +95,49 @@ export class ReportReplyRepository {
         knex.raw('COUNT(rr.id) as total_reports'),
         knex.raw('(?) as most_frequent_type', [mostFrequentTypeSubquery]),
         knex.raw('MAX(rr.created_at) as latest_report_date'),
+        knex.raw(
+          `(CASE
+              WHEN EXISTS (SELECT 1 FROM report_reply rr_s WHERE rr_s.reply_id = r.id AND rr_s.status = ?) THEN ?
+              WHEN EXISTS (SELECT 1 FROM report_reply rr_s WHERE rr_s.reply_id = r.id AND rr_s.status = ?) THEN ?
+              ELSE ?
+            END) as status`,
+          [
+            ReportReplyStatus.REJECTED,
+            ReportReplyStatus.REJECTED,
+            ReportReplyStatus.ACCEPTED,
+            ReportReplyStatus.ACCEPTED,
+            ReportReplyStatus.PENDING,
+          ],
+        ),
       ])
       .from('report_reply as rr')
       .join('reply as r', 'rr.reply_id', 'r.id')
       .groupBy('r.id');
 
-    // Aplicar filtro de status com lógica especial
-    if (status === ReportReplyStatus.PENDING) {
-      // Mostrar apenas replies que NÃO têm NENHUMA denúncia ACCEPTED
-      query = query.whereNotExists(
-        knex
-          .select(knex.raw('1'))
-          .from('report_reply as rr_check')
-          .whereRaw('rr_check.reply_id = ??', ['r.id'])
-          .andWhere('rr_check.status', '=', ReportReplyStatus.ACCEPTED),
+    // Aplicar filtro de status
+    if (status) {
+      query = query.having(
+        knex.raw(
+          `(CASE
+              WHEN EXISTS (SELECT 1 FROM report_reply rr_s WHERE rr_s.reply_id = r.id AND rr_s.status = ?) THEN ?
+              WHEN EXISTS (SELECT 1 FROM report_reply rr_s WHERE rr_s.reply_id = r.id AND rr_s.status = ?) THEN ?
+              ELSE ?
+            END) = ?`,
+          [
+            ReportReplyStatus.REJECTED,
+            ReportReplyStatus.REJECTED,
+            ReportReplyStatus.ACCEPTED,
+            ReportReplyStatus.ACCEPTED,
+            ReportReplyStatus.PENDING,
+            status,
+          ],
+        ),
       );
-    } else if (status === ReportReplyStatus.ACCEPTED) {
-      // Mostrar apenas replies que TÊM pelo menos uma denúncia ACCEPTED
-      query = query.whereExists(
-        knex
-          .select(knex.raw('1'))
-          .from('report_reply as rr_check')
-          .whereRaw('rr_check.reply_id = ??', ['r.id'])
-          .andWhere('rr_check.status', '=', ReportReplyStatus.ACCEPTED),
-      );
-    } else if (status === ReportReplyStatus.REJECTED) {
-      // Mostrar apenas replies que TÊM denúncias REJECTED e nenhuma ACCEPTED
-      query = query
-        .where('rr.status', '=', ReportReplyStatus.REJECTED)
-        .whereNotExists(
-          knex
-            .select(knex.raw('1'))
-            .from('report_reply as rr_check')
-            .whereRaw('rr_check.reply_id = ??', ['r.id'])
-            .andWhere('rr_check.status', '=', ReportReplyStatus.ACCEPTED),
-        );
     }
-
-    query = query.orderBy('latest_report_date', 'desc');
 
     // Aplicar paginação
     if (pageable && page !== undefined && size !== undefined) {
-      query = query.limit(size).offset(page * size);
+      query = query.limit(size).offset(page);
     }
 
     const results = await query;
@@ -161,6 +163,7 @@ export class ReportReplyRepository {
       totalReports: Number(r.total_reports),
       mostFrequentType: r.most_frequent_type,
       latestReportDate: new Date(r.latest_report_date),
+      status: r.status,
     }));
   }
 

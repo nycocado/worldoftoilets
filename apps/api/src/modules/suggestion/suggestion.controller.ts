@@ -82,13 +82,25 @@ export class SuggestionController {
     @User() user: jwtTypes.RequestUser,
   ): Promise<ApiResponseDto<SuggestionResponseDto>> {
     const { latitude, longitude, toilet } = createSuggestionDto;
-    const { access, name, address, city, state, country, placeId, extras } =
-      toilet;
+    const {
+      access,
+      name,
+      address,
+      city,
+      state,
+      country,
+      placeId,
+      extras,
+      latitude: toiletLatitude,
+      longitude: toiletLongitude,
+    } = toilet;
 
     const result = await this.createSuggestionUseCase.execute(
       user.publicId,
       latitude,
       longitude,
+      toiletLatitude,
+      toiletLongitude,
       access,
       name,
       address,

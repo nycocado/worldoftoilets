@@ -9,15 +9,15 @@ import { ReportReplyStatus } from 'src/database/entities/report-reply.entity';
 export class GetReportsReplyRequestDto {
   @ApiPropertyOptional({
     description: 'Número da página.',
-    minimum: 1,
-    default: 1,
-    example: 1,
+    minimum: 0,
+    default: 0,
+    example: 0,
   })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
-  @Min(1)
-  page?: number = 1;
+  @Min(0)
+  page?: number = 0;
 
   @ApiPropertyOptional({
     description: 'Quantidade de itens por página.',

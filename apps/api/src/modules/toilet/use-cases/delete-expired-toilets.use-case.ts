@@ -64,7 +64,9 @@ export class DeleteExpiredToiletsUseCase {
       // Remove as imagens das suggestions
       for (const suggestion of suggestions) {
         if (suggestion.photoUrl) {
-          await this.minioService.deleteFile(suggestion.photoUrl).catch(() => {});
+          await this.minioService
+            .deleteFile(suggestion.photoUrl)
+            .catch(() => {});
         }
       }
     }

@@ -15,7 +15,6 @@ import {
   Transactional,
 } from '@mikro-orm/mariadb';
 import { InteractionEntity } from '@database/entities/interaction.entity';
-import { ReportUserStatus } from '@database/entities/report-user.entity';
 
 /**
  * Gerencia o acesso e a persistência de dados para a entidade CommentEntity.

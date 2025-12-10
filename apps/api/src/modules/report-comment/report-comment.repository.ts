@@ -85,6 +85,7 @@ export class ReportCommentRepository {
       totalReports: number;
       mostFrequentType: string;
       latestReportDate: Date;
+      status: ReportCommentStatus;
     }>
   > {
     const em = this.repository.getEntityManager();
@@ -111,52 +112,52 @@ export class ReportCommentRepository {
         knex.raw('COUNT(rc.id) as total_reports'),
         knex.raw('(?) as most_frequent_type', [mostFrequentTypeSubquery]),
         knex.raw('MAX(rc.created_at) as latest_report_date'),
+        knex.raw(
+          `(CASE
+              WHEN EXISTS (SELECT 1 FROM report_comment rc_s JOIN react r_s ON rc_s.react_id = r_s.id WHERE r_s.comment_id = c.id AND rc_s.status = ?) THEN ?
+              WHEN EXISTS (SELECT 1 FROM report_comment rc_s JOIN react r_s ON rc_s.react_id = r_s.id WHERE r_s.comment_id = c.id AND rc_s.status = ?) THEN ?
+              ELSE ?
+            END) as status`,
+          [
+            ReportCommentStatus.REJECTED,
+            ReportCommentStatus.REJECTED,
+            ReportCommentStatus.ACCEPTED,
+            ReportCommentStatus.ACCEPTED,
+            ReportCommentStatus.PENDING,
+          ],
+        ),
       ])
       .from('report_comment as rc')
       .join('react as r', 'rc.react_id', 'r.id')
       .join('comment as c', 'r.comment_id', 'c.id')
       .groupBy('c.id');
 
-    // Aplicar filtro de status com lógica especial
-    if (status === ReportCommentStatus.PENDING) {
-      // Mostrar apenas comments que NÃO têm NENHUMA denúncia ACCEPTED
-      query = query.whereNotExists(
-        knex
-          .select(knex.raw('1'))
-          .from('report_comment as rc_check')
-          .join('react as r_check', 'rc_check.react_id', 'r_check.id')
-          .whereRaw('r_check.comment_id = ??', ['c.id'])
-          .andWhere('rc_check.status', '=', ReportCommentStatus.ACCEPTED),
+    // Aplicar filtro de status
+    if (status) {
+      query = query.having(
+        knex.raw(
+          `(CASE
+              WHEN EXISTS (SELECT 1 FROM report_comment rc_s JOIN react r_s ON rc_s.react_id = r_s.id WHERE r_s.comment_id = c.id AND rc_s.status = ?) THEN ?
+              WHEN EXISTS (SELECT 1 FROM report_comment rc_s JOIN react r_s ON rc_s.react_id = r_s.id WHERE r_s.comment_id = c.id AND rc_s.status = ?) THEN ?
+              ELSE ?
+            END) = ?`,
+          [
+            ReportCommentStatus.REJECTED,
+            ReportCommentStatus.REJECTED,
+            ReportCommentStatus.ACCEPTED,
+            ReportCommentStatus.ACCEPTED,
+            ReportCommentStatus.PENDING,
+            status,
+          ],
+        ),
       );
-    } else if (status === ReportCommentStatus.ACCEPTED) {
-      // Mostrar apenas comments que TÊM pelo menos uma denúncia ACCEPTED
-      query = query.whereExists(
-        knex
-          .select(knex.raw('1'))
-          .from('report_comment as rc_check')
-          .join('react as r_check', 'rc_check.react_id', 'r_check.id')
-          .whereRaw('r_check.comment_id = ??', ['c.id'])
-          .andWhere('rc_check.status', '=', ReportCommentStatus.ACCEPTED),
-      );
-    } else if (status === ReportCommentStatus.REJECTED) {
-      // Mostrar apenas comments que TÊM denúncias REJECTED e nenhuma ACCEPTED
-      query = query
-        .where('rc.status', '=', ReportCommentStatus.REJECTED)
-        .whereNotExists(
-          knex
-            .select(knex.raw('1'))
-            .from('report_comment as rc_check')
-            .join('react as r_check', 'rc_check.react_id', 'r_check.id')
-            .whereRaw('r_check.comment_id = ??', ['c.id'])
-            .andWhere('rc_check.status', '=', ReportCommentStatus.ACCEPTED),
-        );
     }
 
     query = query.orderBy('latest_report_date', 'desc');
 
     // Aplicar paginação
     if (pageable && page !== undefined && size !== undefined) {
-      query = query.limit(size).offset(page * size);
+      query = query.limit(size).offset(page);
     }
 
     const results = await query;
@@ -197,6 +198,7 @@ export class ReportCommentRepository {
       totalReports: Number(r.total_reports),
       mostFrequentType: r.most_frequent_type,
       latestReportDate: new Date(r.latest_report_date),
+      status: r.status,
     }));
   }
 

@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Transform, Type, plainToInstance } from 'class-transformer';
 import { UserSuggestionResponseDto } from 'src/modules/user/dto';
+import { ReportUserStatus } from '@database/entities';
 
 /**
  * DTO de resposta para item da lista de utilizadores denunciados.
@@ -42,4 +43,11 @@ export class ReportUserListResponseDto {
   })
   @Expose()
   latestReportDate: Date;
+
+  @ApiProperty({
+    description: 'Status agregado da denúncia.',
+    enum: ReportUserStatus,
+  })
+  @Expose()
+  status: ReportUserStatus;
 }

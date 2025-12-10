@@ -21,27 +21,23 @@ export class GetReportsToiletUseCase {
    * @returns {Promise<ReportToiletListResponseDto[]>} Lista de casas de banho denunciadas.
    */
   async execute(
+    page: number,
+    limit: number,
     status?: ReportToiletStatus,
-    pageable?: boolean,
-    page?: number,
-    size?: number,
   ): Promise<ReportToiletListResponseDto[]> {
+    const offset = page * limit;
+
     const grouped = await this.repository.findGroupedByToilet(
       status,
-      pageable,
-      page,
-      size,
+      true,
+      offset,
+      limit,
     );
 
     return grouped.map((item) =>
       plainToInstance(
         ReportToiletListResponseDto,
-        {
-          toilet: item.toilet,
-          totalReports: item.totalReports,
-          mostFrequentType: item.mostFrequentType,
-          latestReportDate: item.latestReportDate,
-        },
+        { ...item, status: item.status },
         { excludeExtraneousValues: true },
       ),
     );

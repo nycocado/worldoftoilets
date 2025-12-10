@@ -8,9 +8,7 @@
  * buildMinioFileUrl('toilets/abc123.jpg')
  * // Retorna: 'https://storage.example.com/worldoftoilets/toilets/abc123.jpg'
  */
-export function buildMinioFileUrl(
-  filePath: string | null | undefined,
-): string {
+export function buildMinioFileUrl(filePath: string | null | undefined): string {
   if (!filePath) return '';
 
   const publicUrl = process.env.MINIO_PUBLIC_URL;
