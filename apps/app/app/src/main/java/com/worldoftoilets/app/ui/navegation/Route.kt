@@ -3,8 +3,10 @@ package com.worldoftoilets.app.ui.navegation
 import android.content.Context
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.AddLocation
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material.icons.rounded.AddLocation
 import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -34,6 +36,18 @@ sealed class NavRoute<T : Any>(
         }
     }
 
+    data class Suggestion(private val context: Context) : NavRoute<AppDestinations.SuggestionStart>(
+        selectedIcon = Icons.Rounded.AddLocation,
+        unselectedIcon = Icons.Outlined.AddLocation,
+        hasNews = false,
+        destination = AppDestinations.SuggestionStart,
+        routeClass = AppDestinations.SuggestionStart::class
+    ) {
+        override fun getTitle(): String {
+            return context.getString(R.string.suggest)
+        }
+    }
+
     data class Profile(private val context: Context) : NavRoute<AppDestinations.Profile>(
         selectedIcon = Icons.Rounded.AccountCircle,
         unselectedIcon = Icons.Outlined.AccountCircle,
@@ -52,6 +66,7 @@ fun getBottomRoutes(): List<NavRoute<*>> {
     val context: Context = LocalContext.current
     return listOf(
         NavRoute.Home(context),
+        NavRoute.Suggestion(context),
         NavRoute.Profile(context)
     )
 }

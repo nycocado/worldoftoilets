@@ -7,6 +7,7 @@ import com.worldoftoilets.app.network.AuthInterceptor
 import com.worldoftoilets.app.network.AuthService
 import com.worldoftoilets.app.network.CommentService
 import com.worldoftoilets.app.network.ReportService
+import com.worldoftoilets.app.network.SuggestionService
 import com.worldoftoilets.app.network.ToiletService
 import com.worldoftoilets.app.network.TokenRefreshInterceptor
 import com.worldoftoilets.app.network.UserService
@@ -148,5 +149,11 @@ object SecurityModule {
     @Singleton
     fun provideRouteService(retrofit: Retrofit): com.worldoftoilets.app.network.RouteService {
         return retrofit.create(com.worldoftoilets.app.network.RouteService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSuggestionService(retrofit: Retrofit): SuggestionService {
+        return retrofit.create(SuggestionService::class.java)
     }
 }

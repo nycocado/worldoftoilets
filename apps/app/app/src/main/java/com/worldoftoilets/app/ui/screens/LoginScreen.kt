@@ -70,9 +70,17 @@ fun LoginScreen(
     LaunchedEffect(email, password) {
         emailSupportText = when {
             email.isEmpty() -> ""
+            email.length > 100 -> context.getString(R.string.error_too_long_email)
             !Patterns.EMAIL_ADDRESS.matcher(email)
                 .matches() -> context.getString(R.string.error_invalid_email)
 
+            else -> ""
+        }
+
+        passwordSupportText = when {
+            password.isEmpty() -> ""
+            password.length < 8 -> context.getString(R.string.error_too_short_password)
+            password.length > 64 -> context.getString(R.string.error_too_long_password)
             else -> ""
         }
     }

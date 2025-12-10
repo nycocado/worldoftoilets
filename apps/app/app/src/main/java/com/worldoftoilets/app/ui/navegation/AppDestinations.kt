@@ -51,6 +51,12 @@ object AppDestinations {
     @Serializable
     data class SettingsChange(val type: String)
 
+    // Suggestion Screens
+    @Serializable
+    object SuggestionStart
+    @Serializable
+    object SuggestionData
+
     // Report Screens
     @Serializable
     data class Report(val typeId: String, val id: String)
