@@ -1,68 +1,70 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 @layer base {
   :root {
-    /* Cores do Design System - Light Mode (OKLCH format) */
-    --background: oklch(0.97 0.01 180);            /* Crisp White #F4F7F6 - Fundo das telas */
-    --foreground: oklch(0.21 0 0);                 /* Deep Black #1F1F1F - Texto principal */
+    /* Cores do Design System - Light Mode (From Dashboard Example) */
+    --background: #F8FAFC;         /* THEME.light.background */
+    --foreground: #0F172A;         /* THEME.light.textMain */
 
-    --card: oklch(1 0 0);                          /* Pure White #FFFFFF - Cards e Containers */
-    --card-foreground: oklch(0.21 0 0);            /* Deep Black #1F1F1F */
+    --card: #FFFFFF;               /* THEME.light.surface */
+    --card-foreground: #0F172A;    /* THEME.light.textMain */
 
-    --popover: oklch(1 0 0);                       /* Pure White #FFFFFF */
-    --popover-foreground: oklch(0.21 0 0);
+    --popover: #FFFFFF;            /* THEME.light.surface */
+    --popover-foreground: #0F172A; /* THEME.light.textMain */
 
-    --primary: oklch(0.63 0.22 240);               /* Electric Blue #00A3FF - Ações principais, Links, Marca */
-    --primary-foreground: oklch(1 0 0);
+    --primary: #00A3FF;            /* THEME.light.primary */
+    --primary-foreground: #FFFFFF;
 
-    --secondary: oklch(0.74 0.20 165);             /* Fresh Green #00D084 - Sucesso, Confirmações */
-    --secondary-foreground: oklch(1 0 0);
+    --secondary: #00D084;          /* THEME.light.secondary */
+    --secondary-foreground: #FFFFFF;
 
-    --muted: oklch(0.98 0.005 180);                /* Soft Gray #F8FAFB - Surface Low */
-    --muted-foreground: oklch(0.55 0 0);
+    --muted: #F1F5F9;              /* THEME.light.surfaceVariant */
+    --muted-foreground: #64748B;   /* THEME.light.textMuted */
 
-    --accent: oklch(0.78 0.15 75);                 /* Golden Sun #FFB020 - Alertas, Destaques */
-    --accent-foreground: oklch(0.21 0 0);
+    --accent: #FFB020;             /* THEME.light.tertiary */
+    --accent-foreground: #FFFFFF;
 
-    --destructive: oklch(0.66 0.25 25);            /* Alert Red #FF4D4F - Erros e Denúncias */
-    --destructive-foreground: oklch(1 0 0);
+    --destructive: #FF4D4F;        /* THEME.light.error */
+    --destructive-foreground: #FFFFFF;
 
-    --border: oklch(0.76 0 0);                     /* Gray Medium #BDBDBD - Bordas de inputs e cards */
-    --input: oklch(0.76 0 0);                      /* Gray Medium #BDBDBD */
-    --ring: oklch(0.63 0.22 240);                  /* Electric Blue #00A3FF - Focus ring */
+    --border: #E2E8F0;             /* THEME.light.border */
+    --input: #E2E8F0;              /* THEME.light.border */
+    --ring: #00A3FF;               /* THEME.light.primary */
 
-    --radius: 1rem;                                /* 16dp conforme Design System */
+    --radius: 1rem;                /* 16dp conforme Design System */
   }
 
   .dark {
-    /* Cores do Design System - Dark Mode (OKLCH format) */
-    --background: oklch(0.15 0.01 216);            /* Deep dark background */
-    --foreground: oklch(0.97 0.01 180);            /* Light text */
+    /* Cores do Design System - Dark Mode (From Dashboard Example) */
+    --background: #0F172A;         /* THEME.dark.background */
+    --foreground: #F8FAFC;         /* THEME.dark.textMain */
 
-    --card: oklch(0.18 0.01 215);                  /* Dark cards */
-    --card-foreground: oklch(0.97 0.01 180);
+    --card: #1E293B;               /* THEME.dark.surface */
+    --card-foreground: #F8FAFC;    /* THEME.dark.textMain */
 
-    --popover: oklch(0.18 0.01 215);
-    --popover-foreground: oklch(0.97 0.01 180);
+    --popover: #1E293B;            /* THEME.dark.surface */
+    --popover-foreground: #F8FAFC; /* THEME.dark.textMain */
 
-    --primary: oklch(0.63 0.22 240);               /* Electric Blue #00A3FF */
-    --primary-foreground: oklch(1 0 0);
+    --primary: #38BDF8;            /* THEME.dark.primary */
+    --primary-foreground: #0F172A;
 
-    --secondary: oklch(0.74 0.20 165);             /* Fresh Green #00D084 */
-    --secondary-foreground: oklch(1 0 0);
+    --secondary: #34D399;          /* THEME.dark.secondary */
+    --secondary-foreground: #0F172A;
 
-    --muted: oklch(0.22 0.01 215);
-    --muted-foreground: oklch(0.70 0 0);
+    --muted: #334155;              /* THEME.dark.surfaceVariant */
+    --muted-foreground: #94A3B8;   /* THEME.dark.textMuted */
 
-    --accent: oklch(0.78 0.15 75);                 /* Golden Sun #FFB020 */
-    --accent-foreground: oklch(0.21 0 0);
+    --accent: #FBBF24;             /* THEME.dark.tertiary */
+    --accent-foreground: #0F172A;
 
-    --destructive: oklch(0.70 0.20 25);            /* Lighter red for dark mode */
-    --destructive-foreground: oklch(1 0 0);
+    --destructive: #F87171;        /* THEME.dark.error */
+    --destructive-foreground: #0F172A;
 
-    --border: oklch(0.35 0 0);                     /* Lighter gray for dark mode borders */
-    --input: oklch(0.35 0 0);
-    --ring: oklch(0.63 0.22 240);
+    --border: #334155;             /* THEME.dark.border */
+    --input: #334155;              /* THEME.dark.border */
+    --ring: #38BDF8;               /* THEME.dark.primary */
   }
 }
 
@@ -87,4 +89,43 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+}
+
+:root {
+  --sidebar: hsl(0 0% 98%);
+  --sidebar-foreground: hsl(240 5.3% 26.1%);
+  --sidebar-primary: hsl(240 5.9% 10%);
+  --sidebar-primary-foreground: hsl(0 0% 98%);
+  --sidebar-accent: hsl(240 4.8% 95.9%);
+  --sidebar-accent-foreground: hsl(240 5.9% 10%);
+  --sidebar-border: hsl(220 13% 91%);
+  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+}
+
+.dark {
+  --sidebar: hsl(240 5.9% 10%);
+  --sidebar-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-primary: hsl(224.3 76.3% 48%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(240 3.7% 15.9%);
+  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-border: hsl(240 3.7% 15.9%);
+  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }

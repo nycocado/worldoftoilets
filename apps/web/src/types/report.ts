@@ -3,10 +3,35 @@ import { UserSuggestionResponseDto } from './user';
 import { CommentResponseDto } from './comment';
 
 // Report Types
-export type ToiletReportType = 'fake-information' | 'unsanitary-conditions' | 'privacy-violation' | 'maintenance-needed' | 'damaged-equipment' | 'others';
-export type CommentReportType = 'not-useful' | 'fake-information' | 'inappropriate-content' | 'offensive-content' | 'spam' | 'others';
-export type UserReportType = 'harassment-abuse' | 'fake-account' | 'impersonation' | 'hate-speech' | 'privacy-violation' | 'spam' | 'others';
-export type ReplyReportType = 'not-useful' | 'fake-information' | 'inappropriate-content' | 'offensive-content' | 'spam' | 'others';
+export type ToiletReportType =
+  | 'fake-information'
+  | 'unsanitary-conditions'
+  | 'privacy-violation'
+  | 'maintenance-needed'
+  | 'damaged-equipment'
+  | 'others';
+export type CommentReportType =
+  | 'not-useful'
+  | 'fake-information'
+  | 'inappropriate-content'
+  | 'offensive-content'
+  | 'spam'
+  | 'others';
+export type UserReportType =
+  | 'harassment-abuse'
+  | 'fake-account'
+  | 'impersonation'
+  | 'hate-speech'
+  | 'privacy-violation'
+  | 'spam'
+  | 'others';
+export type ReplyReportType =
+  | 'not-useful'
+  | 'fake-information'
+  | 'inappropriate-content'
+  | 'offensive-content'
+  | 'spam'
+  | 'others';
 
 export type ReportStatus = 'pending' | 'accepted' | 'rejected';
 

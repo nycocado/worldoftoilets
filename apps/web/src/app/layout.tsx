@@ -1,21 +1,27 @@
-import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
-import "./globals.css";
-import { CsrfProvider } from "@/context/CsrfContext";
-import { AuthProvider } from "@/context/AuthContext";
-import { ThemeProvider } from "@/components/theme-provider";
-import React from "react";
+import type { Metadata } from 'next';
+import { Montserrat } from 'next/font/google';
+import './globals.css';
+import { CsrfProvider } from '@/context/CsrfContext';
+import { AuthProvider } from '@/context/AuthContext';
+import { ThemeProvider } from '@/components/theme-provider';
+import React from 'react';
+
+import { Toaster } from '@/components/ui/sonner';
 
 const montserrat = Montserrat({
-  variable: "--font-montserrat",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"], // Added bolder weights for headers
-  display: "swap",
+  variable: '--font-montserrat',
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800', '900'], // Added bolder weights for headers
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
-  title: "World of Toilets - Admin Dashboard",
-  description: "Dashboard administrativo para gestão da plataforma World of Toilets",
+  title: 'World of Toilets - Admin Dashboard',
+  description:
+    'Dashboard administrativo para gestão da plataforma World of Toilets',
+  icons: {
+    icon: '/logo.svg',
+  },
 };
 
 export default function RootLayout({
@@ -25,7 +31,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt" suppressHydrationWarning>
-      <body className={`${montserrat.variable} min-h-screen font-sans antialiased`}>
+      <body
+        className={`${montserrat.variable} min-h-screen font-sans antialiased`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -34,6 +42,7 @@ export default function RootLayout({
         >
           <CsrfProvider>
             <AuthProvider>{children}</AuthProvider>
+            <Toaster />
           </CsrfProvider>
         </ThemeProvider>
       </body>

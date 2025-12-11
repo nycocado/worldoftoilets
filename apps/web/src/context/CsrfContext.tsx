@@ -1,6 +1,12 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from 'react';
 import { getCsrfToken } from '@/lib/api/auth';
 import { setCsrfToken as setClientCsrfToken } from '@/lib/api/client';
 
