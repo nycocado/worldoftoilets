@@ -42,6 +42,7 @@ export async function refreshToken() {
 export async function logout() {
   return apiClient<{ message: string }>('/auth/logout', {
     method: 'POST',
+    skipAuthHeader: true, // Do not send Access Token, rely on Refresh Token cookie
   });
 }
 
@@ -70,24 +71,33 @@ export async function resendVerification(email: string) {
 }
 
 export async function forgotPassword(email: string) {
-  return apiClient<{ message: string }>('/auth/forgot-password', {
-    method: 'POST',
-    body: JSON.stringify({ email }),
-    skipRefresh: true,
-  });
+  return apiClient<{ message: string }>(
+    `/auth/forgot-password?email=${encodeURIComponent(email)}`,
+    {
+      method: 'POST',
+      skipRefresh: true,
+    },
+  );
 }
 
 export async function resetPassword(token: string, newPassword: string) {
   return apiClient<{ message: string }>('/auth/reset-password', {
     method: 'POST',
-    body: JSON.stringify({ token, password: newPassword }),
+    body: JSON.stringify({ token, newPassword }),
     skipRefresh: true,
   });
 }
 
-export async function getCsrfToken() {
+export async function getCsrfToken(token?: string) {
+  const headers: Record<string, string> = {};
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
   return apiClient<CsrfTokenResponseDto>('/auth/csrf-token', {
     method: 'GET',
+    headers,
     skipRefresh: true,
+    credentials: 'include',
   });
 }

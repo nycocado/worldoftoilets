@@ -19,13 +19,17 @@ export interface Role {
 }
 
 export interface Access {
-  name: string;  // "Público", "Privado", "Só consumidores"
+  name: string; // "Público", "Privado", "Só consumidores"
   apiName: 'public' | 'private' | 'consumers-only';
 }
 
 export interface TypeExtra {
-  name: string;  // "Acessível para cadeira de rodas"
-  apiName: 'wheelchair-accessible' | 'baby-changing-station' | 'disabled-parking' | 'accessible-for-visually-impaired';
+  name: string; // "Acessível para cadeira de rodas"
+  apiName:
+    | 'wheelchair-accessible'
+    | 'baby-changing-station'
+    | 'disabled-parking'
+    | 'accessible-for-visually-impaired';
 }
 
 export interface CommentRateToiletResponseDto {

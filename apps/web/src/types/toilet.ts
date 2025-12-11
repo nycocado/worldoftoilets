@@ -13,7 +13,7 @@ export interface ToiletResponseDto {
   country: string;
   countryCode: string;
   photoUrl: string;
-  placeId: string;  // Google Places ID
+  placeId: string; // Google Places ID
   rating: CommentRateToiletResponseDto;
 }
 

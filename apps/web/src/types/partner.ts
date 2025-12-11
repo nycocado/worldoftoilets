@@ -25,9 +25,9 @@ export interface PartnerSelfResponseDto {
 
 export interface PartnerAdminResponseDto {
   publicId: string;
-  user: UserAdminResponseDto | null;  // null if pending
+  user: UserAdminResponseDto | null; // null if pending
   toilet: ToiletResponseDto;
-  certificate: string | null;  // URL
+  certificate: string | null; // URL
   contactEmail: string;
   status: 'pending' | 'active' | 'inactive' | 'rejected';
   reviewedBy: UserAdminResponseDto | null;

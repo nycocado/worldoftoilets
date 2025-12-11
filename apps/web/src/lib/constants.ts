@@ -74,10 +74,15 @@ export const NAV_ITEMS = [
   },
 ] as const;
 
-export function hasPermission(userRoles: { apiName: string }[], requiredRole: string): boolean {
+export function hasPermission(
+  userRoles: { apiName: string }[],
+  requiredRole: string,
+): boolean {
   if (requiredRole === 'all') return true;
   if (requiredRole === 'admin') {
-    return userRoles.some(r => ADMIN_ROLES.includes(r.apiName as typeof ADMIN_ROLES[number]));
+    return userRoles.some((r) =>
+      ADMIN_ROLES.includes(r.apiName as (typeof ADMIN_ROLES)[number]),
+    );
   }
-  return userRoles.some(r => r.apiName === requiredRole);
+  return userRoles.some((r) => r.apiName === requiredRole);
 }
