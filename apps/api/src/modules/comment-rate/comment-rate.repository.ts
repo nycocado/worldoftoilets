@@ -48,8 +48,8 @@ export class CommentRateRepository {
     commentRate.paper = paper;
     commentRate.structure = structure;
     commentRate.accessibility = accessibility;
-
-    await em.persistAndFlush(commentRate);
+    em.persist(commentRate);
+    await em.flush();
     return commentRate;
   }
 
@@ -83,7 +83,8 @@ export class CommentRateRepository {
     if (accessibility !== undefined) {
       commentRate.accessibility = accessibility;
     }
-    await em.persistAndFlush(commentRate);
+    em.persist(commentRate);
+    await em.flush();
     return commentRate;
   }
 }

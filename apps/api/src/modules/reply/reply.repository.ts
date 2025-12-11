@@ -153,7 +153,8 @@ export class ReplyRepository {
     reply.comment = comment;
     reply.user = user;
     reply.text = text;
-    await em.persistAndFlush(reply);
+    em.persist(reply);
+    await em.flush();
     return reply;
   }
 
@@ -175,8 +176,8 @@ export class ReplyRepository {
     const em = this.repository.getEntityManager();
     reply.state = ReplyState.HIDDEN;
     reply.deletedBy = deletedBy;
-    reply.deletedAt = new Date();
-    await em.persistAndFlush(reply);
+    em.persist(reply);
+    await em.flush();
     return reply;
   }
 
@@ -189,7 +190,8 @@ export class ReplyRepository {
   @Transactional()
   async delete(reply: ReplyEntity): Promise<void> {
     const em = this.repository.getEntityManager();
-    await em.removeAndFlush(reply);
+    em.remove(reply);
+    await em.flush();
   }
 
   /**
@@ -202,7 +204,8 @@ export class ReplyRepository {
   async deleteExpired(retention: Date): Promise<void> {
     const em = this.repository.getEntityManager();
     const replies = await this.findExpired(retention);
-    await em.removeAndFlush(replies);
+    em.remove(replies);
+    await em.flush();
   }
 
   /**
@@ -215,10 +218,8 @@ export class ReplyRepository {
   @Transactional()
   async update(reply: ReplyEntity, text?: string): Promise<ReplyEntity> {
     const em = this.repository.getEntityManager();
-    if (text !== undefined) {
-      reply.text = text;
-    }
-    await em.persistAndFlush(reply);
+    em.persist(reply);
+    await em.flush();
     return reply;
   }
 
@@ -236,7 +237,8 @@ export class ReplyRepository {
   ): Promise<ReplyEntity> {
     const em = this.repository.getEntityManager();
     reply.state = state;
-    await em.persistAndFlush(reply);
+    em.persist(reply);
+    await em.flush();
     return reply;
   }
 
@@ -252,7 +254,8 @@ export class ReplyRepository {
     reply.state = ReplyState.VISIBLE;
     reply.deletedBy = undefined;
     reply.deletedAt = undefined;
-    await em.persistAndFlush(reply);
+    em.persist(reply);
+    await em.flush();
     return reply;
   }
 }

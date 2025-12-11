@@ -49,8 +49,8 @@ export class RefreshTokenRepository {
     const refreshToken = new RefreshTokenEntity();
     refreshToken.user = user;
     refreshToken.expiresAt = expiresAt;
-
-    await em.persistAndFlush(refreshToken);
+    em.persist(refreshToken);
+    await em.flush();
     return refreshToken;
   }
 
@@ -66,7 +66,8 @@ export class RefreshTokenRepository {
   ): Promise<RefreshTokenEntity> {
     const em = this.repository.getEntityManager();
     refreshToken.invalidAt = new Date();
-    await em.persistAndFlush(refreshToken);
+    em.persist(refreshToken);
+    await em.flush();
     return refreshToken;
   }
 
@@ -85,7 +86,8 @@ export class RefreshTokenRepository {
       token.invalidAt = new Date();
     });
 
-    await em.persistAndFlush(tokens);
+    em.persist(tokens);
+    await em.flush();
     return tokens;
   }
 
@@ -96,6 +98,7 @@ export class RefreshTokenRepository {
   async deleteExpired(): Promise<void> {
     const em = this.repository.getEntityManager();
     const tokens = await this.findExpired();
-    await em.removeAndFlush(tokens);
+    em.remove(tokens);
+    await em.flush();
   }
 }

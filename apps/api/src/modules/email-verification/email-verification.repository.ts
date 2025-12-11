@@ -64,8 +64,8 @@ export class EmailVerificationRepository {
     const emailVerification = new EmailVerificationEntity();
     emailVerification.userCredential = userCredential;
     emailVerification.expiresAt = expiresAt;
-
-    await em.persistAndFlush(emailVerification);
+    em.persist(emailVerification);
+    await em.flush();
     return emailVerification;
   }
 
@@ -80,7 +80,8 @@ export class EmailVerificationRepository {
   ): Promise<EmailVerificationEntity> {
     const em = this.repository.getEntityManager();
     emailVerification.invalidAt = new Date();
-    await em.persistAndFlush(emailVerification);
+    em.persist(emailVerification);
+    await em.flush();
     return emailVerification;
   }
 
@@ -102,7 +103,8 @@ export class EmailVerificationRepository {
       token.invalidAt = new Date();
     });
 
-    await em.persistAndFlush(tokens);
+    em.persist(tokens);
+    await em.flush();
     return tokens;
   }
 
@@ -115,7 +117,8 @@ export class EmailVerificationRepository {
     const tokens = await this.repository.find({
       expiresAt: { $lt: new Date() },
     });
-    await em.removeAndFlush(tokens);
+    em.remove(tokens);
+    await em.flush();
   }
 
   /**
@@ -131,8 +134,9 @@ export class EmailVerificationRepository {
     emailVerification.userCredential.emailVerified = true;
     emailVerification.invalidAt = new Date();
 
-    await em.persistAndFlush(emailVerification.userCredential);
-    await em.persistAndFlush(emailVerification);
+    em.persist(emailVerification.userCredential);
+    em.persist(emailVerification);
+    await em.flush();
     return emailVerification;
   }
 }

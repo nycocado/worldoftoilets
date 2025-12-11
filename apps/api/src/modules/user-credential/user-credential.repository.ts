@@ -34,7 +34,8 @@ export class UserCredentialRepository {
     userCredential.user = user;
     userCredential.email = email;
     userCredential.password = hashedPassword;
-    await em.persistAndFlush(userCredential);
+    em.persist(userCredential);
+    await em.flush();
     return userCredential;
   }
 
@@ -52,7 +53,8 @@ export class UserCredentialRepository {
   ): Promise<UserCredentialEntity> {
     const em = this.repository.getEntityManager();
     userCredential.password = await bcrypt.hash(newPassword, 12);
-    await em.persistAndFlush(userCredential);
+    em.persist(userCredential);
+    await em.flush();
     return userCredential;
   }
 }

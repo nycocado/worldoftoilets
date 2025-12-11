@@ -240,7 +240,8 @@ export class ReportToiletRepository {
     report.typeReportToilet = typeReportToilet;
     report.status = ReportToiletStatus.PENDING;
 
-    await em.persistAndFlush(report);
+    em.persist(report);
+    await em.flush();
     return report;
   }
 

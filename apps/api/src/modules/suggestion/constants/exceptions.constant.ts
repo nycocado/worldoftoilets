@@ -21,4 +21,5 @@ export const SUGGESTION_EXCEPTIONS = {
   NOT_SUGGESTION_AUTHOR: 'You are not the author of this suggestion.',
   CANNOT_UPDATE_REVIEWED_SUGGESTION:
     'Cannot update image for reviewed suggestions.',
+  TOILET_ALREADY_HAS_IMAGE: 'Toilet already has an image.',
 };

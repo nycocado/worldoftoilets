@@ -341,7 +341,7 @@ class LocalViewModel @Inject constructor(
         // Limpar cache de listagens que dependem do filtro
         _toiletsNearbyIds.value = UiState.Idle
         _toiletsBoundingBoxIds.value = emptyList()
-        
+
         // Reload location-based data if location is available
         _location.value?.let { loc ->
             loadToiletsNearby(loc.latitude, loc.longitude)
@@ -617,9 +617,9 @@ class LocalViewModel @Inject constructor(
                     _ratingState.value = Result.success(updatedComment)
 
                 }.onFailure { e ->
-                _error.value = e.message ?: "Erro ao atualizar comentário"
-                _ratingState.value = Result.failure(e)
-            }
+                    _error.value = e.message ?: "Erro ao atualizar comentário"
+                    _ratingState.value = Result.failure(e)
+                }
         }
     }
 
@@ -646,7 +646,8 @@ class LocalViewModel @Inject constructor(
 
         viewModelScope.launch {
             _routeState.value = UiState.Loading
-            val result = routeRepository.calculateRouteToToilet(toiletId, loc.latitude, loc.longitude)
+            val result =
+                routeRepository.calculateRouteToToilet(toiletId, loc.latitude, loc.longitude)
             result.onSuccess { route ->
                 _routeState.value = UiState.Success(route)
             }.onFailure { e ->
@@ -671,7 +672,8 @@ class LocalViewModel @Inject constructor(
     ) {
         val userLocation = _location.value
         if (userLocation == null) {
-            _suggestionState.value = Result.failure(Exception("Localização do usuário desconhecida"))
+            _suggestionState.value =
+                Result.failure(Exception("Localização do usuário desconhecida"))
             return
         }
 
@@ -693,15 +695,11 @@ class LocalViewModel @Inject constructor(
                             inputStream?.close()
                             outputStream.close()
 
-                            val uploadResult = suggestionRepository.uploadImage(response.publicId, file)
+                            val uploadResult =
+                                suggestionRepository.uploadImage(response.publicId, file)
                             uploadResult.onSuccess {
                                 _suggestionState.value = Result.success(Unit)
                             }.onFailure { e ->
-                                // Even if image upload fails, suggestion is created
-                                // But let's treat it as failure for now or partial success?
-                                // Prompt says "envio dos dados... e quando confirmados, sera enviado a foto"
-                                // We can consider it success but maybe log error.
-                                // For simplicity, let's just mark success as the main goal was achieved.
                                 _suggestionState.value = Result.success(Unit)
                             }
                             file.delete()

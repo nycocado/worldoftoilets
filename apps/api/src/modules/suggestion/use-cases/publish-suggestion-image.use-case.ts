@@ -9,7 +9,6 @@ import { ToiletService } from '@modules/toilet/toilet.service';
 import { MinioService } from '@modules/minio';
 import { SUGGESTION_EXCEPTIONS } from '@modules/suggestion/constants/exceptions.constant';
 import { SuggestionResponseDto } from '@modules/suggestion/dto';
-import { SuggestionStatus, ToiletStatus } from '@database/entities';
 import { plainToInstance } from 'class-transformer';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -37,21 +36,15 @@ export class PublishSuggestionImageUseCase {
     const suggestion =
       await this.suggestionService.getSuggestionByPublicId(suggestionPublicId);
 
-    if (suggestion.status !== SuggestionStatus.ACCEPTED) {
-      throw new ConflictException(
-        SUGGESTION_EXCEPTIONS.ONLY_ACCEPTED_CAN_PUBLISH_IMAGE,
-      );
-    }
-
     if (!suggestion.photoUrl) {
       throw new NotFoundException(SUGGESTION_EXCEPTIONS.SUGGESTION_NO_IMAGE);
     }
 
     const toilet = suggestion.toilet;
 
-    if (!toilet || toilet.status !== ToiletStatus.ACTIVE) {
+    if (toilet && toilet.photoUrl) {
       throw new ConflictException(
-        SUGGESTION_EXCEPTIONS.TOILET_MUST_BE_ACTIVE_TO_PUBLISH_IMAGE,
+        SUGGESTION_EXCEPTIONS.TOILET_ALREADY_HAS_IMAGE,
       );
     }
 

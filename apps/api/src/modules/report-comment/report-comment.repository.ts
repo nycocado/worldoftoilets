@@ -265,7 +265,8 @@ export class ReportCommentRepository {
     report.typeReportComment = typeReportComment;
     report.status = ReportCommentStatus.PENDING;
 
-    await em.persistAndFlush(report);
+    em.persist(report);
+    await em.flush();
     return report;
   }
 

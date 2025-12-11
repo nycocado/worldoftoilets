@@ -157,7 +157,8 @@ export class SuggestionRepository {
     suggestion.latitude = latitude;
     suggestion.longitude = longitude;
     suggestion.status = SuggestionStatus.PENDING;
-    await em.persistAndFlush(suggestion);
+    em.persist(suggestion);
+    await em.flush();
     return suggestion;
   }
 
@@ -244,7 +245,8 @@ export class SuggestionRepository {
   @Transactional()
   async delete(suggestion: SuggestionEntity): Promise<void> {
     const em = this.repository.getEntityManager();
-    await em.removeAndFlush(suggestion);
+    em.remove(suggestion);
+    await em.flush();
   }
 
   /**

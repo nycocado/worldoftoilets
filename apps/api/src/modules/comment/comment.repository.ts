@@ -117,46 +117,44 @@ export class CommentRepository {
     timestamp?: Date,
     user?: UserEntity,
   ): Promise<CommentEntity[]> {
-    const comments = await this.commentRepository.find(
-      {
-        state: commentState,
-        interaction: {
-          discriminator: InteractionDiscriminator.COMMENT,
-          toilet: toilet,
+    const where: any = {
+      state: commentState,
+      interaction: {
+        discriminator: InteractionDiscriminator.COMMENT,
+        toilet: toilet,
+      },
+      createdAt: { $lte: timestamp },
+    };
+
+    if (user) {
+      where.reacts = {
+        $none: {
+          user: user,
+          discriminator: ReactDiscriminator.REPORT,
         },
-        createdAt: { $lte: timestamp },
-        ...(user && {
-          reacts: {
-            $none: {
-              user: user,
-              discriminator: ReactDiscriminator.REPORT,
-            },
+      };
+      where.interaction.user = {
+        reportsReceived: {
+          $none: {
+            userReporter: user,
           },
-          interaction: {
-            user: {
-              reportsReceived: {
-                $none: {
-                  userReporter: user,
-                },
-              },
-            },
-          },
-        }),
-      },
-      {
-        populate: [
-          'interaction.user.commentsCount',
-          'interaction.user.partner',
-          'rate',
-          'likes',
-          'dislikes',
-          'replyCount',
-        ],
-        limit: pageable ? size : undefined,
-        offset: pageable && page && size ? page * size : undefined,
-        orderBy: { createdAt: QueryOrder.DESC },
-      },
-    );
+        },
+      };
+    }
+
+    const comments = await this.commentRepository.find(where, {
+      populate: [
+        'interaction.user.commentsCount',
+        'interaction.user.partner',
+        'rate',
+        'likes',
+        'dislikes',
+        'replyCount',
+      ],
+      limit: pageable ? size : undefined,
+      offset: pageable && page && size ? page * size : undefined,
+      orderBy: { createdAt: QueryOrder.DESC },
+    });
 
     // Se o usuário está autenticado, enriquecer comentários com myReact
     if (user) {
@@ -211,44 +209,44 @@ export class CommentRepository {
     timestamp?: Date,
     requestUser?: UserEntity,
   ): Promise<CommentEntity[]> {
-    const comments = await this.commentRepository.find(
-      {
-        state: commentState,
-        interaction: {
-          discriminator: InteractionDiscriminator.COMMENT,
-          user: user,
+    const where: any = {
+      state: commentState,
+      interaction: {
+        discriminator: InteractionDiscriminator.COMMENT,
+        user: user,
+      },
+      createdAt: { $lte: timestamp },
+    };
+
+    if (requestUser) {
+      where.reacts = {
+        $none: {
+          user: requestUser,
+          discriminator: ReactDiscriminator.REPORT,
         },
-        createdAt: { $lte: timestamp },
-        ...(requestUser && {
-          reacts: {
-            $none: {
-              user: requestUser,
-              discriminator: ReactDiscriminator.REPORT,
-            },
-          },
-        }),
-      },
-      {
-        populate: [
-          'interaction.toilet.access',
-          'interaction.toilet.extras',
-          'interaction.toilet.totalRatings',
-          'interaction.toilet.avgClean',
-          'interaction.toilet.avgStructure',
-          'interaction.toilet.avgAccessibility',
-          'interaction.toilet.paperAvailability',
-          'interaction.user.commentsCount',
-          'interaction.user.partner',
-          'rate',
-          'likes',
-          'dislikes',
-          'replyCount',
-        ],
-        limit: pageable ? size : undefined,
-        offset: pageable && page && size ? page * size : undefined,
-        orderBy: { createdAt: QueryOrder.DESC },
-      },
-    );
+      };
+    }
+
+    const comments = await this.commentRepository.find(where, {
+      populate: [
+        'interaction.toilet.access',
+        'interaction.toilet.extras',
+        'interaction.toilet.totalRatings',
+        'interaction.toilet.avgClean',
+        'interaction.toilet.avgStructure',
+        'interaction.toilet.avgAccessibility',
+        'interaction.toilet.paperAvailability',
+        'interaction.user.commentsCount',
+        'interaction.user.partner',
+        'rate',
+        'likes',
+        'dislikes',
+        'replyCount',
+      ],
+      limit: pageable ? size : undefined,
+      offset: pageable && page && size ? page * size : undefined,
+      orderBy: { createdAt: QueryOrder.DESC },
+    });
 
     // Se o usuário está autenticado, enriquecer comentários com myReact
     if (requestUser) {
@@ -312,7 +310,8 @@ export class CommentRepository {
     const comment = new CommentEntity();
     comment.interaction = interaction;
     comment.text = text;
-    await em.persistAndFlush(comment);
+    em.persist(comment);
+    await em.flush();
     return comment;
   }
 
@@ -332,7 +331,8 @@ export class CommentRepository {
     comment.state = CommentState.HIDDEN;
     comment.deletedBy = deletedBy;
     comment.deletedAt = new Date();
-    await em.persistAndFlush(comment);
+    em.persist(comment);
+    await em.flush();
     return comment;
   }
 
@@ -345,7 +345,8 @@ export class CommentRepository {
   @Transactional()
   async delete(comment: CommentEntity): Promise<void> {
     const em = this.commentRepository.getEntityManager();
-    await em.removeAndFlush(comment);
+    em.remove(comment);
+    await em.flush();
   }
 
   /**
@@ -358,7 +359,8 @@ export class CommentRepository {
   async deleteExpired(retention: Date): Promise<void> {
     const em = this.commentRepository.getEntityManager();
     const comments = await this.findExpired(retention);
-    await em.removeAndFlush(comments);
+    em.remove(comments);
+    await em.flush();
   }
 
   /**
@@ -374,7 +376,8 @@ export class CommentRepository {
     if (text !== undefined) {
       comment.text = text;
     }
-    await em.persistAndFlush(comment);
+    em.persist(comment);
+    await em.flush();
     return comment;
   }
 
@@ -392,7 +395,8 @@ export class CommentRepository {
   ): Promise<CommentEntity> {
     const em = this.commentRepository.getEntityManager();
     comment.state = state;
-    await em.persistAndFlush(comment);
+    em.persist(comment);
+    await em.flush();
     return comment;
   }
 
@@ -408,7 +412,8 @@ export class CommentRepository {
     comment.state = CommentState.VISIBLE;
     comment.deletedBy = undefined;
     comment.deletedAt = undefined;
-    await em.persistAndFlush(comment);
+    em.persist(comment);
+    await em.flush();
     return comment;
   }
 }
