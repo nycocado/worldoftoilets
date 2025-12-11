@@ -9,9 +9,7 @@ import { CountryService } from '@common/services';
 
 @ValidatorConstraint({ async: false })
 @Injectable()
-export class IsValidCountryCodeConstraint
-  implements ValidatorConstraintInterface
-{
+export class IsValidCountryCodeConstraint implements ValidatorConstraintInterface {
   constructor(private readonly countryService: CountryService) {}
 
   validate(countryCode: string) {

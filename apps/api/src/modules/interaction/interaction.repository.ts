@@ -57,7 +57,8 @@ export class InteractionRepository {
     const em = this.interactionRepository.getEntityManager();
     interaction.deletedBy = user;
     interaction.deletedAt = new Date();
-    await em.persistAndFlush(interaction);
+    em.persist(interaction);
+    await em.flush();
     return interaction;
   }
 

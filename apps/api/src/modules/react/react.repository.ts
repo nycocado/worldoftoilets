@@ -54,7 +54,8 @@ export class ReactRepository {
     react.user = user;
     react.comment = comment;
     react.discriminator = discriminator;
-    await em.persistAndFlush(react);
+    em.persist(react);
+    await em.flush();
     return react;
   }
 
@@ -72,7 +73,8 @@ export class ReactRepository {
   ): Promise<ReactEntity> {
     const em = this.repository.getEntityManager();
     react.discriminator = discriminator;
-    await em.persistAndFlush(react);
+    em.persist(react);
+    await em.flush();
     return react;
   }
 
@@ -85,6 +87,7 @@ export class ReactRepository {
   @Transactional()
   async delete(react: ReactEntity): Promise<void> {
     const em = this.repository.getEntityManager();
-    await em.removeAndFlush(react);
+    em.remove(react);
+    await em.flush();
   }
 }

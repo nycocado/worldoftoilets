@@ -219,7 +219,8 @@ export class ReportUserRepository {
     report.typeReportUser = typeReportUser;
     report.status = ReportUserStatus.PENDING;
 
-    await em.persistAndFlush(report);
+    em.persist(report);
+    await em.flush();
     return report;
   }
 

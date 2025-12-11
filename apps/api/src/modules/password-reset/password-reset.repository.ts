@@ -50,8 +50,8 @@ export class PasswordResetRepository {
     const passwordReset = new PasswordResetEntity();
     passwordReset.userCredential = userCredential;
     passwordReset.expiresAt = expiresAt;
-
-    await em.persistAndFlush(passwordReset);
+    em.persist(passwordReset);
+    await em.flush();
     return passwordReset;
   }
 
@@ -66,7 +66,8 @@ export class PasswordResetRepository {
   ): Promise<PasswordResetEntity> {
     const em = this.repository.getEntityManager();
     passwordReset.invalidAt = new Date();
-    await em.persistAndFlush(passwordReset);
+    em.persist(passwordReset);
+    await em.flush();
     return passwordReset;
   }
 
@@ -88,7 +89,8 @@ export class PasswordResetRepository {
       token.invalidAt = new Date();
     });
 
-    await em.persistAndFlush(tokens);
+    em.persist(tokens);
+    await em.flush();
     return tokens;
   }
 
@@ -99,6 +101,7 @@ export class PasswordResetRepository {
   async deleteExpired(): Promise<void> {
     const em = this.repository.getEntityManager();
     const tokens = await this.findExpired();
-    await em.removeAndFlush(tokens);
+    em.remove(tokens);
+    await em.flush();
   }
 }

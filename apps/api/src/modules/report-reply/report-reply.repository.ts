@@ -220,7 +220,8 @@ export class ReportReplyRepository {
     report.typeReportReply = typeReportReply;
     report.status = ReportReplyStatus.PENDING;
 
-    await em.persistAndFlush(report);
+    em.persist(report);
+    await em.flush();
     return report;
   }
 

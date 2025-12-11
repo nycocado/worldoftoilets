@@ -163,8 +163,8 @@ export class UserRepository {
     if (birthDate !== undefined) {
       user.birthDate = new Date(birthDate);
     }
-
-    await em.persistAndFlush(user);
+    em.persist(user);
+    await em.flush();
     return user;
   }
 
@@ -194,7 +194,8 @@ export class UserRepository {
     const em = this.repository.getEntityManager();
     user.deactivatedAt = undefined;
     user.deactivatedBy = undefined;
-    await em.persistAndFlush(user);
+    em.persist(user);
+    await em.flush();
     return user;
   }
 
@@ -219,7 +220,8 @@ export class UserRepository {
     user.birthDate = new Date(birthDate);
     user.points = 0;
 
-    await em.persistAndFlush(user);
+    em.persist(user);
+    await em.flush();
     return user;
   }
 }

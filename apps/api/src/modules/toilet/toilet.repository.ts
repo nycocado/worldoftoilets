@@ -385,7 +385,8 @@ export class ToiletRepository {
     toilet.status = status;
     toilet.placeId = placeId;
     toilet.extras.set(extras || []);
-    await em.persistAndFlush(toilet);
+    em.persist(toilet);
+    await em.flush();
     return toilet;
   }
 
@@ -461,7 +462,8 @@ export class ToiletRepository {
   async deleteExpired(retention: Date): Promise<void> {
     const em = this.repository.getEntityManager();
     const toilets = await this.findExpired(retention);
-    await em.removeAndFlush(toilets);
+    em.remove(toilets);
+    await em.flush();
   }
 
   /**
@@ -489,7 +491,8 @@ export class ToiletRepository {
   @Transactional()
   async delete(toilet: ToiletEntity): Promise<void> {
     const em = this.repository.getEntityManager();
-    await em.removeAndFlush(toilet);
+    em.remove(toilet);
+    await em.flush();
   }
 
   /**

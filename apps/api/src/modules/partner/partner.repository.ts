@@ -178,7 +178,8 @@ export class PartnerRepository {
     partner.certificate = certificate;
     partner.contactEmail = contactEmail;
     partner.status = PartnerStatus.PENDING;
-    await em.persistAndFlush(partner);
+    em.persist(partner);
+    await em.flush();
     return partner;
   }
 
@@ -297,6 +298,7 @@ export class PartnerRepository {
   @Transactional()
   async remove(partner: PartnerEntity): Promise<void> {
     const em = this.repository.getEntityManager();
-    await em.removeAndFlush(partner);
+    em.remove(partner);
+    await em.flush();
   }
 }
