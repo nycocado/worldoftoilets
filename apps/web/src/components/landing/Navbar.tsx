@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { MapPin, Menu, LogIn } from 'lucide-react';
+import { Menu, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Sheet,
@@ -13,37 +13,41 @@ import {
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import Link from 'next/link';
-import Image from 'next/image'; // Import Image
+import Image from 'next/image';
+import { pt } from '@/locales/pt';
 
 export const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const { scrollY } = useScroll();
+  const t = pt.landing.nav;
+  const tCommon = pt.common;
 
   useMotionValueEvent(scrollY, 'change', (latest) => {
     setScrolled(latest > 50);
   });
 
   const navLinks = [
-    { href: '#features', label: 'Funcionalidades' },
-    { href: '#partners', label: 'Parceiros' },
-    { href: '#community', label: 'Comunidade' },
+    { href: '#features', label: t.features },
+    { href: '#partners', label: t.partners },
+    { href: '#community', label: t.community },
   ];
 
   return (
     <motion.nav
       className={`fixed w-full z-50 transition-all duration-300 border-b border-transparent`}
       animate={{
-        backgroundColor: scrolled ? 'var(--background)' : 'transparent',
-        borderColor: scrolled ? 'var(--border)' : 'transparent',
+        backgroundColor: scrolled ? 'var(--background)' : 'rgba(0,0,0,0)',
+        borderColor: scrolled ? 'var(--border)' : 'rgba(0,0,0,0)',
         paddingTop: scrolled ? '0.75rem' : '1.25rem',
         paddingBottom: scrolled ? '0.75rem' : '1.25rem',
         backdropFilter: scrolled ? 'blur(8px)' : 'none',
       }}
-      style={{
-        // @ts-ignore - Framer motion types for css variables can be tricky
-        '--background': 'hsl(var(--background) / 0.8)',
-        '--border': 'hsl(var(--border))',
-      }}
+      style={
+        {
+          '--background': 'hsl(var(--background) / 0.8)',
+          '--border': 'hsl(var(--border))',
+        } as React.CSSProperties
+      }
     >
       <div className="container mx-auto px-6 flex justify-between items-center">
         <div className="flex items-center gap-2">
@@ -52,10 +56,10 @@ export const Navbar = () => {
             alt="World of Toilets Logo"
             width={32}
             height={39}
-            className="pointer-events-none"
+            className="pointer-events-none h-8 w-auto"
           />
           <span className="text-xl font-extrabold tracking-tight text-foreground">
-            World of Toilets
+            {tCommon.worldOfToilets}
           </span>
         </div>
 
@@ -80,7 +84,7 @@ export const Navbar = () => {
               className="rounded-full font-bold border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
             >
               <LogIn size={18} className="mr-2" />
-              Login
+              {t.login}
             </Button>
           </Link>
         </div>
@@ -104,7 +108,7 @@ export const Navbar = () => {
                     height={30}
                     className="pointer-events-none"
                   />
-                  World of Toilets
+                  {tCommon.worldOfToilets}
                 </SheetTitle>
               </SheetHeader>
               <div className="flex flex-col gap-6 mt-8">
@@ -119,7 +123,7 @@ export const Navbar = () => {
                 ))}
                 <Link href="/auth/login">
                   <Button className="w-full rounded-full font-bold mt-4">
-                    <LogIn size={18} className="mr-2" /> Login
+                    <LogIn size={18} className="mr-2" /> {t.login}
                   </Button>
                 </Link>
               </div>

@@ -18,18 +18,23 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Loader2 } from 'lucide-react';
-
-const forgotPasswordSchema = z.object({
-  email: z.string().email('Email inválido'),
-});
-
-type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
+import { pt } from '@/locales/pt';
 
 export function ForgotPasswordDialog() {
   const [open, setOpen] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { isLoading: isCsrfLoading } = useCsrf();
+
+  const t = pt.auth.forgotPassword;
+  const tValidation = pt.auth.validation;
+  const tLogin = pt.auth.login;
+
+  const forgotPasswordSchema = z.object({
+    email: z.string().email(tValidation.emailInvalid),
+  });
+
+  type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
   const {
     register,
@@ -47,11 +52,6 @@ export function ForgotPasswordDialog() {
       setIsSuccess(true);
     } catch (error) {
       console.error(error);
-      // We typically don't want to reveal if an email exists or not for security,
-      // so we might show success even on error, OR show a generic error.
-      // Let's assume we just show success to avoid enumeration,
-      // or if we want to be helpful (less secure), we show error.
-      // For admin panels, being helpful is usually okay.
       setIsSuccess(true);
     } finally {
       setIsLoading(false);
@@ -61,7 +61,6 @@ export function ForgotPasswordDialog() {
   const handleOpenChange = (newOpen: boolean) => {
     setOpen(newOpen);
     if (!newOpen) {
-      // Reset state when closing
       setTimeout(() => {
         setIsSuccess(false);
         reset();
@@ -78,33 +77,32 @@ export function ForgotPasswordDialog() {
           variant="link"
           className="px-0 font-normal text-sm text-muted-foreground"
         >
-          Esqueceu sua senha?
+          {t.dialogTrigger}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Recuperar Senha</DialogTitle>
-          <DialogDescription>
-            Digite seu email abaixo para recebermos um link de redefinição de
-            senha.
-          </DialogDescription>
+          <DialogTitle>{t.title}</DialogTitle>
+          <DialogDescription>{t.description}</DialogDescription>
         </DialogHeader>
 
         {isSuccess ? (
           <div className="py-6 text-center space-y-4">
-            <div className="text-green-600 font-medium">Email enviado!</div>
+            <div className="text-green-600 font-medium">
+              {t.dialogSuccessTitle}
+            </div>
             <p className="text-sm text-muted-foreground">
-              Verifique sua caixa de entrada (e spam) para continuar o processo.
+              {t.dialogSuccessDescription}
             </p>
             <Button onClick={() => handleOpenChange(false)} className="w-full">
-              Entendi
+              {t.dialogButton}
             </Button>
           </div>
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
             <div className="space-y-2">
               <label htmlFor="forgot-email" className="text-sm font-medium">
-                Email
+                {tLogin.emailLabel}
               </label>
               <Input
                 id="forgot-email"
@@ -122,10 +120,10 @@ export function ForgotPasswordDialog() {
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Enviando...
+                    {t.submitting}
                   </>
                 ) : (
-                  'Enviar Link'
+                  t.submit
                 )}
               </Button>
             </DialogFooter>

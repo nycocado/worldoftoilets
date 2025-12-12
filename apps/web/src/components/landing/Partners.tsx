@@ -17,14 +17,17 @@ import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { pt } from '@/locales/pt';
 
 export const Partners = () => {
+  const t = pt.landing.partners;
+  const benefits = t.benefits;
+
   return (
     <section
       id="partners"
       className="py-24 bg-muted/30 relative overflow-hidden"
     >
-      {/* Decorative Background */}
       <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] dark:opacity-[0.08]"></div>
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[100px]"></div>
 
@@ -35,42 +38,40 @@ export const Partners = () => {
               variant="outline"
               className="px-4 py-2 text-sm font-bold border-accent/30 text-accent bg-accent/5"
             >
-              <Building size={14} className="mr-2" /> Empresas Aliadas
+              <Building size={14} className="mr-2" /> {t.badge}
             </Badge>
 
             <h2 className="text-4xl lg:text-5xl font-black text-foreground">
-              Para <span className="text-accent">Casas de Banho</span> de{' '}
-              <span className="text-accent">Qualidade</span>.
+              {t.title} <span className="text-accent">{t.titleHighlight1}</span>{' '}
+              {t.titleSuffix}{' '}
+              <span className="text-accent">{t.titleHighlight2}</span>.
             </h2>
 
             <p className="text-muted-foreground text-lg leading-relaxed">
-              Conecte-se com a missão World of Toilets e demonstre o compromisso
-              da sua empresa com a higiene e o bem-estar público. Junte-se a
-              empresas que valorizam a responsabilidade social e a qualidade dos
-              serviços.
+              {t.description}
             </p>
 
             <div className="grid sm:grid-cols-2 gap-6 pt-4">
               {[
                 {
                   icon: Eye,
-                  title: 'Visibilidade de Marca',
-                  desc: 'Tenha sua marca associada a uma iniciativa de impacto social positivo.',
+                  title: benefits.visibility.title,
+                  desc: benefits.visibility.desc,
                 },
                 {
                   icon: MessageSquare,
-                  title: 'Feedback Qualificado',
-                  desc: 'Receba insights diretos sobre a perceção dos utilizadores sobre seus sanitários.',
+                  title: benefits.feedback.title,
+                  desc: benefits.feedback.desc,
                 },
                 {
                   icon: Handshake,
-                  title: 'Responsabilidade Social',
-                  desc: 'Demonstre o seu compromisso com a comunidade e o bem-estar público.',
+                  title: benefits.social.title,
+                  desc: benefits.social.desc,
                 },
                 {
                   icon: TrendingUp,
-                  title: 'Melhora Contínua',
-                  desc: 'Utilize dados e feedback para aprimorar a qualidade dos seus serviços.',
+                  title: benefits.improvement.title,
+                  desc: benefits.improvement.desc,
                 },
               ].map((item, idx) => (
                 <div key={idx} className="flex gap-4">
@@ -90,13 +91,12 @@ export const Partners = () => {
                 size="lg"
                 className="h-14 px-8 text-lg rounded-full shadow-lg bg-accent text-accent-foreground hover:bg-accent/90 transition-transform hover:-translate-y-1"
               >
-                Aplicar para Parceria
+                {t.apply}
               </Button>
             </div>
           </div>
 
           <div className="relative hidden lg:block">
-            {/* Mockup de Cartão de Parceiro */}
             <motion.div
               initial={{ rotate: 3 }}
               whileHover={{ rotate: 0 }}
@@ -119,8 +119,8 @@ export const Partners = () => {
                           variant="outline"
                           className="mt-1 border-accent text-accent font-bold"
                         >
-                          <Award size={12} className="mr-1" /> Parceiro
-                          Verificado
+                          <Award size={12} className="mr-1" />{' '}
+                          {t.mockup.verified}
                         </Badge>
                       </div>
                     </div>
@@ -128,14 +128,14 @@ export const Partners = () => {
                       variant="secondary"
                       className="text-green-700 bg-green-100 dark:bg-green-900 dark:text-green-300 hover:bg-green-200"
                     >
-                      Aberto
+                      {t.mockup.open}
                     </Badge>
                   </div>
 
                   <div className="space-y-4 mb-8">
                     <div className="flex justify-between items-center p-3 bg-muted rounded-xl">
                       <span className="text-muted-foreground text-sm">
-                        Avaliação Geral
+                        {t.mockup.rating}
                       </span>
                       <div className="flex gap-1 text-accent">
                         {[1, 2, 3, 4, 5].map((i) => (
@@ -145,7 +145,7 @@ export const Partners = () => {
                     </div>
                     <div className="flex justify-between items-center p-3 bg-muted rounded-xl">
                       <span className="text-muted-foreground text-sm">
-                        Visitas este mês
+                        {t.mockup.visits}
                       </span>
                       <span className="font-bold text-card-foreground">
                         1,245
@@ -154,7 +154,7 @@ export const Partners = () => {
                   </div>
 
                   <Button className="w-full bg-foreground text-background hover:bg-foreground/90 rounded-full">
-                    Gerir Perfil
+                    {t.mockup.manage}
                   </Button>
                 </CardContent>
               </Card>

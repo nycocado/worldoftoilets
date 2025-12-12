@@ -1,17 +1,11 @@
-import {
-  ShieldAlert,
-  LayoutDashboard,
-  Users,
-  MessageSquare,
-  MapPin,
-  Handshake,
-  FileText,
-  Building2,
-} from 'lucide-react';
+import { ShieldAlert, LayoutDashboard, Users, FileText } from 'lucide-react';
+import { pt } from '@/locales/pt';
+
+const t = pt.navigation;
 
 export const ADMIN_NAVIGATION = [
   {
-    title: 'Visão Geral',
+    title: t.overview,
     url: '/dashboard',
     icon: LayoutDashboard,
     roles: [
@@ -24,48 +18,48 @@ export const ADMIN_NAVIGATION = [
     ],
   },
   {
-    title: 'Administração',
+    title: t.admin.title,
     roles: ['admin', 'users-administrator'],
     items: [
       {
-        title: 'Utilizadores',
+        title: t.admin.users,
         url: '/dashboard/users',
         icon: Users,
       },
       {
-        title: 'Denúncias de Users',
+        title: t.admin.userReports,
         url: '/dashboard/reports/users',
         icon: ShieldAlert,
       },
     ],
   },
   {
-    title: 'Casas de Banho',
+    title: t.toilets.title,
     roles: ['admin', 'toilets-administrator'],
     items: [
       {
-        title: 'Denúncias de Casas de Banho',
+        title: t.toilets.reports,
         url: '/dashboard/reports/toilets',
         icon: ShieldAlert,
       },
       {
-        title: 'Sugestões',
+        title: t.toilets.suggestions,
         url: '/dashboard/suggestions',
         icon: FileText,
       },
     ],
   },
   {
-    title: 'Moderação',
+    title: t.moderation.title,
     roles: ['admin', 'comments-administrator'],
     items: [
       {
-        title: 'Denúncias Comentários',
+        title: t.moderation.comments,
         url: '/dashboard/reports/comments',
         icon: ShieldAlert,
       },
       {
-        title: 'Denúncias de Respostas',
+        title: t.moderation.replies,
         url: '/dashboard/reports/replies',
         icon: ShieldAlert,
       },

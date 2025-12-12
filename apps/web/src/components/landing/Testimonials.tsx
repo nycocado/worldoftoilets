@@ -5,25 +5,29 @@ import { Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { pt } from '@/locales/pt';
 
 export const Testimonials = () => {
+  const t = pt.landing.testimonials;
+  const cards = t.cards;
+
   const testimonials = [
     {
-      name: 'Matilde Homão',
-      role: 'Motorista TVDE',
-      text: 'Como estou sempre na estrada, encontrar um WC limpo em zonas desconhecidas era um pesadelo. Esta app salvou o meu dia várias vezes!',
+      name: cards[0].name,
+      role: cards[0].role,
+      text: cards[0].text,
       initial: 'MH',
     },
     {
-      name: 'Maria Cunha',
-      role: 'Mãe & Jornalista',
-      text: 'Com um bebé de 8 meses, preciso urgentemente de saber onde há fraldários limpos. O filtro de pesquisa é perfeito.',
+      name: cards[1].name,
+      role: cards[1].role,
+      text: cards[1].text,
       initial: 'MC',
     },
     {
-      name: 'David Barção',
-      role: 'Turista',
-      text: 'Viajo muito e não conheço as cidades. Ter rotas a pé diretas para um WC público gratuito é essencial.',
+      name: cards[2].name,
+      role: cards[2].role,
+      text: cards[2].text,
       initial: 'DB',
     },
   ];
@@ -32,12 +36,8 @@ export const Testimonials = () => {
     <section id="community" className="py-24 bg-muted/50">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-3xl font-black text-foreground">
-            Quem usa o World of Toilets?
-          </h2>
-          <p className="text-muted-foreground mt-2">
-            Histórias reais de quem precisa de soluções rápidas.
-          </p>
+          <h2 className="text-3xl font-black text-foreground">{t.title}</h2>
+          <p className="text-muted-foreground mt-2">{t.subtitle}</p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -51,7 +51,6 @@ export const Testimonials = () => {
                 <CardContent className="p-8 flex flex-col h-full">
                   <div className="flex items-center gap-4 mb-4">
                     <Avatar className="h-12 w-12">
-                      {/* Using a generic avatar service or fallback */}
                       <AvatarImage
                         src={`https://api.dicebear.com/7.x/initials/svg?seed=${persona.initial}`}
                       />

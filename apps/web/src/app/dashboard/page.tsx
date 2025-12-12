@@ -19,8 +19,8 @@ import {
   MapPin,
   MessageSquare,
   Handshake,
-  FileText, // Added for Suggestions
-  ShieldAlert, // Added for Reports
+  FileText,
+  ShieldAlert,
   Building2,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -45,57 +45,56 @@ const ADMIN_DASHBOARD_LINKS: DashboardSection[] = [
     sectionTitle: 'Gestão de Utilizadores',
     roles: ['users-administrator'],
     items: [
-      { 
-        title: 'Utilizadores', 
-        href: '/dashboard/users', 
-        icon: Users, 
-        desc: 'Ver, editar e gerir contas de utilizadores.' 
+      {
+        title: 'Utilizadores',
+        href: '/dashboard/users',
+        icon: Users,
+        desc: 'Ver, editar e gerir contas de utilizadores.',
       },
-      { 
-        title: 'Denúncias de Utilizadores', 
-        href: '/dashboard/reports/users', 
-        icon: ShieldAlert, 
-        desc: 'Analisar e resolver denúncias sobre comportamentos de utilizadores.' 
+      {
+        title: 'Denúncias de Utilizadores',
+        href: '/dashboard/reports/users',
+        icon: ShieldAlert,
+        desc: 'Analisar e resolver denúncias sobre comportamentos de utilizadores.',
       },
-    ]
+    ],
   },
   {
     sectionTitle: 'Gestão de Conteúdo (Casas de Banho)',
     roles: ['toilets-administrator'],
     items: [
-      { 
-        title: 'Denúncias de Casas de Banho', 
-        href: '/dashboard/reports/toilets', 
-        icon: ShieldAlert, 
-        desc: 'Analisar e resolver denúncias sobre informações ou estado de casas de banho.' 
+      {
+        title: 'Denúncias de Casas de Banho',
+        href: '/dashboard/reports/toilets',
+        icon: ShieldAlert,
+        desc: 'Analisar e resolver denúncias sobre informações ou estado de casas de banho.',
       },
-      { 
-        title: 'Sugestões de Casas de Banho', 
-        href: '/dashboard/suggestions', 
-        icon: FileText, 
-        desc: 'Rever, aprovar ou rejeitar sugestões de novos locais ou edições.' 
+      {
+        title: 'Sugestões de Casas de Banho',
+        href: '/dashboard/suggestions',
+        icon: FileText,
+        desc: 'Rever, aprovar ou rejeitar sugestões de novos locais ou edições.',
       },
-    ]
+    ],
   },
   {
     sectionTitle: 'Moderação de Comentários e Respostas',
     roles: ['comments-administrator'],
     items: [
-      { 
-        title: 'Denúncias de Comentários', 
-        href: '/dashboard/reports/comments', 
-        icon: MessageSquare, 
-        desc: 'Moderar e resolver denúncias de conteúdo em comentários.' 
+      {
+        title: 'Denúncias de Comentários',
+        href: '/dashboard/reports/comments',
+        icon: MessageSquare,
+        desc: 'Moderar e resolver denúncias de conteúdo em comentários.',
       },
-      { 
-        title: 'Denúncias de Respostas', 
-        href: '/dashboard/reports/replies', 
-        icon: MessageSquare, 
-        desc: 'Moderar e resolver denúncias de conteúdo em respostas.' 
+      {
+        title: 'Denúncias de Respostas',
+        href: '/dashboard/reports/replies',
+        icon: MessageSquare,
+        desc: 'Moderar e resolver denúncias de conteúdo em respostas.',
       },
-    ]
+    ],
   },
-
 ];
 
 export default function DashboardPage() {
@@ -139,10 +138,9 @@ export default function DashboardPage() {
 
       {/* Access Modules Grid */}
       {ADMIN_DASHBOARD_LINKS.map((section, sectionIdx) => {
-        // Only render section if user has access to at least one item in it
-        const hasSectionAccess = section.items.some(item => {
-            const allowedRoles = item.roles || section.roles;
-            return allowedRoles.some(role => hasPermission(roles, role));
+        const hasSectionAccess = section.items.some((item) => {
+          const allowedRoles = item.roles || section.roles;
+          return allowedRoles.some((role) => hasPermission(roles, role));
         });
 
         if (!hasSectionAccess) return null;
@@ -156,23 +154,25 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {section.items.map((item, itemIdx) => {
                 const allowedRoles = item.roles || section.roles;
-                const hasItemAccess = allowedRoles.some(role => hasPermission(roles, role));
+                const hasItemAccess = allowedRoles.some((role) =>
+                  hasPermission(roles, role),
+                );
 
-                if (!hasItemAccess) return null; // Correctly placed conditional return
+                if (!hasItemAccess) return null;
 
                 return (
                   <Card
                     key={itemIdx}
-                    className={`relative overflow-hidden transition-all border-l-4 hover:shadow-md border-l-primary`} // Simplified class as it's always accessible now
+                    className={`relative overflow-hidden transition-all border-l-4 hover:shadow-md border-l-primary`}
                   >
                     <CardHeader className="pb-2">
                       <div className="flex justify-between items-start">
                         <div
-                          className={`p-3 rounded-xl bg-primary/10 text-primary`} // Simplified class
+                          className={`p-3 rounded-xl bg-primary/10 text-primary`}
                         >
                           <item.icon size={24} />
                         </div>
-                        <Badge // Always show "Ativo" badge if rendered
+                        <Badge
                           variant="secondary"
                           className="gap-1 bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400"
                         >

@@ -1,11 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import { assignRoles, removeRoles } from '@/lib/api/admin';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
+import { pt } from '@/locales/pt';
 import {
   Dialog,
   DialogContent,
@@ -16,33 +15,9 @@ import {
 } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Loader2, Shield, User, Building2, ShieldAlert } from 'lucide-react';
+import { Loader2, Shield, User, ShieldAlert } from 'lucide-react';
 import type { UserAdminResponseDto } from '@/types/user';
-import type { Role } from '@/types/api';
-
-// Define available roles structure
-const AVAILABLE_ROLES = {
-  admin: [
-    { id: 'users-administrator', label: 'Administrador de Usuários' },
-    { id: 'toilets-administrator', label: 'Administrador de Casas de Banho' },
-    { id: 'comments-administrator', label: 'Administrador de Comentários' },
-    { id: 'partners-administrator', label: 'Administrador de Parceiros' },
-  ],
-  user: [
-    { id: 'comments-user', label: 'Comentar' },
-    { id: 'report-comments-user', label: 'Denunciar Comentários' },
-    { id: 'reaction-user', label: 'Reagir a Comentários' },
-    { id: 'report-toilets-user', label: 'Denunciar Banheiros' },
-    { id: 'suggest-toilets-user', label: 'Sugerir Banheiros' },
-    { id: 'report-users-user', label: 'Denunciar Usuários' },
-  ],
-  dead: [
-    { id: 'dead-administrator', label: 'Administrador Banido' },
-    { id: 'dead-user', label: 'Usuário Banido' },
-  ],
-};
 
 const DEAD_ROLES = ['dead-user', 'dead-administrator'];
 
@@ -62,6 +37,44 @@ export function EditRolesDialog({
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  const tRoles = pt.roles;
+
+  const AVAILABLE_ROLES = {
+    admin: [
+      { id: 'users-administrator', label: tRoles.admin['users-administrator'] },
+      {
+        id: 'toilets-administrator',
+        label: tRoles.admin['toilets-administrator'],
+      },
+      {
+        id: 'comments-administrator',
+        label: tRoles.admin['comments-administrator'],
+      },
+      {
+        id: 'partners-administrator',
+        label: tRoles.admin['partners-administrator'],
+      },
+    ],
+    user: [
+      { id: 'comments-user', label: tRoles.user['comments-user'] },
+      {
+        id: 'report-comments-user',
+        label: tRoles.user['report-comments-user'],
+      },
+      { id: 'reaction-user', label: tRoles.user['reaction-user'] },
+      { id: 'report-toilets-user', label: tRoles.user['report-toilets-user'] },
+      {
+        id: 'suggest-toilets-user',
+        label: tRoles.user['suggest-toilets-user'],
+      },
+      { id: 'report-users-user', label: tRoles.user['report-users-user'] },
+    ],
+    dead: [
+      { id: 'dead-administrator', label: tRoles.dead['dead-administrator'] },
+      { id: 'dead-user', label: tRoles.dead['dead-user'] },
+    ],
+  };
+
   useEffect(() => {
     if (user && open) {
       setSelectedRoles(user.roles.map((r) => r.apiName));
@@ -74,25 +87,19 @@ export function EditRolesDialog({
       const isDeadRole = DEAD_ROLES.includes(roleId);
       const hasDeadRole = prev.some((r) => DEAD_ROLES.includes(r));
 
-      // Scenario 1: Deselecting a role
       if (isCurrentlySelected) {
         return prev.filter((id) => id !== roleId);
       }
 
-      // Scenario 2: Selecting a Dead Role
       if (isDeadRole) {
-        // Selecting a dead role clears EVERYTHING else and sets only this dead role
         return [roleId];
       }
 
-      // Scenario 3: Selecting a Normal Role while a Dead Role is active
       if (hasDeadRole) {
-        // Remove all dead roles, add the new normal role
         const cleanRoles = prev.filter((r) => !DEAD_ROLES.includes(r));
         return [...cleanRoles, roleId];
       }
 
-      // Scenario 4: Normal selection
       return [...prev, roleId];
     });
   };
@@ -106,7 +113,6 @@ export function EditRolesDialog({
       const toAdd = selectedRoles.filter((r) => !originalRoles.includes(r));
       const toRemove = originalRoles.filter((r) => !selectedRoles.includes(r));
 
-      // Execute updates in parallel
       const promises = [];
       if (toAdd.length > 0) {
         promises.push(assignRoles(user.publicId, toAdd));
@@ -117,11 +123,12 @@ export function EditRolesDialog({
 
       await Promise.all(promises);
 
+      toast.success(pt.dashboard.users.toasts.updateRolesSuccess);
       onSuccess();
       onOpenChange(false);
     } catch (error) {
       console.error('Failed to update roles', error);
-      // Handle error (toast, etc)
+      toast.error(pt.dashboard.users.toasts.updateRolesError);
     } finally {
       setIsLoading(false);
     }
@@ -131,10 +138,17 @@ export function EditRolesDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] flex flex-col">
         <DialogHeader>
-          <DialogTitle>Gerenciar Cargos e Permissões</DialogTitle>
-          <DialogDescription>
-            Editando permissões para <b>{user?.name}</b> ({user?.email})
-          </DialogDescription>
+          <DialogTitle>
+            {pt.dashboard.users.dialogs.editRoles.title}
+          </DialogTitle>
+          <DialogDescription
+            dangerouslySetInnerHTML={{
+              __html: pt.dashboard.users.dialogs.editRoles.description.replace(
+                '{name}',
+                user?.name || '',
+              ),
+            }}
+          />
         </DialogHeader>
 
         <ScrollArea className="flex-1 pr-4 -mr-4">
@@ -144,7 +158,7 @@ export function EditRolesDialog({
               <div className="flex items-center gap-2 pb-2 border-b">
                 <Shield className="h-4 w-4 text-purple-600" />
                 <h4 className="font-semibold text-sm text-purple-900 dark:text-purple-300">
-                  Administração
+                  {tRoles.admin.title}
                 </h4>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -174,7 +188,7 @@ export function EditRolesDialog({
               <div className="flex items-center gap-2 pb-2 border-b">
                 <User className="h-4 w-4 text-slate-600" />
                 <h4 className="font-semibold text-sm text-slate-900 dark:text-slate-300">
-                  Permissões de Utilizador
+                  {tRoles.user.title}
                 </h4>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -204,13 +218,13 @@ export function EditRolesDialog({
               <div className="flex items-center gap-2 pb-2 border-b border-red-200 dark:border-red-800">
                 <ShieldAlert className="h-4 w-4 text-red-600" />
                 <h4 className="font-semibold text-sm text-red-700 dark:text-red-400">
-                  Banimento de Utilizador
+                  {tRoles.dead.title}
                 </h4>
               </div>
-              <p className="text-xs text-red-600 dark:text-red-300 mb-3">
-                Selecionar uma opção de banimento irá{' '}
-                <strong>remover todos os outros cargos</strong> do utilizador.
-              </p>
+              <p
+                className="text-xs text-red-600 dark:text-red-300 mb-3"
+                dangerouslySetInnerHTML={{ __html: tRoles.dead.warning }}
+              />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {AVAILABLE_ROLES.dead.map((role) => (
                   <div
@@ -242,16 +256,16 @@ export function EditRolesDialog({
             onClick={() => onOpenChange(false)}
             disabled={isLoading}
           >
-            Cancelar
+            {pt.common.cancel}
           </Button>
           <Button onClick={handleSave} disabled={isLoading}>
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Salvando...
+                {pt.common.loading}
               </>
             ) : (
-              'Salvar Alterações'
+              pt.common.save
             )}
           </Button>
         </DialogFooter>

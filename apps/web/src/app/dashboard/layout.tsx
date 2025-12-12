@@ -53,7 +53,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
       <DashboardSidebar />
       <main
         className={cn(
-          'flex-1 w-full min-h-screen p-8 transition-[margin] duration-300 ease-in-out',
+          'flex-1 w-full min-h-screen p-8 pt-20 md:pt-8 transition-[margin] duration-300 ease-in-out',
           isSidebarCollapsed ? 'md:ml-20' : 'md:ml-72',
         )}
       >

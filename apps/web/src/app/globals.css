@@ -4,67 +4,67 @@
 
 @layer base {
   :root {
-    /* Cores do Design System - Light Mode (From Dashboard Example) */
-    --background: #F8FAFC;         /* THEME.light.background */
-    --foreground: #0F172A;         /* THEME.light.textMain */
+    /* Cores do App Mobile (Light Mode) */
+    --background: #F4F7F6;         /* CrispBackground */
+    --foreground: #1F1F1F;         /* DeepBlack */
 
-    --card: #FFFFFF;               /* THEME.light.surface */
-    --card-foreground: #0F172A;    /* THEME.light.textMain */
+    --card: #FFFFFF;               /* PureWhite */
+    --card-foreground: #1F1F1F;    /* DeepBlack */
 
-    --popover: #FFFFFF;            /* THEME.light.surface */
-    --popover-foreground: #0F172A; /* THEME.light.textMain */
+    --popover: #FFFFFF;            /* PureWhite */
+    --popover-foreground: #1F1F1F; /* DeepBlack */
 
-    --primary: #00A3FF;            /* THEME.light.primary */
-    --primary-foreground: #FFFFFF;
+    --primary: #00A3FF;            /* ElectricBlue */
+    --primary-foreground: #FFFFFF; /* PureWhite */
 
-    --secondary: #00D084;          /* THEME.light.secondary */
-    --secondary-foreground: #FFFFFF;
+    --secondary: #00D084;          /* FreshGreen */
+    --secondary-foreground: #FFFFFF; /* PureWhite */
 
-    --muted: #F1F5F9;              /* THEME.light.surfaceVariant */
-    --muted-foreground: #64748B;   /* THEME.light.textMuted */
+    --muted: #F0F3F5;              /* LightSurfaceVariant */
+    --muted-foreground: #757575;   /* GrayDark */
 
-    --accent: #FFB020;             /* THEME.light.tertiary */
-    --accent-foreground: #FFFFFF;
+    --accent: #FFB020;             /* GoldenSun */
+    --accent-foreground: #FFFFFF;  /* PureWhite */
 
-    --destructive: #FF4D4F;        /* THEME.light.error */
-    --destructive-foreground: #FFFFFF;
+    --destructive: #FF4D4F;        /* AlertRed */
+    --destructive-foreground: #FFFFFF; /* PureWhite */
 
-    --border: #E2E8F0;             /* THEME.light.border */
-    --input: #E2E8F0;              /* THEME.light.border */
-    --ring: #00A3FF;               /* THEME.light.primary */
+    --border: #BDBDBD;             /* GrayMedium */
+    --input: #BDBDBD;              /* GrayMedium */
+    --ring: #00A3FF;               /* ElectricBlue */
 
-    --radius: 1rem;                /* 16dp conforme Design System */
+    --radius: 1rem;                /* 16dp */
   }
 
   .dark {
-    /* Cores do Design System - Dark Mode (From Dashboard Example) */
-    --background: #0F172A;         /* THEME.dark.background */
-    --foreground: #F8FAFC;         /* THEME.dark.textMain */
+    /* Cores Ajustadas para Web (Rich Dark Mode) - Baseado em Slate */
+    --background: #0F172A;         /* Slate 900 - Fundo rico */
+    --foreground: #F8FAFC;         /* Slate 50 - Texto claro e legível */
 
-    --card: #1E293B;               /* THEME.dark.surface */
-    --card-foreground: #F8FAFC;    /* THEME.dark.textMain */
+    --card: #1E293B;               /* Slate 800 - Superfícies elevadas */
+    --card-foreground: #F8FAFC;    /* Texto em cards */
 
-    --popover: #1E293B;            /* THEME.dark.surface */
-    --popover-foreground: #F8FAFC; /* THEME.dark.textMain */
+    --popover: #1E293B;            /* Slate 800 */
+    --popover-foreground: #F8FAFC;
 
-    --primary: #38BDF8;            /* THEME.dark.primary */
-    --primary-foreground: #0F172A;
+    --primary: #38BDF8;            /* Sky 400 - Azul elétrico vibrante para dark mode */
+    --primary-foreground: #0F172A; /* Contraste no botão primário */
 
-    --secondary: #34D399;          /* THEME.dark.secondary */
+    --secondary: #34D399;          /* Emerald 400 - Verde fresco vibrante */
     --secondary-foreground: #0F172A;
 
-    --muted: #334155;              /* THEME.dark.surfaceVariant */
-    --muted-foreground: #94A3B8;   /* THEME.dark.textMuted */
+    --muted: #334155;              /* Slate 700 - Elementos secundários */
+    --muted-foreground: #94A3B8;   /* Slate 400 - Texto de apoio */
 
-    --accent: #FBBF24;             /* THEME.dark.tertiary */
+    --accent: #FBBF24;             /* Amber 400 - Golden Sun vibrante */
     --accent-foreground: #0F172A;
 
-    --destructive: #F87171;        /* THEME.dark.error */
+    --destructive: #F87171;        /* Red 400 - Erro suave */
     --destructive-foreground: #0F172A;
 
-    --border: #334155;             /* THEME.dark.border */
-    --input: #334155;              /* THEME.dark.border */
-    --ring: #38BDF8;               /* THEME.dark.primary */
+    --border: #334155;             /* Slate 700 - Bordas sutis */
+    --input: #1E293B;              /* Inputs integrados ao fundo do card */
+    --ring: #38BDF8;               /* Foco azul */
   }
 }
 

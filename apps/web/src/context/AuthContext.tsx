@@ -29,7 +29,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Routes where we should NOT attempt to load the user session
 const PUBLIC_ONLY_ROUTES = ['/auth/reset-password', '/auth/verify-email'];
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -51,16 +50,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loadUser = async () => {
     try {
-      // Attempt to refresh token first to warm up the in-memory access token
-      try {
-        const refreshRes = await apiRefreshToken();
-        if (refreshRes.data.accessToken) {
-          setAccessToken(refreshRes.data.accessToken);
-        }
-      } catch (e) {
-        // Silent fail on refresh - user might not be logged in
-      }
-
       const response = await apiClient<UserSelfResponseDto>('/user/self', {
         method: 'GET',
       });
@@ -76,9 +65,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await apiLogout();
     } catch {
-      // Ignore errors on logout
     } finally {
-      setAccessToken(null); // Clear in-memory access token immediately
+      setAccessToken(null);
       setUser(null);
       router.push('/auth/login');
     }
@@ -87,14 +75,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (isCsrfLoading) return;
 
-    // Skip user loading for specific public routes to avoid unnecessary API calls/errors
     if (PUBLIC_ONLY_ROUTES.some((route) => pathname?.startsWith(route))) {
       setIsLoading(false);
       return;
     }
 
     loadUser();
-  }, [isCsrfLoading, pathname]);
+  }, [isCsrfLoading]);
 
   return (
     <AuthContext.Provider

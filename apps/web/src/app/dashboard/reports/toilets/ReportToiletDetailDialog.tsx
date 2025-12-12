@@ -32,6 +32,7 @@ import {
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import { pt } from 'date-fns/locale';
+import { pt as t } from '@/locales/pt';
 
 interface ReportToiletDetailDialogProps {
   toiletReportedId: string;
@@ -52,6 +53,7 @@ export function ReportToiletDetailDialog({
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const { theme, resolvedTheme } = useTheme();
+  const tStatus = t.common.statusLabels;
 
   const REPORT_TYPES: Record<string, string> = {
     'fake-information': 'Informação Falsa',
@@ -73,20 +75,18 @@ export function ReportToiletDetailDialog({
     } finally {
       setLoading(false);
     }
-  }, [toiletReportedId, setLoading, setDetails, getToiletReportDetails, toast]); // Dependencies for useCallback
+  }, [toiletReportedId, setLoading, setDetails, getToiletReportDetails, toast]);
 
   useEffect(() => {
     if (open && toiletReportedId) {
       fetchDetails();
     }
-  }, [open, toiletReportedId, fetchDetails]); // Add fetchDetails as dependency
+  }, [open, toiletReportedId, fetchDetails]);
 
-  // Map Initialization Effect
   useEffect(() => {
-    // Only initialize map if dialog is open, not loading, details exist, map container is ready and coordinates are present
     if (!open || loading || !details || !mapContainer.current) return;
     if (!details.toilet?.latitude || !details.toilet?.longitude) {
-      console.warn('Map: Missing toilet coordinates.', details.toilet); // Keep warning for missing coords
+      console.warn('Map: Missing toilet coordinates.', details.toilet);
       return;
     }
 
@@ -107,16 +107,16 @@ export function ReportToiletDetailDialog({
 
       map.current.addControl(new maplibregl.NavigationControl(), 'top-right');
 
-      // Add Marker
-      new maplibregl.Marker({ color: '#e11d48' }) // Primary/Destructive color
+      new maplibregl.Marker({ color: '#e11d48' })
         .setLngLat([details.toilet.longitude, details.toilet.latitude])
         .addTo(map.current);
     } else {
-      // If map exists, only update style if needed (theme change)
-      if ((map.current.getStyle().metadata as any)?.['maplibre:import'] !== styleUrl) {
+      if (
+        (map.current.getStyle().metadata as any)?.['maplibre:import'] !==
+        styleUrl
+      ) {
         map.current.setStyle(styleUrl);
       }
-      // Fly to coordinates if they change (unlikely in this context, but good practice)
       if (
         map.current.getCenter().lat !== details.toilet.latitude ||
         map.current.getCenter().lng !== details.toilet.longitude
@@ -131,7 +131,7 @@ export function ReportToiletDetailDialog({
     return () => {
       if (map.current) {
         map.current.remove();
-        map.current = null; // Clear the ref
+        map.current = null;
       }
     };
   }, [open, loading, details, theme, resolvedTheme]);
@@ -141,23 +141,30 @@ export function ReportToiletDetailDialog({
     action: 'accept' | 'reject' | 'restore',
   ) => {
     setProcessing(true);
+    const toasts = t.dashboard.reports.toilets.toasts;
     try {
       if (action === 'accept') {
         await acceptToiletReport(reportId);
-        toast.success('Denúncia confirmada.');
+        toast.success(toasts.acceptSuccess);
       } else if (action === 'reject') {
         await rejectToiletReport(reportId);
-        toast.success('Denúncia rejeitada.');
+        toast.success(toasts.rejectSuccess);
       } else if (action === 'restore') {
         await setToiletReportsPending(reportId);
-        toast.success('Denúncia restaurada para pendente.');
+        toast.success(toasts.restoreSuccess);
       }
       fetchDetails();
       onActionComplete();
       onOpenChange(false);
     } catch (error) {
       console.error(`Failed to ${action} report`, error);
-      toast.error(`Erro ao processar ação.`);
+      toast.error(
+        action === 'accept'
+          ? toasts.acceptError
+          : action === 'reject'
+            ? toasts.rejectError
+            : toasts.restoreError,
+      );
     } finally {
       setProcessing(false);
     }
@@ -181,9 +188,7 @@ export function ReportToiletDetailDialog({
           </div>
         ) : details ? (
           <div className="flex flex-col md:flex-row h-full min-h-[600px] flex-1 pt-6">
-            {/* Left Side: Toilet Info & Map */}
             <div className="md:w-1/2 flex flex-col border-r bg-muted/10 overflow-y-auto p-6 gap-6">
-              {/* Image Card */}
               <div className="rounded-xl overflow-hidden border shadow-sm w-full h-64 relative bg-muted shrink-0 group">
                 {details.toilet.photoUrl ? (
                   <img
@@ -212,7 +217,6 @@ export function ReportToiletDetailDialog({
               </div>
 
               <div className="flex flex-col gap-6">
-                {/* Stats & Badges */}
                 <div className="space-y-3">
                   <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
                     <CheckCircle2 className="h-3.5 w-3.5" />
@@ -256,7 +260,6 @@ export function ReportToiletDetailDialog({
                   </div>
                 </div>
 
-                {/* Map Card */}
                 <div className="space-y-3">
                   <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
                     <MapPin className="h-3.5 w-3.5" />
@@ -275,7 +278,6 @@ export function ReportToiletDetailDialog({
               </div>
             </div>
 
-            {/* Right Side: Reports List */}
             <div className="md:w-1/2 flex flex-col bg-background h-full">
               <div className="p-6 border-b shrink-0">
                 <div className="text-lg font-semibold mb-1">
@@ -315,19 +317,20 @@ export function ReportToiletDetailDialog({
                             }
                             className="text-[10px] uppercase mb-1"
                           >
-                            {report.status}
+                            {report.status === 'pending'
+                              ? tStatus.pending
+                              : report.status === 'accepted'
+                                ? tStatus.accepted
+                                : tStatus.rejected}
                           </Badge>
                           <div className="text-[10px] text-muted-foreground">
                             {formatDistanceToNow(new Date(report.createdAt), {
                               addSuffix: true,
                               locale: pt,
-                            }).replace('há aproximadamente', 'há')}
+                            })}
                           </div>
                         </div>
                       </div>
-
-                      {/* Evidence Image if available */}
-                      {/* Assuming report might have evidence image? If not, skip. */}
 
                       {report.status === 'pending' && (
                         <div className="flex gap-2 justify-end mt-3 pt-3 border-t border-dashed">
