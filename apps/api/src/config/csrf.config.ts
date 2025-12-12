@@ -3,13 +3,15 @@ import { doubleCsrf } from 'csrf-csrf';
 const csrfSecret =
   process.env.CSRF_SECRET || 'a-very-secure-and-random-secret-key';
 
+const cookieSecure = process.env.COOKIE_SECURE === 'true';
+
 export const { doubleCsrfProtection, generateCsrfToken } = doubleCsrf({
   getSecret: () => csrfSecret,
   cookieName: 'x-csrf-token',
   cookieOptions: {
     httpOnly: true,
     sameSite: 'strict',
-    secure: process.env.NODE_ENV === 'production',
+    secure: cookieSecure,
     path: '/',
   },
   size: 64,

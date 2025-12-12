@@ -99,7 +99,7 @@ export class AuthController {
 
     res.cookie('token', loginResponse.accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: this.configService.get<string>('COOKIE_SECURE', 'false') === 'true',
       sameSite: 'strict',
       maxAge,
     });
@@ -111,7 +111,7 @@ export class AuthController {
 
     res.cookie('refreshToken', loginResponse.refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: this.configService.get<string>('COOKIE_SECURE', 'false') === 'true',
       sameSite: 'strict',
       maxAge: refreshMaxAge,
     });
@@ -193,7 +193,7 @@ export class AuthController {
 
     res.cookie('token', refreshResponse.accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: this.configService.get<string>('COOKIE_SECURE', 'false') === 'true',
       sameSite: 'strict',
       maxAge,
     });
@@ -206,7 +206,7 @@ export class AuthController {
 
     res.cookie('refreshToken', refreshResponse.refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: this.configService.get<string>('COOKIE_SECURE', 'false') === 'true',
       sameSite: 'strict',
       maxAge: refreshMaxAge,
     });
@@ -367,7 +367,7 @@ export class AuthController {
     if (!req.cookies['csrf_session_id']) {
       res.cookie('csrf_session_id', crypto.randomUUID(), {
         sameSite: 'strict',
-        secure: process.env.NODE_ENV === 'production',
+        secure: this.configService.get<string>('COOKIE_SECURE', 'false') === 'true',
         path: '/',
       });
     }
