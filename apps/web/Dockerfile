@@ -7,6 +7,10 @@ RUN npm ci --only=production && npm cache clean --force
 FROM node:lts-alpine AS builder
 RUN apk add --no-cache curl python3 make g++
 WORKDIR /app
+
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+
 COPY package.json package-lock.json* ./
 RUN npm ci
 COPY . .
