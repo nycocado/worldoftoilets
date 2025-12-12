@@ -366,8 +366,8 @@ services:
             test: ['CMD', '/opt/bitnami/scripts/mariadb-galera/healthcheck.sh']
             interval: 15s
             timeout: 5s
-            retries: 6
-            start_period: 15s
+            retries: 8
+            start_period: 30s
         networks:
             - wot-network
 
@@ -395,8 +395,8 @@ services:
             test: ['CMD', '/opt/bitnami/scripts/mariadb-galera/healthcheck.sh']
             interval: 15s
             timeout: 5s
-            retries: 6
-            start_period: 15s
+            retries: 8
+            start_period: 45s
         networks:
             - wot-network
 
@@ -424,8 +424,8 @@ services:
             test: ['CMD', '/opt/bitnami/scripts/mariadb-galera/healthcheck.sh']
             interval: 15s
             timeout: 5s
-            retries: 6
-            start_period: 15s
+            retries: 8
+            start_period: 60s
         networks:
             - wot-network
 
