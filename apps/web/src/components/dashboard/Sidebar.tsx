@@ -15,7 +15,7 @@ import {
 import { useAuth } from '@/context/AuthContext';
 import { useDashboard } from '@/context/DashboardContext';
 import { ADMIN_NAVIGATION } from './navigation';
-import { cn } from '@/lib/utils';
+import { cn, getUserAvatarUrl } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -32,6 +32,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { pt } from '@/locales/pt';
 
 export function DashboardSidebar() {
   const pathname = usePathname();
@@ -41,7 +42,9 @@ export function DashboardSidebar() {
     Record<string, boolean>
   >({});
 
-  // Filter navigation based on roles
+  const t = pt.common;
+  const tRoles = pt.roles;
+
   const filteredNav = React.useMemo(() => {
     return ADMIN_NAVIGATION.map((section) => {
       if (!section.items) {
@@ -65,20 +68,20 @@ export function DashboardSidebar() {
   const userRoleLabel = React.useMemo(() => {
     if (!user?.roles?.length) return 'Usuário';
 
-    // Priority check
-    if (user.roles.some((r) => r.apiName === 'admin')) return 'Administrador';
+    if (user.roles.some((r) => r.apiName === 'admin'))
+      return tRoles.admin.title;
     if (user.roles.some((r) => r.apiName === 'partners-administrator'))
-      return 'Gestor de Parceiros';
+      return tRoles.admin['partners-administrator'];
     if (user.roles.some((r) => r.apiName === 'users-administrator'))
-      return 'Gestor de Usuários';
+      return tRoles.admin['users-administrator'];
     if (user.roles.some((r) => r.apiName === 'toilets-administrator'))
-      return 'Gestor de Casas de Banho';
+      return tRoles.admin['toilets-administrator'];
     if (user.roles.some((r) => r.apiName === 'comments-administrator'))
-      return 'Moderador';
-    if (user.roles.some((r) => r.apiName === 'partner')) return 'Parceiro';
+      return tRoles.admin['comments-administrator'];
+    if (user.roles.some((r) => r.apiName === 'partner')) return 'Parceiro'; // Needs localization in pt.ts if not there
 
     return user.roles[0].name;
-  }, [user]);
+  }, [user, tRoles]);
 
   const toggleSection = (title: string) => {
     if (isSidebarCollapsed) return;
@@ -107,18 +110,21 @@ export function DashboardSidebar() {
           </Button>
         ) : (
           <>
-            <div className="flex items-center gap-2 overflow-hidden">
+            <Link
+              href="/dashboard"
+              className="flex items-center gap-2 overflow-hidden transition-opacity hover:opacity-80"
+            >
               <Image
                 src="/logo.svg"
                 alt="World of Toilets"
                 width={32}
-                height={32}
-                className="shrink-0"
+                height={39}
+                className="shrink-0 h-8 w-auto"
               />
               <span className="font-bold text-lg tracking-tight whitespace-nowrap">
-                World of Toilets
+                {t.worldOfToilets}
               </span>
-            </div>
+            </Link>
 
             {!mobile && (
               <Button
@@ -152,12 +158,7 @@ export function DashboardSidebar() {
           <Avatar
             className={cn(isSidebarCollapsed && !mobile ? 'h-8 w-8' : '')}
           >
-            <AvatarImage
-              src={
-                user?.icon ? `/${user.icon.replace('-', '')}.png` : undefined
-              }
-              alt={user?.name}
-            />
+            <AvatarImage src={getUserAvatarUrl(user?.icon)} alt={user?.name} />
             <AvatarFallback>{userInitials}</AvatarFallback>
           </Avatar>
           {(!isSidebarCollapsed || mobile) && (
@@ -171,7 +172,7 @@ export function DashboardSidebar() {
         </div>
         {(!isSidebarCollapsed || mobile) && (
           <p className="px-2 text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1 mt-2">
-            Menu Principal
+            {t.menu}
           </p>
         )}
       </div>
@@ -180,7 +181,6 @@ export function DashboardSidebar() {
       <nav className="flex-1 overflow-y-auto px-4 space-y-1">
         <TooltipProvider delayDuration={0}>
           {filteredNav.map((section, idx) => {
-            // Single Item
             if (!section.items) {
               const Icon = section.icon;
               const isActive = pathname === section.url;
@@ -225,7 +225,6 @@ export function DashboardSidebar() {
               return button;
             }
 
-            // Section Group
             const isExpanded = expandedSections[section.title] ?? true;
             return (
               <div key={idx} className="mb-4">
@@ -270,20 +269,7 @@ export function DashboardSidebar() {
                     )}
                   </>
                 ) : (
-                  // Collapsed State for Group - Just icons if possible or hide
-                  // For simplicity, if collapsed, we might only show the Group Icon if it had one, but groups in this config don't have icons always.
-                  // Actually the config has icons for single items but not groups? Let's check.
-                  // Config has icons for groups too.
-                  // We can show the Group Icon as a trigger for a popover, but that's complex.
-                  // Simple solution: Show header icon with tooltip. Clicking it expands sidebar.
                   <div className="flex justify-center py-2">
-                    {/* If the group has no icon, maybe skip or use generic. Navigation config seems to lack icons for Groups? 
-                         Checking navigation.ts: Groups do NOT have icons. Only items inside.
-                         So for collapsed state, we can display the icons of the items inside directly?
-                         Or just keep it clean: Groups are hidden, only single items show? No, that loses access.
-                         
-                         Let's iterate through items and show their icons.
-                     */}
                     <div className="space-y-1 w-full">
                       {section.items.map((item) => {
                         const Icon = item.icon;
@@ -338,7 +324,7 @@ export function DashboardSidebar() {
         >
           {(!isSidebarCollapsed || mobile) && (
             <span className="text-xs font-bold text-muted-foreground">
-              Opções
+              {t.options}
             </span>
           )}
           <ThemeToggle />
@@ -357,7 +343,7 @@ export function DashboardSidebar() {
                   <LogOut className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="right">Sair</TooltipContent>
+              <TooltipContent side="right">{t.exit}</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         ) : (
@@ -367,7 +353,7 @@ export function DashboardSidebar() {
             onClick={() => logout()}
           >
             <LogOut className="mr-2 h-4 w-4" />
-            Sair
+            {t.exit}
           </Button>
         )}
       </div>
@@ -387,20 +373,30 @@ export function DashboardSidebar() {
       </aside>
 
       {/* Mobile Sidebar (Sheet) */}
-      <div className="md:hidden fixed top-4 left-4 z-50">
+      <div className="md:hidden fixed top-0 left-0 right-0 z-50 h-16 px-4 flex items-center bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="outline" size="icon">
-              <Menu className="h-4 w-4" />
+            <Button variant="ghost" size="icon">
+              <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="p-0 w-72">
             <SheetHeader className="sr-only">
-              <SheetTitle>Menu</SheetTitle>
+              <SheetTitle>{t.menu}</SheetTitle>
             </SheetHeader>
             <SidebarContent mobile />
           </SheetContent>
         </Sheet>
+        <div className="ml-2 font-bold text-lg tracking-tight flex items-center gap-2">
+          <Image
+            src="/logo.svg"
+            alt="Logo"
+            width={24}
+            height={29}
+            className="h-6 w-auto"
+          />
+          {t.worldOfToilets}
+        </div>
       </div>
     </>
   );

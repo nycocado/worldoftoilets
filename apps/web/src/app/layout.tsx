@@ -5,20 +5,20 @@ import { CsrfProvider } from '@/context/CsrfContext';
 import { AuthProvider } from '@/context/AuthContext';
 import { ThemeProvider } from '@/components/theme-provider';
 import React from 'react';
+import { pt } from '@/locales/pt';
 
 import { Toaster } from '@/components/ui/sonner';
 
 const montserrat = Montserrat({
   variable: '--font-montserrat',
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800', '900'], // Added bolder weights for headers
+  weight: ['400', '500', '600', '700', '800', '900'],
   display: 'swap',
 });
 
 export const metadata: Metadata = {
-  title: 'World of Toilets - Admin Dashboard',
-  description:
-    'Dashboard administrativo para gestão da plataforma World of Toilets',
+  title: pt.metadata.title,
+  description: pt.metadata.description,
   icons: {
     icon: '/logo.svg',
   },

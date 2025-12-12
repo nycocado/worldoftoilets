@@ -12,14 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import {
-  Loader2,
-  ShieldAlert,
-  Clock,
-  AlertTriangle,
-  CheckCircle2,
-  RotateCcw,
-} from 'lucide-react';
+import { Loader2, Clock, CheckCircle2, RotateCcw } from 'lucide-react';
 import {
   getUserReportDetails,
   acceptUserReport,
@@ -28,7 +21,9 @@ import {
 } from '@/lib/api/admin';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
-import { pt } from 'date-fns/locale';
+import { pt as dateFnsPt } from 'date-fns/locale';
+import { pt } from '@/locales/pt';
+import { getUserAvatarUrl } from '@/lib/utils';
 
 interface ReportUserDetailDialogProps {
   userReportedId: string;
@@ -47,6 +42,11 @@ export function ReportUserDetailDialog({
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
 
+  const t = pt.dashboard.reports.users.detail;
+  const tToasts = pt.dashboard.reports.users.toasts;
+  const tTypes = pt.dashboard.reports.users.types;
+  const tStatus = pt.common.statusLabels;
+
   useEffect(() => {
     if (open && userReportedId) {
       fetchDetails();
@@ -60,7 +60,7 @@ export function ReportUserDetailDialog({
       setDetails(response.data);
     } catch (error) {
       console.error('Failed to fetch report details', error);
-      toast.error('Erro ao carregar detalhes');
+      toast.error(tToasts.loadError);
     } finally {
       setLoading(false);
     }
@@ -74,33 +74,27 @@ export function ReportUserDetailDialog({
     try {
       if (action === 'accept') {
         await acceptUserReport(reportId);
-        toast.success('Denúncia aceite. Usuário banido.');
+        toast.success(tToasts.banSuccess);
       } else if (action === 'reject') {
         await rejectUserReport(reportId);
-        toast.success('Denúncia rejeitada.');
+        toast.success(tToasts.rejectSuccess);
       } else if (action === 'restore') {
         await setUserReportsPending(reportId);
-        toast.success('Denúncia restaurada para pendente.');
+        toast.success(tToasts.restoreSuccess);
       }
       fetchDetails();
       onActionComplete();
-      onOpenChange(false); // Close dialog after action
+      onOpenChange(false);
     } catch (error) {
       console.error(`Failed to ${action} report`, error);
-      toast.error(`Erro ao processar ação.`);
+      toast.error(tToasts.error);
     } finally {
       setProcessing(false);
     }
   };
 
-  const REPORT_TYPES: Record<string, string> = {
-    'harassment-abuse': 'Assédio/Abuso',
-    'fake-account': 'Conta Falsa',
-    impersonation: 'Impersonação',
-    'hate-speech': 'Discurso de Ódio',
-    'privacy-violation': 'Violação de Privacidade',
-    spam: 'Spam',
-    others: 'Outros',
+  const getReportTypeLabel = (type: string) => {
+    return (tTypes as any)[type] || type;
   };
 
   if (!open) return null;
@@ -109,10 +103,8 @@ export function ReportUserDetailDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-hidden flex flex-col">
         <DialogHeader>
-          <DialogTitle>Detalhes da Denúncia</DialogTitle>
-          <DialogDescription>
-            Analise as infrações reportadas para decidir a ação apropriada.
-          </DialogDescription>
+          <DialogTitle>{t.title}</DialogTitle>
+          <DialogDescription>{t.description}</DialogDescription>
         </DialogHeader>
 
         {loading ? (
@@ -125,11 +117,7 @@ export function ReportUserDetailDialog({
             <div className="flex items-start gap-4 p-4 bg-muted/40 rounded-lg border">
               <Avatar className="h-14 w-14">
                 <AvatarImage
-                  src={
-                    details.userReported.icon
-                      ? `/${details.userReported.icon.replace('-', '')}.png`
-                      : undefined
-                  }
+                  src={getUserAvatarUrl(details.userReported.icon)}
                 />
                 <AvatarFallback>
                   {details.userReported.name?.slice(0, 2).toUpperCase()}
@@ -149,7 +137,7 @@ export function ReportUserDetailDialog({
                     variant="outline"
                     className="h-7 bg-background border-dashed text-xs whitespace-nowrap"
                   >
-                    {details.totalReports} Denúncias Totais
+                    {details.totalReports} {t.totalReports}
                   </Badge>
                 </div>
 
@@ -162,7 +150,7 @@ export function ReportUserDetailDialog({
                         variant="destructive"
                         className="h-7 whitespace-nowrap shadow-sm"
                       >
-                        {REPORT_TYPES[type] || type}: {count}
+                        {getReportTypeLabel(type)}: {count}
                       </Badge>
                     ),
                   )}
@@ -174,7 +162,7 @@ export function ReportUserDetailDialog({
             <div className="flex-1 overflow-hidden flex flex-col min-h-0">
               <h4 className="font-semibold mb-3 flex items-center gap-2 shrink-0">
                 <Clock className="h-4 w-4 text-primary" />
-                Histórico de Ocorrências
+                {t.history}
               </h4>
               <ScrollArea className="flex-1 pr-4 -mr-4">
                 <div className="space-y-3 pb-4">
@@ -186,10 +174,10 @@ export function ReportUserDetailDialog({
                       <div className="flex justify-between items-start mb-2">
                         <div className="flex flex-col">
                           <span className="font-semibold text-sm">
-                            {REPORT_TYPES[report.typeReportUser.apiName]}
+                            {getReportTypeLabel(report.typeReportUser.apiName)}
                           </span>
                           <span className="text-xs text-muted-foreground">
-                            por{' '}
+                            {t.by}{' '}
                             <span className="font-medium text-foreground">
                               {report.userReporter.name}
                             </span>
@@ -204,13 +192,17 @@ export function ReportUserDetailDialog({
                             }
                             className="text-[10px] uppercase mb-1"
                           >
-                            {report.status}
+                            {report.status === 'pending'
+                              ? tStatus.pending
+                              : report.status === 'accepted'
+                                ? tStatus.accepted
+                                : tStatus.rejected}
                           </Badge>
                           <div className="text-[10px] text-muted-foreground">
                             {formatDistanceToNow(new Date(report.createdAt), {
                               addSuffix: true,
-                              locale: pt,
-                            }).replace('há aproximadamente', 'há')}
+                              locale: dateFnsPt,
+                            })}
                           </div>
                         </div>
                       </div>
@@ -225,7 +217,7 @@ export function ReportUserDetailDialog({
                             }
                             disabled={processing}
                           >
-                            Banir por este motivo
+                            {t.actions.ban}
                           </Button>
                           <Button
                             size="sm"
@@ -236,7 +228,7 @@ export function ReportUserDetailDialog({
                             }
                             disabled={processing}
                           >
-                            Rejeitar
+                            {t.actions.reject}
                           </Button>
                         </div>
                       )}
@@ -244,8 +236,8 @@ export function ReportUserDetailDialog({
                       {report.status !== 'pending' && (
                         <div className="pt-2 mt-2 border-t flex justify-between items-center">
                           <div className="text-[10px] text-muted-foreground flex items-center gap-1">
-                            <CheckCircle2 className="h-3 w-3" /> Resolvido por{' '}
-                            {report.reviewedBy?.name}
+                            <CheckCircle2 className="h-3 w-3" />{' '}
+                            {t.actions.resolvedBy} {report.reviewedBy?.name}
                           </div>
                           <Button
                             size="sm"
@@ -257,7 +249,7 @@ export function ReportUserDetailDialog({
                             disabled={processing}
                           >
                             <RotateCcw className="h-3 w-3 mr-1" />
-                            Restaurar
+                            {t.actions.restore}
                           </Button>
                         </div>
                       )}
@@ -269,7 +261,7 @@ export function ReportUserDetailDialog({
           </div>
         ) : (
           <div className="text-center py-10 text-muted-foreground">
-            Erro ao carregar dados.
+            {tToasts.loadError}
           </div>
         )}
       </DialogContent>

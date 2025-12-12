@@ -1,24 +1,22 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image'; // Import Image
-// MapPin e Star não são mais usados no MapScreen, mas podem ser em outros lugares, então não os removo daqui se não tiver certeza.
+import Image from 'next/image';
 
-// Ecrã de Exemplo: Mapa
 export const MapScreen = () => (
   <div className="w-full h-full bg-gray-100 flex flex-col relative">
     {' '}
-    {/* Added relative here */}
     <Image
       src="/app-example-1.jpg"
       alt="App Example"
-      fill={true} // Use fill to cover parent
-      className="object-cover pointer-events-none" // Adicionado pointer-events-none aqui
+      fill={true}
+      priority
+      sizes="(max-width: 768px) 100vw, 300px"
+      className="object-cover pointer-events-none"
     />
   </div>
 );
 
-// Componente Mockup
 export const MobileMockup = ({
   screen,
   className = '',
@@ -34,7 +32,6 @@ export const MobileMockup = ({
     <div className="h-[46px] w-[3px] bg-[#0F172A] absolute -left-[17px] top-[178px] rounded-l-lg"></div>
     <div className="h-[64px] w-[3px] bg-[#0F172A] absolute -right-[17px] top-[142px] rounded-r-lg"></div>
     <div className="rounded-[2rem] overflow-hidden w-full h-full bg-white relative">
-      {/* Dynamic Screen Content */}
       {screen}
     </div>
   </div>

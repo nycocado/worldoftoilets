@@ -323,16 +323,20 @@ export async function publishSuggestionImage(id: string) {
 export async function uploadToiletImage(id: string, file: File) {
   const formData = new FormData();
   formData.append('image', file);
-  
-  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/toilet/${id}/manage/image`, {
-    method: 'POST',
-    headers: {
-      ...(token && { Authorization: `Bearer ${token}` }),
+  const token =
+    typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/toilet/${id}/manage/image`,
+    {
+      method: 'POST',
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: formData,
     },
-    body: formData,
-  });
+  );
 
   if (!response.ok) {
     let errorData;
@@ -349,7 +353,9 @@ export async function uploadToiletImage(id: string, file: File) {
 }
 
 // Comment Reports Management
-export async function getCommentReports(filters: { page?: number; limit?: number; status?: string } = {}) {
+export async function getCommentReports(
+  filters: { page?: number; limit?: number; status?: string } = {},
+) {
   const params = new URLSearchParams();
   if (filters.page) params.append('page', filters.page.toString());
   if (filters.limit) params.append('limit', filters.limit.toString());
@@ -364,25 +370,36 @@ export async function getCommentReportDetails(commentPublicId: string) {
 }
 
 export async function acceptCommentReport(reportId: string) {
-  return apiClient<{ message: string }>(`/report-comment/manage/${reportId}/accept`, {
-    method: 'PATCH',
-  });
+  return apiClient<{ message: string }>(
+    `/report-comment/manage/${reportId}/accept`,
+    {
+      method: 'PATCH',
+    },
+  );
 }
 
 export async function rejectCommentReport(reportId: string) {
-  return apiClient<{ message: string }>(`/report-comment/manage/${reportId}/reject`, {
-    method: 'PATCH',
-  });
+  return apiClient<{ message: string }>(
+    `/report-comment/manage/${reportId}/reject`,
+    {
+      method: 'PATCH',
+    },
+  );
 }
 
 export async function setCommentReportPending(reportId: string) {
-  return apiClient<{ message: string }>(`/report-comment/manage/${reportId}/pending`, {
-    method: 'PATCH',
-  });
+  return apiClient<{ message: string }>(
+    `/report-comment/manage/${reportId}/pending`,
+    {
+      method: 'PATCH',
+    },
+  );
 }
 
 // Reply Reports Management
-export async function getReplyReports(filters: { page?: number; limit?: number; status?: string } = {}) {
+export async function getReplyReports(
+  filters: { page?: number; limit?: number; status?: string } = {},
+) {
   const params = new URLSearchParams();
   if (filters.page) params.append('page', filters.page.toString());
   if (filters.limit) params.append('limit', filters.limit.toString());
@@ -397,19 +414,28 @@ export async function getReplyReportDetails(replyPublicId: string) {
 }
 
 export async function acceptReplyReport(reportId: string) {
-  return apiClient<{ message: string }>(`/report-reply/manage/${reportId}/accept`, {
-    method: 'PATCH',
-  });
+  return apiClient<{ message: string }>(
+    `/report-reply/manage/${reportId}/accept`,
+    {
+      method: 'PATCH',
+    },
+  );
 }
 
 export async function rejectReplyReport(reportId: string) {
-  return apiClient<{ message: string }>(`/report-reply/manage/${reportId}/reject`, {
-    method: 'PATCH',
-  });
+  return apiClient<{ message: string }>(
+    `/report-reply/manage/${reportId}/reject`,
+    {
+      method: 'PATCH',
+    },
+  );
 }
 
 export async function setReplyReportPending(reportId: string) {
-  return apiClient<{ message: string }>(`/report-reply/manage/${reportId}/pending`, {
-    method: 'PATCH',
-  });
+  return apiClient<{ message: string }>(
+    `/report-reply/manage/${reportId}/pending`,
+    {
+      method: 'PATCH',
+    },
+  );
 }

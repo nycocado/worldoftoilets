@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { login, logout } from '@/lib/api/auth';
+import { login } from '@/lib/api/auth';
 import { useAuth } from '@/context/AuthContext';
 import { useCsrf } from '@/context/CsrfContext';
 import { setAccessToken } from '@/lib/api/client';
@@ -22,20 +22,7 @@ import {
 } from '@/components/ui/card';
 
 import Link from 'next/link';
-
-const loginSchema = z.object({
-  email: z
-    .string()
-    .email('Email inválido')
-    .min(3, 'Email deve ter no mínimo 3 caracteres')
-    .max(100, 'Email deve ter no máximo 100 caracteres'),
-  password: z
-    .string()
-    .min(8, 'Senha deve ter no mínimo 8 caracteres')
-    .max(64, 'Senha deve ter no máximo 64 caracteres'),
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
+import { pt } from '@/locales/pt';
 
 function LoginForm() {
   const router = useRouter();
@@ -45,13 +32,28 @@ function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const t = pt.auth.login;
+  const tValidation = pt.auth.validation;
+
+  const loginSchema = z.object({
+    email: z
+      .string()
+      .email(tValidation.emailInvalid)
+      .min(3, tValidation.emailMin)
+      .max(100, tValidation.emailMax),
+    password: z
+      .string()
+      .min(8, tValidation.passwordMin)
+      .max(64, tValidation.passwordMax),
+  });
+
+  type LoginFormData = z.infer<typeof loginSchema>;
+
   useEffect(() => {
     if (searchParams.get('error') === 'unauthorized') {
-      setError(
-        'Acesso negado. Apenas administradores e parceiros podem acessar este painel.',
-      );
+      setError(t.errors.unauthorized);
     }
-  }, [searchParams]);
+  }, [searchParams, t.errors.unauthorized]);
 
   const {
     register,
@@ -75,9 +77,7 @@ function LoginForm() {
 
       if (!isAdmin && !isPartner) {
         setAccessToken(null);
-        setError(
-          'Acesso negado. Apenas administradores e parceiros podem acessar este painel.',
-        );
+        setError(t.errors.unauthorized);
         return;
       }
 
@@ -85,7 +85,7 @@ function LoginForm() {
       await refreshUser();
       router.push('/dashboard');
     } catch (err) {
-      setError('Email ou senha incorretos.');
+      setError(t.errors.invalidCredentials);
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -97,9 +97,9 @@ function LoginForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-2xl text-center">Login</CardTitle>
+        <CardTitle className="text-2xl text-center">{t.title}</CardTitle>
         <CardDescription className="text-center">
-          Entre com seu email e senha para acessar sua conta
+          {t.description}
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -109,7 +109,7 @@ function LoginForm() {
               htmlFor="email"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Email
+              {t.emailLabel}
             </label>
             <Input
               id="email"
@@ -127,7 +127,7 @@ function LoginForm() {
               htmlFor="password"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Senha
+              {t.passwordLabel}
             </label>
             <Input
               id="password"
@@ -144,18 +144,14 @@ function LoginForm() {
               href="/auth/forgot-password"
               className="text-sm font-medium text-muted-foreground hover:underline"
             >
-              Esqueceu sua senha?
+              {t.forgotPassword}
             </Link>
           </div>
           {error && <p className="text-sm text-red-500 text-center">{error}</p>}
         </CardContent>
         <CardFooter className="flex flex-col space-y-2">
           <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isLoading
-              ? 'Entrando...'
-              : isCsrfLoading
-                ? 'Carregando segurança...'
-                : 'Entrar'}
+            {isLoading ? t.submitting : isCsrfLoading ? t.loading : t.submit}
           </Button>
         </CardFooter>
       </form>

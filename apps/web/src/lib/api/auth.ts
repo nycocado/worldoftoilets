@@ -12,7 +12,7 @@ export async function login(credentials: LoginRequestDto) {
   return apiClient<LoginResponseDto>('/auth/login', {
     method: 'POST',
     body: JSON.stringify(credentials),
-    skipRefresh: true, // Don't attempt refresh on login
+    skipRefresh: true,
   });
 }
 
@@ -35,14 +35,15 @@ export async function registerAdmin(data: RegisterAdminRequestDto) {
 export async function refreshToken() {
   return apiClient<RefreshTokenResponseDto>('/auth/refresh', {
     method: 'POST',
-    skipRefresh: true, // Obviously don't retry refresh on refresh
+    skipRefresh: true,
+    skipAuthHeader: true,
   });
 }
 
 export async function logout() {
   return apiClient<{ message: string }>('/auth/logout', {
     method: 'POST',
-    skipAuthHeader: true, // Do not send Access Token, rely on Refresh Token cookie
+    skipAuthHeader: true,
   });
 }
 

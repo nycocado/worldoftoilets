@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTheme } from 'next-themes';
 import {
   Dialog,
@@ -23,19 +23,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Loader2, MapPin, User, Save, Upload, ImagePlus } from 'lucide-react';
+import { Loader2, User, Save, Upload, ImagePlus } from 'lucide-react';
 import {
   approveSuggestion,
   rejectSuggestion,
   updateToilet,
   publishSuggestionImage,
-  setSuggestionPending,
   uploadToiletImage,
   getSuggestionDetails,
 } from '@/lib/api/admin';
 import { toast } from 'sonner';
 import { SuggestionMap } from './SuggestionMap';
+import { pt } from '@/locales/pt';
 
 interface SuggestionDetailDialogProps {
   suggestion: any;
@@ -51,19 +50,20 @@ export function SuggestionDetailDialog({
   onActionComplete,
 }: SuggestionDetailDialogProps) {
   const [details, setDetails] = useState<any>(suggestion);
-  const [loading, setLoading] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [editMode, setEditMode] = useState(false);
 
-  // Expanded Edited Data State
+  const t = pt.dashboard.suggestions.dialog;
+  const tToasts = pt.dashboard.suggestions.toasts;
+
   const [editedData, setEditedData] = useState<{
     name: string;
     address: string;
     city: string;
     state: string;
     country: string;
-    access: string; // apiName
-    extras: string[]; // Changed to array of strings
+    access: string;
+    extras: string[];
     latitude: number;
     longitude: number;
     photoUrl: string;
@@ -81,10 +81,10 @@ export function SuggestionDetailDialog({
   });
 
   const AVAILABLE_EXTRAS = [
-    { id: 'wheelchair-accessible', label: 'Acessível a Cadeira de Rodas' },
-    { id: 'baby-changing-station', label: 'Fraldário' },
-    { id: 'disabled-parking', label: 'Estacionamento para Deficientes' },
-    { id: 'accessible-for-visually-impaired', label: 'Acessibilidade Visual' },
+    { id: 'wheelchair-accessible', label: t.extras.wheelchair },
+    { id: 'baby-changing-station', label: t.extras.baby },
+    { id: 'disabled-parking', label: t.extras.parking },
+    { id: 'accessible-for-visually-impaired', label: t.extras.visual },
   ];
 
   const [showConfirmAccept, setShowConfirmAccept] = useState(false);
@@ -92,13 +92,12 @@ export function SuggestionDetailDialog({
   const [uploading, setUploading] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { theme, resolvedTheme } = useTheme();
 
   useEffect(() => {
     if (open && suggestion) {
       setDetails(suggestion);
       initializeEditedData(suggestion);
-      fetchDetails(); // Get fresh details to ensure we have toilet data
+      fetchDetails();
     }
   }, [open, suggestion]);
 
@@ -118,7 +117,6 @@ export function SuggestionDetailDialog({
   const initializeEditedData = (data: any) => {
     const toilet = data.toilet || {};
 
-    // Normalize extras to string array
     let currentExtras: string[] = [];
     if (Array.isArray(toilet.extras)) {
       currentExtras = toilet.extras.map((e: any) =>
@@ -133,27 +131,23 @@ export function SuggestionDetailDialog({
       state: toilet.state || '',
       country: toilet.country || '',
       access: toilet.access?.apiName || 'public',
-      extras: currentExtras || [], // Ensure array
+      extras: currentExtras || [],
 
-      // These come from suggestion primarily if we are looking at the suggestion
       latitude: data.latitude || toilet.latitude || 0,
       longitude: data.longitude || toilet.longitude || 0,
       photoUrl: data.photoUrl || toilet.photoUrl || '',
     });
   };
 
-
-
   const handleSaveEdits = async () => {
     setProcessing(true);
     try {
-      // Clean up data before sending?
       await updateToilet(details.toilet.publicId, editedData);
-      toast.success('Dados da casa de banho atualizados.');
+      toast.success(tToasts.updateSuccess);
       setEditMode(false);
       fetchDetails();
     } catch (error) {
-      toast.error('Erro ao salvar alterações.');
+      toast.error(tToasts.updateError);
     } finally {
       setProcessing(false);
     }
@@ -168,31 +162,27 @@ export function SuggestionDetailDialog({
       const response = await uploadToiletImage(details.toilet.publicId, file);
 
       if (response.data && response.data.photoUrl) {
-        setDetails((prev: any) => ({ ...prev, toilet: response.data })); // Update the toilet object in details
+        setDetails((prev: any) => ({ ...prev, toilet: response.data }));
         setEditedData((prev) => ({
           ...prev,
           photoUrl: response.data.photoUrl,
-        })); // Update photoUrl in editedData
-        toast.success('Upload concluído!');
+        }));
+        toast.success(tToasts.uploadSuccess);
       } else {
-        toast.error('Erro: photoUrl da imagem não recebida na resposta.');
+        toast.error(tToasts.uploadError);
       }
     } catch (error) {
       console.error(error);
-      toast.error('Erro ao fazer upload da imagem.');
+      toast.error(tToasts.uploadError);
     } finally {
       setUploading(false);
     }
   };
 
-  // Actions
   const handleAcceptFlow = () => {
-    // Check if the suggestion originally had a photo
     const suggestionHadPhoto = !!suggestion.photoUrl;
-    // Check if the toilet currently has a different photo than the suggestion
     const toiletHasDifferentPhoto =
       suggestion.photoUrl !== details.toilet.photoUrl;
-    // Check if the admin is currently planning to use the suggested photo (i.e., didn't upload a new one)
     const adminUsingSuggestedPhoto =
       editedData.photoUrl === suggestion.photoUrl;
 
@@ -201,9 +191,9 @@ export function SuggestionDetailDialog({
       toiletHasDifferentPhoto &&
       adminUsingSuggestedPhoto
     ) {
-      setShowConfirmAccept(true); // Ask about publishing the original suggested photo
+      setShowConfirmAccept(true);
     } else {
-      executeAccept(false); // Just accept the suggestion, no photo publish needed
+      executeAccept(false);
     }
   };
 
@@ -211,17 +201,16 @@ export function SuggestionDetailDialog({
     setProcessing(true);
     try {
       if (publish && suggestion.photoUrl) {
-        // Use suggestion.photoUrl to confirm if the original suggested photo is being published
-        await publishSuggestionImage(suggestion.publicId); // Use suggestion's publicId for publish endpoint
-        toast.success('Imagem original da sugestão publicada com sucesso.');
+        await publishSuggestionImage(suggestion.publicId);
+        toast.success(tToasts.publishSuccess);
       }
       await approveSuggestion(suggestion.publicId);
-      toast.success('Sugestão aceita.');
+      toast.success(tToasts.approveSuccess);
       setShowConfirmAccept(false);
       onActionComplete();
       onOpenChange(false);
     } catch (error) {
-      toast.error('Erro ao aceitar.');
+      toast.error(tToasts.approveError);
     } finally {
       setProcessing(false);
     }
@@ -231,11 +220,11 @@ export function SuggestionDetailDialog({
     setProcessing(true);
     try {
       await rejectSuggestion(details.publicId);
-      toast.success('Rejeitada.');
+      toast.success(tToasts.rejectSuccess);
       onActionComplete();
       onOpenChange(false);
     } catch (error) {
-      toast.error('Erro.');
+      toast.error(tToasts.rejectError);
     } finally {
       setProcessing(false);
     }
@@ -249,10 +238,8 @@ export function SuggestionDetailDialog({
         {/* Header */}
         <div className="p-6 border-b flex justify-between items-center bg-background z-10 shrink-0">
           <div>
-            <DialogTitle>Detalhes e Edição</DialogTitle>
-            <DialogDescription>
-              Revise os dados sugeridos ou edite completamente a casa de banho.
-            </DialogDescription>
+            <DialogTitle>{t.title}</DialogTitle>
+            <DialogDescription>{t.description}</DialogDescription>
           </div>
           <div className="flex gap-2">
             {!editMode && details?.status === 'pending' && (
@@ -261,7 +248,7 @@ export function SuggestionDetailDialog({
                 size="sm"
                 onClick={() => setEditMode(true)}
               >
-                <User className="mr-2 h-4 w-4" /> Editar Tudo
+                <User className="mr-2 h-4 w-4" /> {t.editAll}
               </Button>
             )}
             {editMode && (
@@ -274,14 +261,14 @@ export function SuggestionDetailDialog({
                     fetchDetails();
                   }}
                 >
-                  Cancelar
+                  {t.cancel}
                 </Button>
                 <Button
                   size="sm"
                   onClick={handleSaveEdits}
                   disabled={processing || uploading}
                 >
-                  <Save className="h-4 w-4 mr-2" /> Salvar Alterações
+                  <Save className="h-4 w-4 mr-2" /> {t.save}
                 </Button>
               </>
             )}
@@ -299,18 +286,21 @@ export function SuggestionDetailDialog({
                 userLat={editedData.latitude || 0}
                 userLon={editedData.longitude || 0}
                 editMode={editMode}
-                onUserMarkerDrag={(lat, lng) => 
-                  setEditedData(prev => ({ ...prev, latitude: lat, longitude: lng }))
+                onUserMarkerDrag={(lat, lng) =>
+                  setEditedData((prev) => ({
+                    ...prev,
+                    latitude: lat,
+                    longitude: lng,
+                  }))
                 }
               />
-              
+
               {editMode && (
                 <div className="absolute top-4 left-4 right-4 bg-background/90 backdrop-blur p-3 rounded-lg border shadow-sm text-xs z-10 pointer-events-none">
                   <p className="font-medium text-amber-600 mb-1">
-                    Modo de Edição
+                    {t.map.editMode}
                   </p>
-                  Arraste o marcador vermelho para ajustar a localização
-                  sugerida.
+                  {t.map.dragMarker}
                 </div>
               )}
             </div>
@@ -321,7 +311,7 @@ export function SuggestionDetailDialog({
             <div className="space-y-6">
               {/* Image Section */}
               <div className="space-y-3">
-                <Label>Imagem da Casa de Banho</Label>
+                <Label>{t.labels.image}</Label>
                 <div className="rounded-lg overflow-hidden border aspect-square w-full relative group bg-muted shadow-sm">
                   {editedData.photoUrl ? (
                     <img
@@ -348,7 +338,7 @@ export function SuggestionDetailDialog({
                         ) : (
                           <Upload className="h-4 w-4 mr-2" />
                         )}
-                        Carregar do PC
+                        {t.labels.upload}
                       </Button>
                     </div>
                   )}
@@ -368,7 +358,7 @@ export function SuggestionDetailDialog({
 
               <div className="grid gap-4">
                 <div className="space-y-2">
-                  <Label>Nome</Label>
+                  <Label>{t.labels.name}</Label>
                   <Input
                     value={editedData.name}
                     onChange={(e) =>
@@ -379,7 +369,7 @@ export function SuggestionDetailDialog({
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Endereço</Label>
+                  <Label>{t.labels.address}</Label>
                   <Textarea
                     value={editedData.address}
                     onChange={(e) =>
@@ -393,7 +383,7 @@ export function SuggestionDetailDialog({
 
                 <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label>Cidade</Label>
+                    <Label>{t.labels.city}</Label>
                     <Input
                       value={editedData.city}
                       onChange={(e) =>
@@ -403,7 +393,7 @@ export function SuggestionDetailDialog({
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Distrito/Estado</Label>
+                    <Label>{t.labels.state}</Label>
                     <Input
                       value={editedData.state}
                       onChange={(e) =>
@@ -413,7 +403,7 @@ export function SuggestionDetailDialog({
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>País</Label>
+                    <Label>{t.labels.country}</Label>
                     <Input
                       value={editedData.country}
                       onChange={(e) =>
@@ -428,7 +418,7 @@ export function SuggestionDetailDialog({
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Acesso</Label>
+                  <Label>{t.labels.access}</Label>
                   <Select
                     value={editedData.access}
                     onValueChange={(v) =>
@@ -437,13 +427,17 @@ export function SuggestionDetailDialog({
                     disabled={!editMode}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Selecione" />
+                      <SelectValue placeholder={t.accessOptions.placeholder} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="public">Público</SelectItem>
-                      <SelectItem value="private">Privado</SelectItem>
+                      <SelectItem value="public">
+                        {t.accessOptions.public}
+                      </SelectItem>
+                      <SelectItem value="private">
+                        {t.accessOptions.private}
+                      </SelectItem>
                       <SelectItem value="consumers-only">
-                        Clientes (Consumidores)
+                        {t.accessOptions.consumers}
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -451,7 +445,7 @@ export function SuggestionDetailDialog({
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Latitude</Label>
+                    <Label>{t.labels.latitude}</Label>
                     <Input
                       type="number"
                       value={editedData.latitude}
@@ -465,7 +459,7 @@ export function SuggestionDetailDialog({
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Longitude</Label>
+                    <Label>{t.labels.longitude}</Label>
                     <Input
                       type="number"
                       value={editedData.longitude}
@@ -481,7 +475,7 @@ export function SuggestionDetailDialog({
                 </div>
 
                 <div className="space-y-3 pt-2">
-                  <Label>Extras e Comodidades</Label>
+                  <Label>{t.labels.extras}</Label>
                   <div className="grid grid-cols-1 gap-3">
                     {AVAILABLE_EXTRAS.map((extra) => (
                       <div
@@ -525,14 +519,14 @@ export function SuggestionDetailDialog({
                 onClick={handleReject}
                 disabled={processing}
               >
-                Rejeitar Sugestão
+                {t.reject}
               </Button>
               <Button
                 onClick={handleAcceptFlow}
                 disabled={processing}
                 className="bg-green-600 hover:bg-green-700 text-white"
               >
-                Aceitar Sugestão
+                {t.accept}
               </Button>
             </div>
           ) : (
@@ -542,7 +536,9 @@ export function SuggestionDetailDialog({
                   details?.status === 'accepted' ? 'default' : 'secondary'
                 }
               >
-                {details?.status === 'accepted' ? 'Aceita' : 'Rejeitada'}
+                {details?.status === 'accepted'
+                  ? pt.common.statusLabels.accepted
+                  : pt.common.statusLabels.rejected}
               </Badge>
             </div>
           )}
@@ -552,10 +548,9 @@ export function SuggestionDetailDialog({
         {showConfirmAccept && (
           <div className="absolute inset-0 z-50 bg-black/50 flex items-center justify-center p-4 animate-in fade-in">
             <div className="bg-background rounded-lg shadow-lg max-w-md w-full p-6 space-y-4">
-              <DialogTitle>Publicar Imagem?</DialogTitle>
+              <DialogTitle>{t.confirmPublish.title}</DialogTitle>
               <DialogDescription>
-                Esta sugestão inclui uma nova foto. Deseja definir esta foto
-                como a imagem principal da casa de banho?
+                {t.confirmPublish.description}
               </DialogDescription>
 
               <div className="flex items-center space-x-2 border p-3 rounded-md bg-muted/30">
@@ -568,7 +563,7 @@ export function SuggestionDetailDialog({
                   htmlFor="publish"
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  Sim, publicar como imagem principal
+                  {t.confirmPublish.checkbox}
                 </label>
               </div>
 
@@ -577,10 +572,10 @@ export function SuggestionDetailDialog({
                   variant="ghost"
                   onClick={() => setShowConfirmAccept(false)}
                 >
-                  Cancelar
+                  {t.cancel}
                 </Button>
                 <Button onClick={() => executeAccept(publishImage)}>
-                  Confirmar
+                  {t.confirmPublish.confirm}
                 </Button>
               </div>
             </div>

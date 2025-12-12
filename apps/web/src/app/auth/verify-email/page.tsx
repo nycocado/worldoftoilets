@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
+import { pt } from '@/locales/pt';
 
 function VerifyEmailContent() {
   const router = useRouter();
@@ -25,46 +26,38 @@ function VerifyEmailContent() {
   >('idle');
   const [message, setMessage] = useState<string>('');
 
-  // Use a ref to prevent double execution in strict mode
   const hasVerified = useRef(false);
+  const t = pt.auth.verifyEmail;
 
   useEffect(() => {
-    // If no token, show error immediately
     if (!token) {
       setStatus('error');
-      setMessage('Token de verificação inválido ou ausente.');
+      setMessage(t.errors.missingToken);
       return;
     }
 
-    // Prevent double calling
     if (hasVerified.current) return;
 
     const verify = async () => {
       hasVerified.current = true;
       setStatus('verifying');
       try {
-        // 1. Fetch CSRF token bound to this specific verification token
-        // This ensures the backend generates a hash that matches the session ID (the bearer token)
         const csrfResponse = await getCsrfToken(token);
 
-        // 2. Set the token globally so apiClient uses it
         setCsrfToken(csrfResponse.data.csrfToken);
 
-        // 3. Perform verification with matching Bearer and CSRF tokens
         await verifyEmail(token);
 
         setStatus('success');
       } catch (err: any) {
         console.error(err);
         setStatus('error');
-        setMessage(
-          err.message || 'Falha ao verificar email. O link pode ter expirado.',
-        );
+        setMessage(err.message || t.errors.generic);
       }
     };
 
     verify();
-  }, [token]);
+  }, [token, t.errors.missingToken, t.errors.generic]);
 
   if (!token) {
     return (
@@ -74,10 +67,10 @@ function VerifyEmailContent() {
             <XCircle className="h-12 w-12 text-red-500" />
           </div>
           <CardTitle className="text-xl text-center text-red-600">
-            Link Inválido
+            {t.invalidTokenTitle}
           </CardTitle>
           <CardDescription className="text-center">
-            Não foi possível encontrar o token de verificação.
+            {t.invalidTokenDesc}
           </CardDescription>
         </CardHeader>
       </Card>
@@ -98,16 +91,16 @@ function VerifyEmailContent() {
         </div>
         <CardTitle className="text-2xl text-center">
           {status === 'verifying' || status === 'idle'
-            ? 'Verificando Email...'
+            ? t.titleVerifying
             : status === 'success'
-              ? 'Email Verificado!'
-              : 'Falha na Verificação'}
+              ? t.titleSuccess
+              : t.titleError}
         </CardTitle>
         <CardDescription className="text-center">
           {status === 'verifying' || status === 'idle'
-            ? 'Aguarde enquanto confirmamos seu endereço de email.'
+            ? t.descVerifying
             : status === 'success'
-              ? 'Sua conta foi verificada com sucesso. Você já pode acessar todos os recursos no aplicativo móvel.'
+              ? t.descSuccess
               : message}
         </CardDescription>
       </CardHeader>

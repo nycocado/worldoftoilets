@@ -17,18 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-
-const resetPasswordSchema = z
-  .object({
-    password: z.string().min(8, 'A senha deve ter pelo menos 8 caracteres'),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'As senhas não coincidem',
-    path: ['confirmPassword'],
-  });
-
-type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
+import { pt } from '@/locales/pt';
 
 function ResetPasswordForm() {
   const router = useRouter();
@@ -38,6 +27,21 @@ function ResetPasswordForm() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const t = pt.auth.resetPassword;
+  const tValidation = pt.auth.validation;
+
+  const resetPasswordSchema = z
+    .object({
+      password: z.string().min(8, tValidation.passwordMin),
+      confirmPassword: z.string(),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: t.errors.mismatch,
+      path: ['confirmPassword'],
+    });
+
+  type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 
   const {
     register,
@@ -49,7 +53,7 @@ function ResetPasswordForm() {
 
   const onSubmit = async (data: ResetPasswordFormData) => {
     if (!token) {
-      setError('Token de redefinição inválido ou ausente.');
+      setError(t.errors.tokenInvalid);
       return;
     }
 
@@ -59,9 +63,7 @@ function ResetPasswordForm() {
       await resetPassword(token, data.password);
       setSuccess(true);
     } catch (err) {
-      setError(
-        'Ocorreu um erro ao redefinir a senha. O link pode ter expirado.',
-      );
+      setError(t.errors.generic);
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -74,11 +76,8 @@ function ResetPasswordForm() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-xl text-red-600">Erro</CardTitle>
-          <CardDescription>
-            Token de redefinição de senha não encontrado. Por favor, verifique o
-            link que você recebeu.
-          </CardDescription>
+          <CardTitle className="text-xl text-red-600">{t.errorTitle}</CardTitle>
+          <CardDescription>{t.errorToken}</CardDescription>
         </CardHeader>
       </Card>
     );
@@ -88,11 +87,10 @@ function ResetPasswordForm() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-xl text-green-600">Sucesso!</CardTitle>
-          <CardDescription>
-            Sua senha foi redefinida com sucesso. Você já pode acessar sua conta
-            no aplicativo móvel.
-          </CardDescription>
+          <CardTitle className="text-xl text-green-600">
+            {t.successTitle}
+          </CardTitle>
+          <CardDescription>{t.successDescription}</CardDescription>
         </CardHeader>
       </Card>
     );
@@ -101,9 +99,9 @@ function ResetPasswordForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-2xl text-center">Redefinir Senha</CardTitle>
+        <CardTitle className="text-2xl text-center">{t.title}</CardTitle>
         <CardDescription className="text-center">
-          Digite sua nova senha abaixo.
+          {t.description}
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -113,7 +111,7 @@ function ResetPasswordForm() {
               htmlFor="password"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Nova Senha
+              {t.passwordLabel}
             </label>
             <Input
               id="password"
@@ -130,7 +128,7 @@ function ResetPasswordForm() {
               htmlFor="confirmPassword"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Confirmar Nova Senha
+              {t.confirmPasswordLabel}
             </label>
             <Input
               id="confirmPassword"
@@ -149,10 +147,10 @@ function ResetPasswordForm() {
         <CardFooter>
           <Button type="submit" className="w-full" disabled={isSubmitting}>
             {isLoading
-              ? 'Redefinindo...'
+              ? t.submitting
               : isCsrfLoading
-                ? 'Carregando segurança...'
-                : 'Redefinir Senha'}
+                ? pt.auth.login.loading
+                : t.submit}
           </Button>
         </CardFooter>
       </form>

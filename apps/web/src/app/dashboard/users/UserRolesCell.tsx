@@ -7,25 +7,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { ShieldCheck, Building2, User } from 'lucide-react';
-
-const AREA_TRANSLATIONS: Record<string, string> = {
-  comments: 'Comentários',
-  toilets: 'Casas de Banho',
-  users: 'Usuários',
-  partners: 'Parceiros',
-  dead: 'Dead',
-  admin: 'Super Admin',
-};
-
-const USER_PERMISSIONS_MAP: Record<string, string> = {
-  'comments-user': 'Comentar',
-  'report-comments-user': 'Denunciar Comentários',
-  'reaction-user': 'Reagir',
-  'report-toilets-user': 'Denunciar Casas de Banho',
-  'suggest-toilets-user': 'Sugerir Casas de Banho',
-  'report-users-user': 'Denunciar Usuários',
-  'dead-user': 'Dead User',
-};
+import { pt } from '@/locales/pt';
 
 export function UserRolesCell({ roles }: { roles: Role[] }) {
   const isAdmin = roles.some(
@@ -33,19 +15,27 @@ export function UserRolesCell({ roles }: { roles: Role[] }) {
   );
   const isPartner = roles.some((r) => r.apiName === 'partner');
 
+  const tRoles = pt.roles;
+
   // Extract specific admin areas
   const adminAreas = roles
     .filter((r) => r.apiName.includes('administrator') || r.apiName === 'admin')
     .map((r) => {
-      if (r.apiName === 'admin') return 'Super Admin';
-      const key = r.apiName.replace('-administrator', '');
-      return AREA_TRANSLATIONS[key] || key;
+      if (r.apiName === 'admin') return tRoles.areas.admin;
+      const key = r.apiName.replace(
+        '-administrator',
+        '',
+      ) as keyof typeof tRoles.areas;
+      return tRoles.areas[key] || key;
     });
 
   // Extract user permissions
   const userPermissions = roles
-    .filter((r) => USER_PERMISSIONS_MAP[r.apiName])
-    .map((r) => USER_PERMISSIONS_MAP[r.apiName]);
+    .filter((r) => {
+      // Check if the role exists in our 'user' roles map
+      return (tRoles.user as any)[r.apiName];
+    })
+    .map((r) => (tRoles.user as any)[r.apiName]);
 
   return (
     <div className="flex flex-col gap-1">
@@ -108,7 +98,6 @@ export function UserRolesCell({ roles }: { roles: Role[] }) {
         )}
       </div>
 
-      {/* Show detailed areas inline */}
       {isAdmin && (
         <span
           className="text-[10px] text-muted-foreground truncate max-w-[150px]"

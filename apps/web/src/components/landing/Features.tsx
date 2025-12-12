@@ -4,29 +4,33 @@ import React from 'react';
 import { Navigation, Star, ShieldAlert } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { pt } from '@/locales/pt';
 
 export const Features = () => {
+  const t = pt.landing.features;
+  const cards = t.cards;
+
   const features = [
     {
       icon: Navigation,
       color: 'text-primary',
       bg: 'bg-blue-50 dark:bg-blue-900/20',
-      title: 'Navegação Inteligente',
-      desc: 'Algoritmo A* integrado para calcular a rota mais rápida a pé até ao WC mais próximo.',
+      title: cards.navigation.title,
+      desc: cards.navigation.desc,
     },
     {
       icon: Star,
       color: 'text-accent',
       bg: 'bg-yellow-50 dark:bg-yellow-900/20',
-      title: 'Avaliações Reais',
-      desc: 'Saiba se há papel, se está limpo e se é acessível antes de ir, com base em feedback da comunidade.',
+      title: cards.reviews.title,
+      desc: cards.reviews.desc,
     },
     {
       icon: ShieldAlert,
       color: 'text-destructive',
       bg: 'bg-red-50 dark:bg-red-900/20',
-      title: 'Reporte Instantâneo',
-      desc: 'Encontrou um problema? Denuncie locais sujos ou perigosos e ajude outros utilizadores.',
+      title: cards.report.title,
+      desc: cards.report.desc,
     },
   ];
 
@@ -35,12 +39,9 @@ export const Features = () => {
       <div className="container mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-20">
           <h2 className="text-3xl lg:text-4xl font-black text-foreground mb-4">
-            Tudo o que precisa para a sua emergência
+            {t.title}
           </h2>
-          <p className="text-muted-foreground text-lg">
-            Não é apenas um mapa. É um ecossistema completo para garantir que
-            encontra as melhores instalações.
-          </p>
+          <p className="text-muted-foreground text-lg">{t.subtitle}</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">

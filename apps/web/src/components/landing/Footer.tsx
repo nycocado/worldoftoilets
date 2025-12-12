@@ -1,9 +1,13 @@
 import React from 'react';
-import { MapPin, Github } from 'lucide-react';
+import { Github } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
-import Image from 'next/image'; // Import Image
+import Image from 'next/image';
+import { pt } from '@/locales/pt';
 
 export const Footer = () => {
+  const t = pt.landing.footer;
+  const tCommon = pt.common;
+
   return (
     <footer className="bg-card border-t border-border py-12">
       <div className="container mx-auto px-6">
@@ -15,14 +19,14 @@ export const Footer = () => {
                 alt="World of Toilets Logo"
                 width={24}
                 height={30}
-                className="pointer-events-none"
+                className="pointer-events-none h-8 w-auto"
               />
-              <span className="text-xl font-bold">World of Toilets</span>
+              <span className="text-xl font-bold">
+                {tCommon.worldOfToilets}
+              </span>
             </div>
             <p className="max-w-xs mb-4 text-muted-foreground">
-              Uma iniciativa dedicada a resolver problemas de higiene e
-              acessibilidade urbana, conectando pessoas a sanitários de
-              qualidade.
+              {t.description}
             </p>
             <div className="flex gap-4 text-muted-foreground">
               <a href="#" className="hover:text-primary transition-colors">
@@ -32,18 +36,18 @@ export const Footer = () => {
           </div>
 
           <div>
-            <h4 className="text-foreground font-bold mb-4">Projeto</h4>
+            <h4 className="text-foreground font-bold mb-4">{t.project}</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
                 <a href="#" className="hover:text-primary transition-colors">
-                  Sobre Nós
+                  {t.about}
                 </a>
               </li>
             </ul>
           </div>
 
           <div>
-            <h4 className="text-foreground font-bold mb-4">Tecnologia</h4>
+            <h4 className="text-foreground font-bold mb-4">{t.tech}</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
                 <a href="#" className="hover:text-primary transition-colors">
@@ -67,10 +71,8 @@ export const Footer = () => {
         <Separator className="my-8" />
 
         <div className="flex flex-col md:flex-row justify-between items-center text-xs text-muted-foreground">
-          <p>&copy; 2025 World of Toilets.</p>
-          <p className="mt-2 md:mt-0">
-            Desenvolvido com ❤️ por Nycolas, Luan, Lohanne e Kira.
-          </p>
+          <p>{t.copyright}</p>
+          <p className="mt-2 md:mt-0">{t.developedBy}</p>
         </div>
       </div>
     </footer>

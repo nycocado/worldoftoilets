@@ -98,8 +98,11 @@ export async function apiClient<T>(
   endpoint: string,
   options: ApiClientOptions = {},
 ): Promise<ApiResponse<T>> {
-  const { skipRefresh = false, skipAuthHeader = false, ...fetchOptions } =
-    options;
+  const {
+    skipRefresh = false,
+    skipAuthHeader = false,
+    ...fetchOptions
+  } = options;
   const method = fetchOptions.method?.toUpperCase() || 'GET';
   const requiresCsrf = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method);
 
