@@ -291,8 +291,8 @@ export function SuggestionDetailDialog({
         {/* Content */}
         <div className="flex flex-col md:flex-row h-full min-h-0 flex-1 overflow-hidden">
           {/* Left: Map & Location */}
-          <div className="md:w-1/2 flex flex-col border-r bg-muted/10 relative p-6 gap-4">
-            <div className="rounded-xl overflow-hidden border shadow-sm w-full h-full relative bg-muted">
+          <div className="md:w-1/2 flex flex-col border-r bg-muted/10 relative p-6 gap-4 max-h-[400px] md:max-h-none">
+            <div className="rounded-xl overflow-hidden border shadow-sm w-full h-64 md:h-full relative bg-muted">
               <SuggestionMap
                 toiletLat={details.toilet?.latitude || 0}
                 toiletLon={details.toilet?.longitude || 0}

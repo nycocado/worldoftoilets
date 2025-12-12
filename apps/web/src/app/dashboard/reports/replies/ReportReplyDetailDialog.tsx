@@ -132,7 +132,7 @@ export function ReportReplyDetailDialog({ aggregatedReport, open, onOpenChange, 
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span className="font-semibold text-sm">{details.reply.user?.name}</span>
-                    <span className="text-xs text-muted-foreground">• {formatDistanceToNow(new Date(details.reply.createdAt), { addSuffix: true, locale: pt })}</span>
+                    <span className="text-xs text-muted-foreground">• {formatDistanceToNow(new Date(details.reply.createdAt), { addSuffix: true, locale: pt }).replace('há aproximadamente', 'há')}</span>
                   </div>
                   <p className="text-sm text-foreground">{details.reply.text}</p>
                 </div>
@@ -166,7 +166,7 @@ export function ReportReplyDetailDialog({ aggregatedReport, open, onOpenChange, 
                         <User className="h-3 w-3" />
                         <span>{report.user?.name}</span>
                         <Clock className="h-3 w-3 ml-1" />
-                        <span>{formatDistanceToNow(new Date(report.createdAt), { addSuffix: true, locale: pt })}</span>
+                        <span>{formatDistanceToNow(new Date(report.createdAt), { addSuffix: true, locale: pt }).replace('há aproximadamente', 'há')}</span>
                       </div>
                     </div>
 

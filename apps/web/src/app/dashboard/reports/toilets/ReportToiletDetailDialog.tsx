@@ -317,11 +317,11 @@ export function ReportToiletDetailDialog({
                           >
                             {report.status}
                           </Badge>
-                          <div className="text-[10px] text-muted-foreground whitespace-nowrap">
+                          <div className="text-[10px] text-muted-foreground">
                             {formatDistanceToNow(new Date(report.createdAt), {
                               addSuffix: true,
                               locale: pt,
-                            })}
+                            }).replace('há aproximadamente', 'há')}
                           </div>
                         </div>
                       </div>

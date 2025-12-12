@@ -26,10 +26,24 @@ import {
 import Link from 'next/link';
 import { hasPermission } from '@/lib/constants';
 
-const ADMIN_DASHBOARD_LINKS = [
+type DashboardItem = {
+  title: string;
+  href: string;
+  icon: React.ComponentType<{ size?: number }>;
+  desc: string;
+  roles?: string[];
+};
+
+type DashboardSection = {
+  sectionTitle: string;
+  roles: string[];
+  items: DashboardItem[];
+};
+
+const ADMIN_DASHBOARD_LINKS: DashboardSection[] = [
   {
     sectionTitle: 'Gestão de Utilizadores',
-    roles: ['admin', 'users-administrator'],
+    roles: ['users-administrator'],
     items: [
       { 
         title: 'Utilizadores', 
@@ -47,7 +61,7 @@ const ADMIN_DASHBOARD_LINKS = [
   },
   {
     sectionTitle: 'Gestão de Conteúdo (Casas de Banho)',
-    roles: ['admin', 'toilets-administrator'],
+    roles: ['toilets-administrator'],
     items: [
       { 
         title: 'Denúncias de Casas de Banho', 
@@ -65,7 +79,7 @@ const ADMIN_DASHBOARD_LINKS = [
   },
   {
     sectionTitle: 'Moderação de Comentários e Respostas',
-    roles: ['admin', 'comments-administrator'],
+    roles: ['comments-administrator'],
     items: [
       { 
         title: 'Denúncias de Comentários', 
@@ -81,25 +95,7 @@ const ADMIN_DASHBOARD_LINKS = [
       },
     ]
   },
-  {
-    sectionTitle: 'Gestão de Parceiros', // Keep if still relevant
-    roles: ['admin', 'partners-administrator', 'partner'], // partner role can see this section
-    items: [
-      { 
-        title: 'Candidaturas de Parceiros', // Updated title if managing applications
-        href: '/dashboard/partners', 
-        icon: Handshake, 
-        desc: 'Aprovar novas parcerias comerciais e verificar contratos.' 
-      },
-      { // Assuming 'my-toilet' is for partners to manage their own toilet
-        title: 'Minha Casa de Banho (Parceiro)',
-        href: '/dashboard/my-toilet',
-        icon: Building2,
-        desc: 'Gerir informações e reviews da sua própria casa de banho parceira.',
-        roles: ['partner'], // Only visible to 'partner' role, not general admin
-      },
-    ]
-  }
+
 ];
 
 export default function DashboardPage() {
@@ -162,37 +158,26 @@ export default function DashboardPage() {
                 const allowedRoles = item.roles || section.roles;
                 const hasItemAccess = allowedRoles.some(role => hasPermission(roles, role));
 
+                if (!hasItemAccess) return null; // Correctly placed conditional return
+
                 return (
                   <Card
                     key={itemIdx}
-                    className={`relative overflow-hidden transition-all border-l-4 ${
-                      hasItemAccess
-                        ? 'hover:shadow-md border-l-primary'
-                        : 'opacity-60 bg-muted/50 border-l-muted-foreground/20'
-                    }`}
+                    className={`relative overflow-hidden transition-all border-l-4 hover:shadow-md border-l-primary`} // Simplified class as it's always accessible now
                   >
                     <CardHeader className="pb-2">
                       <div className="flex justify-between items-start">
                         <div
-                          className={`p-3 rounded-xl ${hasItemAccess ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}
+                          className={`p-3 rounded-xl bg-primary/10 text-primary`} // Simplified class
                         >
                           <item.icon size={24} />
                         </div>
-                        {hasItemAccess ? (
-                          <Badge
-                            variant="secondary"
-                            className="gap-1 bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400"
-                          >
-                            <Unlock size={10} /> Ativo
-                          </Badge>
-                        ) : (
-                          <Badge
-                            variant="outline"
-                            className="gap-1 text-muted-foreground"
-                          >
-                            <Lock size={10} /> Bloqueado
-                          </Badge>
-                        )}
+                        <Badge // Always show "Ativo" badge if rendered
+                          variant="secondary"
+                          className="gap-1 bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400"
+                        >
+                          <Unlock size={10} /> Ativo
+                        </Badge>
                       </div>
                       <CardTitle className="text-lg font-bold mt-4">
                         {item.title}
@@ -206,29 +191,18 @@ export default function DashboardPage() {
                     </CardContent>
 
                     <CardFooter>
-                      {hasItemAccess ? (
-                        <Link href={item.href} className="w-full">
-                          <Button
-                            variant="outline"
-                            className="w-full justify-between group"
-                          >
-                            Aceder
-                            <ArrowUpRight
-                              size={16}
-                              className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
-                            />
-                          </Button>
-                        </Link>
-                      ) : (
+                      <Link href={item.href} className="w-full">
                         <Button
-                          variant="ghost"
-                          disabled
-                          className="w-full justify-between cursor-not-allowed"
+                          variant="outline"
+                          className="w-full justify-between group"
                         >
-                          Sem Permissão
-                          <Lock size={16} />
+                          Aceder
+                          <ArrowUpRight
+                            size={16}
+                            className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
+                          />
                         </Button>
-                      )}
+                      </Link>
                     </CardFooter>
                   </Card>
                 );

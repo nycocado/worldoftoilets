@@ -123,8 +123,8 @@ export default function ReplyReportsPage() {
                     </div>
 
                     {/* 2. Stats (Center) - 6 Cols */}
-                    <div className="lg:col-span-6 w-full grid grid-cols-3 gap-2 px-2 lg:px-6 lg:border-l lg:border-r border-border/40">
-                       <div className="flex flex-col items-center justify-center text-center">
+                    <div className="lg:col-span-6 w-full grid grid-cols-1 md:grid-cols-3 gap-4 px-2 lg:px-6 lg:border-l lg:border-r border-border/40">
+                       <div className="flex flex-col items-center justify-center text-center px-1">
                           <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold mb-1">
                              Denúncias
                           </span>
@@ -133,26 +133,26 @@ export default function ReplyReportsPage() {
                           </span>
                        </div>
 
-                       <div className="flex flex-col items-center justify-center text-center border-l border-r border-border/40 lg:border-none">
+                       <div className="flex flex-col items-center justify-center text-center px-1 md:border-l md:border-r border-border/40 lg:border-none">
                           <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold mb-1">
                              Motivo Principal
                           </span>
-                          <div className="flex items-center gap-1.5 text-sm font-medium text-foreground justify-center">
+                          <div className="flex items-center gap-1.5 text-sm font-medium text-foreground justify-center max-w-full">
                              <AlertTriangle className="h-3.5 w-3.5 text-amber-500 shrink-0" />
-                             <span className="truncate" title={item.mostFrequentType}>
+                             <span className="truncate min-w-0" title={item.mostFrequentType}>
                                 {item.mostFrequentType}
                              </span>
                           </div>
                        </div>
 
-                       <div className="flex flex-col items-center justify-center text-center">
+                       <div className="flex flex-col items-center justify-center text-center px-1">
                           <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold mb-1">
                              Última
                           </span>
-                          <div className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground justify-center">
+                          <div className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground justify-center max-w-full">
                              <Clock className="h-3.5 w-3.5 text-blue-500 shrink-0" />
-                             <span className="truncate">
-                                {formatDistanceToNow(new Date(item.latestReportDate), { addSuffix: true, locale: pt })}
+                             <span>
+                                {formatDistanceToNow(new Date(item.latestReportDate), { addSuffix: true, locale: pt }).replace('há aproximadamente', 'há')}
                              </span>
                           </div>
                        </div>
