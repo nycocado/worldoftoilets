@@ -329,16 +329,15 @@ export default function SuggestionsPage() {
                     </div>
 
                     {/* 3. Actions (Right) - 2 Cols */}
-                    <div className="lg:col-span-2 flex flex-col gap-2 w-full justify-center">
+                    <div className="lg:col-span-2 flex flex-col gap-2 w-full">
                       {statusFilter === 'pending' && (
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            className="flex-1 bg-green-600 hover:bg-green-700 text-white h-8"
-                            onClick={() => handleApprove(item.publicId)}
-                            disabled={processingId === item.publicId}
-                          >
-                            {processingId === item.publicId ? (
+                        <div className="flex flex-col gap-2">
+                                                      <Button
+                                                        size="sm"
+                                                        className="w-full bg-green-600 hover:bg-green-700 text-white h-9"
+                                                        onClick={() => handleApprove(item.publicId)}
+                                                        disabled={processingId === item.publicId}
+                                                      >                            {processingId === item.publicId ? (
                               <Loader2 className="h-3.5 w-3.5 animate-spin" />
                             ) : (
                               <>
@@ -350,7 +349,7 @@ export default function SuggestionsPage() {
                           <Button
                             size="sm"
                             variant="outline"
-                            className="flex-1 h-8 border-red-200 text-red-700 hover:bg-red-50 dark:border-red-900 dark:text-red-400"
+                            className="w-full h-9 border-red-200 text-red-700 hover:bg-red-50 dark:border-red-900 dark:text-red-400"
                             onClick={() => handleReject(item.publicId)}
                             disabled={processingId === item.publicId}
                           >

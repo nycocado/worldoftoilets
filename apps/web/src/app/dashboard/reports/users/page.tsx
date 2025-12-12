@@ -241,7 +241,7 @@ export default function UserReportsPage() {
                         {formatDistanceToNow(new Date(item.latestReportDate), {
                           addSuffix: true,
                           locale: pt,
-                        })}
+                        }).replace('há aproximadamente', 'há')}
                       </div>
                     </div>
                   </div>
