@@ -256,10 +256,11 @@ services:
         build:
             context: ./apps/web
             dockerfile: Dockerfile
+            args:
+                NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
         container_name: wot-web-1
         restart: on-failure
         environment:
-            NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
             PORT: 3001
             NODE_ENV: "production"
         ports:
@@ -282,10 +283,11 @@ services:
         build:
             context: ./apps/web
             dockerfile: Dockerfile
+            args:
+                NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
         container_name: wot-web-2
         restart: on-failure
         environment:
-            NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
             PORT: 3002
             NODE_ENV: "production"
         ports:
