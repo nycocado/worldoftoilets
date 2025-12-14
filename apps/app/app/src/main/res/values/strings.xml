@@ -146,6 +146,7 @@
     <string name="error_register">Error registering</string>
     <string name="error_comment">Error sending comment</string>
     <string name="error_unexpected">An unexpected error occurred, please try again later.</string>
+    <string name="error_invalid_credentials">Invalid email or password</string>
 
     <!-- Authentication Errors -->
     <string name="error_required_name">Required</string>
@@ -162,6 +163,10 @@
     <string name="error_invalid_password">Invalid password</string>
     <string name="error_passwords_do_not_match">Passwords do not match</string>
     <string name="error_in_use_email">Email already in use</string>
+    <string name="error_password_uppercase">Password must contain at least one uppercase letter</string>
+    <string name="error_password_lowercase">Password must contain at least one lowercase letter</string>
+    <string name="error_password_digit">Password must contain at least one number</string>
+    <string name="error_password_special">Password must contain at least one special character</string>
 
     <!-- Time -->
     <string name="time_year_single">A year ago</string>

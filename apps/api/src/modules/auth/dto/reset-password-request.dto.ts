@@ -4,6 +4,7 @@ import {
   MinLength,
   MaxLength,
   IsNotEmpty,
+  IsStrongPassword,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
@@ -29,8 +30,19 @@ export class ResetPasswordRequestDto {
     minLength: 8,
     maxLength: 64,
   })
-  @IsString()
-  @MinLength(8)
+  @IsStrongPassword(
+    {
+      minLength: 8,
+      minLowercase: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+      minSymbols: 1,
+    },
+    {
+      message:
+        'Password too weak. It must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character.',
+    },
+  )
   @MaxLength(64)
   @IsNotEmpty()
   @Type(() => String)

@@ -9,4 +9,6 @@ export const AUTH_EXCEPTIONS = {
   EMAIL_ALREADY_IN_USE: 'Email already in use.',
   EMAIL_ALREADY_VERIFIED: 'Email already verified.',
   USER_DEACTIVATED: 'User account has been deactivated.',
+  WEAK_PASSWORD:
+    'Password too weak. It must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character.',
 };

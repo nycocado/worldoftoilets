@@ -7,10 +7,12 @@ import {
   IsEnum,
   IsNotEmpty,
   IsOptional,
+  IsStrongPassword,
 } from 'class-validator';
 import { UserIcon } from '@database/entities';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
+import { AUTH_EXCEPTIONS } from '../constants';
 
 /**
  * DTO para a requisição de registo de uma nova conta.
@@ -48,8 +50,18 @@ export class RegisterRequestDto {
     minLength: 8,
     maxLength: 64,
   })
-  @IsString()
-  @MinLength(8)
+  @IsStrongPassword(
+    {
+      minLength: 8,
+      minLowercase: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+      minSymbols: 1,
+    },
+    {
+      message: AUTH_EXCEPTIONS.WEAK_PASSWORD,
+    },
+  )
   @MaxLength(64)
   @IsNotEmpty()
   @Type(() => String)

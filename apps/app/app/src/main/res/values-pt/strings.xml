@@ -139,6 +139,7 @@
     <string name="error_register">Erro ao registar</string>
     <string name="error_comment">Erro ao enviar comentário</string>
     <string name="error_unexpected">Ocorreu um erro inesperado, tente novamente mais tarde.</string>
+    <string name="error_invalid_credentials">Email ou palavra-passe incorretos</string>
 
     <!-- Erros de autenticação -->
     <string name="error_required_name">Obrigatório</string>
@@ -155,6 +156,10 @@
     <string name="error_invalid_password">Palavra-passe inválida</string>
     <string name="error_passwords_do_not_match">As palavras-passe não coincidem</string>
     <string name="error_in_use_email">Email já em uso</string>
+    <string name="error_password_uppercase">A palavra-passe deve conter pelo menos uma letra maiúscula</string>
+    <string name="error_password_lowercase">A palavra-passe deve conter pelo menos uma letra minúscula</string>
+    <string name="error_password_digit">A palavra-passe deve conter pelo menos um número</string>
+    <string name="error_password_special">A palavra-passe deve conter pelo menos um caráter especial</string>
 
     <!-- Tempo -->
     <string name="time_year_single">Há um ano</string>
