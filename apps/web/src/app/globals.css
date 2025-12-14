@@ -23,7 +23,7 @@
     --muted: #F0F3F5;              /* LightSurfaceVariant */
     --muted-foreground: #757575;   /* GrayDark */
 
-    --accent: #FFB020;             /* GoldenSun */
+    --accent: #8B5CF6; /* VividViolet */
     --accent-foreground: #FFFFFF;  /* PureWhite */
 
     --destructive: #FF4D4F;        /* AlertRed */
@@ -56,14 +56,14 @@
     --muted: #334155;              /* Slate 700 - Elementos secundários */
     --muted-foreground: #94A3B8;   /* Slate 400 - Texto de apoio */
 
-    --accent: #FBBF24;             /* Amber 400 - Golden Sun vibrante */
-    --accent-foreground: #0F172A;
+    --accent: #8B5CF6; /* VividViolet */
+    --accent-foreground: #FFFFFF;
 
     --destructive: #F87171;        /* Red 400 - Erro suave */
     --destructive-foreground: #0F172A;
 
-    --border: #334155;             /* Slate 700 - Bordas sutis */
-    --input: #1E293B;              /* Inputs integrados ao fundo do card */
+    --border: #475569;             /* Slate 600 - Bordas sutis */
+    --input: #475569;              /* Slate 600 - Matches border for visibility */
     --ring: #38BDF8;               /* Foco azul */
   }
 }

@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.Color
 // Brand Colors
 val ElectricBlue = Color(0xFF00A3FF)
 val FreshGreen = Color(0xFF00D084)
-val GoldenSun = Color(0xFFFFB020)
+val VividViolet = Color(0xFF8B5CF6)
 val AlertRed = Color(0xFFFF4D4F)
 
 // Neutrals
@@ -27,10 +27,10 @@ val LightOnSecondary = PureWhite
 val LightSecondaryContainer = Color(0xFFD1F7E8) // Lighter Green
 val LightOnSecondaryContainer = Color(0xFF003D25)
 
-val LightTertiary = GoldenSun
+val LightTertiary = VividViolet
 val LightOnTertiary = PureWhite
-val LightTertiaryContainer = Color(0xFFFFEBC2)
-val LightOnTertiaryContainer = Color(0xFF4D3300)
+val LightTertiaryContainer = Color(0xFFF3E8FF)
+val LightOnTertiaryContainer = Color(0xFF2E1065)
 
 val LightError = AlertRed
 val LightOnError = PureWhite
@@ -54,10 +54,10 @@ val DarkOnSecondary = Color(0xFF003822)
 val DarkSecondaryContainer = Color(0xFF005233)
 val DarkOnSecondaryContainer = Color(0xFFD1F7E8)
 
-val DarkTertiary = Color(0xFFFFC759)
-val DarkOnTertiary = Color(0xFF452B00)
-val DarkTertiaryContainer = Color(0xFF634000)
-val DarkOnTertiaryContainer = Color(0xFFFFEBC2)
+val DarkTertiary = Color(0xFFA78BFA)
+val DarkOnTertiary = Color(0xFF0F172A)
+val DarkTertiaryContainer = Color(0xFF4C1D95)
+val DarkOnTertiaryContainer = Color(0xFFF3E8FF)
 
 val DarkError = Color(0xFFFFB4AB)
 val DarkOnError = Color(0xFF690005)
