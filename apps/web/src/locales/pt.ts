@@ -121,6 +121,10 @@ export const pt = {
       emailMax: 'Email deve ter no máximo 100 caracteres',
       passwordMin: 'Senha deve ter no mínimo 8 caracteres',
       passwordMax: 'Senha deve ter no máximo 64 caracteres',
+      passwordUppercase: 'Senha deve conter pelo menos uma letra maiúscula',
+      passwordLowercase: 'Senha deve conter pelo menos uma letra minúscula',
+      passwordNumber: 'Senha deve conter pelo menos um número',
+      passwordSpecial: 'Senha deve conter pelo menos um caractere especial',
     },
   },
   dashboard: {

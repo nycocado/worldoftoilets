@@ -104,6 +104,10 @@ fun RegisterScreen(
             password.isEmpty() -> context.getString(R.string.error_required_password)
             password.length < 8 -> context.getString(R.string.error_too_short_password)
             password.length > 64 -> context.getString(R.string.error_too_long_password)
+            !password.any { it.isUpperCase() } -> context.getString(R.string.error_password_uppercase)
+            !password.any { it.isLowerCase() } -> context.getString(R.string.error_password_lowercase)
+            !password.any { it.isDigit() } -> context.getString(R.string.error_password_digit)
+            !password.any { !it.isLetterOrDigit() } -> context.getString(R.string.error_password_special)
             else -> ""
         }
 
