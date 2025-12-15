@@ -50,17 +50,15 @@
       - [Visualização de Resultados](#visualização-de-resultados)
     - [Segurança Informática](#segurança-informática)
       - [Autenticação e Autorização](#autenticação-e-autorização)
-      - [Proteção de Dados](#proteção-de-dados)
+      - [Proteção de Dados e Credenciais](#proteção-de-dados-e-credenciais)
       - [Validação e Sanitização](#validação-e-sanitização)
       - [Funcionalidades de Segurança](#funcionalidades-de-segurança)
       - [Gestão e Boas Práticas](#gestão-e-boas-práticas)
       - [Implementações Necessárias no Futuro](#implementações-necessárias-no-futuro)
     - [Sistemas Distribuídos](#sistemas-distribuídos)
   - [Requisitos Técnicos](#requisitos-técnicos)
-    - [Requisitos Funcionais Herdados (Think Toilet)](#requisitos-funcionais-herdados-think-toilet)
-    - [Requisitos Funcionais Novos (World of Toilets)](#requisitos-funcionais-novos-world-of-toilets)
-    - [Requisitos Não Funcionais Herdados (Think Toilet)](#requisitos-não-funcionais-herdados-think-toilet)
-    - [Requisitos Não Funcionais Novos (World of Toilets)](#requisitos-não-funcionais-novos-world-of-toilets)
+    - [Requisitos Funcionais Implementados](#requisitos-funcionais-implementados)
+    - [Requisitos Não Funcionais Implementados](#requisitos-não-funcionais-implementados)
   - [Arquitetura da Solução](#arquitetura-da-solução)
     - [Camada de Apresentação (Clientes)](#camada-de-apresentação-clientes)
     - [Camada de Load Balancing e Distribuição](#camada-de-load-balancing-e-distribuição)
@@ -138,6 +136,8 @@ Este projeto foi desenhado para ser agnóstico ao sistema operativo, correndo in
     ```bash
     npm install
     ```
+
+3. Copie as variaveis de `.env.example` para `.env` e configure da maneira adequada
 
 ### Modos de Execução
 
@@ -395,9 +395,14 @@ O sistema utiliza JWT através da biblioteca @nestjs/jwt. Os tokens dividem-se e
 
 O controle de acesso implementa 82 permissões organizadas hierarquicamente, com roles diferenciados para utilizadores normais e administradores. Guards reutilizáveis aplicados via decoradores protegem endpoints específicos, verificando permissões a nível individual.
 
-#### Proteção de Dados
+#### Proteção de Dados e Credenciais
 
-As passwords são protegidas com bcrypt (12 salt rounds), algoritmo que gera salt único por password e resiste a ataques de rainbow table. A política exige entre 8 e 64 caracteres. O sistema implementa soft deletes para auditoria, mantendo histórico de utilizadores desativados e tokens invalidados sem remoção física imediata.
+A segurança das credenciais segue uma abordagem de defesa em profundidade. As passwords são protegidas com bcrypt (12 salt rounds), algoritmo que gera um salt único e resiste a ataques de rainbow table. Para garantir a robustez das credenciais na entrada, foi implementada uma política de Senhas Fortes (Strong Password Policy) através de uma validação cruzada entre tecnologias:
+
+- Utilização de Zod e Regex para validação de esquemas e feedback imediato nas interfaces cliente.
+- Reforço no backend principal via class-validator, assegurando que nenhuma requisição contorne as regras de negócio.
+
+Esta política impõe um comprimento entre 8 e 64 caracteres e exige complexidade algorítmica (mistura de letras maiúsculas, minúsculas, números e símbolos), garantindo elevada entropia contra ataques de força bruta. O sistema mantém ainda soft deletes para auditoria, preservando o histórico de utilizadores e tokens sem perda de integridade referencial.
 
 #### Validação e Sanitização
 
@@ -419,7 +424,12 @@ O sistema utiliza conteinerização via Docker, proporcionando isolamento entre 
 
 #### Implementações Necessárias no Futuro
 
-Por operar localmente em desenvolvimento, alguns componentes de segurança não foram implementados. A biblioteca @nestjs/throttler está instalada mas não configurada globalmente para rate limiting. As comunicações ocorrem via HTTP sem TLS/SSL. Headers de segurança como CSP, X-Frame-Options e HSTS estão ausentes pela falta do Helmet.js. A configuração CORS permite todas as origens em desenvolvimento, requerendo whitelist explícita antes de produção.
+Devido à natureza académica do projeto e à sua execução em ambiente local, alguns componentes de segurança perimetral não foram ativados para facilitar a depuração e a interoperabilidade entre contentores. As seguintes limitações estão identificadas e requerem implementação numa futura passagem para produção:
+
+- Rate Limiting: A biblioteca @nestjs/throttler encontra-se instalada na arquitetura, mas não está configurada globalmente, permitindo testes de carga e desenvolvimento sem bloqueios por limite de requisições.
+- Criptografia de Transporte: As comunicações internas e externas ocorrem atualmente via HTTP. A implementação de certificados TLS/SSL (HTTPS) é um requisito pendente para garantir a confidencialidade dos dados em trânsito, estando prevista a utilização de Cloudflare Tunnels para assegurar a proteção desta comunicação.
+- Hardening de Cabeçalhos: Cabeçalhos de defesa como CSP, X-Frame-Options e HSTS estão ausentes. A integração da biblioteca Helmet.js está prevista para mitigar vulnerabilidades baseadas no navegador.
+- Política CORS: A configuração atual permite todas as origens para simplificar a comunicação entre os diferentes front-ends e serviços em Docker. Em produção, será necessária uma whitelist estrita.
 
 ### Sistemas Distribuídos
 
@@ -427,7 +437,7 @@ O sistema foi desenhado com alta disponibilidade através de replicação de ser
 
 ## Requisitos Técnicos
 
-### Requisitos Funcionais Herdados (Think Toilet)
+### Requisitos Funcionais Implementados
 
 - Os utilizadores devem poder pesquisar casas de banho próximas através de um mapa interativo.
 - Os utilizadores devem poder visualizar detalhes das casas de banho, incluindo avaliações e média de classificações.
@@ -435,9 +445,6 @@ O sistema foi desenhado com alta disponibilidade através de replicação de ser
 - Os utilizadores devem poder consultar o seu histórico de avaliações.
 - Os utilizadores devem registar-se e autenticar-se para interagir com a comunidade.
 - Os utilizadores devem poder denunciar locais ou comentários inadequados.
-
-### Requisitos Funcionais Novos (World of Toilets)
-
 - Os utilizadores devem poder filtrar casas de banho por necessidades específicas (acessibilidade, fraldário, preço, etc.).
 - Os utilizadores devem poder sugerir novas casas de banho para aprovação.
 - Os utilizadores devem poder responder a comentários principais (sem respostas em cadeia).
@@ -446,7 +453,7 @@ O sistema foi desenhado com alta disponibilidade através de replicação de ser
 - O sistema deve calcular e apresentar rotas otimizadas a pé até às casas de banho.
 - Os utilizadores devem poder denunciar outros utilizadores por comportamento inadequado.
 
-### Requisitos Não Funcionais Herdados (Think Toilet)
+### Requisitos Não Funcionais Implementados
 
 - A interface deve ser intuitiva e responsiva.
 - O sistema deve permitir moderação de conteúdo por administradores.
@@ -454,9 +461,6 @@ O sistema foi desenhado com alta disponibilidade através de replicação de ser
 - A aplicação móvel deve ser desenvolvida em Kotlin com Jetpack Compose.
 - Dados sensíveis dos utilizadores devem ser encriptados antes do armazenamento.
 - Integração com MapLibre para visualização de mapas.
-
-### Requisitos Não Funcionais Novos (World of Toilets)
-
 - O sistema deve suportar múltiplas instâncias de cada serviço para evitar ponto único de falha.
 - A base de dados deve ser replicada para garantir disponibilidade e integridade dos dados.
 - O sistema deve implementar balanceamento de carga entre as instâncias.
@@ -465,7 +469,7 @@ O sistema foi desenhado com alta disponibilidade através de replicação de ser
 - As APIs devem ser construídas com TypeScript e NestJS seguindo arquitetura RESTful.
 - O front-end web deve ser desenvolvido com TypeScript, React e Next.js.
 - O armazenamento de ficheiros deve ser feito através de serviço de object storage (MinIO).
-- O cálculo de rotas deve ser efetuado por microsserviço dedicado com algoritmo A-.
+- O cálculo de rotas deve ser efetuado por microsserviço dedicado com algoritmo A\*.
 - Os administradores devem ter diferentes níveis de permissões configuráveis.
 
 ## Arquitetura da Solução
@@ -592,7 +596,7 @@ O desenvolvimento do projeto está organizado em 8 sprints, desde a conceptualiz
 |   3    | 03/11 \- 09/11 | IA & API Core              | Algoritmo A\*, Endpoints Toilets/Reviews     |
 |   4    | 10/11 \- 16/11 | Integração IA & API        | Microsserviço Flask, Testes                  |
 |   5    | 17/11 \- 23/11 | Frontend Web & Mobile      | Landing Page, Dashboard, App Kotlin (início) |
-|   6    | 24/11 \- 30/11 | Integração Completa        | App Mobile, Rotas IA, Testes E2E             |
+|   6    | 24/11 \- 30/11 | Integração Completa        | App Mobile, Rotas IA                         |
 |   7    | 01/12 \- 15/12 | Refinamento & Entrega      | Segurança, Documentação, Vídeo               |
 
 ## Conclusão
