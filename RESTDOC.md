@@ -1,6 +1,7 @@
 # REST API - Think Toilet
 
 ## Índice
+
 - [REST API - Think Toilet](#rest-api---think-toilet)
   - [Índice](#índice)
   - [Introdução](#introdução)
@@ -40,24 +41,30 @@
     - [Access](#access)
 
 ## Introdução
+
 A API do Think Toilet oferece acesso eficiente a informações sobre usuários, casas de banho e comentários, permitindo consultas, visualizações e interações organizadas. Desenvolvida para integração com a aplicação móvel, a API fornece dados atualizados e é compatível com outras plataformas.
 
 Os dados são entregues em formato JSON, garantindo respostas consistentes e facilitando a integração com sistemas diversos. A estrutura dos dados e os endpoints são flexíveis, projetados para suportar expansões futuras e melhorias contínuas na aplicação.
 
 ## Autenticação - Endpoints
+
 ### Login
+
 - **URL:**  
     `/login`
 - **METHOD:**  
     `POST`
 - **DATA PARAMETHERS:**
+
     ``` json
     {
         "email": [string],
         "password": [string]
     }
     ```
+
 - **SUCCESS RESPONSE:**
+
     ```json
     {
         "id": [integer],
@@ -68,7 +75,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "numComments": [integer],
     }
     ```
+
 - **ERROR RESPONSE:**
+
     ```json
     {
         "status": 500,
@@ -76,6 +85,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 401,
@@ -83,6 +93,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 401,
@@ -90,7 +101,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **SAMPLE CALL:**
+
     ```kotlin
     @POST("api/login")
     suspend fun login(
@@ -99,11 +112,13 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     ```
 
 ### Registo
+
 - **URL:**  
     `/register`
 - **METHOD:**  
     `POST`
 - **DATA PARAMETHERS:**
+
     ```json
     {
         "name": [string],
@@ -113,7 +128,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "birthDate": [date]
     }
     ```
+
 - **SUCCESS RESPONSE:**
+
     ```json
     {
         "id": [integer],
@@ -124,7 +141,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "numComments": [integer],
     }
     ```
+
 - **ERROR RESPONSE:**
+
     ```json
     {
         "status": 500,
@@ -132,6 +151,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 409,
@@ -139,7 +159,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **SAMPLE CALL:**
+
     ```kotlin
     @POST("api/register")
     suspend fun register(
@@ -148,7 +170,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     ```
 
 ## Usuários - Endpoints
+
 ### Mostrar usuários
+
 - **URL:**  
     `/users`  
 - **METHOD:**  
@@ -157,6 +181,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
   - Optional (Query):  
     `ids=[integers] (default: null)`
 - **SUCCESS RESPONSE:**  
+
     ```json
     [
         {
@@ -169,7 +194,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         },
     ]
     ```
+
 - **ERROR RESPONSE:**
+
     ```json
     {
         "status": 500,
@@ -177,7 +204,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **SAMPLE CALL:**  
+
     ```kotlin
     @GET("api/users")
     suspend fun getUsers(
@@ -186,14 +215,16 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     ```
 
 ### Mostrar usuários por ID
+
 - **URL:**  
     `/users/{id}`
 - **METHOD:**  
     `GET`
 - **URL PARAMETHERS:**
-    - Required (Path):  
+  - Required (Path):  
         `id=[integer]`
 - **SUCCESS RESPONSE:**
+
     ```json
     {
         "id": [integer],
@@ -204,7 +235,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "numComments": [integer],
     }
     ```
+
 - **ERROR RESPONSE:**
+
     ```json
     {
         "status": 500,
@@ -212,6 +245,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -219,7 +253,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **SAMPLE CALL:**
+
     ```kotlin
     @GET("api/users/{id}")
     suspend fun getUser(
@@ -228,17 +264,19 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     ```
 
 ### Editar e-mail do usuário
+
 - **URL:**  
     `/users/{id}/edit/email`
 - **METHOD:**  
     `POST`
 - **URL PARAMETHERS:**
-    - Required (Path):  
+  - Required (Path):  
         `id=[integer]`
-    - Required (Query):  
+  - Required (Query):  
         `email=[string],`  
         `password=[string]`
 - **SUCCESS RESPONSE:**
+
     ```json
     {
         "id": [integer],
@@ -249,7 +287,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "numComments": [integer],
     }
     ```
+
 - **ERROR RESPONSE:**
+
     ```json
     {
         "status": 500,
@@ -257,6 +297,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -264,6 +305,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 401,
@@ -271,6 +313,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 409,
@@ -278,6 +321,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 500,
@@ -285,7 +329,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **SAMPLE CALL:**
+
     ```kotlin
     @POST("api/users/{id}/edit/email")
     suspend fun editEmail(
@@ -296,16 +342,18 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     ```
 
 ### Editar ícone do usuário
+
 - **URL:**  
     `/users/{id}/edit/icon`
 - **METHOD:**  
     `POST`
 - **URL PARAMETHERS:**
-    - Required (Path):  
+  - Required (Path):  
         `id=[integer]`
-    - Required (Query):  
+  - Required (Query):  
         `iconId=[string]`
 - **SUCCESS RESPONSE:**
+
     ```json
     {
         "id": [integer],
@@ -316,7 +364,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "numComments": [integer],
     }
     ```
+
 - **ERROR RESPONSE:**
+
     ```json
     {
         "status": 500,
@@ -324,6 +374,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -331,6 +382,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 500,
@@ -338,7 +390,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **SAMPLE CALL:**
+
     ```kotlin
     @POST("api/users/{id}/edit/icon")
     suspend fun editIcon(
@@ -348,17 +402,19 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     ```
 
 ### Editar nome do usuário
+
 - **URL:**  
     `/users/{id}/edit/name`
 - **METHOD:**  
     `POST`
 - **URL PARAMETHERS:**
-    - Required (Path):  
+  - Required (Path):  
         `id=[integer]`
-    - Required (Query):  
+  - Required (Query):  
         `name=[string],`  
         `password=[string]`
 - **SUCCESS RESPONSE:**
+
     ```json
     {
         "id": [integer],
@@ -369,7 +425,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "numComments": [integer],
     }
     ```
+
 - **ERROR RESPONSE:**
+
     ```json
     {
         "status": 500,
@@ -377,6 +435,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -384,6 +443,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 401,
@@ -391,6 +451,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 409,
@@ -398,6 +459,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 500,
@@ -405,7 +467,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **SAMPLE CALL:**
+
     ```kotlin
     @POST("api/users/{id}/edit/name")
     suspend fun editName(
@@ -416,17 +480,19 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     ```
 
 ### Editar senha do usuário
+
 - **URL:**  
     `/users/{id}/edit/password`
 - **METHOD:**  
     `POST`
 - **URL PARAMETHERS:**
-    - Required (Path):  
+  - Required (Path):  
         `id=[integer]`
-    - Required (Query):  
+  - Required (Query):  
         `password=[string],`  
         `newPassword=[string]`
 - **SUCCESS RESPONSE:**
+
     ```json
     {
         "id": [integer],
@@ -437,7 +503,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "numComments": [integer],
     }
     ```
+
 - **ERROR RESPONSE:**
+
     ```json
     {
         "status": 500,
@@ -445,6 +513,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -452,6 +521,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 401,
@@ -459,6 +529,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 500,
@@ -466,7 +537,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **SAMPLE CALL:**
+
     ```kotlin
     @POST("api/users/{id}/edit/password")
     suspend fun editPassword(
@@ -475,17 +548,20 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         @Query("newPassword") newPassword: String
     ): Call<ResponseBody>
     ```
-    
+
 ### Apagar usuário
+
 (Essa ação requer uma chave de administrador)
+
 - **URL:**  
     `/users`
 - **METHOD:**  
     `DELETE`
 - **URL PARAMETHERS:**
-    - Required (Query):  
+  - Required (Query):  
         `id=[integer]`
 - **SUCCESS RESPONSE:**
+
     ```json
     {
         "status": 200,
@@ -493,7 +569,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **ERROR RESPONSE:**
+
     ```json
     {
         "status": 200,
@@ -501,6 +579,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -510,13 +589,15 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     ```
 
 ## Casas de Banho - Endpoints
+
 ### Mostrar casas de banho
+
 - **URL:**  
     `/toilets`
 - **METHOD:**  
     `GET`
 - **URL PARAMETHERS:**
-    - Optional (Query):  
+  - Optional (Query):  
         `state=[string], (default: null)`  
         `userId=[integer], (default: null)`  
         `ids=[integers], (default: null)`  
@@ -524,6 +605,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         `page=[integer], (default: 0)`  
         `size=[integer] (default: 20)`
 - **SUCCESS RESPONSE:**
+
     ```json
     [
         {
@@ -545,7 +627,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         },
     ]
     ```
+
 - **ERROR RESPONSE:**
+
     ```json
     {
         "status": 500,
@@ -553,6 +637,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -560,6 +645,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -567,7 +653,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **SAMPLE CALL:**
+
     ```kotlin
     @GET("api/toilets")
     suspend fun getToilets(
@@ -581,17 +669,19 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     ```
 
 ### Mostrar casas de banho por bounding box
+
 - **URL:**  
     `/toilets/bounding`
 - **METHOD:**  
     `GET`
 - **URL PARAMETHERS:**
-    - Required (Query):  
+  - Required (Query):  
         `minLat=[double],`  
         `maxLat=[double],`  
         `minLon=[double],`  
         `maxLon=[double]`
 - **SUCCESS RESPONSE:**
+
     ```json
     [
         {
@@ -613,7 +703,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         },
     ]
     ```
+
 - **ERROR RESPONSE:**
+
     ```json
     {
         "status": 500,
@@ -621,7 +713,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **SAMPLE CALL:**
+
     ```kotlin
     @GET("api/toilets/bounding")
     suspend fun getToiletsBounding(
@@ -633,21 +727,23 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     ```
 
 ### Mostrar casas de banho por proximidade
+
 - **URL:**  
     `/toilets/nearby`
 - **METHOD:**  
     `GET`
 - **URL PARAMETHERS:**
-    - Required (Query):  
+  - Required (Query):  
         `lat=[double],`  
         `lon=[double]`
-    - Optional (Query):  
+  - Optional (Query):  
         `state=[string], (default: null)`  
         `userId=[integer], (default: null)`  
         `pageable=[boolean], (default: false)`  
         `page=[integer], (default: 0)`  
         `size=[integer] (default: 20)`
 - **SUCCESS RESPONSE:**
+
     ```json
     [
         {
@@ -669,7 +765,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         },
     ]
     ```
+
 - **ERROR RESPONSE:**
+
     ```json
     {
         "status": 500,
@@ -677,13 +775,15 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
         "message": "State with technical name [string] not found.",
         "timestamp": [datetime]
     }
-    ``` 
+    ```
+
     ```json
     {
         "status": 404,
@@ -691,7 +791,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **SAMPLE CALL:**
+
     ```kotlin
     @GET("api/toilets/nearby")
     suspend fun getToiletsNearby(
@@ -706,14 +808,16 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     ```
 
 ### Mostrar casa de banho por ID
+
 - **URL:**  
     `/toilets/{id}`
 - **METHOD:**  
     `GET`
 - **URL PARAMETHERS:**
-    - Required (Path):  
+  - Required (Path):  
         `id=[integer]`
 - **SUCCESS RESPONSE:**
+
     ```json
     {
         "id": [integer],
@@ -733,7 +837,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "placeId": [string]
     }
     ```
+
 - **ERROR RESPONSE:**
+
     ```json
     {
         "status": 500,
@@ -741,6 +847,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -748,7 +855,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **SAMPLE CALL:**
+
     ```kotlin
     @GET("api/toilets/{id}")
     suspend fun getToilet(
@@ -757,19 +866,21 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     ```
 
 ### Mostrar casas de banho pelo ID do usuário
+
 - **URL:**  
     `/toilets/users/{userId}`
 - **METHOD:**  
     `GET`
 - **URL PARAMETHERS:**
-    - Required (Path):  
+  - Required (Path):  
         `userId=[integer]`
-    - Optional (Query):  
+  - Optional (Query):  
         `state=[string], (default: null)`  
         `pageable=[boolean], (default: false)`  
         `page=[integer], (default: 0)`  
         `size=[integer] (default: 20)`
 - **SUCCESS RESPONSE:**
+
     ```json
     [
         {
@@ -791,7 +902,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         },
     ]
     ```
+
 - **ERROR RESPONSE:**
+
     ```json
     {
         "status": 500,
@@ -799,6 +912,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -806,6 +920,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -813,7 +928,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **SAMPLE CALL:**
+
     ```kotlin
     @GET("api/toilets/users/{userId}")
     suspend fun getToiletsByUser(
@@ -826,18 +943,20 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     ```
 
 ### Pesquisar casas de banho
+
 - **URL:**  
     `/toilets/search/{query}`
 - **METHOD:**  
     `GET`
 - **URL PARAMETHERS:**
-    - Required (Path):  
+  - Required (Path):  
         `query=[string]`
-    - Optional (Query):  
+  - Optional (Query):  
         `pageable=[boolean], (default: false)`  
         `page=[integer], (default: 0)`  
         `size=[integer] (default: 20)`
 - **SUCCESS RESPONSE:**
+
     ```json
     [
         {
@@ -846,7 +965,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         },
     ]
     ```
+
 - **ERROR RESPONSE:**
+
     ```json
     {
         "status": 500,
@@ -854,7 +975,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **SAMPLE CALL:**
+
     ```kotlin
     @GET("api/toilets/search/{query}")
     suspend fun searchToilets(
@@ -866,20 +989,24 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     ```
 
 ### Visualizar imagem da casa de banho
+
 - **URL:**  
     `/toilets/{id}/image`
 - **METHOD:**  
     `GET`
 - **URL PARAMETHERS:**
-    - Required (Path):  
+  - Required (Path):  
         `id=[integer]`
 - **SUCCESS RESPONSE:**
+
     ```json
     {
         "image": [image/jpeg]
     }
     ```
+
 - **ERROR RESPONSE:**
+
     ```json
     {
         "status": 500,
@@ -887,6 +1014,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -894,7 +1022,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **SAMPLE CALL:**
+
     ```kotlin
     @GET("api/toilets/{id}/image")
     suspend fun getToiletImage(
@@ -903,11 +1033,13 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     ```
 
 ### Adicionar denúncia na casa de banho
+
 - **URL:**  
     `/toilets/reports`
 - **METHOD:**  
     `POST`
 - **DATA PARAMETHERS:**
+
     ```json
     {
         "toiletId": [integer],
@@ -915,7 +1047,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "typeReport": [string]
     }
     ```
+
 - **SUCCESS RESPONSE:**
+
     ```json
     {
         "status": 201,
@@ -923,7 +1057,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **ERROR RESPONSE:**
+
     ```json
     {
         "status": 500,
@@ -931,6 +1067,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -938,6 +1075,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -945,6 +1083,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -952,6 +1091,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 500,
@@ -959,7 +1099,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **SAMPLE CALL:**
+
     ```kotlin
     @POST("api/toilets/reports")
     suspend fun addReport(
@@ -968,21 +1110,26 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     ```
 
 ### Adicionar foto na casa de banho
+
 (Essa ação requer uma chave de administrador)
+
 - **URL:**  
     `/toilets/{id}/image`
 - **METHOD:**  
     `POST`
 - **URL PARAMETHERS:**
-    - Required (Path):  
+  - Required (Path):  
         `id=[integer]`
 - **DATA PARAMETHERS:**
+
     ```json
     {
         "image": [image/jpeg]
     }
     ```
+
 - **SUCCESS RESPONSE:**
+
     ```json
     {
         "status": 200,
@@ -990,7 +1137,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **ERROR RESPONSE:**
+
     ```json
     {
         "status": 500,
@@ -998,6 +1147,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -1005,7 +1155,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **SAMPLE CALL:**
+
     ```kotlin
     @POST("api/toilets/{id}/image")
     suspend fun addImage(
@@ -1015,15 +1167,17 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     ```
 
 ### Apagar denúncia na casa de banho
+
 - **URL:**  
     `/toilets/reports`
 - **METHOD:**  
     `DELETE`
 - **URL PARAMETHERS:**
-    - Required (Query):  
+  - Required (Query):  
         `toiletId=[integer],`  
         `userId=[integer]`
 - **SUCCESS RESPONSE:**
+
     ```json
     {
         "status": 200,
@@ -1031,7 +1185,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **ERROR RESPONSE:**
+
     ```json
     {
         "status": 500,
@@ -1039,6 +1195,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -1046,6 +1203,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -1053,6 +1211,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -1060,7 +1219,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **SAMPLE CALL:**
+
     ```kotlin
     @DELETE("api/toilets/reports")
     suspend fun deleteReport(
@@ -1070,19 +1231,22 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     ```
 
 ## Comentários - Endpoints
+
 ### Mostrar comentários de uma casa de banho
+
 - **URL:**  
     `/comments/toilets/{id}`
 - **METHOD:**  
     `GET`
 - **URL PARAMETHERS:**
-    - Required (Path):  
+  - Required (Path):  
         `id=[integer]`
-    - Optional (Query):  
+  - Optional (Query):  
         `pageable=[boolean], (default: false)`  
         `page=[integer], (default: 0)`  
         `size=[integer] (default: 20)`
 - **SUCCESS RESPONSE:**
+
     ```json
     [
         {
@@ -1101,7 +1265,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         },
     ]
     ```
+
 - **ERROR RESPONSE:**
+
     ```json
     {
         "status": 500,
@@ -1109,6 +1275,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -1116,7 +1283,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **SAMPLE CALL:**
+
     ```kotlin
     @GET("api/comments/toilets/{id}")
     suspend fun getComments(
@@ -1128,18 +1297,20 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     ```
 
 ### Mostrar comentários de um usuário
+
 - **URL:**  
     `/comments/users/{id}`
 - **METHOD:**  
     `GET`
 - **URL PARAMETHERS:**
-    - Required (Path):  
+  - Required (Path):  
         `id=[integer]`
-    - Optional (Query):  
+  - Optional (Query):  
         `pageable=[boolean], (default: false)`  
         `page=[integer], (default: 0)`  
         `size=[integer] (default: 20)`
 - **SUCCESS RESPONSE:**
+
     ```json
     [
         {
@@ -1158,7 +1329,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         },
     ]
     ```
+
 - **ERROR RESPONSE:**
+
     ```json
     {
         "status": 500,
@@ -1166,6 +1339,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -1173,7 +1347,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **SAMPLE CALL:**
+
     ```kotlin
     @GET("api/comments/users/{id}")
     suspend fun getCommentsByUser(
@@ -1185,15 +1361,17 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     ```
 
 ### Mostrar reações de um comentário
+
 - **URL:**  
     `/comments/reactions`
 - **METHOD:**  
     `GET`
 - **URL PARAMETHERS:**
-    - Required (Query):  
+  - Required (Query):  
         `userId=[integer],`
         `commentIds=[integers]`  
 - **SUCCESS RESPONSE:**
+
     ```json
     [
         {
@@ -1202,7 +1380,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         },
     ]
     ```
+
 - **ERROR RESPONSE:**
+
     ```json
     {
         "status": 500,
@@ -1210,6 +1390,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -1217,7 +1398,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **SAMPLE CALL:**
+
     ```kotlin
     @GET("api/comments/reactions")
     suspend fun getReactions(
@@ -1227,11 +1410,13 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     ```
 
 ### Adicionar comentário
+
 - **URL:**  
     `/comments`
 - **METHOD:**  
     `POST`
 - **DATA PARAMETHERS:**
+
     ```json
     {
         "toiletId": [integer],
@@ -1243,7 +1428,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "ratingAccessibility": [integer]
     }
     ```
+
 - **SUCCESS RESPONSE:**
+
     ```json
     {
         "id": [integer],
@@ -1260,7 +1447,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "score": [integer]
     }
     ```
+
 - **ERROR RESPONSE:**
+
     ```json
     {
         "status": 500,
@@ -1268,6 +1457,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -1275,6 +1465,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -1282,6 +1473,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 500,
@@ -1289,7 +1481,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **SAMPLE CALL:**
+
     ```kotlin
     @POST("api/comments")
     suspend fun addComment(
@@ -1298,11 +1492,13 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     ```
 
 ### Adicionar reação em um comentário
+
 - **URL:**  
     `/comments/reactions`
 - **METHOD:**  
     `POST`
 - **DATA PARAMETHERS:**
+
     ```json
     {
         "commentId": [integer],
@@ -1310,7 +1506,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "typeReaction": [string]
     }
     ```
+
 - **SUCCESS RESPONSE:**
+
     ```json
     {
         "status": 201,
@@ -1318,7 +1516,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **ERROR RESPONSE:**
+
     ```json
     {
         "status": 500,
@@ -1326,6 +1526,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -1333,6 +1534,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -1340,6 +1542,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -1347,6 +1550,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 500,
@@ -1354,7 +1558,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **SAMPLE CALL:**
+
     ```kotlin
     @POST("api/comments/reactions")
     suspend fun addReaction(
@@ -1363,15 +1569,18 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     ```
 
 ### Apagar comentário
+
 (Essa ação requer uma chave de administrador)
+
 - **URL:**  
     `/comments`
 - **METHOD:**  
     `DELETE`
 - **URL PARAMETHERS:**
-    - Required (Query):  
+  - Required (Query):  
         `id=[integer]`
 - **SUCCESS RESPONSE:**
+
     ```json
     {
         "status": 200,
@@ -1379,7 +1588,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **ERROR RESPONSE:**
+
     ```json
     {
         "status": 500,
@@ -1387,6 +1598,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -1395,15 +1607,17 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     }
 
 ### Apagar reação em um comentário
+
 - **URL:**  
     `/comments/reactions`
 - **METHOD:**  
     `DELETE`
 - **URL PARAMETHERS:**
-    - Required (Query):  
+  - Required (Query):  
         `commentId=[integer],`  
         `userId=[integer]`
 - **SUCCESS RESPONSE:**
+
     ```json
     {
         "status": 200,
@@ -1411,7 +1625,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **ERROR RESPONSE:**
+
     ```json
     {
         "status": 500,
@@ -1419,6 +1635,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -1426,6 +1643,7 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
     ```json
     {
         "status": 404,
@@ -1433,7 +1651,9 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
         "timestamp": [datetime]
     }
     ```
+
 - **SAMPLE CALL:**
+
     ```kotlin
     @DELETE("api/comments/reactions")
     suspend fun deleteReaction(
@@ -1443,15 +1663,19 @@ Os dados são entregues em formato JSON, garantindo respostas consistentes e fac
     ```
 
 ## Observações
+
 ### State
+
 O state, visto em alguns endpoints, é um argumento que representa o estado de uma casa de banho. Ele pode ter os seguintes valores:
+
 - `active` - Casa de banho ativa
 - `inactive` - Casa de banho inativa
 - `under-review` - Casa de banho em revisão
 - `suggested` - Casa de banho sugerida
-- 
+-
 
 ### Extras
+
 O campo extras, visto em alguns endpoints, é um array de strings que representa as características extras de uma casa de banho. Ele pode ter os seguintes valores:
 
 - `WHEELCHAIR_ACCESSIBLE` - Acesso para cadeira de rodas
@@ -1462,6 +1686,7 @@ O campo extras, visto em alguns endpoints, é um array de strings que representa
 Esses valores apresentam diferenças com os presentes na base de dados, que basicamente são em lowercase, substituindo o `_` por `-`. Essa mudança serve para representações de classes Enum no JSON, facilitando o desenvolvimento pela parte do cliente.
 
 ### Access
+
 O campo access, visto em alguns endpoints, é uma string que representa o tipo de acesso de uma casa de banho. Ele pode ter os seguintes valores:
 
 - `PUBLIC` - Acesso público
