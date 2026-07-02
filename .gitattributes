@@ -6,6 +6,7 @@ Dockerfile* text eol=lf
 docker-entrypoint.sh text eol=lf
 # Normaliza line endings para outros arquivos de texto
 * text=auto
+# LFS para mídia e imagens
 *.mp4 filter=lfs diff=lfs merge=lfs -text
 *.pdf filter=lfs diff=lfs merge=lfs -text
 *.png filter=lfs diff=lfs merge=lfs -text
